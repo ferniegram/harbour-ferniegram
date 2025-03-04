@@ -42,6 +42,7 @@ namespace {
     const QString KEY_FOCUS_TEXTAREA_ON_CHAT_OPEN("focusTextAreaOnChatOpen");
     const QString KEY_SPONSORED_MESS("sponsoredMess");
     const QString KEY_HIGHLIGHT_UNREADCONVS("highlightUnreadConversations");
+    const QString KEY_COMPACT_MSG_MENU("compactMessageMenu");
 }
 
 AppSettings::AppSettings(QObject *parent) : QObject(parent), settings(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/io.github.roundedrectangle/fernschreiber2/settings.conf", QSettings::NativeFormat)
@@ -341,5 +342,16 @@ void AppSettings::setSponsoredMess(SponsoredMess sponsoredMess)
         LOG(KEY_SPONSORED_MESS << sponsoredMess);
         settings.setValue(KEY_SPONSORED_MESS, sponsoredMess);
         emit sponsoredMessChanged();
+    }
+}
+
+bool AppSettings::compactMessageMenu() const {
+    return settings.value(KEY_COMPACT_MSG_MENU, true).toBool();
+}
+void AppSettings::setCompactMessageMenu(bool enable) {
+    if (compactMessageMenu() != enable) {
+        LOG(KEY_COMPACT_MSG_MENU << enable);
+        settings.setValue(KEY_COMPACT_MSG_MENU, enable);
+        emit compactMessageMenuChanged();
     }
 }

@@ -22,6 +22,7 @@ import "./messageContent"
 import "../js/twemoji.js" as Emoji
 import "../js/functions.js" as Functions
 import "../js/debug.js" as Debug
+import "../modules/Opal/FancyMenus"
 
 ListItem {
     id: messageListItem
@@ -90,11 +91,8 @@ ListItem {
 
     function openContextMenu() {
         messageOptionsDrawer.open = false
-        if (menu) {
-            openMenu()
-        } else {
-            contextMenuLoader.active = true
-        }
+        if (menu) openMenu()
+        else contextMenuLoader.active = true
     }
 
     function getInteractionText(viewCount, reactions, size, highlightColor) {
@@ -211,44 +209,68 @@ ListItem {
         asynchronous: true
         onStatusChanged: {
             if(status === Loader.Ready) {
-                messageListItem.menu = item;
-                messageListItem.openMenu();
+                messageListItem.menu = item
+                messageListItem.openMenu()
             }
         }
         sourceComponent: Component {
-            ContextMenu {
+            FancyContextMenu {
+                listItem: messageListItem
+                FancyMenuRow {
+                    visible: appSettings.compactMessageMenu
+                    FancyMenuIcon {
+                        icon.source: "image://theme/icon-m-clipboard"
+                        onClicked: copyMessageToClipboard()
+                    }
+                    FancyMenuIcon {
+                        visible: typeof myMessage.can_be_edited !== "undefined" && myMessage.can_be_edited
+                        icon.source: "image://theme/icon-m-edit"
+                        onClicked: editMessage()
+                    }
+                    FancyMenuIcon {
+                        icon.source: "image://theme/icon-m-message-forward"
+                        onClicked: forwardMessage()
+                    }
+                    FancyMenuIcon {
+                        icon.source: "image://theme/icon-m-select-all"
+                        onClicked: page.toggleMessageSelection(myMessage)
+                    }
+                }
                 MenuItem {
                     visible: canReplyToMessage
                     onClicked: replyToMessage()
                     text: qsTr("Reply to Message")
                 }
                 MenuItem {
-                    visible: typeof myMessage.can_be_edited !== "undefined" && myMessage.can_be_edited
+                    visible: !appSettings.compactMessageMenu && typeof myMessage.can_be_edited !== "undefined" && myMessage.can_be_edited
                     onClicked: editMessage()
                     text: qsTr("Edit Message")
                 }
                 MenuItem {
+                    visible: !appSettings.compactMessageMenu
                     onClicked: page.toggleMessageSelection(myMessage)
                     text: qsTr("Select Message")
                 }
                 MenuItem {
-                    visible: showCopyMessageToClipboardMenuItem
+                    visible: !appSettings.compactMessageMenu && showCopyMessageToClipboardMenuItem
                     onClicked: copyMessageToClipboard()
                     text: qsTr("Copy Message to Clipboard")
                 }
                 MenuItem {
-                    visible: showForwardMessageMenuItem
+                    visible: !appSettings.compactMessageMenu && showForwardMessageMenuItem
                     onClicked: forwardMessage()
                     text: qsTr("Forward Message")
                 }
                 MenuItem {
-                    visible: canDeleteMessage && haveSpaceForDeleteMessageMenuItem
+                    visible: canDeleteMessage && (haveSpaceForDeleteMessageMenuItem || appSettings.compactMessageMenu)
                     onClicked: deleteMessage()
                     text: qsTr("Delete Message")
                 }
                 MenuItem {
-                    visible: (numberOfExtraOptionsOtherThanDeleteMessage > 0) ||
-                        (deleteMessageIsOnlyExtraOption && !haveSpaceForDeleteMessageMenuItem)
+                    visible: !appSettings.compactMessageMenu && (
+                                 (numberOfExtraOptionsOtherThanDeleteMessage > 0) ||
+                                 (deleteMessageIsOnlyExtraOption && !haveSpaceForDeleteMessageMenuItem)
+                             )
                     onClicked: {
                         messageOptionsDrawer.myMessage = myMessage;
                         messageOptionsDrawer.userInformation = userInformation;

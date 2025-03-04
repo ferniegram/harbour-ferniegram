@@ -114,6 +114,15 @@ AccordionItem {
                 }
             }
 
+            TextSwitch {
+                width: parent.columnWidth
+                checked: appSettings.compactMessageMenu
+                text: qsTr("Compact message context menu")
+                description: qsTr("Organize some of the context menu items in a row")
+                automaticCheck: false
+                onClicked: appSettings.compactMessageMenu = !checked
+            }
+
             ComboBox {
                 id: feedbackComboBox
                 width: parent.columnWidth
