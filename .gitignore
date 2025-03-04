@@ -53,3 +53,7 @@ compile_commands.json
 
 # TDLib API Secrets
 tdlibsecrets.h
+
+# Opal docs and translations
+libs/opal-translations
+libs/opal-docs
