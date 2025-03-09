@@ -1772,6 +1772,10 @@
         <source>When tapping a quoted message, open it in chat instead of showing it in an overlay.</source>
         <translation>Beim Tippen auf eine zitierte Nachricht zu dieser springen anstatt es in einem Overlay anzuzeigen.</translation>
     </message>
+    <message>
+        <source>Send attachments by enter</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SettingsPage</name>

@@ -43,6 +43,7 @@ namespace {
     const QString KEY_SPONSORED_MESS("sponsoredMess");
     const QString KEY_HIGHLIGHT_UNREADCONVS("highlightUnreadConversations");
     const QString KEY_COMPACT_MSG_MENU("compactMessageMenu");
+    const QString KEY_SEND_ATTACHMENT_BY_ENTER("sendAttachmentByEnter");
 }
 
 AppSettings::AppSettings(QObject *parent) : QObject(parent), settings(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/io.github.roundedrectangle/fernschreiber2/settings.conf", QSettings::NativeFormat)
@@ -353,5 +354,17 @@ void AppSettings::setCompactMessageMenu(bool enable) {
         LOG(KEY_COMPACT_MSG_MENU << enable);
         settings.setValue(KEY_COMPACT_MSG_MENU, enable);
         emit compactMessageMenuChanged();
+    }
+}
+
+bool AppSettings::sendAttachmentByEnter() const {
+    return //compactMessageMenu() &&
+            settings.value(KEY_SEND_ATTACHMENT_BY_ENTER).toBool();
+}
+void AppSettings::setSendAttachmentByEnter(bool enable) {
+    if (sendAttachmentByEnter() != enable) {
+        LOG(KEY_SEND_ATTACHMENT_BY_ENTER << enable);
+        settings.setValue(KEY_SEND_ATTACHMENT_BY_ENTER, enable);
+        emit sendAttachmentByEnterChanged();
     }
 }

@@ -2085,7 +2085,7 @@ Page {
                                     newMessageTextField.focus = false
                             }
 
-                            EnterKey.enabled: !inlineQuery.userNameIsValid && (!appSettings.sendByEnter || text.length)
+                            EnterKey.enabled: !inlineQuery.userNameIsValid && (!appSettings.sendByEnter || (appSettings.sendAttachmentByEnter ? newMessageSendButton.enabled : text.length))
                             EnterKey.iconSource: "image://theme/icon-m-" + (appSettings.sendByEnter ? "chat" : "enter")
 
                             onTextChanged: {
@@ -2120,7 +2120,7 @@ Page {
                             icon.source: "image://theme/icon-m-chat"
                             anchors.bottom: parent.bottom
                             anchors.bottomMargin: Theme.paddingSmall
-                            visible: !inlineQuery.userNameIsValid && (!appSettings.sendByEnter || attachmentPreviewRow.visible)
+                            visible: !inlineQuery.userNameIsValid && (!appSettings.sendByEnter || (!appSettings.sendAttachmentByEnter && attachmentPreviewRow.visible))
                             enabled: false
                             onClicked: {
                                 sendMessage();

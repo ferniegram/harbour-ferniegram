@@ -32,9 +32,16 @@ AccordionItem {
                 text: qsTr("Send message by enter")
                 description: qsTr("Send your message by pressing the enter key")
                 automaticCheck: false
-                onClicked: {
-                    appSettings.sendByEnter = !checked
-                }
+                onClicked: appSettings.sendByEnter = !checked
+            }
+
+            TextSwitch {
+                enabled: appSettings.sendByEnter
+                width: parent.columnWidth
+                checked: appSettings.sendAttachmentByEnter
+                text: qsTr("Send attachments by enter")
+                automaticCheck: false
+                onClicked: appSettings.sendAttachmentByEnter = !checked
             }
 
             TextSwitch {

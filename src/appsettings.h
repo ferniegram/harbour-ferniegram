@@ -46,6 +46,7 @@ class AppSettings : public QObject {
     Q_PROPERTY(SponsoredMess sponsoredMess READ getSponsoredMess WRITE setSponsoredMess NOTIFY sponsoredMessChanged)
     Q_PROPERTY(bool highlightUnreadConversations READ highlightUnreadConversations WRITE setHighlightUnreadConversations NOTIFY highlightUnreadConversationsChanged)
     Q_PROPERTY(bool compactMessageMenu READ compactMessageMenu WRITE setCompactMessageMenu NOTIFY compactMessageMenuChanged)
+    Q_PROPERTY(bool sendAttachmentByEnter READ sendAttachmentByEnter WRITE setSendAttachmentByEnter NOTIFY sendAttachmentByEnterChanged)
 public:
     enum SponsoredMess {
         SponsoredMessHandle,
@@ -130,6 +131,9 @@ public:
     bool compactMessageMenu() const;
     void setCompactMessageMenu(bool enable);
 
+    bool sendAttachmentByEnter() const;
+    void setSendAttachmentByEnter(bool enable);
+
 signals:
     void sendByEnterChanged();
     void focusTextAreaAfterSendChanged();
@@ -153,6 +157,7 @@ signals:
     void sponsoredMessChanged();
     void highlightUnreadConversationsChanged();
     void compactMessageMenuChanged();
+    void sendAttachmentByEnterChanged();
 
 private:
     QSettings settings;

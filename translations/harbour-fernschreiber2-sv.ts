@@ -1772,6 +1772,10 @@
         <source>When tapping a quoted message, open it in chat instead of showing it in an overlay.</source>
         <translation>Vid tryck på ett citerat meddelande öppnas det i chatten istället för att visas i ett överlägg.</translation>
     </message>
+    <message>
+        <source>Send attachments by enter</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SettingsPage</name>
