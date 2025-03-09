@@ -52,11 +52,11 @@ Page {
             Debug.log("[OverviewPage] Opening chat from external requested: ", chatId, messageId);
             // We open the chat only for now - as it's automatically positioned at the last read message
             // it's probably better as if the message itself is displayed in the overlay
-            openChat(chatId);
+            openChat(chatId)
         }
         onPleaseOpenUrl: {
-            Debug.log("[OverviewPage] Opening URL requested: ", url);
-            openUrl(url);
+            Debug.log("[OverviewPage] Opening URL requested: ", url)
+            openUrl(url)
         }
     }
 
@@ -82,24 +82,23 @@ Page {
     Timer {
         id: openInitializationPageTimer
         interval: 0
-        onTriggered: {
-            pageStack.push(Qt.resolvedUrl("../pages/InitializationPage.qml"));
-        }
+        onTriggered:
+            pageStack.push(Qt.resolvedUrl("../pages/InitializationPage.qml"))
     }
     Timer {
         id: updateSecondaryContentTimer
         interval: 600
         onTriggered: {
-            chatListModel.calculateUnreadState();
-            tdLibWrapper.getRecentStickers();
-            tdLibWrapper.getInstalledStickerSets();
-            tdLibWrapper.getContacts();
-            tdLibWrapper.getUserPrivacySettingRules(TelegramAPI.SettingAllowChatInvites);
-            tdLibWrapper.getUserPrivacySettingRules(TelegramAPI.SettingAllowFindingByPhoneNumber);
-            tdLibWrapper.getUserPrivacySettingRules(TelegramAPI.SettingShowLinkInForwardedMessages);
-            tdLibWrapper.getUserPrivacySettingRules(TelegramAPI.SettingShowPhoneNumber);
-            tdLibWrapper.getUserPrivacySettingRules(TelegramAPI.SettingShowProfilePhoto);
-            tdLibWrapper.getUserPrivacySettingRules(TelegramAPI.SettingShowStatus);
+            chatListModel.calculateUnreadState()
+            tdLibWrapper.getRecentStickers()
+            tdLibWrapper.getInstalledStickerSets()
+            tdLibWrapper.getContacts()
+            tdLibWrapper.getUserPrivacySettingRules(TelegramAPI.SettingAllowChatInvites)
+            tdLibWrapper.getUserPrivacySettingRules(TelegramAPI.SettingAllowFindingByPhoneNumber)
+            tdLibWrapper.getUserPrivacySettingRules(TelegramAPI.SettingShowLinkInForwardedMessages)
+            tdLibWrapper.getUserPrivacySettingRules(TelegramAPI.SettingShowPhoneNumber)
+            tdLibWrapper.getUserPrivacySettingRules(TelegramAPI.SettingShowProfilePhoto)
+            tdLibWrapper.getUserPrivacySettingRules(TelegramAPI.SettingShowStatus)
         }
     }
 
@@ -112,10 +111,10 @@ Page {
 
     function openChat(chatId) {
         if(chatListCreated && chatId) {
-            Debug.log("[OverviewPage] Opening Chat: ", chatId);
-            pageStack.pop(overviewPage, PageStackAction.Immediate);
-            pageStack.push(Qt.resolvedUrl("../pages/ChatPage.qml"), { "chatInformation" : chatListModel.getById(chatId) }, PageStackAction.Immediate);
-            chatToOpen = null;
+            Debug.log("[OverviewPage] Opening Chat: ", chatId)
+            pageStack.pop(overviewPage, PageStackAction.Immediate)
+            pageStack.push(Qt.resolvedUrl("../pages/ChatPage.qml"), { "chatInformation" : chatListModel.getById(chatId) }, PageStackAction.Immediate)
+            chatToOpen = null
         }
     }
 
@@ -124,10 +123,10 @@ Page {
             chatToOpen = [chatId, messageId];
         }
         if(chatListCreated && chatToOpen && chatToOpen.length === 2) {
-            Debug.log("[OverviewPage] Opening Chat: ", chatToOpen[0], "message ID: " + chatToOpen[1]);
-            pageStack.pop(overviewPage, PageStackAction.Immediate);
-            pageStack.push(Qt.resolvedUrl("../pages/ChatPage.qml"), { "chatInformation" : tdLibWrapper.getChat(chatToOpen[0]), "messageIdToShow" : chatToOpen[1] }, PageStackAction.Immediate);
-            chatToOpen = null;
+            Debug.log("[OverviewPage] Opening Chat: ", chatToOpen[0], "message ID: " + chatToOpen[1])
+            pageStack.pop(overviewPage, PageStackAction.Immediate)
+            pageStack.push(Qt.resolvedUrl("../pages/ChatPage.qml"), { "chatInformation" : tdLibWrapper.getChat(chatToOpen[0]), "messageIdToShow" : chatToOpen[1] }, PageStackAction.Immediate)
+            chatToOpen = null
         }
     }
 
@@ -322,7 +321,7 @@ Page {
                 onClicked: pageStack.push(Qt.resolvedUrl("../pages/DebugPage.qml"))
             }
             MenuItem {
-                text: qsTr("About Fernschreiber")
+                text: qsTr("About Ferniegram")
                 onClicked: pageStack.push(Qt.resolvedUrl("../pages/AboutPage.qml"))
             }
             MenuItem {
@@ -341,7 +340,7 @@ Page {
 
         PageHeader {
             id: pageHeader
-            title: qsTr("Ferniegram")
+            title: "Ferniegram"
             leftMargin: Theme.itemSizeMedium
             visible: opacity > 0
             Behavior on opacity { FadeAnimation {} }

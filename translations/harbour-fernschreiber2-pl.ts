@@ -4,24 +4,8 @@
 <context>
     <name>AboutPage</name>
     <message>
-        <source>About Fernschreiber</source>
-        <translation>O Fernschreiber</translation>
-    </message>
-    <message>
         <source>A Telegram client for Sailfish OS</source>
         <translation>Klient Telegram dla Sailfish OS</translation>
-    </message>
-    <message>
-        <source>Send E-Mail</source>
-        <translation>Wyślij e-mail</translation>
-    </message>
-    <message>
-        <source>Licensed under GNU GPLv3</source>
-        <translation>Na licencji GNU GPLv3</translation>
-    </message>
-    <message>
-        <source>Sources on GitHub</source>
-        <translation>Źródła na GitHub</translation>
     </message>
     <message>
         <source>Terms of Service</source>
@@ -30,18 +14,6 @@
     <message>
         <source>Privacy Policy</source>
         <translation>Polityka prywatności</translation>
-    </message>
-    <message>
-        <source>Credits</source>
-        <translation>Podziękowania:</translation>
-    </message>
-    <message>
-        <source>This project uses the Telegram Database Library (TDLib). Thanks for making it available under the conditions of the Boost Software License 1.0!</source>
-        <translation>Ten projekt wykorzystuje bibliotekę bazy danych telegramu (TDLib). Dziękujemy za udostępnienie go na warunkach licencji Boost Software License 1.0!</translation>
-    </message>
-    <message>
-        <source>Open Telegram Database Library on GitHub</source>
-        <translation>Otwórz bibliotekę bazy danych Telegram na GitHub</translation>
     </message>
     <message>
         <source>About Telegram</source>
@@ -56,32 +28,92 @@
         <translation>Wersja TDLib %1</translation>
     </message>
     <message>
-        <source>This project uses twemoji. Copyright 2018 Twitter, Inc. and other contributors. Thanks for making it available under the conditions of the MIT License (coding) and CC-BY 4.0 (graphics)!</source>
-        <translation>Ten projekt wykorzystuje twemoji. Copyright 2018 Twitter, Inc. i inni współpracownicy. Dziękujemy za udostępnienie na warunkach Licencji MIT (kodowanie) i CC-BY 4.0 (grafika)!</translation>
-    </message>
-    <message>
-        <source>Open twemoji on GitHub</source>
-        <translation>Otwórz twemoji na GitHub</translation>
-    </message>
-    <message>
-        <source>By Sebastian J. Wolf and &lt;a href=&quot;https://github.com/Wunderfitz/harbour-fernschreiber#contributions&quot;&gt;other contributors&lt;/a&gt;</source>
-        <translation>Stworzony przez Sebastian J. Wolf oraz &lt;a href=&quot;https://github.com/Wunderfitz/harbour-fernschreiber#contributions&quot;&gt;innych współtwórców&lt;/a&gt;</translation>
-    </message>
-    <message>
-        <source>This project uses rlottie. Copyright 2020 Samsung Electronics Co., Ltd. and other contributors. Thanks for making it available under the conditions of the MIT License!</source>
-        <translation>Ten projekt używa rlottie. Copyright 2020 Samsung Electronics Co., Ltd. i inni współtwórcy. Dziękujemy za udostępnienie na warunkach licencji MIT!</translation>
-    </message>
-    <message>
-        <source>Open rlottie on GitHub</source>
-        <translation>Otwórz rlottie na GitHub</translation>
-    </message>
-    <message>
         <source>This project uses OpenStreetMap Nominatim for reverse geocoding of location attachments. Thanks for making it available as web service!</source>
         <translation>Ten projekt wykorzystuje OpenStreetMap Nominatim do odwrotnego geokodowania załączników lokalizacji. Dziękujemy za udostępnienie go jako usługi internetowej! </translation>
     </message>
     <message>
-        <source>Open OSM Nominatim Wiki</source>
-        <translation>Otwórz OSM Nominatim Wiki</translation>
+        <source>About Ferniegram</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Development</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Early testing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Translations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fernschreiber translations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chinese</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Finnish</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>French</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hungarian</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Italian</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Polish</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Russian</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Slovak</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Spanish</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Swedish</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This application is a fork of Fernschreiber, and wouldn&apos;t be possible without it. Thanks to everyone who developed and contributed to it!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Telegram Database Library (TDLib)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This project uses twemoji. Thanks for making it available under the conditions of the MIT License (coding) and CC-BY 4.0 (graphics)!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Coding</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Graphics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>other contributors</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1354,10 +1386,6 @@
 <context>
     <name>OverviewPage</name>
     <message>
-        <source>About Fernschreiber</source>
-        <translation>O Fernschreiber</translation>
-    </message>
-    <message>
         <source>Fernschreiber</source>
         <translation>Fernschreiber</translation>
     </message>
@@ -1430,7 +1458,7 @@
         <translation>Nie można otworzyć linku.</translation>
     </message>
     <message>
-        <source>Ferniegram</source>
+        <source>About Ferniegram</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

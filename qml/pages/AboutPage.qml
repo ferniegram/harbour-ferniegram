@@ -21,264 +21,150 @@ import QtQuick 2.6
 import Sailfish.Silica 1.0
 import WerkWolf.Fernschreiber 1.0
 import "../components"
+import "../modules/Opal/About"
 
-Page {
+AboutPageBase {
     id: aboutPage
     allowedOrientations: Orientation.All
 
-    SilicaFlickable {
-        id: aboutContainer
-        contentHeight: column.height
-        anchors.fill: parent
+    _pageHeaderItem.title: qsTr("About Ferniegram")
+    appName: "Ferniegram 0.1"
+    appIcon: Qt.resolvedUrl("../../images/fernschreiber2.svg")
+    Component.onCompleted: console.log(appIcon)
+    _iconItem.width: Math.min(2 * Theme.itemSizeHuge, Math.min(aboutPage.width, aboutPage.height) / 2)
+    _iconItem.height: _iconItem.width
+    _iconItem.asynchronous: true
+    _iconItem.sourceSize.width: _iconItem.width
+    _iconItem.sourceSize.height: _iconItem.height
+    description: qsTr("A Telegram client for Sailfish OS")
+    sourcesUrl: "https://github.com/roundedrectangle/harbour-fernschreiber"
+    autoAddOpalAttributions: true
+    licenses: License{ spdxId: 'GPL-3.0-only' }
 
-        Column {
-            id: column
-            width: aboutPage.width
-            spacing: Theme.paddingLarge
-
-            PageHeader {
-                title: qsTr("About Fernschreiber")
-            }
-
-            Image {
-                id: wunderfitzImage
-                source: "../../images/fernschreiber2.svg"
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
+    authors: ["roundedrectangle", "Sebastian J. Wolf"]
+    contributionSections: [
+        ContributionSection {
+            title: qsTr("Development")
+            groups: [
+                ContributionGroup {
+                    title: qsTr("Early testing")
+                    entries: "247"
                 }
-                sourceSize {
-                    width: width
-                    height: height
+            ]
+        },
+        ContributionSection {
+            title: qsTr("Translations")
+            groups: [
+
+            ]
+        },
+        ContributionSection {
+            title: qsTr("Fernschreiber translations")
+            groups: [
+                ContributionGroup {
+                    title: qsTr("Chinese")
+                    entries: "dashinfantry"
+                },
+                ContributionGroup {
+                    title: qsTr("Finnish")
+                    entries: "jorm1s"
+                },
+                ContributionGroup {
+                    title: qsTr("French")
+                    entries: ["Patrick Hervieux", "Nicolas Bourdais"]
+                },
+                ContributionGroup {
+                    title: qsTr("Hungarian")
+                    entries: "edp17"
+                },
+                ContributionGroup {
+                    title: qsTr("Italian")
+                    entries: "Matteo"
+                },
+                ContributionGroup {
+                    title: qsTr("Polish")
+                    entries: "atlochowski"
+                },
+                ContributionGroup {
+                    title: qsTr("Russian")
+                    entries: ["Rustem Abzalov", "Slava Monich"]
+                },
+                ContributionGroup {
+                    title: qsTr("Slovak")
+                    entries: "okruhliak"
+                },
+                ContributionGroup {
+                    title: qsTr("Spanish")
+                    entries: "carlosgonz"
+                },
+                ContributionGroup {
+                    title: qsTr("Swedish")
+                    entries: "Åke Engelbrektson"
                 }
-                fillMode: Image.PreserveAspectFit
-                asynchronous: true
-                width: Math.min(2 * Theme.itemSizeHuge, Math.min(aboutPage.width, aboutPage.height) / 2)
-                height: width
-            }
-
-            Label {
-                text: "Ferniegram 0.1"
-                horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: Theme.fontSizeExtraLarge
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
+            ]
+        }
+    ]
+    attributions: [
+        Attribution {
+            name: "Fernschreiber"
+            description: qsTr("This application is a fork of Fernschreiber, and wouldn't be possible without it. Thanks to everyone who developed and contributed to it!")
+            licenses: License { spdxId: 'GPL-3.0-only' }
+            entries: ["Sebastian J. Wolf", "Slava Monich", "jgibbon", "Christian Stemmle", "santhoshmanikandan", "Peter G.", "Johannes Bachmann", "Mikhail Barashkov", "Matteo"]
+            sources: "https://github.com/Wunderfitz/harbour-fernschreiber"
+        },
+        Attribution {
+            name: "TDLib"
+            description: qsTr("Telegram Database Library (TDLib)")
+            licenses: License { spdxId: 'BSL-1.0' }
+            sources: "https://github.com/tdlib/td"
+        },
+        Attribution {
+            name: "Twemoji"
+            description: qsTr("This project uses twemoji. Thanks for making it available under the conditions of the MIT License (coding) and CC-BY 4.0 (graphics)!")
+            entries: ["2022–present Jason Sofonia & Justine De Caires", "2014–2021 Twitter"]
+            licenses: [
+                License{
+                    spdxId: 'MIT'
+                    customShortText: qsTr("Coding")
+                },
+                License{
+                    spdxId: 'CC-BY 4.0'
+                    customShortText: qsTr("Graphics")
                 }
-            }
+            ]
+            sources: "https://github.com/twitter/twemoji"
+        },
+        Attribution {
+            name: "rlottie"
+            entries: ["2020 Samsung Electronics Co., Ltd.", qsTr("other contributors")]
+            licenses: License { spdxId: 'MIT' }
+            sources: "https://github.com/Samsung/rlottie"
+        },
+        Attribution {
+            name: "Nominatim"
+            description: qsTr("This project uses OpenStreetMap Nominatim for reverse geocoding of location attachments. Thanks for making it available as web service!")
+            sources: "https://wiki.openstreetmap.org/wiki/Nominatim"
+        }
+    ]
 
-            Label {
-                wrapMode: Text.Wrap
-                x: Theme.horizontalPageMargin
-                width: parent.width - ( 2 * Theme.horizontalPageMargin )
-                horizontalAlignment: Text.AlignHCenter
-                text: qsTr("A Telegram client for Sailfish OS")
-                font.pixelSize: Theme.fontSizeSmall
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
+    extraSections: [
+        InfoSection {
+            title: qsTr("About Telegram")
+            text: qsTr("This product uses the Telegram API but is not endorsed or certified by Telegram.")
+            buttons: [
+                InfoButton {
+                    text: qsTr("Terms of Service")
+                    onClicked: Qt.openUrlExternally("https://telegram.org/tos")
+                },
+                InfoButton {
+                    text: qsTr("Privacy Policy")
+                    onClicked: Qt.openUrlExternally("https://telegram.org/privacy")
                 }
-            }
-
-            Label {
-                text: qsTr("By Sebastian J. Wolf and <a href=\"https://github.com/Wunderfitz/harbour-fernschreiber#contributions\">other contributors</a>")
-                font.pixelSize: Theme.fontSizeSmall
-                width: parent.width - ( 2 * Theme.horizontalPageMargin )
-                horizontalAlignment: Text.AlignHCenter
-                wrapMode: Text.Wrap
-                linkColor: Theme.highlightColor
-                onLinkActivated: Qt.openUrlExternally(link)
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
-            }
-
-            Text {
-                text: "<a href=\"mailto:sebastian@ygriega.de\">" + qsTr("Send E-Mail") + "</a>"
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
-                font.pixelSize: Theme.fontSizeSmall
-                linkColor: Theme.highlightColor
-
-                onLinkActivated: Qt.openUrlExternally("mailto:sebastian@ygriega.de")
-            }
-
-            Separator {
-                width: parent.width
-                color: Theme.primaryColor
-                horizontalAlignment: Qt.AlignHCenter
-            }
-
-            Label {
-                text: qsTr("Licensed under GNU GPLv3")
-                font.pixelSize: Theme.fontSizeSmall
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
-            }
-
-            Text {
-                text: "<a href=\"https://github.com/Wunderfitz/harbour-fernschreiber\">" + qsTr("Sources on GitHub") + "</a>"
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
-                font.pixelSize: Theme.fontSizeSmall
-                linkColor: Theme.highlightColor
-
-                onLinkActivated: Qt.openUrlExternally("https://github.com/Wunderfitz/harbour-fernschreiber")
-            }
-
-            SectionHeader {
-                text: qsTr("About Telegram")
-            }
-
-            Label {
-                x: Theme.horizontalPageMargin
-                width: parent.width  - ( 2 * Theme.horizontalPageMargin )
-                horizontalAlignment: Text.AlignHCenter
-                text: qsTr("This product uses the Telegram API but is not endorsed or certified by Telegram.")
-                font.pixelSize: Theme.fontSizeSmall
-                wrapMode: Text.Wrap
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
-            }
-
-            Label {
-                x: Theme.horizontalPageMargin
-                width: parent.width  - ( 2 * Theme.horizontalPageMargin )
-                horizontalAlignment: Text.AlignHCenter
-                text: qsTr("TDLib version %1").arg(tdLibWrapper.getVersion())
-                font.pixelSize: Theme.fontSizeSmall
-                wrapMode: Text.Wrap
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
-            }
-
-            Button {
-                text: qsTr("Terms of Service")
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
-                onClicked: {
-                    Qt.openUrlExternally("https://telegram.org/tos");
-                }
-            }
-
-            Button {
-                text: qsTr("Privacy Policy")
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
-                onClicked: {
-                    Qt.openUrlExternally("https://telegram.org/privacy")
-                }
-            }
-
-            SectionHeader {
-                text: qsTr("Credits")
-            }
-
-            Label {
-                x: Theme.horizontalPageMargin
-                width: parent.width  - ( 2 * Theme.horizontalPageMargin )
-                text: qsTr("This project uses the Telegram Database Library (TDLib). Thanks for making it available under the conditions of the Boost Software License 1.0!")
-                font.pixelSize: Theme.fontSizeExtraSmall
-                wrapMode: Text.Wrap
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
-            }
-
-            Text {
-                text: "<a href=\"https://github.com/tdlib/td\">" + qsTr("Open Telegram Database Library on GitHub") + "</a>"
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
-                font.pixelSize: Theme.fontSizeSmall
-                linkColor: Theme.highlightColor
-
-                onLinkActivated: Qt.openUrlExternally("https://github.com/tdlib/td")
-            }
-
-            Label {
-                x: Theme.horizontalPageMargin
-                width: parent.width  - ( 2 * Theme.horizontalPageMargin )
-                text: qsTr("This project uses twemoji. Copyright 2018 Twitter, Inc. and other contributors. Thanks for making it available under the conditions of the MIT License (coding) and CC-BY 4.0 (graphics)!")
-                font.pixelSize: Theme.fontSizeExtraSmall
-                wrapMode: Text.Wrap
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
-            }
-
-            Text {
-                text: "<a href=\"https://github.com/twitter/twemoji\">" + qsTr("Open twemoji on GitHub") + "</a>"
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
-                font.pixelSize: Theme.fontSizeSmall
-                linkColor: Theme.highlightColor
-
-                onLinkActivated: Qt.openUrlExternally("https://github.com/twitter/twemoji")
-            }
-
-            Label {
-                x: Theme.horizontalPageMargin
-                width: parent.width  - ( 2 * Theme.horizontalPageMargin )
-                text: qsTr("This project uses rlottie. Copyright 2020 Samsung Electronics Co., Ltd. and other contributors. Thanks for making it available under the conditions of the MIT License!")
-                font.pixelSize: Theme.fontSizeExtraSmall
-                wrapMode: Text.Wrap
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
-            }
-
-            Text {
-                text: "<a href=\"https://github.com/Samsung/rlottie\">" + qsTr("Open rlottie on GitHub") + "</a>"
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
-                font.pixelSize: Theme.fontSizeSmall
-                linkColor: Theme.highlightColor
-
-                onLinkActivated: Qt.openUrlExternally("https://github.com/Samsung/rlottie")
-            }
-
-            Label {
-                x: Theme.horizontalPageMargin
-                width: parent.width  - ( 2 * Theme.horizontalPageMargin )
-                text: qsTr("This project uses OpenStreetMap Nominatim for reverse geocoding of location attachments. Thanks for making it available as web service!")
-                font.pixelSize: Theme.fontSizeExtraSmall
-                wrapMode: Text.Wrap
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
-            }
-
-            Text {
-                text: "<a href=\"https://wiki.openstreetmap.org/wiki/Nominatim\">" + qsTr("Open OSM Nominatim Wiki") + "</a>"
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
-                font.pixelSize: Theme.fontSizeSmall
-                linkColor: Theme.highlightColor
-
-                onLinkActivated: Qt.openUrlExternally("https://wiki.openstreetmap.org/wiki/Nominatim")
-            }
-
-            Label {
-                id: separatorLabel
-                x: Theme.horizontalPageMargin
-                width: parent.width  - ( 2 * Theme.horizontalPageMargin )
-                font.pixelSize: Theme.fontSizeExtraSmall
-                wrapMode: Text.Wrap
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                }
-            }
-
-            VerticalScrollDecorator {}
+            ]
+        },
+        InfoSection {
+            text: qsTr("TDLib version %1").arg(tdLibWrapper.getVersion())
         }
 
-    }
+    ]
 }

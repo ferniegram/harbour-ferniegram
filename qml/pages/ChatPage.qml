@@ -139,9 +139,11 @@ Page {
                     .arg(Functions.getShortenedCount(chatGroupInformation.member_count)))
                 .arg(qsTr("%1 online", "", chatOnlineMemberCount)
                     .arg(Functions.getShortenedCount(chatOnlineMemberCount)))
-        } else
-            chatStatusText = (isChannel ? qsTr("%1 subscribers", "", chatGroupInformation.member_count) : qsTr("%1 members", "", chatGroupInformation.member_count))
-                .arg(Functions.getShortenedCount(chatGroupInformation.member_count))
+        } else {
+            if (isChannel)
+                chatStatusText.text = qsTr("%1 subscribers", "", chatGroupInformation.member_count).arg(Functions.getShortenedCount(chatGroupInformation.member_count))
+            else chatStatusText.text = qsTr("%1 members", "", chatGroupInformation.member_count).arg(Functions.getShortenedCount(chatGroupInformation.member_count))
+        }
         joinLeaveChatMenuItem.text = chatPage.userIsMember ? qsTr("Leave Chat") : qsTr("Join Chat")
     }
 
