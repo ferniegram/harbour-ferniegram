@@ -211,7 +211,7 @@ Page {
                     messageStatusSuffix += Emoji.emojify("☑️", Theme.fontSizeTiny)
             }
         }
-        return ( useElapsed ? Functions.getDateTimeElapsed(message.date) : Functions.getDateTimeTranslated(message.date) ) + messageStatusSuffix
+        return (useElapsed ? Functions.getDateTimeElapsed(message.date) : Functions.getDateTimeTranslated(message.date)) + messageStatusSuffix
     }
 
     function clearAttachmentPreviewRow() {

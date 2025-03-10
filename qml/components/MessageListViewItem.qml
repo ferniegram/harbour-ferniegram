@@ -107,11 +107,11 @@ ListItem {
             var reaction = reactions[i]
             var reactionText = reaction.reaction ? reaction.reaction : (reaction.type && reaction.type.emoji) ? reaction.type.emoji : ""
             if (reactionText) {
-                interactionText += ( "&nbsp;" + Emoji.emojify(reactionText, size) )
+                interactionText += ("&nbsp;" + Emoji.emojify(reactionText, size))
                 if (!chatPage.isPrivateChat) {
                     var count = Functions.getShortenedCount(reaction.total_count)
                     interactionText += " "
-                    interactionText += (reaction.is_chosen ? ( "<font color='" + highlightColor + "'><b>" + count + "</b></font>" ) : count)
+                    interactionText += (reaction.is_chosen ? ("<font color='" + highlightColor + "'><b>" + count + "</b></font>") : count)
                 }
             }
         }
@@ -713,8 +713,8 @@ ListItem {
                     id: interactionLoader
                     width: parent.width
                     asynchronous: true
-                    active: ( chatPage.isChannel && messageViewCount > 0 ) || reactions.length > 0
-                    height: ( ( chatPage.isChannel && messageViewCount > 0 ) || reactions.length > 0 ) ? ( Theme.fontSizeExtraSmall + Theme.paddingSmall ) : 0
+                    active: (chatPage.isChannel && messageViewCount > 0) || reactions.length > 0
+                    height: active ? (Theme.fontSizeExtraSmall + Theme.paddingSmall) : 0
                     sourceComponent: Component {
                         Label {
                             text: getInteractionText(messageViewCount, reactions, font.pixelSize, Theme.highlightColor)
@@ -775,8 +775,8 @@ ListItem {
         anchors.top: messageTextRow.bottom
         anchors.topMargin: Theme.paddingMedium
         anchors.horizontalCenter: parent.horizontalCenter
-        visible: messageListItem.messageReactions ? ( messageListItem.messageReactions.length > 0 ? true : false ) : false
-        opacity: messageListItem.messageReactions ? ( messageListItem.messageReactions.length > 0 ? 1 : 0 ) : 0
+        visible: messageListItem.messageReactions ? (messageListItem.messageReactions.length > 0 ? true : false) : false
+        opacity: visible ? 1 : 0
         Behavior on opacity { NumberAnimation {} }
         spacing: Theme.paddingMedium
 
@@ -836,6 +836,4 @@ ListItem {
             }
         }
     }
-
-
 }

@@ -37,7 +37,7 @@
     </message>
     <message>
         <source>Development</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Development</translation>
     </message>
     <message>
         <source>Early testing</source>
@@ -45,7 +45,7 @@
     </message>
     <message>
         <source>Translations</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Translations</translation>
     </message>
     <message>
         <source>Fernschreiber translations</source>
@@ -53,43 +53,43 @@
     </message>
     <message>
         <source>Chinese</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chinese</translation>
     </message>
     <message>
         <source>Finnish</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Finnish</translation>
     </message>
     <message>
         <source>French</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">French</translation>
     </message>
     <message>
         <source>Hungarian</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Hungarian</translation>
     </message>
     <message>
         <source>Italian</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Italian</translation>
     </message>
     <message>
         <source>Polish</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Polish</translation>
     </message>
     <message>
         <source>Russian</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Russian</translation>
     </message>
     <message>
         <source>Slovak</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Slovak</translation>
     </message>
     <message>
         <source>Spanish</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Spanish</translation>
     </message>
     <message>
         <source>Swedish</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Swedish</translation>
     </message>
     <message>
         <source>This application is a fork of Fernschreiber, and wouldn&apos;t be possible without it. Thanks to everyone who developed and contributed to it!</source>
@@ -1361,179 +1361,6 @@ messages</numerusform>
     <message>
         <source>Your contributions to translations or code would be most welcome.</source>
         <translation>Your contributions to translations or code would be most welcome.</translation>
-    </message>
-    <message>
-        <source>Author</source>
-        <translation>Author</translation>
-    </message>
-    <message numerus="yes">
-        <source>Author(s)</source>
-        <translation>
-            <numerusform>Author</numerusform>
-            <numerusform>Authors</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Maintainer</source>
-        <translation>Maintainer</translation>
-    </message>
-    <message numerus="yes">
-        <source>Maintainer(s)</source>
-        <translation>
-            <numerusform>Maintainer</numerusform>
-            <numerusform>Maintainers</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Programming</source>
-        <translation>Programming</translation>
-    </message>
-    <message>
-        <source>Icon Design</source>
-        <translation>Icon Design</translation>
-    </message>
-    <message>
-        <source>Third-party libraries</source>
-        <translation>Third-party libraries</translation>
-    </message>
-    <message>
-        <source>Data</source>
-        <translation>Data</translation>
-    </message>
-    <message>
-        <source>Data License</source>
-        <translation>Data License</translation>
-    </message>
-    <message numerus="yes">
-        <source>Data License(s)</source>
-        <translation>
-            <numerusform>Data License</numerusform>
-            <numerusform>Data Licenses</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Terms of Use</source>
-        <translation>Terms of Use</translation>
-    </message>
-    <message>
-        <source>Belarusian</source>
-        <translation>Belarusian</translation>
-    </message>
-    <message>
-        <source>Chinese</source>
-        <translation>Chinese</translation>
-    </message>
-    <message>
-        <source>Czech</source>
-        <translation>Czech</translation>
-    </message>
-    <message>
-        <source>Dutch</source>
-        <translation>Dutch</translation>
-    </message>
-    <message>
-        <source>English</source>
-        <translation>English</translation>
-    </message>
-    <message>
-        <source>Estonian</source>
-        <translation>Estonian</translation>
-    </message>
-    <message>
-        <source>Finnish</source>
-        <translation>Finnish</translation>
-    </message>
-    <message>
-        <source>French</source>
-        <translation>French</translation>
-    </message>
-    <message>
-        <source>German</source>
-        <translation>German</translation>
-    </message>
-    <message>
-        <source>Greek</source>
-        <translation>Greek</translation>
-    </message>
-    <message>
-        <source>Hungarian</source>
-        <translation>Hungarian</translation>
-    </message>
-    <message>
-        <source>Indonesian</source>
-        <translation>Indonesian</translation>
-    </message>
-    <message>
-        <source>Italian</source>
-        <translation>Italian</translation>
-    </message>
-    <message>
-        <source>Lithuanian</source>
-        <translation>Lithuanian</translation>
-    </message>
-    <message>
-        <source>Norwegian Bokmål</source>
-        <translation>Norwegian (Bokmål)</translation>
-    </message>
-    <message>
-        <source>Polish</source>
-        <translation>Polish</translation>
-    </message>
-    <message>
-        <source>Portuguese</source>
-        <translation>Portuguese</translation>
-    </message>
-    <message>
-        <source>Brazilian Portuguese</source>
-        <translation>Brazilian Portuguese</translation>
-    </message>
-    <message>
-        <source>Romanian</source>
-        <translation>Romanian</translation>
-    </message>
-    <message>
-        <source>Russian</source>
-        <translation>Russian</translation>
-    </message>
-    <message>
-        <source>Serbian</source>
-        <translation>Serbian</translation>
-    </message>
-    <message>
-        <source>Slovak</source>
-        <translation>Slovak</translation>
-    </message>
-    <message>
-        <source>Spanish</source>
-        <translation>Spanish</translation>
-    </message>
-    <message>
-        <source>Swedish</source>
-        <translation>Swedish</translation>
-    </message>
-    <message>
-        <source>Tamil</source>
-        <translation>Tamil</translation>
-    </message>
-    <message>
-        <source>Turkish</source>
-        <translation>Turkish</translation>
-    </message>
-    <message>
-        <source>Ukrainian</source>
-        <translation>Ukrainian</translation>
-    </message>
-    <message>
-        <source>Norwegian Nynorsk</source>
-        <translation>Norwegian (Nynorsk)</translation>
-    </message>
-    <message>
-        <source>Latvian</source>
-        <translation>Latvian</translation>
-    </message>
-    <message>
-        <source>Dutch (Belgium)</source>
-        <translation>Dutch (Belgium)</translation>
     </message>
 </context>
 <context>

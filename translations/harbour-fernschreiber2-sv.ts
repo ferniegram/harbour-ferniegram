@@ -37,7 +37,7 @@
     </message>
     <message>
         <source>Development</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Utveckling</translation>
     </message>
     <message>
         <source>Early testing</source>
@@ -45,7 +45,7 @@
     </message>
     <message>
         <source>Translations</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Översättningar</translation>
     </message>
     <message>
         <source>Fernschreiber translations</source>
@@ -53,43 +53,43 @@
     </message>
     <message>
         <source>Chinese</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kinesiska</translation>
     </message>
     <message>
         <source>Finnish</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Finska</translation>
     </message>
     <message>
         <source>French</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Franska</translation>
     </message>
     <message>
         <source>Hungarian</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ungerska</translation>
     </message>
     <message>
         <source>Italian</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Italienska</translation>
     </message>
     <message>
         <source>Polish</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Polska</translation>
     </message>
     <message>
         <source>Russian</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ryska</translation>
     </message>
     <message>
         <source>Slovak</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Slovakiska</translation>
     </message>
     <message>
         <source>Spanish</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Spanska</translation>
     </message>
     <message>
         <source>Swedish</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Svenska</translation>
     </message>
     <message>
         <source>This application is a fork of Fernschreiber, and wouldn&apos;t be possible without it. Thanks to everyone who developed and contributed to it!</source>
@@ -1359,179 +1359,6 @@
     <message>
         <source>Your contributions to translations or code would be most welcome.</source>
         <translation>Kodbidrag eller översättningar är väldigt välkommet.</translation>
-    </message>
-    <message>
-        <source>Author</source>
-        <translation>Utvecklare</translation>
-    </message>
-    <message numerus="yes">
-        <source>Author(s)</source>
-        <translation>
-            <numerusform>Utvecklare</numerusform>
-            <numerusform>Utvecklare</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Maintainer</source>
-        <translation>Ansvarig</translation>
-    </message>
-    <message numerus="yes">
-        <source>Maintainer(s)</source>
-        <translation>
-            <numerusform>Ansvarig</numerusform>
-            <numerusform>Ansvariga</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Programming</source>
-        <translation>Programmering</translation>
-    </message>
-    <message>
-        <source>Icon Design</source>
-        <translation>Ikondesign</translation>
-    </message>
-    <message>
-        <source>Third-party libraries</source>
-        <translation>Tredjeparts bibliotek</translation>
-    </message>
-    <message>
-        <source>Data</source>
-        <translation>Data</translation>
-    </message>
-    <message>
-        <source>Data License</source>
-        <translation>Datalicens</translation>
-    </message>
-    <message numerus="yes">
-        <source>Data License(s)</source>
-        <translation>
-            <numerusform>Datalicens</numerusform>
-            <numerusform>Datalicenser</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Terms of Use</source>
-        <translation>Villkor för användning</translation>
-    </message>
-    <message>
-        <source>Belarusian</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Chinese</source>
-        <translation>Kinesiska</translation>
-    </message>
-    <message>
-        <source>Czech</source>
-        <translation>Tjeckiska</translation>
-    </message>
-    <message>
-        <source>Dutch</source>
-        <translation>Nederländska</translation>
-    </message>
-    <message>
-        <source>English</source>
-        <translation>Engelska</translation>
-    </message>
-    <message>
-        <source>Estonian</source>
-        <translation>Estniska</translation>
-    </message>
-    <message>
-        <source>Finnish</source>
-        <translation>Finska</translation>
-    </message>
-    <message>
-        <source>French</source>
-        <translation>Franska</translation>
-    </message>
-    <message>
-        <source>German</source>
-        <translation>Tyska</translation>
-    </message>
-    <message>
-        <source>Greek</source>
-        <translation>Grekiska</translation>
-    </message>
-    <message>
-        <source>Hungarian</source>
-        <translation>Ungerska</translation>
-    </message>
-    <message>
-        <source>Indonesian</source>
-        <translation>Indonesiska</translation>
-    </message>
-    <message>
-        <source>Italian</source>
-        <translation>Italienska</translation>
-    </message>
-    <message>
-        <source>Lithuanian</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Norwegian Bokmål</source>
-        <translation>Norska Bokmål</translation>
-    </message>
-    <message>
-        <source>Polish</source>
-        <translation>Polska</translation>
-    </message>
-    <message>
-        <source>Portuguese</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Brazilian Portuguese</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Romanian</source>
-        <translation>Rumänska</translation>
-    </message>
-    <message>
-        <source>Russian</source>
-        <translation>Ryska</translation>
-    </message>
-    <message>
-        <source>Serbian</source>
-        <translation>Serbiska</translation>
-    </message>
-    <message>
-        <source>Slovak</source>
-        <translation>Slovakiska</translation>
-    </message>
-    <message>
-        <source>Spanish</source>
-        <translation>Spanska</translation>
-    </message>
-    <message>
-        <source>Swedish</source>
-        <translation>Svenska</translation>
-    </message>
-    <message>
-        <source>Tamil</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Turkish</source>
-        <translation>Turkiska</translation>
-    </message>
-    <message>
-        <source>Ukrainian</source>
-        <translation>Ukrainska</translation>
-    </message>
-    <message>
-        <source>Norwegian Nynorsk</source>
-        <translation>Norska Nynorska</translation>
-    </message>
-    <message>
-        <source>Latvian</source>
-        <translation>Lettiska</translation>
-    </message>
-    <message>
-        <source>Dutch (Belgium)</source>
-        <translation>Holländska (Belgien)</translation>
     </message>
 </context>
 <context>
