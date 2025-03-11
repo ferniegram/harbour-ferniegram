@@ -211,6 +211,10 @@ Page {
                     messageStatusSuffix += Emoji.emojify("☑️", Theme.fontSizeTiny)
             }
         }
+
+        if (message.author_signature)
+            messageStatusSuffix += " - " + message.author_signaturete
+
         return (useElapsed ? Functions.getDateTimeElapsed(message.date) : Functions.getDateTimeTranslated(message.date)) + messageStatusSuffix
     }
 
