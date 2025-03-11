@@ -1800,6 +1800,26 @@
         <source>Send attachments by enter</source>
         <translation>Invia allegati con il tasto invio</translation>
     </message>
+    <message>
+        <source>Sponsored messages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable or disable sponsored messages. Note that they will always be disabled for Premium subscribers.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto view</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ignore</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SettingsPage</name>
