@@ -321,7 +321,6 @@ ListItem {
     }
 
     Component.onCompleted: {
-        console.log(JSON.stringify(messageProperties), myMessage.chat_id, page.myUserId, canDeleteMessage)
         delegateComponentLoadingTimer.start()
         if (myMessage.reply_to_message_id)
             tdLibWrapper.getMessage(myMessage.reply_in_chat_id ? myMessage.reply_in_chat_id : page.chatInformation.id,

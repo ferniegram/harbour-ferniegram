@@ -128,6 +128,7 @@ Item {
     //        maximumLineCount: expanded ? 0 : 3
             color: Theme.primaryColor
 //            text: model.modelData.content.caption.text
+            linkColor: Theme.highlightColor
             text: Emoji.emojify(Functions.enhanceMessageText(message.content.caption, false), Theme.fontSizeExtraSmall)
             onTextChanged: expanded = false
             font.pixelSize: Theme.fontSizeExtraSmall
