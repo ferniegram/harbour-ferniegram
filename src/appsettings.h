@@ -45,7 +45,6 @@ class AppSettings : public QObject {
     Q_PROPERTY(bool focusTextAreaOnChatOpen READ getFocusTextAreaOnChatOpen WRITE setFocusTextAreaOnChatOpen NOTIFY focusTextAreaOnChatOpenChanged)
     Q_PROPERTY(SponsoredMess sponsoredMess READ getSponsoredMess WRITE setSponsoredMess NOTIFY sponsoredMessChanged)
     Q_PROPERTY(bool highlightUnreadConversations READ highlightUnreadConversations WRITE setHighlightUnreadConversations NOTIFY highlightUnreadConversationsChanged)
-    Q_PROPERTY(bool compactMessageMenu READ compactMessageMenu WRITE setCompactMessageMenu NOTIFY compactMessageMenuChanged)
     Q_PROPERTY(bool sendAttachmentByEnter READ sendAttachmentByEnter WRITE setSendAttachmentByEnter NOTIFY sendAttachmentByEnterChanged)
 public:
     enum SponsoredMess {
@@ -128,9 +127,6 @@ public:
     bool highlightUnreadConversations() const;
     void setHighlightUnreadConversations(bool enable);
 
-    bool compactMessageMenu() const;
-    void setCompactMessageMenu(bool enable);
-
     bool sendAttachmentByEnter() const;
     void setSendAttachmentByEnter(bool enable);
 
@@ -156,7 +152,6 @@ signals:
     void focusTextAreaOnChatOpenChanged();
     void sponsoredMessChanged();
     void highlightUnreadConversationsChanged();
-    void compactMessageMenuChanged();
     void sendAttachmentByEnterChanged();
 
 private:

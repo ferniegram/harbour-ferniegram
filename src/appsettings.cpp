@@ -42,7 +42,6 @@ namespace {
     const QString KEY_FOCUS_TEXTAREA_ON_CHAT_OPEN("focusTextAreaOnChatOpen");
     const QString KEY_SPONSORED_MESS("sponsoredMess");
     const QString KEY_HIGHLIGHT_UNREADCONVS("highlightUnreadConversations");
-    const QString KEY_COMPACT_MSG_MENU("compactMessageMenu");
     const QString KEY_SEND_ATTACHMENT_BY_ENTER("sendAttachmentByEnter");
 }
 
@@ -346,19 +345,8 @@ void AppSettings::setSponsoredMess(SponsoredMess sponsoredMess)
     }
 }
 
-bool AppSettings::compactMessageMenu() const {
-    return settings.value(KEY_COMPACT_MSG_MENU, true).toBool();
-}
-void AppSettings::setCompactMessageMenu(bool enable) {
-    if (compactMessageMenu() != enable) {
-        LOG(KEY_COMPACT_MSG_MENU << enable);
-        settings.setValue(KEY_COMPACT_MSG_MENU, enable);
-        emit compactMessageMenuChanged();
-    }
-}
-
 bool AppSettings::sendAttachmentByEnter() const {
-    return //compactMessageMenu() &&
+    return //getSendByEnter() &&
             settings.value(KEY_SEND_ATTACHMENT_BY_ENTER).toBool();
 }
 void AppSettings::setSendAttachmentByEnter(bool enable) {

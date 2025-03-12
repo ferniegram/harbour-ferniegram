@@ -51,22 +51,6 @@ ListItem {
     property bool additionalOptionsOpened
     property bool wasNavigatedTo: false
 
-    readonly property var additionalItemsModel: (extraContentLoader.item && ("extraContextMenuItems" in extraContentLoader.item)) ?
-        extraContentLoader.item.extraContextMenuItems : 0
-    readonly property int numberOfExtraOptionsOtherThanDeleteMessage:
-        (showCopyMessageToClipboardMenuItem ? 0 : 1) +
-        (showForwardMessageMenuItem ? 0 : 1) +
-        (page.canPinMessages() ? 1 : 0) +
-        (additionalItemsModel ? additionalItemsModel.length : 0)
-    readonly property bool deleteMessageIsOnlyExtraOption: canDeleteMessage && !numberOfExtraOptionsOtherThanDeleteMessage
-
-    readonly property int maxContextMenuItemCount: page.isPortrait ? 5 : 4
-    readonly property int baseContextMenuItemCount: (canReplyToMessage ? 1 : 0) +
-        (messageProperties.can_be_edited ? 1 : 0) + 2 /* "Select Message" and "More Options..." */
-    readonly property bool showCopyMessageToClipboardMenuItem: (baseContextMenuItemCount + 1) <= maxContextMenuItemCount
-    readonly property bool showForwardMessageMenuItem: (baseContextMenuItemCount + 2) <= maxContextMenuItemCount
-    // And don't count "More Options..." for "Delete Message" if "Delete Message" is the only extra option
-    readonly property bool haveSpaceForDeleteMessageMenuItem: (baseContextMenuItemCount + 3 - (deleteMessageIsOnlyExtraOption ? 1 : 0)) <= maxContextMenuItemCount
     property var chatReactions
     property var messageReactions
     property var messageProperties: ({can_be_deleted_for_all_users: false, can_be_deleted_only_for_self: false, can_be_edited: false, isStub: true})
@@ -213,76 +197,45 @@ ListItem {
             FancyContextMenu {
                 listItem: messageListItem
                 FancyMenuRow {
-                    visible: appSettings.compactMessageMenu
                     FancyMenuIcon {
-                        icon.source: "image://theme/icon-m-clipboard"
-                        onClicked: copyMessageToClipboard()
-                    }
-                    FancyMenuIcon {
-                        visible: typeof messageProperties.can_be_edited !== "undefined" && messageProperties.can_be_edited
-                        icon.source: "image://theme/icon-m-edit"
-                        onClicked: editMessage()
+                        icon.source: "image://theme/icon-m-select-all"
+                        onClicked: page.toggleMessageSelection(myMessage)
                     }
                     FancyMenuIcon {
                         icon.source: "image://theme/icon-m-message-forward"
                         onClicked: forwardMessage()
                     }
                     FancyMenuIcon {
-                        icon.source: "image://theme/icon-m-select-all"
-                        onClicked: page.toggleMessageSelection(myMessage)
+                        icon.source: "image://theme/icon-m-clipboard"
+                        onClicked: copyMessageToClipboard()
                     }
                 }
-                MenuItem {
+                FancyAloneMenuItem {
                     visible: canReplyToMessage
-                    onClicked: replyToMessage()
+                    icon.source: "image://theme/icon-m-message-reply"
                     text: qsTr("Reply to Message")
+                    onClicked: replyToMessage()
                 }
-                MenuItem {
-                    visible: !appSettings.compactMessageMenu && typeof messageProperties.can_be_edited !== "undefined" && messageProperties.can_be_edited
-                    onClicked: editMessage()
-                    text: qsTr("Edit Message")
-                }
-                MenuItem {
-                    visible: !appSettings.compactMessageMenu
-                    onClicked: page.toggleMessageSelection(myMessage)
-                    text: qsTr("Select Message")
-                }
-                MenuItem {
-                    visible: !appSettings.compactMessageMenu && showCopyMessageToClipboardMenuItem
-                    onClicked: copyMessageToClipboard()
-                    text: qsTr("Copy Message to Clipboard")
-                }
-                MenuItem {
-                    visible: !appSettings.compactMessageMenu && showForwardMessageMenuItem
-                    onClicked: forwardMessage()
-                    text: qsTr("Forward Message")
-                }
-                MenuItem {
-                    visible: canDeleteMessage && (haveSpaceForDeleteMessageMenuItem || appSettings.compactMessageMenu)
-                    onClicked: deleteMessage()
-                    text: qsTr("Delete Message")
-                }
-                MenuItem {
-                    visible: !appSettings.compactMessageMenu && (
-                                 (numberOfExtraOptionsOtherThanDeleteMessage > 0) ||
-                                 (deleteMessageIsOnlyExtraOption && !haveSpaceForDeleteMessageMenuItem)
-                             )
-                    onClicked: {
-                        messageOptionsDrawer.myMessage = myMessage
-                        messageOptionsDrawer.userInformation = userInformation
-                        messageOptionsDrawer.sourceItem = messageListItem
-                        messageOptionsDrawer.additionalItemsModel = additionalItemsModel
-                        messageOptionsDrawer.showCopyMessageToClipboardMenuItem = !showCopyMessageToClipboardMenuItem
-                        messageOptionsDrawer.showForwardMessageMenuItem = !showForwardMessageMenuItem
-                        messageOptionsDrawer.showDeleteMessageMenuItem = canDeleteMessage && !haveSpaceForDeleteMessageMenuItem
-                        messageListItem.additionalOptionsOpened = true
-                        messageOptionsDrawer.open = true
+                FancyMenuRow {
+                    FancyIconMenuItem {
+                        visible: typeof messageProperties.can_be_edited !== "undefined" && messageProperties.can_be_edited
+                        icon.source: "image://theme/icon-m-edit"
+                        text: parent.visibleChildren.length > 1 ? qsTr("Edit", "message") : qsTr("Edit Message")
+                        onClicked: editMessage()
                     }
-                    text: qsTr("More Options...")
+                    FancyIconMenuItem {
+                        visible: canDeleteMessage
+                        icon.source: "image://theme/icon-m-delete"
+                        text: parent.visibleChildren.length > 1 ? qsTr("Delete", "message") : qsTr("Delete Message")
+                        onClicked: deleteMessage()
+                    }
                 }
             }
         }
     }
+
+    // Just in case we will need them back
+    property bool __otherTranslations: qsTr("Copy Message to Clipboard") + qsTr("Select Message") + qsTr("Forward Message") + qsTr("More Options...")
 
     function updateIsUnread() {
         messageBackground.isUnread = messageIndex > chatModel.getLastReadMessageIndex() && myMessage['@type'] !== "sponsoredMessage"
@@ -368,6 +321,7 @@ ListItem {
     }
 
     Component.onCompleted: {
+        console.log(JSON.stringify(messageProperties), myMessage.chat_id, page.myUserId, canDeleteMessage)
         delegateComponentLoadingTimer.start()
         if (myMessage.reply_to_message_id)
             tdLibWrapper.getMessage(myMessage.reply_in_chat_id ? myMessage.reply_in_chat_id : page.chatInformation.id,
