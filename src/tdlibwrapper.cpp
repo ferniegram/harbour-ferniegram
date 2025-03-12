@@ -765,6 +765,16 @@ void TDLibWrapper::editMessageText(const QString &chatId, const QString &message
     this->sendRequest(requestObject);
 }
 
+void TDLibWrapper::editMessageCaption(const QString &chatId, const QString &messageId, const QString &caption) {
+    LOG("Editing message caption" << chatId << messageId);
+    QVariantMap requestObject;
+    requestObject.insert(_TYPE, "editMessageCaption");
+    requestObject.insert(CHAT_ID, chatId);
+    requestObject.insert(MESSAGE_ID, messageId);
+    requestObject.insert("caption", newFormattedText(caption));
+    this->sendRequest(requestObject);
+}
+
 void TDLibWrapper::deleteMessages(const QString &chatId, const QVariantList messageIds)
 {
     LOG("Deleting some messages" << chatId << messageIds);

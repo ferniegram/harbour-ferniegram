@@ -242,7 +242,8 @@ Page {
 
     function sendMessage() {
         if (newMessageColumn.editMessageId !== "0")
-            tdLibWrapper.editMessageText(chatInformation.id, newMessageColumn.editMessageId, newMessageTextField.text)
+            (newMessageColumn.editIsCaption ? tdLibWrapper.editMessageCaption : tdLibWrapper.editMessageText)
+                    (chatInformation.id, newMessageColumn.editMessageId, newMessageTextField.text)
         else {
             if (attachmentPreviewRow.visible) {
                 var basecall = function(f){ f(chatInformation.id, attachmentPreviewRow.fileProperties.filePath, newMessageTextField.text, newMessageColumn.replyToMessageId) }
@@ -263,6 +264,7 @@ Page {
         controlSendButton()
         newMessageInReplyToRow.inReplyToMessage = null
         newMessageColumn.editMessageId = "0"
+        newMessageColumn.editIsCaption = false
         fernschreiberUtils.stopGeoLocationUpdates()
     }
 
@@ -1367,6 +1369,7 @@ Page {
                                     }
                                     onEditMessage: {
                                         newMessageColumn.editMessageId = messageId
+                                        newMessageColumn.editIsCaption = !!myMessage && !!myMessage.content && !!myMessage.content.caption
                                         newMessageTextField.text = Functions.getMessageText(myMessage, false, chatPage.myUserId, true)
                                         newMessageTextField.focus = true
                                     }
@@ -1478,6 +1481,7 @@ Page {
                             attachmentOptionsFlickable.isNeeded = false
                             newMessageInReplyToRow.inReplyToMessage = null
                             newMessageColumn.editMessageId = "0"
+                            newMessageColumn.editIsCaption = false
                         }
                     }
 
@@ -1552,6 +1556,7 @@ Page {
                     readonly property bool isNeeded: !chatPage.isSelecting && chatPage.canSendMessages
                     property string replyToMessageId: "0"
                     property string editMessageId: "0"
+                    property bool editIsCaption
 
                     InReplyToRow {
                         onInReplyToMessageChanged:
@@ -1967,6 +1972,7 @@ Page {
                             icon.source: "image://theme/icon-m-clear"
                             onClicked: {
                                 newMessageColumn.editMessageId = "0"
+                                newMessageColumn.editIsCaption = false
                                 newMessageTextField.text = ""
                             }
                         }
