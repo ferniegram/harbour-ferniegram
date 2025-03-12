@@ -33,6 +33,7 @@
 #include <QSysInfo>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QGuiApplication>
 
 #define DEBUG_MODULE FernschreiberUtils
 #include "debuglog.h"
@@ -61,10 +62,15 @@ namespace {
     const QString MESSAGE_CONTENT_TYPE_VENUE("messageVenue");
 }
 
-FernschreiberUtils::FernschreiberUtils(QObject *parent)
-    : QObject(parent)
-    , manager(new QNetworkAccessManager(this))
+FernschreiberUtils::FernschreiberUtils(AppSettings *appSettings, QObject *parent)
+    : QObject(parent),
+    manager(new QNetworkAccessManager(this))
 {
+    LOG("Initializing FernschreiberUtils (other)...");
+    this->appSettings = appSettings;
+    connect(this->appSettings, SIGNAL(leaveInBackgroundChanged()), this, SLOT(handleLaveInBackgroundUpdated()));
+    this->handleLaveInBackgroundUpdated();
+
     LOG("Initializing audio recorder...");
 
     QString temporaryDirectoryPath = this->getTemporaryDirectoryPath();
@@ -390,4 +396,8 @@ void FernschreiberUtils::cleanUp()
 QString FernschreiberUtils::getTemporaryDirectoryPath()
 {
     return QStandardPaths::writableLocation(QStandardPaths::TempLocation) +  + "/harbour-fernschreiber2";
+}
+
+void FernschreiberUtils::handleLaveInBackgroundUpdated() {
+    QGuiApplication::setQuitOnLastWindowClosed(!appSettings->leaveInBackground());
 }

@@ -269,6 +269,14 @@ AccordionItem {
                     onNotificationFeedbackChanged: sponsoredComboBox.updateSponsoredSelection()
                 }
             }
+
+            TextSwitch {
+                width: parent.columnWidth
+                checked: appSettings.leaveInBackground
+                text: qsTr("Leave app running in the background when it is closed")
+                automaticCheck: false
+                onClicked: appSettings.leaveInBackground = !checked
+            }
         }
     }
 }

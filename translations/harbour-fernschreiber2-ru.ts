@@ -747,7 +747,7 @@
     </message>
     <message>
         <source>left this chat</source>
-        <translation>покунул(а) чат</translation>
+        <translation>покинул(а) чат</translation>
     </message>
     <message>
         <source>sent a voice note</source>
@@ -1851,6 +1851,10 @@
     </message>
     <message>
         <source>Ignore</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Leave app running in the background when it is closed</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

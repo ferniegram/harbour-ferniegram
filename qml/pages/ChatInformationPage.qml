@@ -30,8 +30,8 @@ Page {
     allowedOrientations: Orientation.All
     property string searchString
 
-    property int chatOnlineMemberCount: 0;
-    property int myUserId: tdLibWrapper.getUserInformation().id;
+    property int chatOnlineMemberCount: 0
+    property int myUserId: tdLibWrapper.getUserInformation().id
 
     property bool isPrivateChat: false
     property bool isSecretChat: false
@@ -50,12 +50,12 @@ Page {
                                     || (groupInformation.status["@type"] === "chatMemberStatusCreator" && groupInformation.status.is_member)
                                     )
 
-    property var chatInformation:({});
-    property var privateChatUserInformation:({});
-    property var chatPartnerFullInformation:({});
-    property var chatPartnerProfilePhotos:([]);
-    property var groupInformation: ({});
-    property var groupFullInformation: ({});
+    property var chatInformation:({})
+    property var privateChatUserInformation:({})
+    property var chatPartnerFullInformation:({})
+    property var chatPartnerProfilePhotos:([])
+    property var groupInformation: ({})
+    property var groupFullInformation: ({})
 
 //    property alias membersList: membersList
 
@@ -64,9 +64,9 @@ Page {
         case PageStatus.Activating:
             Debug.log("activating Loader")
             mainContentLoader.active = true
-            break;
+            break
         case PageStatus.Active:
-            break;
+            break
         }
     }
 

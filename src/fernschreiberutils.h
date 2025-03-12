@@ -31,7 +31,7 @@ class FernschreiberUtils : public QObject
 {
     Q_OBJECT
 public:
-    explicit FernschreiberUtils(QObject *parent = nullptr);
+    explicit FernschreiberUtils(AppSettings *appSettings = nullptr, QObject *parent = nullptr);
     ~FernschreiberUtils();
 
     enum VoiceNoteRecordingState {
@@ -66,6 +66,7 @@ private slots:
     void handleAudioRecorderStatusChanged(QMediaRecorder::Status status);
     void handleGeoPositionUpdated(const QGeoPositionInfo &info);
     void handleReverseGeocodeFinished();
+    void handleLaveInBackgroundUpdated();
 
 private:
     QAudioRecorder audioRecorder;
@@ -76,6 +77,7 @@ private:
 
     void cleanUp();
     QString getTemporaryDirectoryPath();
+    AppSettings *appSettings;
 
 };
 

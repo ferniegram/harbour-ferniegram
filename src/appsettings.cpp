@@ -44,6 +44,7 @@ namespace {
     const QString KEY_HIGHLIGHT_UNREADCONVS("highlightUnreadConversations");
     const QString KEY_COMPACT_MSG_MENU("compactMessageMenu");
     const QString KEY_SEND_ATTACHMENT_BY_ENTER("sendAttachmentByEnter");
+    const QString KEY_LEAVE_IN_BACKGROUND("leaveInBackground");
 }
 
 AppSettings::AppSettings(QObject *parent) : QObject(parent), settings(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/io.github.roundedrectangle/fernschreiber2/settings.conf", QSettings::NativeFormat)
@@ -359,12 +360,23 @@ void AppSettings::setCompactMessageMenu(bool enable) {
 
 bool AppSettings::sendAttachmentByEnter() const {
     return //compactMessageMenu() &&
-            settings.value(KEY_SEND_ATTACHMENT_BY_ENTER).toBool();
+            settings.value(KEY_SEND_ATTACHMENT_BY_ENTER, false).toBool();
 }
 void AppSettings::setSendAttachmentByEnter(bool enable) {
     if (sendAttachmentByEnter() != enable) {
         LOG(KEY_SEND_ATTACHMENT_BY_ENTER << enable);
         settings.setValue(KEY_SEND_ATTACHMENT_BY_ENTER, enable);
         emit sendAttachmentByEnterChanged();
+    }
+}
+
+bool AppSettings::leaveInBackground() const {
+    return settings.value(KEY_LEAVE_IN_BACKGROUND, false).toBool();
+}
+void AppSettings::setLeaveInBackground(bool enable) {
+    if (leaveInBackground() != enable) {
+        LOG(KEY_LEAVE_IN_BACKGROUND << enable);
+        settings.setValue(KEY_LEAVE_IN_BACKGROUND, enable);
+        emit leaveInBackgroundChanged();
     }
 }

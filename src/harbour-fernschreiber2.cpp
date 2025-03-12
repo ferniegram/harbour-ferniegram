@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
     context->setContextProperty("tdLibWrapper", tdLibWrapper);
     qmlRegisterUncreatableType<TDLibWrapper>(uri, 1, 0, "TelegramAPI", QString());
 
-    FernschreiberUtils *fernschreiberUtils = new FernschreiberUtils(view.data());
+    FernschreiberUtils *fernschreiberUtils = new FernschreiberUtils(appSettings, view.data());
     context->setContextProperty("fernschreiberUtils", fernschreiberUtils);
     qmlRegisterUncreatableType<FernschreiberUtils>(uri, 1, 0, "FernschreiberUtilities", QString());
 
