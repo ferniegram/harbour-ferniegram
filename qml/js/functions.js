@@ -41,7 +41,6 @@ function getUserName(userInformation) {
 }
 
 function getMessageText(message, simple, currentUserId, ignoreEntities) {
-
     var myself = false;
     if ( message['@type'] !== "sponsoredMessage" ) {
         myself = ( message.sender_id['@type'] === "messageSenderUser" && message.sender_id.user_id.toString() === currentUserId.toString() );
@@ -144,6 +143,7 @@ function getMessageText(message, simple, currentUserId, ignoreEntities) {
     case 'messageChatDeletePhoto':
         return myself ? qsTr("deleted the chat photo", "myself") : qsTr("deleted the chat photo");
     case 'messageChatSetTtl':
+    case 'messageChatSetMessageAutoDeleteTime':
         return myself ? qsTr("changed the secret chat TTL setting", "myself; TTL = Time To Live") : qsTr("changed the secret chat TTL setting", "TTL = Time To Live");
     case 'messageChatUpgradeFrom':
     case 'messageChatUpgradeTo':
@@ -164,6 +164,24 @@ function getMessageText(message, simple, currentUserId, ignoreEntities) {
         return myself ? qsTr("scored %Ln points", "myself", message.content.score) : qsTr("scored %Ln points", "myself", message.content.score);
     case 'messageUnsupported':
         return myself ? qsTr("sent an unsupported message", "myself") : qsTr("sent an unsupported message");
+    case 'messageBotWriteAccessAllowed':
+        switch (message.content.reason['@type']) {
+        case 'botWriteAccessAllowReasonAddedToAttachmentMenu':
+            return qsTr("you allowed this bot to message you when you added it to your attachment menu");
+        case 'botWriteAccessAllowReasonConnectedWebsite':
+            return qsTr("you allowed this bot to message you when you logged in on %1").arg(message.content.reason.domain_name);
+        case 'botWriteAccessAllowReasonLaunchedWebApp':
+            return qsTr("you allowed this bot to message you in its web-app");
+        }
+        return qsTr("you allowed this bot to message you"); // botWriteAccessAllowReasonAcceptedRequest
+    case 'messageChatBoost':
+        return (myself ? qsTr("boosted this chat %Ln times", "myself") : qsTr("boosted this chat %Ln times")).arg(message.content.boost_count);
+    case 'messageGift':
+        return myself ? qsTr("sent a gift", "myself") : qsTr("sent a gift");
+    case 'messageGiveawayCreated':
+        return myself ? qsTr("started a giveaway", "myself") : qsTr("started a giveaway");
+    case 'messageGiveawayCompleted':
+        return myself ? qsTr("a giveaway was completed", "myself") : qsTr("a giveaway was completed");
     default:
         return myself ? qsTr("sent an unsupported message: %1", "myself; %1 is message type").arg(message.content['@type'].substring(7)) : qsTr("sent an unsupported message: %1", "%1 is message type").arg(message.content['@type'].substring(7));
     }

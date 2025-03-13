@@ -934,6 +934,76 @@
         <source>sent a video note</source>
         <translation>a envoyé une note vidéo</translation>
     </message>
+    <message>
+        <source>sent a self-destructing voice note that is expired</source>
+        <comment>myself</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>sent a self-destructing voice note that is expired</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>sent a self-destructing video note that is expired</source>
+        <comment>myself</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>sent a self-destructing video note that is expired</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>you allowed this bot to message you when you added it to your attachment menu</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>you allowed this bot to message you when you logged in on %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>you allowed this bot to message you in its web-app</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>you allowed this bot to message you</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>boosted this chat %Ln times</source>
+        <comment>myself</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>boosted this chat %Ln times</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>sent a gift</source>
+        <comment>myself</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>sent a gift</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>started a giveaway</source>
+        <comment>myself</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>started a giveaway</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>a giveaway was completed</source>
+        <comment>myself</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>a giveaway was completed</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FullscreenOverlay</name>
@@ -2557,6 +2627,58 @@
     <message>
         <source>sent a game</source>
         <translation>a envoyé un jeu</translation>
+    </message>
+    <message>
+        <source>you allowed this bot to message you when you added it to your attachment menu</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>you allowed this bot to message you when you logged in on %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>you allowed this bot to message you in its web-app</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>you allowed this bot to message you</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>boosted this chat %Ln times</source>
+        <comment>myself</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>boosted this chat %Ln times</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>sent a gift</source>
+        <comment>myself</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>sent a gift</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>started a giveaway</source>
+        <comment>myself</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>started a giveaway</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>a giveaway was completed</source>
+        <comment>myself</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>a giveaway was completed</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

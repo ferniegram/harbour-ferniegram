@@ -213,7 +213,7 @@ qlonglong ChatListModel::ChatData::senderMessageDate() const
 QString ChatListModel::ChatData::senderMessageText() const
 {
     qlonglong myUserId = tdLibWrapper->getUserInformation().value(ID).toLongLong();
-    return FernschreiberUtils::getMessageShortText(tdLibWrapper, lastMessage(CONTENT).toMap(), isChannel(), myUserId, lastMessage(SENDER_ID).toMap() );
+    return FernschreiberUtils::getMessageShortText(tdLibWrapper, lastMessage(CONTENT).toMap(), isChannel(), myUserId, lastMessage(SENDER_ID).toMap());
 }
 
 

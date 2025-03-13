@@ -194,7 +194,7 @@ QString FernschreiberUtils::getMessageShortText(TDLibWrapper *tdLibWrapper, cons
     if (contentType == "messageChatDeletePhoto") {
         return myself ? tr("deleted the chat photo", "myself") : tr("deleted the chat photo");
     }
-    if (contentType == "messageChatSetTtl") {
+    if (contentType == "messageChatSetTtl" || contentType == "messageChatSetMessageAutoDeleteTime") {
         return myself ? tr("changed the secret chat TTL setting", "myself") : tr("changed the secret chat TTL setting");
     }
     if (contentType == "messageChatUpgradeFrom" || contentType == "messageChatUpgradeTo") {
@@ -212,7 +212,13 @@ QString FernschreiberUtils::getMessageShortText(TDLibWrapper *tdLibWrapper, cons
     if (contentType == "messageExpiredVideo") {
         return myself ? tr("sent a self-destructing video that is expired", "myself") : tr("sent a self-destructing video that is expired");
     }
-    if (contentType == "messageScreenshotTaken") {
+    if (contentType == "messageExpiredVoiceNote")
+        return myself ? tr("sent a self-destructing voice note that is expired", "myself") : tr("sent a self-destructing voice note that is expired");
+    
+    if (contentType == "messageExpiredVideoNote")
+        return myself ? tr("sent a self-destructing video note that is expired", "myself") : tr("sent a self-destructing video note that is expired");
+    
+        if (contentType == "messageScreenshotTaken") {
         return myself ? tr("created a screenshot in this chat", "myself") : tr("created a screenshot in this chat");
     }
     if (contentType == "messageGameScore") {
@@ -225,6 +231,26 @@ QString FernschreiberUtils::getMessageShortText(TDLibWrapper *tdLibWrapper, cons
     if (contentType == "messageUnsupported") {
         return myself ? tr("sent an unsupported message", "myself") : tr("sent an unsupported message");
     }
+    if (contentType == "messageBotWriteAccessAllowed") {
+        QVariantMap reason = messageContent.value("reason").toMap();
+        QString reasonType = reason.value(_TYPE).toString();
+        if (reasonType == "botWriteAccessAllowReasonAddedToAttachmentMenu")
+            return tr("you allowed this bot to message you when you added it to your attachment menu");
+        if (reasonType == "botWriteAccessAllowReasonConnectedWebsite")
+            return tr("you allowed this bot to message you when you logged in on %1").arg(reason.value("domain_name").toString());
+        if (reasonType == "botWriteAccessAllowReasonLaunchedWebApp")
+            return tr("you allowed this bot to message you in its web-app");
+        return tr("you allowed this bot to message you"); // botWriteAccessAllowReasonAcceptedRequest
+    }
+    if (contentType == "messageChatBoost")
+        return (myself ? tr("boosted this chat %Ln times", "myself") : tr("boosted this chat %Ln times"))
+                .arg(messageContent.value("boost_count").toInt());
+    if (contentType == "messageGift")
+        return myself ? tr("sent a gift", "myself") : tr("sent a gift");
+    if (contentType == "messageGiveawayCreated")
+        return myself ? tr("started a giveaway", "myself") : tr("started a giveaway");
+    if (contentType == "messageGiveawayCompleted")
+        return myself ? tr("a giveaway was completed", "myself") : tr("a giveaway was completed");
 
     return myself ? tr("sent an unsupported message: %1", "myself").arg(contentType.mid(7)) : tr("sent an unsupported message: %1").arg(contentType.mid(7));
 }
