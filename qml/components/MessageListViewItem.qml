@@ -54,7 +54,7 @@ ListItem {
 
     property var chatReactions
     property var messageReactions
-    property var messageProperties: ({can_be_deleted_for_all_users: false, can_be_deleted_only_for_self: false, can_be_edited: false, isStub: true})
+    property var messageProperties: ({can_be_deleted_for_all_users: false, can_be_deleted_only_for_self: false, can_be_edited: false})
 
     highlighted: (down || (isSelected && messageAlbumMessageIds.length === 0) || additionalOptionsOpened || wasNavigatedTo) && !menuOpen
     openMenuOnPressAndHold: !messageListItem.precalculatedValues.pageIsSelecting
@@ -76,8 +76,6 @@ ListItem {
     }
 
     function openContextMenu() {
-        if (messageProperties.isStub)
-            tdLibWrapper.getMessageProperties(chatId, messageId)
         messageOptionsDrawer.open = false
         if (menu) openMenu()
         else contextMenuLoader.active = true
@@ -287,12 +285,7 @@ ListItem {
         }
         onReactionsUpdated:
             chatReactions = tdLibWrapper.getChatReactions(page.chatInformation.id)
-        onMessagePropertiesReceived:
-            if (messageListItem.messageId === messageId)
-                messageListItem.messageProperties = messageProperties
     }
-
-    onMessagePropertiesChanged: messageListItem.myMessage.properties = messageListItem.messageProperties
 
     Timer {
         id: showItemCompletelyTimer

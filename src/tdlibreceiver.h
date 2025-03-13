@@ -108,7 +108,7 @@ signals:
     void chatUnreadMentionCountUpdated(qlonglong chatId, int unreadMentionCount);
     void chatUnreadReactionCountUpdated(qlonglong chatId, int unreadReactionCount);
     void activeEmojiReactionsUpdated(const QStringList& emojis);
-    void messagePropertiesReceived(qlonglong messageId, const QVariantMap &messageProperties);
+    void messagePropertiesReceived(qlonglong chatId, qlonglong messageId, const QVariantMap &messageProperties);
 
 private:
     typedef void (TDLibReceiver::*Handler)(const QVariantMap &);

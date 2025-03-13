@@ -80,6 +80,7 @@ private slots:
     void handleMessageEditedUpdated(qlonglong chatId, qlonglong messageId, const QVariantMap &replyMarkup);
     void handleMessageInteractionInfoUpdated(qlonglong chatId, qlonglong messageId, const QVariantMap &updatedInfo);
     void handleMessagesDeleted(qlonglong chatId, const QList<qlonglong> &messageIds);
+    void handleMessagePropertiesReceived(qlonglong chatId, qlonglong messageId, const QVariantMap &properties);
 
 private:
     class MessageData;
@@ -91,6 +92,8 @@ private:
     void updateAlbumMessages(QList<qlonglong> albumIds, bool checkDeleted);
     void setMessagesAlbum(const QList<MessageData*> newMessages);
     void setMessagesAlbum(MessageData *message);
+    void setMessagesProperties(MessageData *message);
+    void setMessagesProperties(const QList<MessageData *> newMessages);
     QVariantMap enhanceMessage(const QVariantMap &message);
     int calculateLastKnownMessageId();
     int calculateLastReadSentMessageId();

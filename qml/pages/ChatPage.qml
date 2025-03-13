@@ -89,7 +89,6 @@ Page {
                 focus: false
             }
         }
-
     ]
 
     function toggleMessageSelection(message) {
@@ -1359,6 +1358,7 @@ Page {
                                     messageAlbumMessageIds: model.album_message_ids
                                     messageViewCount: model.view_count
                                     reactions: model.reactions
+                                    messageProperties: model.message_properties
                                     chatReactions: availableReactions
                                     messageIndex: chatProxyModel.mapRowToSource(model.index)
                                     hasContentComponent: !!myMessage.content && chatView.delegateMessagesContent.indexOf(model.content_type) > -1

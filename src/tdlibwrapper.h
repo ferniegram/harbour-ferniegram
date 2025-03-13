@@ -344,7 +344,7 @@ signals:
     void chatUnreadReactionCountUpdated(qlonglong chatId, int unreadReactionCount);
     void tgUrlFound(const QString &tgUrl);
     void reactionsUpdated();
-    void messagePropertiesReceived(qlonglong messageId, const QVariantMap &messageProperties);
+    void messagePropertiesReceived(qlonglong chatId, qlonglong messageId, const QVariantMap &messageProperties);
 
 public slots:
     void handleVersionDetected(const QString &version);
