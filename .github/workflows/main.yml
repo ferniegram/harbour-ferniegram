@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         submodules: 'true'
 
@@ -27,7 +27,7 @@ jobs:
     - name: Fetch TDLib
       uses: dsaltares/fetch-gh-release-asset@master
       with: 
-        repo: "Wunderfitz/td"
+        repo: "roundedrectangle/td"
         file: "tdlib.zip"
         target: tdlib/tdlib.zip
         token: ${{ secrets.GITHUB_TOKEN }}
@@ -53,24 +53,24 @@ jobs:
       id: build_armv7hl
       uses: coderus/github-sfos-build@master
       with:
-        release: 4.4.0.58
+        release: 4.6.0.13
         
     - name: Build i486
       id: build_i486
       uses: coderus/github-sfos-build@master
       with:
-        release: 4.4.0.58
+        release: 4.6.0.13
         arch: i486
 
     - name: Build aarch64
       id: build_aarch64
       uses: coderus/github-sfos-build@master
       with:
-        release: 4.4.0.58
+        release: 4.6.0.13
         arch: aarch64
       
     - name: Upload build result
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: rpm-build-result
         path: RPMS
