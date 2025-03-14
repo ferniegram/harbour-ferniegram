@@ -37,7 +37,6 @@ ListItem {
     property var reactions
     property var messageProperties: ({})
     property bool canReplyToMessage
-    property bool canEdit: typeof messageProperties.can_be_edited !== "undefined" && messageProperties.can_be_edited
     readonly property bool isAnonymous: myMessage.sender_id["@type"] === "messageSenderChat"
     readonly property var userInformation: tdLibWrapper.getUserInformation(myMessage.sender_id.user_id)
     property QtObject precalculatedValues: ListView.view.precalculatedValues
@@ -48,6 +47,7 @@ ListItem {
         return existingMessage.id === messageId
     })
     readonly property bool isOwnMessage: page.myUserId === myMessage.sender_id.user_id
+    readonly property bool canEdit: !!messageProperties.can_be_edited
     readonly property bool canDeleteMessage: !!messageProperties.can_be_deleted_for_all_users || (!!messageProperties.can_be_deleted_only_for_self && myMessage.chat_id === page.myUserId)
     property bool hasContentComponent
     property bool additionalOptionsOpened
