@@ -212,7 +212,7 @@ Page {
         }
 
         if (message.author_signature)
-            messageStatusSuffix += " - " + message.author_signaturete
+            messageStatusSuffix += " - " + message.author_signature
 
         return (useElapsed ? Functions.getDateTimeElapsed(message.date) : Functions.getDateTimeTranslated(message.date)) + messageStatusSuffix
     }
