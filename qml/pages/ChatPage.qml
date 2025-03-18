@@ -71,6 +71,7 @@ Page {
     signal resetElements()
     signal elementSelected(int elementIndex)
     signal navigatedTo(int targetIndex)
+    property bool elapsedStatus: true
 
     states: [
         State {
@@ -112,7 +113,7 @@ Page {
     function updateChatPartnerStatusText() {
         if (chatPage.isSelecting)
             return
-        var statusText = Functions.getChatPartnerStatusText(chatPartnerInformation.status['@type'], chatPartnerInformation.status.was_online)
+        var statusText = Functions.getChatPartnerStatusText(chatPartnerInformation.status['@type'], chatPartnerInformation.status.was_online, !elapsedStatus)
         if (chatPage.secretChatDetails) {
             var secretChatStatus = Functions.getSecretChatStatus(chatPage.secretChatDetails)
             if (statusText && secretChatStatus)
@@ -939,6 +940,10 @@ Page {
                         chatPage.selectedMessages = []
                     else pageStack.navigateForward()
                 }
+                onPressAndHold: if (isPrivateChat || isSecretChat) {
+                    elapsedStatus = !elapsedStatus
+                    updateChatPartnerStatusText()
+                }
             }
 
             Column {
@@ -1030,6 +1035,8 @@ Page {
                             text: ""
                             textFormat: Text.StyledText
                             font.pixelSize: chatPage.isPortrait ? Theme.fontSizeExtraSmall : Theme.fontSizeTiny
+                            minimumPixelSize: Theme.fontSizeTiny
+                            fontSizeMode: Text.Fit
                             font.family: Theme.fontFamilyHeading
                             color: headerMouseArea.pressed ? Theme.secondaryHighlightColor : Theme.secondaryColor
                             truncationMode: TruncationMode.Fade

@@ -22,20 +22,17 @@ PhotoTextsListItem {
     // last message
     secondaryText.text: previewText ? Emoji.emojify(Functions.enhanceHtmlEntities(previewText), Theme.fontSizeExtraSmall) : "<i>" + qsTr("No message in this chat.") + "</i>"
     // message date
-    tertiaryText.text: showDraft ? Functions.getDateTimeElapsed(draft_message_date) : ( last_message_date ? ( last_message_date.length === 0 ? "" : Functions.getDateTimeElapsed(last_message_date) + Emoji.emojify(last_message_status, tertiaryText.font.pixelSize) ) : "" )
+    tertiaryText.text: showDraft ? Functions.getDateTimeElapsed(draft_message_date) : (last_message_date ? (last_message_date.length === 0 ? "" : Functions.getDateTimeElapsed(last_message_date) + Emoji.emojify(last_message_status, tertiaryText.font.pixelSize)) : "")
     unreadCount: unread_count
     unreadReactionCount: unread_reaction_count
     unreadMentionCount: unread_mention_count
-    isSecret: ( chat_type === TelegramAPI.ChatTypeSecret )
+    isSecret: chat_type === TelegramAPI.ChatTypeSecret
     isMarkedAsUnread: is_marked_as_unread
     isPinned: is_pinned
     isMuted: display.notification_settings.mute_for > 0
 
     openMenuOnPressAndHold: true//chat_id != overviewPage.ownUserId
-
-    onPressAndHold: {
-        contextMenuLoader.active = true;
-    }
+    onPressAndHold: contextMenuLoader.active = true
 
     Loader {
         id: contextMenuLoader
