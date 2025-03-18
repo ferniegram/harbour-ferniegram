@@ -29,9 +29,8 @@ SilicaFlickable {
     property alias membersList: membersList
 
     function initializePage() {
-        membersList.clear();
-        var chatType = chatInformation.type["@type"];
-        switch(chatType) {
+        membersList.clear()
+        switch(chatInformation.type["@type"]) {
         case "chatTypePrivate":
             chatInformationPage.isPrivateChat = true;
             chatInformationPage.chatPartnerGroupId = chatInformationPage.chatInformation.type.user_id.toString();
@@ -71,11 +70,11 @@ SilicaFlickable {
         }
         Debug.log("is set up", chatInformationPage.isPrivateChat, chatInformationPage.isSecretChat, chatInformationPage.isBasicGroup, chatInformationPage.isSuperGroup, chatInformationPage.chatPartnerGroupId)
         if(!(chatInformationPage.isPrivateChat || chatInformationPage.isSecretChat)) {
-            updateGroupStatusText();
+            updateGroupStatusText()
         }
 
 
-        tabViewLoader.active = true;
+        tabViewLoader.active = true
     }
     function scrollUp(force) {
         if(force) {
@@ -92,7 +91,8 @@ SilicaFlickable {
             scrollDownAnimation.start()
         }
     }
-    function handleBasicGroupFullInfo(groupFullInfo) {
+    function handleBasicGroupFullInfo(groupFullInfo, groupId) {
+        if(!chatInformationPage.isBasicGroup || chatInformationPage.chatPartnerGroupId !== groupId) return
         chatInformationPage.groupFullInformation = groupFullInfo;
         membersList.clear();
         if(groupFullInfo.members && groupFullInfo.members.length > 0) {
@@ -116,9 +116,9 @@ SilicaFlickable {
                     .arg(Functions.getShortenedCount(chatInformationPage.chatOnlineMemberCount)));
         } else {
             if (isChannel) {
-                headerItem.description = qsTr("%1 subscribers", "", chatInformationPage.groupInformation.member_count ).arg(Functions.getShortenedCount(chatInformationPage.groupInformation.member_count));
+                headerItem.description = qsTr("%1 subscribers", "", chatInformationPage.groupInformation.member_count).arg(Functions.getShortenedCount(chatInformationPage.groupInformation.member_count))
             } else {
-                headerItem.description = qsTr("%1 members", "", chatInformationPage.groupInformation.member_count).arg(Functions.getShortenedCount(chatInformationPage.groupInformation.member_count));
+                headerItem.description = qsTr("%1 members", "", chatInformationPage.groupInformation.member_count).arg(Functions.getShortenedCount(chatInformationPage.groupInformation.member_count))
             }
         }
     }
@@ -135,40 +135,32 @@ SilicaFlickable {
         onSupergroupFullInfoReceived: {
             Debug.log("onSupergroupFullInfoReceived", chatInformationPage.isSuperGroup, chatInformationPage.chatPartnerGroupId, groupId)
             if(chatInformationPage.isSuperGroup && chatInformationPage.chatPartnerGroupId === groupId) {
-                chatInformationPage.groupFullInformation = groupFullInfo;
+                chatInformationPage.groupFullInformation = groupFullInfo
             }
         }
         onSupergroupFullInfoUpdated: {
             Debug.log("onSupergroupFullInfoUpdated", chatInformationPage.isSuperGroup, chatInformationPage.chatPartnerGroupId, groupId)
             if(chatInformationPage.isSuperGroup && chatInformationPage.chatPartnerGroupId === groupId) {
-                chatInformationPage.groupFullInformation = groupFullInfo;
+                chatInformationPage.groupFullInformation = groupFullInfo
             }
         }
-        onBasicGroupFullInfoReceived: {
-            if(chatInformationPage.isBasicGroup && chatInformationPage.chatPartnerGroupId === groupId) {
-                handleBasicGroupFullInfo(groupFullInfo)
-            }
-        }
+        onBasicGroupFullInfoReceived: handleBasicGroupFullInfo(groupFullInfo, groupId)
+        onBasicGroupFullInfoUpdated: handleBasicGroupFullInfo(groupFullInfo, groupId)
 
-        onBasicGroupFullInfoUpdated: {
-            if(chatInformationPage.isBasicGroup && chatInformationPage.chatPartnerGroupId === groupId) {
-                handleBasicGroupFullInfo(groupFullInfo)
-            }
-        }
         onUserFullInfoReceived: {
             if((chatInformationPage.isPrivateChat || chatInformationPage.isSecretChat) && userFullInfo["@extra"] === chatInformationPage.chatPartnerGroupId) {
-                chatInformationPage.chatPartnerFullInformation = userFullInfo;
+                chatInformationPage.chatPartnerFullInformation = userFullInfo
             }
         }
         onUserFullInfoUpdated: {
             if((chatInformationPage.isPrivateChat || chatInformationPage.isSecretChat) && userId === chatInformationPage.chatPartnerGroupId) {
-                chatInformationPage.chatPartnerFullInformation = userFullInfo;
+                chatInformationPage.chatPartnerFullInformation = userFullInfo
             }
         }
 
         onUserProfilePhotosReceived: {
             if((chatInformationPage.isPrivateChat || chatInformationPage.isSecretChat) && extra === chatInformationPage.chatPartnerGroupId) {
-                chatInformationPage.chatPartnerProfilePhotos = photos;
+                chatInformationPage.chatPartnerProfilePhotos = photos
             }
         }
         onChatPermissionsUpdated: {
@@ -197,9 +189,7 @@ SilicaFlickable {
         }
     }
 
-    Component.onCompleted: {
-        initializePage();
-    }
+    Component.onCompleted: initializePage()
 
     ListModel {
         id: membersList
@@ -454,7 +444,7 @@ SilicaFlickable {
                     anchors.verticalCenter: inviteLinkItem.verticalCenter
                     onClicked: {
                         Clipboard.text = chatInformationPage.groupFullInformation.invite_link
-                        appNotification.show(qsTr("The Invite Link has been copied to the clipboard."));
+                        appNotification.show(qsTr("The Invite Link has been copied to the clipboard."))
                     }
                 }
             }

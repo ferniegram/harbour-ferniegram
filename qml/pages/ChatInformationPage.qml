@@ -64,9 +64,9 @@ Page {
         case PageStatus.Activating:
             Debug.log("activating Loader")
             mainContentLoader.active = true
-            break;
+            break
         case PageStatus.Active:
-            break;
+            break
         }
     }
 
