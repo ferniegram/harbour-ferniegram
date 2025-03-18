@@ -435,7 +435,7 @@ SilicaFlickable {
                 visible: !!inviteLinkItem.text
                 InformationTextItem {
                     id: inviteLinkItem
-                    text: !(chatInformationPage.isPrivateChat || chatInformationPage.isSecretChat) ? chatInformationPage.groupFullInformation.invite_link : ""
+                    text: !(chatInformationPage.isPrivateChat || chatInformationPage.isSecretChat) ? chatInformationPage.groupFullInformation.invite_link.invite_link : ""
                     width: parent.width - inviteLinkButton.width
                 }
                 IconButton {
@@ -443,7 +443,7 @@ SilicaFlickable {
                     icon.source: "image://theme/icon-m-clipboard"
                     anchors.verticalCenter: inviteLinkItem.verticalCenter
                     onClicked: {
-                        Clipboard.text = chatInformationPage.groupFullInformation.invite_link
+                        Clipboard.text = chatInformationPage.groupFullInformation.invite_link.invite_link
                         appNotification.show(qsTr("The Invite Link has been copied to the clipboard."))
                     }
                 }
