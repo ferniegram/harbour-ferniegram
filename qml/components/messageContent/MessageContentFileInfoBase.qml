@@ -148,6 +148,7 @@ MessageContentBase {
                 color: Theme.secondaryHighlightColor
                 visible: text.length > 0
                 truncationMode: TruncationMode.Fade
+                maximumLineCount: 1
             }
             Item {
                 height: sizeLabel.height
