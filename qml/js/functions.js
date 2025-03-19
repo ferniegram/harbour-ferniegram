@@ -187,7 +187,7 @@ function getMessageText(message, simple, currentUserId, ignoreEntities) {
     }
 }
 
-function getChatPartnerStatusText(statusType, was_online, translated) {
+function getChatPartnerStatusText(statusType, was_online, asTimepoint) {
     switch(statusType) {
     case "userStatusEmpty":
         return qsTr("was never online");
@@ -196,7 +196,7 @@ function getChatPartnerStatusText(statusType, was_online, translated) {
     case "userStatusLastWeek":
         return qsTr("last online: last week");
     case "userStatusOffline":
-        return qsTr("last online: %1").arg(!translated ? getDateTimeElapsed(was_online) : getDateTimeTranslated(was_online));
+        return qsTr("last online: %1").arg(asTimepoint ? getDateTimeTimepoint(was_online) : getDateTimeElapsed(was_online));
     case "userStatusOnline":
         return qsTr("online");
     case "userStatusRecently":

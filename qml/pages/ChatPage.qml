@@ -71,7 +71,7 @@ Page {
     signal resetElements()
     signal elementSelected(int elementIndex)
     signal navigatedTo(int targetIndex)
-    property bool elapsedStatus: true
+    property bool timepointStatus
 
     states: [
         State {
@@ -113,7 +113,7 @@ Page {
     function updateChatPartnerStatusText() {
         if (chatPage.isSelecting)
             return
-        var statusText = Functions.getChatPartnerStatusText(chatPartnerInformation.status['@type'], chatPartnerInformation.status.was_online, !elapsedStatus)
+        var statusText = Functions.getChatPartnerStatusText(chatPartnerInformation.status['@type'], chatPartnerInformation.status.was_online, timepointStatus)
         if (chatPage.secretChatDetails) {
             var secretChatStatus = Functions.getSecretChatStatus(chatPage.secretChatDetails)
             if (statusText && secretChatStatus)
@@ -941,7 +941,7 @@ Page {
                     else pageStack.navigateForward()
                 }
                 onPressAndHold: if (isPrivateChat || isSecretChat) {
-                    elapsedStatus = !elapsedStatus
+                    timepointStatus = !timepointStatus
                     updateChatPartnerStatusText()
                 }
             }

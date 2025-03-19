@@ -33,20 +33,20 @@ ApplicationWindow
     Connections {
         target: dBusAdaptor
         onPleaseOpenMessage: {
-            appWindow.activate();
+            appWindow.activate()
         }
         onPleaseOpenUrl: {
-            appWindow.activate();
+            appWindow.activate()
         }
     }
 
     Connections {
         target: tdLibWrapper
         onOpenFileExternally: {
-            Qt.openUrlExternally(filePath);
+            Qt.openUrlExternally(filePath)
         }
         onTgUrlFound: {
-            Functions.handleLink(tgUrl);
+            Functions.handleLink(tgUrl)
         }
     }
 
