@@ -225,6 +225,18 @@
         <comment>header</comment>
         <translation type="unfinished">用户名</translation>
     </message>
+    <message>
+        <source>Private Chat</source>
+        <translation type="unfinished">个人对话</translation>
+    </message>
+    <message>
+        <source>Group</source>
+        <translation type="unfinished">群组</translation>
+    </message>
+    <message>
+        <source>Channel</source>
+        <translation type="unfinished">频道</translation>
+    </message>
 </context>
 <context>
     <name>ChatInformationTabItemMembersGroups</name>

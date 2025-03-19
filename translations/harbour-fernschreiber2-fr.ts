@@ -228,6 +228,18 @@
         <comment>header</comment>
         <translation type="unfinished">Nom d&apos;utilisateur</translation>
     </message>
+    <message>
+        <source>Private Chat</source>
+        <translation type="unfinished">Conversation privée</translation>
+    </message>
+    <message>
+        <source>Group</source>
+        <translation type="unfinished">Groupe</translation>
+    </message>
+    <message>
+        <source>Channel</source>
+        <translation type="unfinished">Canal</translation>
+    </message>
 </context>
 <context>
     <name>ChatInformationTabItemMembersGroups</name>

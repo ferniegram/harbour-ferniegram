@@ -231,6 +231,18 @@
         <comment>header</comment>
         <translation type="unfinished">Prihlasovacie meno</translation>
     </message>
+    <message>
+        <source>Private Chat</source>
+        <translation type="unfinished">Súkromný čet</translation>
+    </message>
+    <message>
+        <source>Group</source>
+        <translation type="unfinished">Skupina</translation>
+    </message>
+    <message>
+        <source>Channel</source>
+        <translation type="unfinished">Kanál</translation>
+    </message>
 </context>
 <context>
     <name>ChatInformationTabItemMembersGroups</name>

@@ -353,127 +353,255 @@ SilicaFlickable {
             anchors {
                 top: parent.top
                 left: parent.left
-                leftMargin: Theme.horizontalPageMargin
                 right: parent.right
-                rightMargin: Theme.horizontalPageMargin
             }
 
-            Item { //large image placeholder
-                width: parent.width
-                height: imageContainer.hasImage ? imageContainer.maxDimension : 0
-            }
-
-            Label {
-                id: copyIdText
-                x: Math.max(headerItem.x + imageContainer.x - groupInfoItem.x + (imageContainer.width - width)/2, 0)
-                text: chatInformationPage.chatPartnerGroupId
-                font.pixelSize: Theme.fontSizeSmall
-                color: copyIdMouseArea.pressed ? Theme.secondaryHighlightColor : Theme.highlightColor
-                visible: text !== ""
-
-                MouseArea {
-                    id: copyIdMouseArea
-                    anchors {
-                        fill: parent
-                        margins: -Theme.paddingLarge
-                    }
-                    onClicked: {
-                        Clipboard.text = copyIdText.text
-                        appNotification.show(qsTr("ID has been copied to the clipboard."));
-                    }
+            Column {
+                anchors {
+                    left: parent.left
+                    leftMargin: Theme.horizontalPageMargin
+                    right: parent.right
+                    rightMargin: Theme.horizontalPageMargin
                 }
-            }
+                Item { //large image placeholder
+                    width: parent.width
+                    height: imageContainer.hasImage ? imageContainer.maxDimension : 0
+                }
 
-            InformationEditArea {
-                visible: canEdit
-                canEdit: !chatInformationPage.isPrivateOrSecretChat && chatInformationPage.groupInformation.status && (chatInformationPage.groupInformation.status.can_change_info  || chatInformationPage.groupInformation.status["@type"] === "chatMemberStatusCreator")
-                headerText: qsTr("Chat Title", "group title header")
-                text: chatInformationPage.chatInformation.title
+                Label {
+                    id: copyIdText
+                    x: Math.max(headerItem.x + imageContainer.x - parent.x + (imageContainer.width - width)/2, 0)
+                    text: chatInformationPage.chatPartnerGroupId
+                    font.pixelSize: Theme.fontSizeSmall
+                    color: copyIdMouseArea.pressed ? Theme.secondaryHighlightColor : Theme.highlightColor
+                    visible: text !== ""
 
-                onSaveButtonClicked: {
-                    if(!editItem.errorHighlight) {
-                        tdLibWrapper.setChatTitle(chatInformationPage.chatInformation.id, textValue);
-                    } else {
-                        isEditing = true
+                    MouseArea {
+                        id: copyIdMouseArea
+                        anchors {
+                            fill: parent
+                            margins: -Theme.paddingLarge
+                        }
+                        onClicked: {
+                            Clipboard.text = copyIdText.text
+                            appNotification.show(qsTr("ID has been copied to the clipboard."));
+                        }
                     }
                 }
 
-                onTextEdited: {
-                    if(textValue.length > 0 && textValue.length < 129) {
-                        editItem.errorHighlight = false
-                        editItem.label = ""
-                        editItem.placeholderText = ""
-                    } else {
-                        editItem.label = qsTr("Enter 1-128 characters")
-                        editItem.placeholderText = editItem.label
-                        editItem.errorHighlight = true
+                InformationEditArea {
+                    visible: canEdit
+                    canEdit: !chatInformationPage.isPrivateOrSecretChat && chatInformationPage.groupInformation.status && (chatInformationPage.groupInformation.status.can_change_info  || chatInformationPage.groupInformation.status["@type"] === "chatMemberStatusCreator")
+                    headerText: qsTr("Chat Title", "group title header")
+                    text: chatInformationPage.chatInformation.title
+
+                    onSaveButtonClicked: {
+                        if(!editItem.errorHighlight) {
+                            tdLibWrapper.setChatTitle(chatInformationPage.chatInformation.id, textValue);
+                        } else {
+                            isEditing = true
+                        }
+                    }
+
+                    onTextEdited: {
+                        if(textValue.length > 0 && textValue.length < 129) {
+                            editItem.errorHighlight = false
+                            editItem.label = ""
+                            editItem.placeholderText = ""
+                        } else {
+                            editItem.label = qsTr("Enter 1-128 characters")
+                            editItem.placeholderText = editItem.label
+                            editItem.errorHighlight = true
+                        }
                     }
                 }
-            }
-            InformationEditArea {
-                canEdit: (chatInformationPage.isPrivateOrSecretChat && chatInformationPage.privateChatUserInformation.id === chatInformationPage.myUserId) || ((chatInformationPage.isBasicGroup || chatInformationPage.isSuperGroup) && chatInformationPage.groupInformation && (chatInformationPage.groupInformation.status.can_change_info || chatInformationPage.groupInformation.status["@type"] === "chatMemberStatusCreator"))
-                emptyPlaceholderText: qsTr("There is no information text available, yet.")
-                headerText: qsTr("Info", "group or user infotext header")
-                multiLine: true
-                text: (chatInformationPage.isPrivateOrSecretChat ? Functions.enhanceMessageText(chatInformationPage.chatPartnerFullInformation.bio, false) : chatInformationPage.groupFullInformation.description) || ""
-                onSaveButtonClicked: {
-                    if (chatInformationPage.isPrivateOrSecretChat) { // own bio
-                        tdLibWrapper.setBio(textValue)
-                    } else { // group info
-                        tdLibWrapper.setChatDescription(chatInformationPage.chatInformation.id, textValue)
+                InformationEditArea {
+                    canEdit: (chatInformationPage.isPrivateOrSecretChat && chatInformationPage.privateChatUserInformation.id === chatInformationPage.myUserId) || ((chatInformationPage.isBasicGroup || chatInformationPage.isSuperGroup) && chatInformationPage.groupInformation && (chatInformationPage.groupInformation.status.can_change_info || chatInformationPage.groupInformation.status["@type"] === "chatMemberStatusCreator"))
+                    emptyPlaceholderText: qsTr("There is no information text available, yet.")
+                    headerText: qsTr("Info", "group or user infotext header")
+                    multiLine: true
+                    text: (chatInformationPage.isPrivateOrSecretChat ? Functions.enhanceMessageText(chatInformationPage.chatPartnerFullInformation.bio, false) : chatInformationPage.groupFullInformation.description) || ""
+                    onSaveButtonClicked: {
+                        if (chatInformationPage.isPrivateOrSecretChat) { // own bio
+                            tdLibWrapper.setBio(textValue)
+                        } else { // group info
+                            tdLibWrapper.setChatDescription(chatInformationPage.chatInformation.id, textValue)
+                        }
                     }
                 }
-            }
-
-            InformationTextItem {
-                headerText: qsTr("Phone Number", "user phone number header")
-                text: (chatInformationPage.isPrivateOrSecretChat && chatInformationPage.privateChatUserInformation.phone_number ? "+"+chatInformationPage.privateChatUserInformation.phone_number : "") || ""
-                isLinkedLabel: true
-            }
-
-            BackgroundItem {
-                height: contentHeight
-                contentHeight: usernameItem.height
-                visible: !!usernameItem.text
-                _showPress: false
 
                 InformationTextItem {
-                    id: usernameItem
-                    highlight: true
-                    headerText: qsTr("Username", "header")
-                    text: headerItem.description != chatInformationPage.username ? chatInformationPage.username : ""
+                    headerText: qsTr("Phone Number", "user phone number header")
+                    text: (chatInformationPage.isPrivateOrSecretChat && chatInformationPage.privateChatUserInformation.phone_number ? "+"+chatInformationPage.privateChatUserInformation.phone_number : "") || ""
+                    isLinkedLabel: true
                 }
-                onClicked: {
-                    Clipboard.text = usernameItem.text
-                    appNotification.show(qsTr("Username has been copied to the clipboard"))
-                }
-            }
 
-            SectionHeader {
-                font.pixelSize: Theme.fontSizeExtraSmall
-                visible: !!inviteLinkItem.text
-                height: visible ? Theme.itemSizeExtraSmall : 0
-                text: qsTr("Invite Link", "header")
-                x: 0
-            }
+                BackgroundItem {
+                    height: contentHeight
+                    contentHeight: usernameItem.height
+                    visible: !!usernameItem.text
+                    _showPress: false
 
-            Row {
-                width: parent.width
-                visible: !!inviteLinkItem.text
-                InformationTextItem {
-                    id: inviteLinkItem
-                    text: !chatInformationPage.isPrivateOrSecretChat ? chatInformationPage.groupFullInformation.invite_link.invite_link : ""
-                    width: parent.width - inviteLinkButton.width
-                }
-                IconButton {
-                    id: inviteLinkButton
-                    icon.source: "image://theme/icon-m-clipboard"
-                    anchors.verticalCenter: inviteLinkItem.verticalCenter
+                    InformationTextItem {
+                        id: usernameItem
+                        highlight: true
+                        headerText: qsTr("Username", "header")
+                        text: headerItem.description != chatInformationPage.username ? chatInformationPage.username : ""
+                    }
                     onClicked: {
-                        Clipboard.text = chatInformationPage.groupFullInformation.invite_link.invite_link
-                        appNotification.show(qsTr("The Invite Link has been copied to the clipboard."))
+                        Clipboard.text = usernameItem.text
+                        appNotification.show(qsTr("Username has been copied to the clipboard"))
                     }
                 }
+
+                SectionHeader {
+                    font.pixelSize: Theme.fontSizeExtraSmall
+                    visible: !!inviteLinkItem.text
+                    height: visible ? Theme.itemSizeExtraSmall : 0
+                    text: qsTr("Invite Link", "header")
+                    x: 0
+                }
+
+                Row {
+                    width: parent.width
+                    visible: !!inviteLinkItem.text
+                    InformationTextItem {
+                        id: inviteLinkItem
+                        text: !chatInformationPage.isPrivateOrSecretChat ? chatInformationPage.groupFullInformation.invite_link.invite_link : ""
+                        width: parent.width - inviteLinkButton.width
+                    }
+                    IconButton {
+                        id: inviteLinkButton
+                        icon.source: "image://theme/icon-m-clipboard"
+                        anchors.verticalCenter: inviteLinkItem.verticalCenter
+                        onClicked: {
+                            Clipboard.text = chatInformationPage.groupFullInformation.invite_link.invite_link
+                            appNotification.show(qsTr("The Invite Link has been copied to the clipboard."))
+                        }
+                    }
+                }
+            }
+
+            Item {
+                width: 1
+                height: Theme.paddingLarge
+                visible: personalChatLoader.active
+            }
+
+            Loader {
+                id: personalChatLoader
+                width: parent.width
+                asynchronous: true
+                height: item ? item.height : 0
+                sourceComponent: Item {
+                    id: foundChatListDelegate
+                    width: parent.width
+                    height: foundChatListItem.height
+
+                    property bool setupCompleted
+                    property var foundChatInformation: tdLibWrapper.getChat(chatInformationPage.chatPartnerFullInformation.personal_chat_id)
+                    property var relatedInformation
+                    property bool isPrivateChat: false
+                    property bool isBasicGroup: false
+                    property bool isSupergroup: false
+
+                    function detectChatType() {
+                        if (setupCompleted || !foundChatInformation || !foundChatInformation.type) return;
+                        setupCompleted = true
+                        switch (foundChatInformation.type["@type"]) {
+                        case "chatTypePrivate":
+                            relatedInformation = tdLibWrapper.getUserInformation(foundChatInformation.type.user_id);
+                            foundChatListItem.prologSecondaryText.text = qsTr("Private Chat");
+                            foundChatListItem.secondaryText.text = "@" + ( relatedInformation.username !== "" ? relatedInformation.username : relatedInformation.user_id );
+                            tdLibWrapper.getUserFullInfo(foundChatInformation.type.user_id);
+                            isPrivateChat = true;
+                            break;
+                        case "chatTypeBasicGroup":
+                            relatedInformation = tdLibWrapper.getBasicGroup(foundChatInformation.type.basic_group_id);
+                            foundChatListItem.prologSecondaryText.text = qsTr("Group");
+                            tdLibWrapper.getGroupFullInfo(foundChatInformation.type.basic_group_id, false);
+                            isBasicGroup = true;
+                            break;
+                        case "chatTypeSupergroup":
+                            relatedInformation = tdLibWrapper.getSuperGroup(foundChatInformation.type.supergroup_id);
+                            if (relatedInformation.is_channel) {
+                                foundChatListItem.prologSecondaryText.text = qsTr("Channel");
+                            } else {
+                                foundChatListItem.prologSecondaryText.text = qsTr("Group");
+                            }
+                            tdLibWrapper.getGroupFullInfo(foundChatInformation.type.supergroup_id, true);
+                            isSupergroup = true;
+                            break;
+                        }
+                    }
+
+                    Component.onCompleted: detectChatType()
+                    onFoundChatInformationChanged: detectChatType()
+
+                    Connections {
+                        target: tdLibWrapper
+                        onUserFullInfoUpdated: {
+                            if (foundChatListDelegate.isPrivateChat && userId.toString() === foundChatListDelegate.foundChatInformation.type.user_id.toString()) {
+                                foundChatListItem.tertiaryText.text = Emoji.emojify(userFullInfo.bio, foundChatListItem.tertiaryText.font.pixelSize, "../js/emoji/");
+                            }
+                        }
+                        onUserFullInfoReceived: {
+                            if (foundChatListDelegate.isPrivateChat && userFullInfo["@extra"].toString() === foundChatListDelegate.foundChatInformation.type.user_id.toString()) {
+                                foundChatListItem.tertiaryText.text = Emoji.emojify(userFullInfo.bio, foundChatListItem.tertiaryText.font.pixelSize, "../js/emoji/");
+                            }
+                        }
+
+                        onBasicGroupFullInfoUpdated: {
+                            if (foundChatListDelegate.isBasicGroup && groupId.toString() === foundChatListDelegate.foundChatInformation.type.basic_group_id.toString()) {
+                                foundChatListItem.secondaryText.text = qsTr("%1 members", "", groupFullInfo.members.length).arg(Number(groupFullInfo.members.length).toLocaleString(Qt.locale(), "f", 0));
+                                foundChatListItem.tertiaryText.text = Emoji.emojify(groupFullInfo.description, foundChatListItem.tertiaryText.font.pixelSize, "../js/emoji/");
+                            }
+                        }
+                        onBasicGroupFullInfoReceived: {
+                            if (foundChatListDelegate.isBasicGroup && groupId.toString() === foundChatListDelegate.foundChatInformation.type.basic_group_id.toString()) {
+                                foundChatListItem.secondaryText.text = qsTr("%1 members", "", groupFullInfo.members.length).arg(Number(groupFullInfo.members.length).toLocaleString(Qt.locale(), "f", 0));
+                                foundChatListItem.tertiaryText.text = Emoji.emojify(groupFullInfo.description, foundChatListItem.tertiaryText.font.pixelSize, "../js/emoji/");
+                            }
+                        }
+
+                        onSupergroupFullInfoUpdated: {
+                            if (foundChatListDelegate.isSupergroup && groupId.toString() === foundChatListDelegate.foundChatInformation.type.supergroup_id.toString()) {
+                                if (foundChatListDelegate.relatedInformation.is_channel) {
+                                    foundChatListItem.secondaryText.text = qsTr("%1 subscribers", "", groupFullInfo.member_count).arg(Number(groupFullInfo.member_count).toLocaleString(Qt.locale(), "f", 0));
+                                } else {
+                                    foundChatListItem.secondaryText.text = qsTr("%1 members", "", groupFullInfo.member_count).arg(Number(groupFullInfo.member_count).toLocaleString(Qt.locale(), "f", 0));
+                                }
+                                foundChatListItem.tertiaryText.text = Emoji.emojify(groupFullInfo.description, foundChatListItem.tertiaryText.font.pixelSize, "../js/emoji/");
+                            }
+                        }
+                        onSupergroupFullInfoReceived: {
+                            if (foundChatListDelegate.isSupergroup && groupId.toString() === foundChatListDelegate.foundChatInformation.type.supergroup_id.toString()) {
+                                if (foundChatListDelegate.relatedInformation.is_channel) {
+                                    foundChatListItem.secondaryText.text = qsTr("%1 subscribers", "", groupFullInfo.member_count).arg(Number(groupFullInfo.member_count).toLocaleString(Qt.locale(), "f", 0));
+                                } else {
+                                    foundChatListItem.secondaryText.text = qsTr("%1 members", "", groupFullInfo.member_count).arg(Number(groupFullInfo.member_count).toLocaleString(Qt.locale(), "f", 0));
+                                }
+                                foundChatListItem.tertiaryText.text = Emoji.emojify(groupFullInfo.description, foundChatListItem.tertiaryText.font.pixelSize, "../js/emoji/");
+                            }
+                        }
+                    }
+
+                    PhotoTextsListItem {
+                        id: foundChatListItem
+
+                        pictureThumbnail.photoData: typeof foundChatInformation.photo.small !== "undefined" ? foundChatInformation.photo.small : {}
+                        width: parent.width
+                        showSeparator: false
+
+                        primaryText.text: Emoji.emojify(foundChatInformation.title, primaryText.font.pixelSize, "../js/emoji/")
+                        tertiaryText.maximumLineCount: 1
+
+                        onClicked: pageStack.push(Qt.resolvedUrl("../pages/ChatPage.qml"), {chatInformation: foundChatInformation})
+                    }
+                }
+
+                // for some reason, when the loader is disabled by default, connections don't work; thus we only disable it later
+                Component.onCompleted: active = !!chatInformationPage.chatPartnerFullInformation && !!chatInformationPage.chatPartnerFullInformation.personal_chat_id
             }
 
             Item {
@@ -485,6 +613,10 @@ SilicaFlickable {
                 width: parent.width
                 color: Theme.primaryColor
                 horizontalAlignment: Qt.AlignHCenter
+                anchors {
+                    leftMargin: Theme.horizontalPageMargin
+                    rightMargin: Theme.horizontalPageMargin
+                }
                 opacity: (tabViewLoader.status === Loader.Ready && tabViewLoader.item.count > 0) ? 1.0 : 0.0
 
                 Behavior on opacity { FadeAnimation {}}

@@ -228,6 +228,18 @@
         <comment>header</comment>
         <translation type="unfinished">Käyttäjätunnus</translation>
     </message>
+    <message>
+        <source>Private Chat</source>
+        <translation type="unfinished">Yksityinen keskustelu</translation>
+    </message>
+    <message>
+        <source>Group</source>
+        <translation type="unfinished">Ryhmä</translation>
+    </message>
+    <message>
+        <source>Channel</source>
+        <translation type="unfinished">Kanava</translation>
+    </message>
 </context>
 <context>
     <name>ChatInformationTabItemMembersGroups</name>

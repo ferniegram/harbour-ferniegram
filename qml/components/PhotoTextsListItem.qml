@@ -10,6 +10,7 @@ ListItem {
     property alias prologSecondaryText: prologSecondaryText //usually last sender name
     property alias secondaryText: secondaryText //usually last message
     property alias tertiaryText: tertiaryText //usually last message date
+    property bool showSeparator: true
 
     property int unreadCount: 0
     property int unreadMentionCount: 0
@@ -219,6 +220,7 @@ ListItem {
     }
 
     Separator {
+        visible: showSeparator
         id: separator
         anchors {
             bottom: parent.bottom
