@@ -1954,6 +1954,10 @@
         <source>Ignore</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Voice note volume</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SettingsPage</name>

@@ -61,9 +61,10 @@ namespace {
     const QString MESSAGE_CONTENT_TYPE_VENUE("messageVenue");
 }
 
-FernschreiberUtils::FernschreiberUtils(QObject *parent)
+FernschreiberUtils::FernschreiberUtils(AppSettings *settings, QObject *parent)
     : QObject(parent)
     , manager(new QNetworkAccessManager(this))
+    , appSettings(settings)
 {
     LOG("Initializing audio recorder...");
 
@@ -267,7 +268,7 @@ void FernschreiberUtils::startRecordingVoiceNote()
     LOG("Start recording voice note...");
     QDateTime thisIsNow = QDateTime::currentDateTime();
     this->audioRecorder.setOutputLocation(QUrl::fromLocalFile(this->getTemporaryDirectoryPath() + "/voicenote-" + thisIsNow.toString("yyyy-MM-dd-HH-mm-ss") + ".ogg"));
-    this->audioRecorder.setVolume(1);
+    this->audioRecorder.setVolume(appSettings->voiceNoteVolume());
     this->audioRecorder.record();
 }
 

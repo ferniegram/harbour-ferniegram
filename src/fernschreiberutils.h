@@ -31,7 +31,7 @@ class FernschreiberUtils : public QObject
 {
     Q_OBJECT
 public:
-    explicit FernschreiberUtils(QObject *parent = nullptr);
+    explicit FernschreiberUtils(AppSettings *settings = nullptr, QObject *parent = nullptr);
     ~FernschreiberUtils();
 
     enum VoiceNoteRecordingState {
@@ -76,6 +76,7 @@ private:
 
     void cleanUp();
     QString getTemporaryDirectoryPath();
+    AppSettings *appSettings;
 
 };
 

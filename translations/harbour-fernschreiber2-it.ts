@@ -1921,6 +1921,10 @@
         <source>Ignore</source>
         <translation>Ignora</translation>
     </message>
+    <message>
+        <source>Voice note volume</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SettingsPage</name>

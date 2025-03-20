@@ -269,6 +269,17 @@ AccordionItem {
                     onNotificationFeedbackChanged: sponsoredComboBox.updateSponsoredSelection()
                 }
             }
+
+            Slider {
+                width: parent.width
+                label: qsTr("Voice note volume")
+                minimumValue: 1
+                maximumValue: 15.0
+                stepSize: 1
+                value: appSettings.voiceNoteVolume
+                valueText: value
+                onValueChanged: appSettings.voiceNoteVolume = sliderValue
+            }
         }
     }
 }
