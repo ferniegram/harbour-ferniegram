@@ -255,6 +255,8 @@ public:
     Q_INVOKABLE void setNetworkType(NetworkType networkType);
     Q_INVOKABLE void setInactiveSessionTtl(int days);
     Q_INVOKABLE void getMessageProperties(qlonglong chatId, qlonglong messageId);
+    Q_INVOKABLE void getCustomEmojiStickers(QStringList ids);
+    Q_INVOKABLE void getCustomEmojiStickers(QString id);
 
     // Others (candidates for extraction ;))
     Q_INVOKABLE void searchEmoji(const QString &queryString);

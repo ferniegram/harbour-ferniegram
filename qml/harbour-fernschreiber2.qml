@@ -21,6 +21,7 @@ import Sailfish.Silica 1.0
 import "pages"
 import "components"
 import "./js/functions.js" as Functions
+import WerkWolf.Fernschreiber 1.0
 
 ApplicationWindow
 {
@@ -55,10 +56,22 @@ ApplicationWindow
         parent: pageStack.currentPage
     }
 
+    Component {
+        id: tdlibFileComponent
+        TDLibFile {
+            tdlib: tdLibWrapper
+            autoLoad: true
+        }
+    }
+
     Component.onCompleted: {
         Functions.setGlobals({
             tdLibWrapper: tdLibWrapper,
-            appNotification: appNotification
-        });
+            appNotification: appNotification,
+            stickerManager: stickerManager,
+            createTdlibFile: function(info){
+                return tdlibFileComponent.createObject(appWindow, {fileInformation: info})
+            },
+        })
     }
 }

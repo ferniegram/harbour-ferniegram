@@ -2454,3 +2454,18 @@ void TDLibWrapper::getMessageProperties(qlonglong chatId, qlonglong messageId) {
     requestObject.insert(_EXTRA, extra);
     this->sendRequest(requestObject);
 }
+
+void TDLibWrapper::getCustomEmojiStickers(QStringList ids) {
+    LOG("Receiving stickers for custom emojis" << ids);
+    QVariantMap requestObject;
+    requestObject.insert(_TYPE, "getCustomEmojiStickers");
+    requestObject.insert("custom_emoji_ids", ids);
+    this->sendRequest(requestObject);
+}
+
+void TDLibWrapper::getCustomEmojiStickers(QString id) {
+    LOG("Receiving sticker for custom emoji" << id);
+    QStringList ids;
+    ids.append(id);
+    getCustomEmojiStickers(ids);
+}

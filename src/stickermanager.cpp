@@ -56,6 +56,10 @@ QVariantMap StickerManager::getStickerSet(const QString &stickerSetId)
     return this->stickerSets.value(stickerSetId).toMap();
 }
 
+QVariantMap StickerManager::getCustomEmojiSticker(const QString &emojiId) {
+    return this->customEmojis.value(emojiId).toMap();
+}
+
 bool StickerManager::hasStickerSet(const QString &stickerSetId)
 {
     return this->stickerSets.contains(stickerSetId);
@@ -64,6 +68,10 @@ bool StickerManager::hasStickerSet(const QString &stickerSetId)
 bool StickerManager::isStickerSetInstalled(const QString &stickerSetId)
 {
     return this->installedStickerSetIds.contains(stickerSetId);
+}
+
+bool StickerManager::hasCustomEmoji(const QString &emojiId) {
+    return this->customEmojis.contains(emojiId);
 }
 
 bool StickerManager::needsReload()
@@ -88,7 +96,13 @@ void StickerManager::handleStickersReceived(const QVariantList &stickers)
     QListIterator<QVariant> stickersIterator(stickers);
     while (stickersIterator.hasNext()) {
         QVariantMap newSticker = stickersIterator.next().toMap();
-        this->stickers.insert(newSticker.value("sticker").toMap().value("id").toString(), newSticker);
+        QString fileId = newSticker.value("sticker").toMap().value("id").toString();
+        this->stickers.insert(fileId, newSticker);
+
+        QVariantMap fullType = newSticker.value("full_type").toMap();
+        if (fullType.value("@type").toString() == "stickerFullTypeCustomEmoji") {
+            this->customEmojis.insert(fullType.value("custom_emoji_id").toString(), newSticker);
+        }
     }
 
     this->recentStickers.clear();

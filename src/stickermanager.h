@@ -36,8 +36,10 @@ public:
     Q_INVOKABLE QVariantList getRecentStickers();
     Q_INVOKABLE QVariantList getInstalledStickerSets();
     Q_INVOKABLE QVariantMap getStickerSet(const QString &stickerSetId);
+    Q_INVOKABLE QVariantMap getCustomEmojiSticker(const QString &emojiId);
     Q_INVOKABLE bool hasStickerSet(const QString &stickerSetId);
     Q_INVOKABLE bool isStickerSetInstalled(const QString &stickerSetId);
+    Q_INVOKABLE bool hasCustomEmoji(const QString &emojiId);
     Q_INVOKABLE bool needsReload();
     Q_INVOKABLE void setNeedsReload(const bool &reloadNeeded);
 
@@ -63,6 +65,7 @@ private:
     QVariantMap stickers;
     QVariantMap stickerSets;
     QVariantMap stickerSetMap;
+    QVariantMap customEmojis;
     bool reloadNeeded;
 
 };

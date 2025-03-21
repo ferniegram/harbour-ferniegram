@@ -19,13 +19,15 @@
 
 .pragma library
 .import "debug.js" as Debug
+.import "twemoji.js" as Emoji
 .import Sailfish.Silica 1.0 as Silica
 
-var tdLibWrapper;
-var appNotification;
+var tdLibWrapper, appNotification, stickerManager, createTdlibFile
 function setGlobals(globals) {
-    tdLibWrapper = globals.tdLibWrapper;
-    appNotification = globals.appNotification;
+    tdLibWrapper = globals.tdLibWrapper
+    appNotification = globals.appNotification
+    stickerManager = globals.stickerManager
+    createTdlibFile = globals.createTdlibFile
 }
 function formatUnreadCount(value) {
     if(value < 1000) {
@@ -40,10 +42,15 @@ function getUserName(userInformation) {
     return ((userInformation.first_name || "") + " " + (userInformation.last_name || "")).trim();
 }
 
-function getMessageText(message, simple, currentUserId, ignoreEntities) {
+function getMessageText(message, simple, currentUserId, ignoreEntities, emojiSize) {
     var myself = false;
     if ( message['@type'] !== "sponsoredMessage" ) {
         myself = ( message.sender_id['@type'] === "messageSenderUser" && message.sender_id.user_id.toString() === currentUserId.toString() );
+    }
+
+    var getCaption = function(text){
+        return simple ? text.arg(message.content.caption.text)
+                      : enhanceMessageText(message.content.caption, ignoreEntities, emojiSize)
     }
 
     switch(message.content['@type']) {
@@ -51,7 +58,7 @@ function getMessageText(message, simple, currentUserId, ignoreEntities) {
         if (simple) {
             return message.content.text.text;
         } else {
-            return enhanceMessageText(message.content.text, ignoreEntities);
+            return enhanceMessageText(message.content.text, ignoreEntities, emojiSize);
         }
     case 'messageSticker':
         return simple ? message.content.sticker.emoji : ""
@@ -59,13 +66,13 @@ function getMessageText(message, simple, currentUserId, ignoreEntities) {
         return simple ? message.content.animated_emoji.sticker.emoji : ""
     case 'messagePhoto':
         if (message.content.caption.text !== "") {
-            return simple ? qsTr("Picture: %1").arg(message.content.caption.text) : enhanceMessageText(message.content.caption, ignoreEntities)
+            return getCaption(qsTr("Picture: %1"))
         } else {
             return simple ? (myself ? qsTr("sent a picture", "myself") : qsTr("sent a picture")) : "";
         }
     case 'messageVideo':
         if (message.content.caption.text !== "") {
-            return simple ? qsTr("Video: %1").arg(message.content.caption.text) : enhanceMessageText(message.content.caption, ignoreEntities)
+            return getCaption(qsTr("Video: %1"))
         } else {
             return simple ? (myself ? qsTr("sent a video", "myself") : qsTr("sent a video")) : "";
         }
@@ -73,25 +80,25 @@ function getMessageText(message, simple, currentUserId, ignoreEntities) {
         return simple ? (myself ? qsTr("sent a video note", "myself") : qsTr("sent a video note")) : "";
     case 'messageAnimation':
         if (message.content.caption.text !== "") {
-            return simple ? qsTr("Animation: %1").arg(message.content.caption.text) : enhanceMessageText(message.content.caption, ignoreEntities)
+            return getCaption(qsTr("Animation: %1"))
         } else {
             return simple ? (myself ? qsTr("sent an animation", "myself") : qsTr("sent an animation")) : "";
         }
     case 'messageAudio':
         if (message.content.caption.text !== "") {
-            return simple ? qsTr("Audio: %1").arg(message.content.caption.text) : enhanceMessageText(message.content.caption, ignoreEntities)
+            getCaption(qsTr("Audio: %1"))
         } else {
             return simple ? (myself ? qsTr("sent an audio", "myself") : qsTr("sent an audio")) : "";
         }
     case 'messageVoiceNote':
         if (message.content.caption.text !== "") {
-            return simple ? qsTr("Voice Note: %1").arg(message.content.caption.text) : enhanceMessageText(message.content.caption, ignoreEntities)
+            getCaption(qsTr("Voice Note: %1"))
         } else {
             return simple ? (myself ? qsTr("sent a voice note", "myself") : qsTr("sent a voice note")) : "";
         }
     case 'messageDocument':
         if (message.content.document.file_name !== "") {
-            return simple ? qsTr("Document: %1").arg(message.content.document.file_name) : (message.content.caption.text !== "" ? enhanceMessageText(message.content.caption, ignoreEntities) : "").trim();
+            return simple ? qsTr("Document: %1").arg(message.content.document.file_name) : (message.content.caption.text !== "" ? getCaption() : "").trim();
         } else {
             return simple ? (myself ? qsTr("sent a document", "myself") : qsTr("sent a document")) : "";
         }
@@ -284,7 +291,7 @@ function textFixReserved(text) {
     return text.replace(ampRegExp, "&amp;").replace(ltRegExp, "&lt;").replace(gtRegExp, "&gt;").replace(rawNewLineRegExp, "<br>");
 }
 
-function enhanceMessageText(formattedText, ignoreEntities) {
+function enhanceMessageText(formattedText, ignoreEntities, emojiSize) {
     if (typeof formattedText === 'undefined') return ''
 
     var messageInsertions = [];
@@ -295,6 +302,7 @@ function enhanceMessageText(formattedText, ignoreEntities) {
     if(formattedText.entities.length === 0)
         return textFixReserved(messageText)
 
+    emojiSize = Math.round((typeof emojiSize === 'undefined' ? Silica.Theme.fontSizeSmall : emojiSize) * 1.15)
     for (var i = 0; i < formattedText.entities.length; i++) {
         entity = formattedText.entities[i];
         if (entity['@type'] !== "textEntity") {
@@ -386,6 +394,17 @@ function enhanceMessageText(formattedText, ignoreEntities) {
                     { offset: (entity.offset + entity.length), insertionString: "</a>", removeLength: 0 }
                 );
             break;
+            case 'textEntityTypeCustomEmoji':
+                var emoji = entity.type.custom_emoji_id
+                if (stickerManager.hasCustomEmoji(emoji)) {
+                    var sticker = stickerManager.getCustomEmojiSticker(emoji)
+                    console.log(sticker.format['@type'])
+                    if (sticker.format['@type'] === 'stickerFormatWebm') break
+                    var file = createTdlibFile(sticker.sticker)
+                    console.log(Emoji.getEmojiTag(file.path, emojiSize))
+                    messageInsertions.push({offset: entity.offset, insertionString: Emoji.getEmojiTag(file.path, emojiSize), removeLength: entity.length})
+                } else tdLibWrapper.getCustomEmojiStickers(emoji)
+            break
         }
     }
 
