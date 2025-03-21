@@ -1344,6 +1344,7 @@ Page {
                                                                        "messageChatDeletePhoto",
                                                                        "messageChatJoinByLink",
                                                                        "messageChatSetTtl",
+                                                                       "messageChatSetMessageAutoDeleteTime",
                                                                        "messageChatUpgradeFrom",
                                                                        "messageContactRegistered",
                                                                        // "messageExpiredPhoto", "messageExpiredVideo","messageWebsiteConnected"
