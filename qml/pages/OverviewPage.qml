@@ -282,9 +282,7 @@ Page {
                 pageStack.push(Qt.resolvedUrl("../pages/ChatPage.qml"), options);
             }
         }
-        onErrorReceived: {
-            Functions.handleErrorMessage(code, message);
-        }
+        onErrorReceived: Functions.handleErrorMessage(code, message, extra)
         onCopyToDownloadsSuccessful: {
             appNotification.show(qsTr("Download of %1 successful.").arg(fileName), filePath);
         }

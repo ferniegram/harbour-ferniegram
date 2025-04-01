@@ -140,7 +140,10 @@ public:
     Q_INVOKABLE QVariantMap getUserInformation();
     Q_INVOKABLE QVariantMap getUserInformation(const QString &userId);
     Q_INVOKABLE bool hasUserInformation(const QString &userId);
+    Q_INVOKABLE bool hasUserNameInformation(const QString &userName);
     Q_INVOKABLE QVariantMap getUserInformationByName(const QString &userName);
+    Q_INVOKABLE bool hasSuperGroupNameInformation(const QString &name);
+    Q_INVOKABLE QVariantMap getSupergroupInformationByName(const QString &name);
     Q_INVOKABLE UserPrivacySettingRule getUserPrivacySettingRule(UserPrivacySetting userPrivacySetting);
     Q_INVOKABLE QVariantMap getUnreadMessageInformation();
     Q_INVOKABLE QVariantMap getUnreadChatInformation();
@@ -219,7 +222,7 @@ public:
     Q_INVOKABLE void setPollAnswer(const QString &chatId, qlonglong messageId, QVariantList optionIds);
     Q_INVOKABLE void stopPoll(const QString &chatId, qlonglong messageId);
     Q_INVOKABLE void getPollVoters(const QString &chatId, qlonglong messageId, int optionId, int limit, int offset, const QString &extra);
-    Q_INVOKABLE void searchPublicChat(const QString &userName, bool doOpenOnFound);
+    Q_INVOKABLE void searchPublicChat(const QString &userName, bool doOpenOnFound = false);
     Q_INVOKABLE void joinChatByInviteLink(const QString &inviteLink);
     Q_INVOKABLE void getDeepLinkInfo(const QString &link);
     Q_INVOKABLE void getContacts();
@@ -414,6 +417,7 @@ private:
     QVariantMap unreadChatInformation;
     QHash<qlonglong,Group*> basicGroups;
     QHash<qlonglong,Group*> superGroups;
+    QVariantMap superGroupsByName;
     EmojiSearchWorker emojiSearchWorker;
     QStringList activeEmojiReactions;
 

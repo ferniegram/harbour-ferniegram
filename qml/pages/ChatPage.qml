@@ -516,8 +516,7 @@ Page {
         }
         onEmojiSearchSuccessful:
             chatPage.emojiProposals = result
-        onErrorReceived:
-            Functions.handleErrorMessage(code, message)
+        onErrorReceived: Functions.handleErrorMessage(code, message, extra)
         onReceivedMessage: {
             if (message.is_pinned) {
                 Debug.log("[ChatPage] Received pinned message")

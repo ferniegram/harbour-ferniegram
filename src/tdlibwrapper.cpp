@@ -1038,7 +1038,10 @@ void TDLibWrapper::searchPublicChat(const QString &userName, bool doOpenOnFound)
     }
     QVariantMap requestObject;
     requestObject.insert(_TYPE, "searchPublicChat");
-    requestObject.insert(_EXTRA, "searchPublicChat:"+userName);
+    QVariantMap extraObject = requestObject;
+    extraObject.insert(TYPE, "searchPublicChat:"+userName);
+    extraObject.insert("doOpenOnFound", doOpenOnFound);
+    requestObject.insert(_EXTRA, extraObject);
     requestObject.insert(USERNAME, userName);
     this->sendRequest(requestObject);
 }
@@ -1582,14 +1585,24 @@ QVariantMap TDLibWrapper::getUserInformation(const QString &userId)
     return this->usersById.value(userId).toMap();
 }
 
-bool TDLibWrapper::hasUserInformation(const QString &userId)
-{
+bool TDLibWrapper::hasUserInformation(const QString &userId) {
     return this->usersById.contains(userId);
 }
 
-QVariantMap TDLibWrapper::getUserInformationByName(const QString &userName)
-{
+bool TDLibWrapper::hasUserNameInformation(const QString &userName) {
+    return this->usersByName.contains(userName);
+}
+
+QVariantMap TDLibWrapper::getUserInformationByName(const QString &userName) {
     return this->usersByName.value(userName.toLower()).toMap();
+}
+
+bool TDLibWrapper::hasSuperGroupNameInformation(const QString &name) {
+    return this->superGroupsByName.contains(name);
+}
+
+QVariantMap TDLibWrapper::getSupergroupInformationByName(const QString &name) {
+    return this->superGroupsByName.value(name.toLower()).toMap();
 }
 
 TDLibWrapper::UserPrivacySettingRule TDLibWrapper::getUserPrivacySettingRule(TDLibWrapper::UserPrivacySetting userPrivacySetting)
@@ -1923,15 +1936,19 @@ void TDLibWrapper::handleChatReceived(const QVariantMap &chatInformation)
     if (!this->activeChatSearchName.isEmpty()) {
         QVariantMap chatType = chatInformation.value(TYPE).toMap();
         ChatType receivedChatType = chatTypeFromString(chatType.value(_TYPE).toString());
+        LOG("Found a chat" << receivedChatType << chatType);
         if (receivedChatType == ChatTypeBasicGroup) {
             LOG("Found basic group for active search" << this->activeChatSearchName);
             this->activeChatSearchName.clear();
             this->createBasicGroupChat(chatType.value("basic_group_id").toString(), "openDirectly");
-        }
-        if (receivedChatType == ChatTypeSupergroup) {
+        } else if (receivedChatType == ChatTypeSupergroup) {
             LOG("Found supergroup for active search" << this->activeChatSearchName);
             this->activeChatSearchName.clear();
             this->createSupergroupChat(chatType.value("supergroup_id").toString(), "openDirectly");
+        } else if (receivedChatType == ChatTypePrivate) {
+            LOG("Found private chat for active search" << this->activeChatSearchName);
+            this->activeChatSearchName.clear();
+            this->createPrivateChat(chatType.value("user_id").toString(), "openDirectly");
         }
     }
 }
@@ -1973,8 +1990,8 @@ void TDLibWrapper::handleBasicGroupUpdated(qlonglong groupId, const QVariantMap 
     }
 }
 
-void TDLibWrapper::handleSuperGroupUpdated(qlonglong groupId, const QVariantMap &groupInformation)
-{
+void TDLibWrapper::handleSuperGroupUpdated(qlonglong groupId, const QVariantMap &groupInformation) {
+    superGroupsByName.insert(groupInformation.value(USERNAMES).toMap().value(EDITABLE_USERNAME).toString().toLower(), groupInformation);
     emit superGroupUpdated(updateGroup(groupId, groupInformation, &superGroups)->groupId);
     if (!this->activeChatSearchName.isEmpty() && this->activeChatSearchName == groupInformation.value(USERNAME).toString()) {
         LOG("Found supergroup for active search" << this->activeChatSearchName);

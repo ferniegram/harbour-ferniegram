@@ -348,7 +348,7 @@ function enhanceMessageText(formattedText, ignoreEntities, emojiSize, reloader) 
             break;
             case "textEntityTypeMention":
                 messageInsertions.push(
-                    { offset: entity.offset, insertionString: "<a href=\"user://" + messageText.substring(entity.offset, ( entity.offset + entity.length )) + "\">", removeLength: 0 },
+                    { offset: entity.offset, insertionString: "<a href=\"user://" + messageText.substring(entity.offset, entity.offset + entity.length) + "\">", removeLength: 0 },
                     { offset: (entity.offset + entity.length), insertionString: "</a>", removeLength: 0 }
                 );
             break;
@@ -481,7 +481,7 @@ function handleLink(link) {
         var userName = link.substring(8);
         var userInformation = tdLibWrapper.getUserInformationByName(userName);
         if (typeof userInformation.id === "undefined") {
-            appNotification.show(qsTr("Unable to find user %1").arg(userName));
+            tdLibWrapper.searchPublicChat(userName, true)
         } else {
             tdLibWrapper.createPrivateChat(userInformation.id, "openDirectly");
         }
@@ -556,11 +556,14 @@ function getMessagesArrayText(messages) {
     return lines.join("\n");
 }
 
-function handleErrorMessage(code, message) {
+function handleErrorMessage(code, message, extra) {
     if (code === 404 || (code === 400 && message === "USERNAME_INVALID")) {
         // Silently ignore
         // - 404 Not Found messages (occur sometimes, without clear context...)
         // - searchPublicChat messages for "invalid" inline queries
+        if (extra && extra['@type'] === 'searchPublicChat' && extra.doOpenOnFound) {
+            appNotification.show(qsTr("Unable to find user %1").arg(userName));
+        }
         return;
     }
     if (message === "USER_ALREADY_PARTICIPANT") {

@@ -212,7 +212,8 @@ Loader {
                 target: tdLibWrapper
 
                 onChatReceived: {
-                    if(chat["@extra"] === "searchPublicChat:"+inlineQueryLoader.userName) {
+                    console.log(JSON.stringify(chat['@extra']))
+                    if(chat['@extra'] && chat['@extra'].type === "searchPublicChat:"+inlineQueryLoader.userName) {
                         requestTimeout.stop();
                         inlineQueryLoader.isLoading = false;
                         var inlineBotInformation = tdLibWrapper.getUserInformation(chat.type.user_id);
