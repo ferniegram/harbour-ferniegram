@@ -269,22 +269,20 @@ Page {
             }
         }
         onChatReceived: {
-            var openAndSendStartToBot = chat["@extra"].indexOf("openAndSendStartToBot:") === 0
+            var openAndSendStartToBot = chat["@extra"].toString().indexOf("openAndSendStartToBot:") === 0
             if(chat["@extra"] === "openDirectly" || openAndSendStartToBot && chat.type["@type"] === "chatTypePrivate") {
                 pageStack.pop(overviewPage, PageStackAction.Immediate)
                 // if we get a new chat (no messages?), we can not use the provided data
-                var chatinfo = tdLibWrapper.getChat(chat.id);
-                var options = { "chatInformation" : chatinfo }
+                var chatinfo = tdLibWrapper.getChat(chat.id)
+                var options = {chatInformation: chatinfo}
                 if(openAndSendStartToBot) {
-                    options.doSendBotStartMessage = true;
-                    options.sendBotStartMessageParameter = chat["@extra"].substring(22);
+                    options.doSendBotStartMessage = true
+                    options.sendBotStartMessageParameter = chat["@extra"].substring(22)
                 }
-                pageStack.push(Qt.resolvedUrl("../pages/ChatPage.qml"), options);
+                pageStack.push(Qt.resolvedUrl("../pages/ChatPage.qml"), options)
             }
         }
-        onErrorReceived: {
-            Functions.handleErrorMessage(code, message);
-        }
+        onErrorReceived: Functions.handleErrorMessage(code, message, extra)
         onCopyToDownloadsSuccessful: {
             appNotification.show(qsTr("Download of %1 successful.").arg(fileName), filePath);
         }

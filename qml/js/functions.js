@@ -348,7 +348,7 @@ function enhanceMessageText(formattedText, ignoreEntities, emojiSize, reloader) 
             break;
             case "textEntityTypeMention":
                 messageInsertions.push(
-                    { offset: entity.offset, insertionString: "<a href=\"user://" + messageText.substring(entity.offset, ( entity.offset + entity.length )) + "\">", removeLength: 0 },
+                    { offset: entity.offset, insertionString: "<a href=\"user://" + messageText.substring(entity.offset, entity.offset + entity.length) + "\">", removeLength: 0 },
                     { offset: (entity.offset + entity.length), insertionString: "</a>", removeLength: 0 }
                 );
             break;
@@ -478,12 +478,15 @@ function handleLink(link) {
 
     Debug.log("Trying to parse link ourselves: " + link);
     if (link.indexOf("user://") === 0) {
-        var userName = link.substring(8);
-        var userInformation = tdLibWrapper.getUserInformationByName(userName);
-        if (typeof userInformation.id === "undefined") {
-            appNotification.show(qsTr("Unable to find user %1").arg(userName));
-        } else {
-            tdLibWrapper.createPrivateChat(userInformation.id, "openDirectly");
+        var userName = link.substring(8)
+        var userInformation = tdLibWrapper.getUserInformationByName(userName)
+        if (typeof userInformation.id !== "undefined")
+            tdLibWrapper.createPrivateChat(userInformation.id, 'openDirectly')
+        else {
+            userInformation = tdLibWrapper.getSupergroupInformationByName(userName)
+            if (typeof userInformation.id !== "undefined")
+                tdLibWrapper.createSupergroupChat(userInformation.id, 'openDirectly')
+            else tdLibWrapper.searchPublicChat(userName, true)
         }
     } else if (link.indexOf("userId://") === 0) {
         tdLibWrapper.createPrivateChat(link.substring(9), "openDirectly");
@@ -556,12 +559,16 @@ function getMessagesArrayText(messages) {
     return lines.join("\n");
 }
 
-function handleErrorMessage(code, message) {
-    if (code === 404 || (code === 400 && message === "USERNAME_INVALID")) {
+function handleErrorMessage(code, message, extra) {
+    if (code === 404 ||
+            (code === 400 &&
+             (message === "USERNAME_INVALID" || message === "USERNAME_NOT_OCCUPIED"))) {
         // Silently ignore
         // - 404 Not Found messages (occur sometimes, without clear context...)
         // - searchPublicChat messages for "invalid" inline queries
-        return;
+        if (extra && extra['@type'] === 'searchPublicChat' && extra.doOpenOnFound)
+            appNotification.show(qsTr("Unable to find user %1").arg(extra.type.substring(17)))
+        return
     }
     if (message === "USER_ALREADY_PARTICIPANT") {
         appNotification.show(qsTr("You are already a member of this chat."));

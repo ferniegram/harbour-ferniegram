@@ -514,10 +514,8 @@ Page {
                 uploadingProgressBar.value = fileInformation.remote.uploaded_size
             }
         }
-        onEmojiSearchSuccessful:
-            chatPage.emojiProposals = result
-        onErrorReceived:
-            Functions.handleErrorMessage(code, message)
+        onEmojiSearchSuccessful: chatPage.emojiProposals = result
+        onErrorReceived: Functions.handleErrorMessage(code, message, extra)
         onReceivedMessage: {
             if (message.is_pinned) {
                 Debug.log("[ChatPage] Received pinned message")

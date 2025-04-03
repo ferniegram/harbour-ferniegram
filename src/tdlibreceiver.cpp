@@ -655,7 +655,7 @@ void TDLibReceiver::processMessageSenders(const QVariantMap &receivedInformation
 void TDLibReceiver::processError(const QVariantMap &receivedInformation)
 {
     LOG("Received an error");
-    emit errorReceived(receivedInformation.value("code").toInt(), receivedInformation.value(MESSAGE).toString(), receivedInformation.value(_EXTRA).toString());
+    emit errorReceived(receivedInformation.value("code").toInt(), receivedInformation.value(MESSAGE).toString(), receivedInformation.value(_EXTRA));
 }
 
 void TDLibReceiver::ok(const QVariantMap &receivedInformation)

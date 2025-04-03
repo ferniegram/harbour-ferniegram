@@ -140,7 +140,10 @@ public:
     Q_INVOKABLE QVariantMap getUserInformation();
     Q_INVOKABLE QVariantMap getUserInformation(const QString &userId);
     Q_INVOKABLE bool hasUserInformation(const QString &userId);
+    Q_INVOKABLE bool hasUserNameInformation(const QString &userName);
     Q_INVOKABLE QVariantMap getUserInformationByName(const QString &userName);
+    Q_INVOKABLE bool hasSuperGroupNameInformation(const QString &name);
+    Q_INVOKABLE QVariantMap getSupergroupInformationByName(const QString &name);
     Q_INVOKABLE UserPrivacySettingRule getUserPrivacySettingRule(UserPrivacySetting userPrivacySetting);
     Q_INVOKABLE QVariantMap getUnreadMessageInformation();
     Q_INVOKABLE QVariantMap getUnreadChatInformation();
@@ -219,7 +222,7 @@ public:
     Q_INVOKABLE void setPollAnswer(const QString &chatId, qlonglong messageId, QVariantList optionIds);
     Q_INVOKABLE void stopPoll(const QString &chatId, qlonglong messageId);
     Q_INVOKABLE void getPollVoters(const QString &chatId, qlonglong messageId, int optionId, int limit, int offset, const QString &extra);
-    Q_INVOKABLE void searchPublicChat(const QString &userName, bool doOpenOnFound);
+    Q_INVOKABLE void searchPublicChat(const QString &userName, bool doOpenOnFound = false);
     Q_INVOKABLE void joinChatByInviteLink(const QString &inviteLink);
     Q_INVOKABLE void getDeepLinkInfo(const QString &link);
     Q_INVOKABLE void getContacts();
@@ -329,7 +332,7 @@ signals:
     void chatPinnedMessageUpdated(qlonglong chatId, qlonglong pinnedMessageId);
     void usersReceived(const QString &extra, const QVariantList &userIds, int totalUsers);
     void messageSendersReceived(const QString &extra, const QVariantList &senders, int totalUsers);
-    void errorReceived(int code, const QString &message, const QString &extra);
+    void errorReceived(int code, const QString &message, const QVariant &extra);
     void contactsImported(const QVariantList &importerCount, const QVariantList &userIds);
     void messageNotFound(qlonglong chatId, qlonglong messageId);
     void chatIsMarkedAsUnreadUpdated(qlonglong chatId, bool chatIsMarkedAsUnread);
@@ -369,7 +372,7 @@ public slots:
     void handleSecretChatReceived(qlonglong secretChatId, const QVariantMap &secretChat);
     void handleSecretChatUpdated(qlonglong secretChatId, const QVariantMap &secretChat);
     void handleStorageOptimizerChanged();
-    void handleErrorReceived(int code, const QString &message, const QString &extra);
+    void handleErrorReceived(int code, const QString &message, const QVariant &extra);
     void handleMessageInformation(qlonglong chatId, qlonglong messageId, const QVariantMap &receivedInformation);
     void handleMessageIsPinnedUpdated(qlonglong chatId, qlonglong messageId, bool isPinned);
     void handleUserPrivacySettingRules(const QVariantMap &rules);
@@ -414,6 +417,7 @@ private:
     QVariantMap unreadChatInformation;
     QHash<qlonglong,Group*> basicGroups;
     QHash<qlonglong,Group*> superGroups;
+    QVariantMap superGroupsByName;
     EmojiSearchWorker emojiSearchWorker;
     QStringList activeEmojiReactions;
 
