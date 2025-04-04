@@ -109,6 +109,7 @@ signals:
     void chatUnreadReactionCountUpdated(qlonglong chatId, int unreadReactionCount);
     void activeEmojiReactionsUpdated(const QStringList& emojis);
     void messagePropertiesReceived(qlonglong chatId, qlonglong messageId, const QVariantMap &messageProperties);
+    void defaultBackgroundUpdated(const QVariantMap &newBackground, bool forDarkMode);
 
 private:
     typedef void (TDLibReceiver::*Handler)(const QVariantMap &);
@@ -196,6 +197,7 @@ private:
     void processUpdateChatUnreadReactionCount(const QVariantMap &receivedInformation);
     void processUpdateActiveEmojiReactions(const QVariantMap &receivedInformation);
     void processMessageProperties(const QVariantMap &receivedInformation);
+    void processUpdateBackground(const QVariantMap &newBackground);
 };
 
 #endif // TDLIBRECEIVER_H

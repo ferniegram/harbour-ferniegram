@@ -195,6 +195,7 @@ void TDLibWrapper::initializeTDLibReceiver() {
     connect(this->tdLibReceiver, SIGNAL(chatUnreadReactionCountUpdated(qlonglong, int)), this, SIGNAL(chatUnreadReactionCountUpdated(qlonglong, int)));
     connect(this->tdLibReceiver, SIGNAL(activeEmojiReactionsUpdated(QStringList)), this, SLOT(handleActiveEmojiReactionsUpdated(QStringList)));
     connect(this->tdLibReceiver, SIGNAL(messagePropertiesReceived(qlonglong, qlonglong, QVariantMap)), this, SIGNAL(messagePropertiesReceived(qlonglong, qlonglong, QVariantMap)));
+    connect(this->tdLibReceiver, SIGNAL(defaultBackgroundUpdated(QVariantMap, bool)), this, SLOT(handleBackgroundUpdated(QVariantMap, bool)));
 
     this->tdLibReceiver->start();
 }
@@ -2483,4 +2484,14 @@ void TDLibWrapper::getCustomEmojiStickers(QString id) {
     QStringList ids;
     ids.append(id);
     getCustomEmojiStickers(ids);
+}
+
+QVariantMap TDLibWrapper::getBackground() {
+    return this->background;
+}
+
+void TDLibWrapper::handleBackgroundUpdated(const QVariantMap &newBackground, bool forDarkMode) {
+    LOG("Default background updated; for dark mode?" << forDarkMode);
+    this->background = newBackground;
+    emit backgroundChanged();
 }

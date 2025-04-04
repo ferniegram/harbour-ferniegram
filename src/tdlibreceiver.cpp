@@ -1,4 +1,4 @@
-/*
+﻿/*
     Copyright (C) 2020 Sebastian J. Wolf and other contributors
 
     This file is part of Fernschreiber.
@@ -128,6 +128,7 @@ TDLibReceiver::TDLibReceiver(void *tdLibClient, QObject *parent) : QThread(paren
     handlers.insert("updateBasicGroup", &TDLibReceiver::processUpdateBasicGroup);
     handlers.insert("updateSupergroup", &TDLibReceiver::processUpdateSuperGroup);
     handlers.insert("updateChatOnlineMemberCount", &TDLibReceiver::processChatOnlineMemberCountUpdated);
+    handlers.insert("updateDefaultBackground", &TDLibReceiver::processUpdateBackground);
     handlers.insert("messages", &TDLibReceiver::processMessages);
     handlers.insert("foundChatMessages", &TDLibReceiver::processFoundChatMessages);
     handlers.insert("sponsoredMessage", &TDLibReceiver::processSponsoredMessage);   // TdLib <= 1.8.7
@@ -395,6 +396,11 @@ void TDLibReceiver::processChatOnlineMemberCountUpdated(const QVariantMap &recei
     const QString chatId = receivedInformation.value(CHAT_ID).toString();
     LOG("Online member count updated for chat " << chatId);
     emit chatOnlineMemberCountUpdated(chatId, receivedInformation.value("online_member_count").toInt());
+}
+
+void TDLibReceiver::processUpdateBackground(const QVariantMap &newBackground) {
+    LOG("Default background updated" << newBackground);
+    emit defaultBackgroundUpdated(newBackground.value("background").toMap(), newBackground.value("for_dark_theme").toBool());
 }
 
 void TDLibReceiver::processMessages(const QVariantMap &receivedInformation)

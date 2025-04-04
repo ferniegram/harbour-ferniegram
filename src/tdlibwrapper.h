@@ -38,6 +38,7 @@ class TDLibWrapper : public QObject
     Q_OBJECT
     Q_PROPERTY(AuthorizationState authorizationState READ getAuthorizationState NOTIFY authorizationStateChanged)
     Q_PROPERTY(QVariantMap userInformation READ getUserInformation NOTIFY ownUserUpdated)
+    Q_PROPERTY(QVariantMap background READ getBackground NOTIFY backgroundChanged)
 
 public:
     explicit TDLibWrapper(AppSettings *appSettings, MceInterface *mceInterface, QObject *parent = nullptr);
@@ -158,6 +159,7 @@ public:
     Q_INVOKABLE void controlScreenSaver(bool enabled);
     Q_INVOKABLE bool getJoinChatRequested();
     Q_INVOKABLE void registerJoinChat();
+    Q_INVOKABLE QVariantMap getBackground();
 
     DBusAdaptor *getDBusAdaptor();
 
@@ -350,6 +352,7 @@ signals:
     void tgUrlFound(const QString &tgUrl);
     void reactionsUpdated();
     void messagePropertiesReceived(qlonglong chatId, qlonglong messageId, const QVariantMap &messageProperties);
+    void backgroundChanged();
 
 public slots:
     void handleVersionDetected(const QString &version);
@@ -381,6 +384,7 @@ public slots:
     void handleNetworkConfigurationChanged(const QNetworkConfiguration &config);
     void handleActiveEmojiReactionsUpdated(const QStringList& emojis);
     void handleGetPageSourceFinished();
+    void handleBackgroundUpdated(const QVariantMap &newBackground, bool forDarkMode);
 
 private:
     void setOption(const QString &name, const QString &type, const QVariant &value);
@@ -420,6 +424,7 @@ private:
     QVariantMap superGroupsByName;
     EmojiSearchWorker emojiSearchWorker;
     QStringList activeEmojiReactions;
+    QVariantMap background;
 
     int versionNumber;
     QString activeChatSearchName;
