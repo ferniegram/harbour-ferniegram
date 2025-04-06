@@ -183,7 +183,8 @@ TDLibReceiver::TDLibReceiver(void *tdLibClient, QObject *parent) : QThread(paren
     handlers.insert("updateChatUnreadMentionCount", &TDLibReceiver::processUpdateChatUnreadMentionCount);
     handlers.insert("updateChatUnreadReactionCount", &TDLibReceiver::processUpdateChatUnreadReactionCount);
     handlers.insert("updateActiveEmojiReactions", &TDLibReceiver::processUpdateActiveEmojiReactions);
-    handlers.insert("messageProperties", &TDLibReceiver::processMessageProperties); // TdLib >= 1.8.45 (maybe even earlier)
+    handlers.insert("messageProperties", &TDLibReceiver::processMessageProperties); // TdLib >= 1.8.34
+    handlers.insert("backgrounds", &TDLibReceiver::processBackgrounds);
 }
 
 void TDLibReceiver::setActive(bool active)
@@ -952,4 +953,9 @@ void TDLibReceiver::processMessageProperties(const QVariantMap &receivedInformat
     const qlonglong messageId = extra.value(MESSAGE_ID).toLongLong();
     LOG("Received message properties" << messageId << receivedInformation);
     emit messagePropertiesReceived(chatId, messageId, receivedInformation);
+}
+
+void TDLibReceiver::processBackgrounds(const QVariantMap &receivedInformation) {
+    LOG("Received backgrounds");
+    emit backgroundsReceived(receivedInformation.value("backgrounds").toList());
 }

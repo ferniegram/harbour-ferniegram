@@ -196,6 +196,7 @@ void TDLibWrapper::initializeTDLibReceiver() {
     connect(this->tdLibReceiver, SIGNAL(activeEmojiReactionsUpdated(QStringList)), this, SLOT(handleActiveEmojiReactionsUpdated(QStringList)));
     connect(this->tdLibReceiver, SIGNAL(messagePropertiesReceived(qlonglong, qlonglong, QVariantMap)), this, SIGNAL(messagePropertiesReceived(qlonglong, qlonglong, QVariantMap)));
     connect(this->tdLibReceiver, SIGNAL(defaultBackgroundUpdated(QVariantMap, bool)), this, SLOT(handleBackgroundUpdated(QVariantMap, bool)));
+    connect(this->tdLibReceiver, SIGNAL(backgroundsReceived(QVariantList)), this, SIGNAL(backgroundsReceived(QVariantList)));
 
     this->tdLibReceiver->start();
 }
@@ -2472,7 +2473,7 @@ void TDLibWrapper::getMessageProperties(qlonglong chatId, qlonglong messageId) {
 }
 
 void TDLibWrapper::getCustomEmojiStickers(QStringList ids) {
-    LOG("Receiving stickers for custom emojis" << ids);
+    LOG("Retrieving stickers for custom emojis" << ids);
     QVariantMap requestObject;
     requestObject.insert(_TYPE, "getCustomEmojiStickers");
     requestObject.insert("custom_emoji_ids", ids);
@@ -2491,7 +2492,15 @@ QVariantMap TDLibWrapper::getBackground() {
 }
 
 void TDLibWrapper::handleBackgroundUpdated(const QVariantMap &newBackground, bool forDarkMode) {
-    LOG("Default background updated; for dark mode?" << forDarkMode);
+    LOG("Default background updated; for dark mode:" << forDarkMode);
     this->background = newBackground;
     emit backgroundChanged();
+}
+
+void TDLibWrapper::getInstalledBackgrounds() {
+    LOG("Retrieving installed backgrounds");
+    QVariantMap requestObject;
+    requestObject.insert(_TYPE, "getInstalledBackgrounds");
+    //requestObject.insert("for_dark_theme", forDarkMode);
+    this->sendRequest(requestObject);
 }

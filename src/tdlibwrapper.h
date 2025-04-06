@@ -262,6 +262,7 @@ public:
     Q_INVOKABLE void getMessageProperties(qlonglong chatId, qlonglong messageId);
     Q_INVOKABLE void getCustomEmojiStickers(QStringList ids);
     Q_INVOKABLE void getCustomEmojiStickers(QString id);
+    Q_INVOKABLE void getInstalledBackgrounds();
 
     // Others (candidates for extraction ;))
     Q_INVOKABLE void searchEmoji(const QString &queryString);
@@ -353,6 +354,7 @@ signals:
     void reactionsUpdated();
     void messagePropertiesReceived(qlonglong chatId, qlonglong messageId, const QVariantMap &messageProperties);
     void backgroundChanged();
+    void backgroundsReceived(const QVariantList &backgrounds);
 
 public slots:
     void handleVersionDetected(const QString &version);
