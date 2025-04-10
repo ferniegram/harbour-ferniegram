@@ -52,13 +52,8 @@ AccordionItem {
                 width: parent.columnWidth
                 property var statistics
                 property var fullStatistics
-                sourceComponent: statistics||fullStatistics ? loadedComponent : loadingComponent
-                onStatusChanged: if (status == Loader.Ready) {
-
-                                     //height = item.height
-                                     console.log(item.height, height)
-                                 }
-                height: item.height
+                sourceComponent: statistics || fullStatistics ? loadedComponent : loadingComponent
+                height: item ? item.height : 0
 
                 Component {
                     id: loadedComponent
@@ -77,7 +72,6 @@ AccordionItem {
                                   + '<br>' + qsTr("<b>TDLib log size</b>: %1").arg(Format.formatFileSize(statisticsLoader.statistics.log_size))
                                   + '<br>' + qsTr("<b>TDLib language pack database size</b>: %1").arg(Format.formatFileSize(statisticsLoader.statistics.language_pack_database_size))
                             wrapMode: Text.Wrap
-                            Component.onCompleted: console.log("A",height)
                         }
                         ButtonLayout {
                             Button {
@@ -89,7 +83,6 @@ AccordionItem {
                                 color: Theme.errorColor
                                 onClicked: tdLibWrapper.optimizeStorage(true)
                             }
-                            Component.onCompleted: console.log("B",height)
                         }
                         Label {
                             x: Theme.horizontalPageMargin
@@ -98,17 +91,18 @@ AccordionItem {
                             text: qsTr("Clearing all cache is not recommended, unless issues occur.")
                             color: Theme.secondaryColor
                             wrapMode: Text.Wrap
-                            Component.onCompleted: console.log("C",height)
                         }
-                        Component.onCompleted: console.log(height)
                     }
                 }
 
                 Component {
                     id: loadingComponent
                     BusyIndicator {
+                        height: implicitHeight
+                        width: implicitWidth
+                        running: true
                         size: BusyIndicatorSize.Medium
-                        anchors.horizontalCenter: parent ? parent.horizontalCenter : null
+                        anchors.horizontalCenter: parent.horizontalCenter
                     }
                 }
 
