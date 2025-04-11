@@ -275,7 +275,7 @@ Item {
                           )
             onClicked: {
                 if(file.isDownloadingCompleted)
-                    tdLibWrapper.copyFileToDownloads(file.path, true)
+                    tdLibWrapper.copyFileToDownloads(file.path, false) // TODO: don't open after downloading and show a button for this instead
                 else if(!file.isDownloadingActive) file.load()
                 else file.cancel()
             }
