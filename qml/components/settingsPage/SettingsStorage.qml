@@ -102,7 +102,7 @@ AccordionItem {
                         width: implicitWidth
                         running: true
                         size: BusyIndicatorSize.Medium
-                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.horizontalCenter: parent ? parent.horizontalCenter : null
                     }
                 }
 
