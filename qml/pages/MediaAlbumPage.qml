@@ -75,7 +75,7 @@ Page {
                         }
                     },
                     State {
-                        when: model.modelData.content['@type'] === 'messageVideo'
+                        when: model.modelData.content['@type'] === 'messageVideo' || model.modelData.content['@type'] === 'messageAnimation' || model.modelData.content['@type'] === 'messageVideoNote'
                         PropertyChanges {
                             target: loader
                             source: "../components/messageContent/mediaAlbumPage/VideoComponent.qml"

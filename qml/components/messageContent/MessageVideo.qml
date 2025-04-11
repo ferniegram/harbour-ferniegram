@@ -32,14 +32,14 @@ MessageContentBase {
                                    ( rawMessage.content['@type'] === "messageAnimation" )
                                    ? rawMessage.content.animation
                                    : rawMessage.content.video_note )
-    property string videoUrl;
-    property int previewFileId;
-    property int videoFileId;
-    property bool isVideoNote : false;
-    property bool fullscreen : false;
-    property bool onScreen: messageListItem ? messageListItem.page.status === PageStatus.Active : true;
-    property string videoType : "video";
-    property bool playRequested: false;
+    property string videoUrl
+    property int previewFileId
+    property int videoFileId
+    property bool isVideoNote
+    property bool fullscreen
+    property bool onScreen: messageListItem ? messageListItem.page.status === PageStatus.Active : true
+    property string videoType: "video"
+    property bool playRequested
 
     height: videoMessageComponent.isVideoNote ? width : Functions.getVideoHeight(width, videoData)
 

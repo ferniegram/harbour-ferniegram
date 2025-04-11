@@ -7,7 +7,13 @@ import "../../"
 
 Video {
     id: video
-    property var videoData: model.modelData.content.video
+    property var videoData: model.modelData.content['@type'] === "messageVideo"
+                            ? model.modelData.content.video
+                            : (
+                                  model.modelData.content['@type'] === "messageAnimation"
+                                  ? model.modelData.content.animation
+                                  : model.modelData.content.video_note)
+    property string videoType: model.modelData.content['@type'] === "messageVideoNote" ? "video" : videoData['@type']
     readonly property bool isPlaying: playbackState === MediaPlayer.PlayingState
     readonly property bool isCurrent: index === page.index
     property bool shouldPlay
@@ -43,7 +49,7 @@ Video {
         id: file
         autoLoad: false
         tdlib: tdLibWrapper
-        fileInformation: videoData.video
+        fileInformation: videoData[videoType]
         property real progress: isDownloadingCompleted ? 1.0 : (downloadedSize / size)
         onDownloadingCompletedChanged: {
             if(isDownloadingCompleted) {
