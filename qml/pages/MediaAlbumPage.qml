@@ -35,7 +35,7 @@ Page {
     property alias index: pagedView.currentIndex
     property alias overlayActive: overlay.active
     property alias delegate: pagedView.delegate
-    property var messages: [];
+    property var messages: []
     // message.content.caption.text
     palette.colorScheme: Theme.LightOnDark
     clip: status !== PageStatus.Active || pageStack.dragInProgress

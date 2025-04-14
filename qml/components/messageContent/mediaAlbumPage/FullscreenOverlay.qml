@@ -33,6 +33,9 @@ Item {
     property alias text: captionLabel.text
     property bool active: true
     property var message
+    property real videoSpeed
+    signal speedButtonClicked
+    property bool speedSliderVisible
     readonly property color gradientColor: '#bb000000'
     readonly property int gradientPadding: Theme.itemSizeMedium
     // signal declarations
@@ -226,7 +229,7 @@ Item {
         id: file
         autoLoad: false
         tdlib: tdLibWrapper
-        property bool isPhoto: message.content['@type'] === 'messagePhoto'
+        readonly property bool isPhoto: message.content['@type'] === 'messagePhoto'
         property var videoData: isPhoto ? null : message.content['@type'] === "messageVideo"
                                           ? message.content.video
                                           : (
@@ -286,14 +289,35 @@ Item {
         }
 
         IconButton {
-             enabled: message.can_be_forwarded
-             opacity: enabled ? 1.0 : 0.2
-             icon.source: "image://theme/icon-m-share?" + (pressed
-                          ? Theme.highlightColor
-                          : Theme.lightPrimaryColor)
-             onClicked: forwardMessage()
-         }
+            enabled: message.can_be_forwarded
+            opacity: enabled ? 1.0 : 0.2
+            icon.source: "image://theme/icon-m-share?" + (pressed
+                      ? Theme.highlightColor
+                      : Theme.lightPrimaryColor)
+            onClicked: forwardMessage()
+        }
     }
+
+    Text {
+        id: videoSpeedText
+        anchors {
+            bottom: parent.bottom
+            bottomMargin: Theme.paddingLarge
+            right: parent.right
+            rightMargin: Theme.horizontalPageMargin
+        }
+        visible: !!text
+        font.pixelSize: Theme.fontSizeExtraLarge
+        text: typeof videoSpeed !== 'undefined' ? videoSpeed+'x' : ''
+        color: videoSpeedMouseArea.pressed || speedSliderVisible ? Theme.highlightColor : Theme.primaryColor
+        MouseArea {
+            id: videoSpeedMouseArea
+            anchors.fill: parent
+            enabled: parent.visible
+            onClicked: speedButtonClicked()
+        }
+    }
+
     states: [
         State {
             name: 'hasCaption'

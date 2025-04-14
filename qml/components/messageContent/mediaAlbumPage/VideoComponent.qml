@@ -19,16 +19,30 @@ Video {
     property bool shouldPlay
     autoLoad: true
     source: file.isDownloadingCompleted ? file.path : ''
-    onIsCurrentChanged: {
-        if(!isCurrent) {
-            pause()
-        }
-    }
+    onIsCurrentChanged: if(!isCurrent) pause()
     onStatusChanged: {
         if(status === MediaPlayer.EndOfMedia) {
             page.overlayActive = true
         }
     }
+
+    Binding {
+        target: overlay
+        property: "videoSpeed"
+        value: playbackRate
+    }
+
+    Binding {
+        target: overlay
+        property: "speedSliderVisible"
+        value: speedSlider.visible
+    }
+
+    Connections {
+        target: overlay
+        onSpeedButtonClicked: speedSlider.visible = !speedSlider.visible
+    }
+
     TDLibThumbnail {
         id: tdLibImage
 
@@ -41,8 +55,6 @@ Video {
         thumbnail: videoData.thumbnail
         minithumbnail: videoData.minithumbnail
         fillMode: Image.PreserveAspectFit
-
-
     }
 
     TDLibFile {
@@ -122,6 +134,41 @@ Video {
         anchors.fill: parent
         opacity: active ? 1 : 0
         Behavior on opacity { FadeAnimator {} }
+
+        Slider {
+            id: speedSlider
+            anchors {
+                bottom: slider.top
+                bottomMargin: Theme.paddingLarge
+            }
+            width: parent.width
+            leftMargin: Theme.horizontalPageMargin
+            rightMargin: Theme.horizontalPageMargin
+
+            visible: false
+            enabled: parent.active
+            property real previousValue
+            Component.onCompleted: previousValue = sliderValue
+            onSliderValueChanged: {
+                if (!down) {
+                    previousValue = sliderValue
+                    visible = false
+                }
+                video.playbackRate = sliderValue
+            }
+            onDownChanged: {
+                if (!down && previousValue != sliderValue) {
+                    previousValue = sliderValue
+                    visible = false
+                }
+            }
+
+            value: video.playbackRate
+            minimumValue: 0.25
+            maximumValue: 2.5
+            stepSize: 0.25
+            valueText: sliderValue+'x'
+        }
 
         Slider {
             id: slider
