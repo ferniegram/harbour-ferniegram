@@ -189,7 +189,7 @@ Page {
 
         if(!message) return ""
         if (message['@type'] === "sponsoredMessage")
-            return qsTr("Sponsored Message")
+            return message.is_recommended ? qsTr("Recommended Message") : qsTr("Sponsored Message")
 
         if (message.edit_date > 0)
             messageStatusSuffix += " - " + qsTr("edited")

@@ -26,51 +26,27 @@ import "../../js/functions.js" as Functions
 Column {
     id: sponsoredMessageColumn
 
-    property var sponsoredMessageData;
+    property var message
 
     Connections {
         target: tdLibWrapper
         onMessageLinkInfoReceived: {
-            if (sponsoredMessageData.link.url === url) {
-                messageOverlayLoader.overlayMessage = messageLinkInfo.message;
-                messageOverlayLoader.active = true;
-            }
-        }
-    }
-
-    Component.onCompleted: {
-        if (sponsoredMessageData) {
-            if (typeof sponsoredMessageData.link === "undefined") {
-                sponsoredMessageButton.text = qsTr("Go to Channel");
-                sponsoredMessageButton.advertisesChannel = true;
-            } else if (sponsoredMessageData.link['@type'] === "internalLinkTypeMessage") {
-                sponsoredMessageButton.text = qsTr("Go to Message");
-                sponsoredMessageButton.advertisesMessage = true;
-            } else {
-                sponsoredMessageButton.text = qsTr("Start Bot");
-                sponsoredMessageButton.advertisesBot = true;
+            if (message.link.url === url) {
+                messageOverlayLoader.overlayMessage = messageLinkInfo.message
+                messageOverlayLoader.active = true
             }
         }
     }
 
     Button {
         id: sponsoredMessageButton
-        property bool advertisesChannel: false;
-        property bool advertisesMessage: false;
-        property bool advertisesBot: false;
-        anchors {
-            horizontalCenter: parent.horizontalCenter
-        }
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        text: message ? message.button_text : ''
         onClicked: {
-            if (advertisesChannel) {
-                tdLibWrapper.createSupergroupChat(tdLibWrapper.getChat(sponsoredMessageData.sponsor_chat_id).type.supergroup_id, "openDirectly");
-            }
-            if (advertisesMessage) {
-                tdLibWrapper.getMessageLinkInfo(sponsoredMessageData.link.url);
-            }
-            if (advertisesBot) {
-                tdLibWrapper.createPrivateChat(tdLibWrapper.getUserInformationByName(sponsoredMessageData.link.bot_username).id, "openAndSendStartToBot:" + sponsoredMessageData.link.start_parameter);
-            }
+            if (Functions.isDirectMessageLink(message.sponsor.url))
+                tdLibWrapper.getMessageLinkInfo(message.sponsor.url)
+            else Functions.handleLink(message.sponsor.url)
         }
     }
 

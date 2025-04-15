@@ -433,12 +433,9 @@ ListItem {
 
             Column {
                 id: messageTextColumn
-
-                spacing: Theme.paddingSmall
-
                 width: precalculatedValues.textColumnWidth
                 anchors.centerIn: messageBackground
-
+                spacing: Theme.paddingSmall
 
                 Label {
                     id: userText
@@ -446,11 +443,11 @@ ListItem {
                     width: parent.width
                     text: messageListItem.isOwnMessage
                           ? qsTr("You")
-                          : Emoji.emojify( myMessage['@type'] === "sponsoredMessage"
-                                          ? tdLibWrapper.getChat(myMessage.sponsor_chat_id).title
-                                          : ( messageListItem.isAnonymous
+                          : Emoji.emojify(myMessage['@type'] === "sponsoredMessage"
+                                          ? myMessage.title
+                                          : (messageListItem.isAnonymous
                                                 ? page.chatInformation.title
-                                                : Functions.getUserName(messageListItem.userInformation) ), font.pixelSize)
+                                                : Functions.getUserName(messageListItem.userInformation)), font.pixelSize)
                     font.pixelSize: Theme.fontSizeExtraSmall
                     font.weight: Font.ExtraBold
                     color: messageListItem.textColor
@@ -519,7 +516,7 @@ ListItem {
                     active: typeof myMessage.forward_info !== "undefined"
                     asynchronous: true
                     width: parent.width
-                    height: active ? ( item ? item.height : Theme.itemSizeExtraSmall ) : 0
+                    height: active ? (item ? item.height : Theme.itemSizeExtraSmall) : 0
                     sourceComponent: Component {
                         Row {
                             id: forwardedMessageInformationRow
@@ -593,21 +590,6 @@ ListItem {
                 }
 
                 Loader {
-                    id: sponsoredMessageButtonLoader
-                    active: myMessage['@type'] === "sponsoredMessage"
-                    asynchronous: true
-                    width: parent.width
-                    height: (status === Loader.Ready) ? item.implicitHeight : myMessage['@type'] === "sponsoredMessage" ? Theme.itemSizeMedium : 0
-
-                    sourceComponent: Component {
-                        SponsoredMessage {
-                            sponsoredMessageData: myMessage
-                            width: parent.width
-                        }
-                    }
-                }
-
-                Loader {
                     id: webPagePreviewLoader
                     active: false
                     asynchronous: true
@@ -645,6 +627,21 @@ ListItem {
                     asynchronous: true
                     active: !!myMessage.reply_markup && myMessage.reply_markup.rows
                     source: Qt.resolvedUrl("ReplyMarkupButtons.qml")
+                }
+
+                Loader {
+                    id: sponsoredMessageButtonLoader
+                    active: myMessage['@type'] === "sponsoredMessage"
+                    asynchronous: true
+                    width: parent.width
+                    height: (status === Loader.Ready) ? item.implicitHeight : myMessage['@type'] === "sponsoredMessage" ? Theme.itemSizeMedium : 0
+
+                    sourceComponent: Component {
+                        SponsoredMessage {
+                            message: myMessage
+                            width: parent.width
+                        }
+                    }
                 }
 
                 Timer {
