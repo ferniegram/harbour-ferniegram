@@ -182,7 +182,7 @@ TDLibReceiver::TDLibReceiver(void *tdLibClient, QObject *parent) : QThread(paren
     handlers.insert("updateChatUnreadMentionCount", &TDLibReceiver::processUpdateChatUnreadMentionCount);
     handlers.insert("updateChatUnreadReactionCount", &TDLibReceiver::processUpdateChatUnreadReactionCount);
     handlers.insert("updateActiveEmojiReactions", &TDLibReceiver::processUpdateActiveEmojiReactions);
-    handlers.insert("messageProperties", &TDLibReceiver::processMessageProperties); // TdLib >= 1.8.45 (maybe even earlier)
+    handlers.insert("messageProperties", &TDLibReceiver::processMessageProperties); // TdLib >= 1.8.34
     handlers.insert("storageStatisticsFast", &TDLibReceiver::processStorageStatisticsFast);
     handlers.insert("storageStatistics", &TDLibReceiver::processStorageStatistics);
 }
