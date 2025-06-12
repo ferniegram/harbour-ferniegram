@@ -894,8 +894,10 @@ void ChatModel::insertMessages(const QList<MessageData*> newMessages)
         LOG("Inserting messages, last known ID:" << lastKnownId << ", first new ID:" << firstNewId);
         if (lastKnownId < firstNewId) {
             appendMessages(newMessages);
-        } else {
+        } else if (messages.first()->messageId > firstNewId) {
             prependMessages(newMessages);
+        } else {
+
         }
     }
 }
@@ -929,6 +931,27 @@ void ChatModel::prependMessages(const QList<MessageData*> newMessages)
         MessageData* message = newMessages.at(i);
         messages.insert(i, message);
         messageIndexMap.insert(message->messageId, i);
+    }
+    // The rest of the map has been damaged too
+    for (; i < totalCount; i++) {
+        messageIndexMap.insert(messages.at(i)->messageId, i);
+    }
+    endInsertRows();
+}
+
+void ChatModel::insertMessagesAt(const QList<MessageData*> newMessages, const int initialIndex) {
+    const int insertCount = newMessages.size();
+    const int totalCount = messages.size() + insertCount;
+    LOG("Prepending" << insertCount << "messages...");
+
+    beginInsertRows(QModelIndex(), initialIndex, initialIndex + insertCount - 1);
+    // Too bad there's no bulk insert
+    messages.reserve(totalCount);
+    int i;
+    for (i = 0; i < insertCount; i++) {
+        MessageData* message = newMessages.at(i);
+        messages.insert(initialIndex + i, message);
+        messageIndexMap.insert(message->messageId, initialIndex + i);
     }
     // The rest of the map has been damaged too
     for (; i < totalCount; i++) {

@@ -88,6 +88,7 @@ private:
     void insertMessages(const QList<MessageData*> newMessages);
     void appendMessages(const QList<MessageData*> newMessages);
     void prependMessages(const QList<MessageData*> newMessages);
+    void insertMessagesAt(const QList<MessageData*> newMessages, const int initialIndex);
     void updateAlbumMessages(qlonglong albumId, bool checkDeleted);
     void updateAlbumMessages(QList<qlonglong> albumIds, bool checkDeleted);
     void setMessagesAlbum(const QList<MessageData*> newMessages);
