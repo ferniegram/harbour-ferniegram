@@ -83,6 +83,8 @@ In case you want to use the same codebase which was used to compile the library 
 
 You'll find the compiled library in the directory `td/tdlib`. You might also need to copy the `td/tdlib/include` folder to the `tdlib/` folder in the root of this project
 
+It might be required to open projects panel in Qt Creator and replace `-GNinja` with `-GUnix Makefiles` in every build configuration and then select "Re-configure with initial parameters". This is a bug and will hopefully be fixed later.
+
 ### Github Action
 Warning: this section was not changed from the one in Fernschreiber. It may have outdated information which does not apply for Ferniegram.
 

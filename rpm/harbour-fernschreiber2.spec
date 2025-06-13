@@ -24,25 +24,25 @@ BuildRequires:  pkgconfig(Qt5Multimedia)
 BuildRequires:  pkgconfig(Qt5Positioning)
 BuildRequires:  pkgconfig(nemonotifications-qt5)
 BuildRequires:  pkgconfig(openssl)
+BuildRequires:  pkgconfig(zlib)
 BuildRequires:  gperf
 BuildRequires:  desktop-file-utils
+BuildRequires: cmake
 BuildRequires: make
 
 %description
-Ferniegram is a Telegram client for Sailfish OS
+%{summary}
 
 %prep
 %setup -q -n %{name}-%{version}
 
 %build
-
-%qmake5
-
+%cmake
 %make_build
 
 %install
 rm -rf %{buildroot}
-%qmake5_install
+%make_install
 
 desktop-file-install --delete-original       \
   --dir %{buildroot}%{_datadir}/applications             \
