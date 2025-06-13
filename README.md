@@ -83,7 +83,9 @@ In case you want to use the same codebase which was used to compile the library 
 
 You'll find the compiled library in the directory `td/tdlib`. You might also need to copy the `td/tdlib/include` folder to the `tdlib/` folder in the root of this project
 
-It might be required to open projects panel in Qt Creator and replace `-GNinja` with `-GUnix Makefiles` in every build configuration and then select "Re-configure with initial parameters". This is a bug and will hopefully be fixed later.
+Ferniegram is now built with CMake. Here are issues related to it which are not yet solved:
+- It might be required to open projects panel in Qt Creator and replace `-GNinja` with `-GUnix Makefiles` in every build cofiguration and then select "Re-configure with initial parameters". *(TODO: do this automatically)*
+- It is recommended to use `ccache` opening projects panel in Qt Creator, adding `-DCMAKE_CXX_COMPILER_LAUNCHER=ccache` initial CMake parameter to every build configuration and selecting "Re-configure with initial parameters". This will speed up the build process starting with the second build. *(TODO: do this automatically)*
 
 ### Github Action
 Warning: this section was not changed from the one in Fernschreiber. It may have outdated information which does not apply for Ferniegram.

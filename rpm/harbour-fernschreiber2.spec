@@ -29,6 +29,7 @@ BuildRequires:  gperf
 BuildRequires:  desktop-file-utils
 BuildRequires: cmake
 BuildRequires: make
+BuildRequires: ccache
 
 %description
 %{summary}
