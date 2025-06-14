@@ -23,15 +23,10 @@ import "../"
 import "../../js/twemoji.js" as Emoji
 
 MessageContentBase {
-    id: thisItem
+    id: stickerMessage
 
-    property var stickerData: messageListItem ? messageListItem.myMessage.content.sticker : overlayFlickable.overlayMessage.content.sticker;
-    readonly property bool asEmoji: appSettings.showStickersAsEmojis
-    readonly property bool animated: stickerData.format["@type"] === "stickerFormatTgs" && appSettings.animateStickers
-    readonly property bool stickerVisible: staticStickerLoader.item ? staticStickerLoader.item.visible :
-        animatedStickerLoader.item ? animatedStickerLoader.item.visible : false
-    readonly property bool isOwnSticker : messageListItem ? messageListItem.isOwnMessage : overlayFlickable.isOwnMessage
-    readonly property real aspectRatio: stickerData.width / stickerData.height
+    property var stickerData: messageListItem ? messageListItem.myMessage.content.sticker : overlayFlickable.overlayMessage.content.sticker
+    readonly property bool isOwnSticker: typeof messageListItem !== 'undefined' ? messageListItem.isOwnMessage : overlayFlickable.isOwnMessage
 
     implicitWidth: stickerData.width
     implicitHeight: stickerData.height
@@ -43,78 +38,20 @@ MessageContentBase {
         autoLoad: true
     }
 
-    Item {
-
-        width: Math.min( stickerData.width, parent.width )
-        height: width * aspectRatio
+    TDLibSticker {
+        width: Math.min(implicitWidth, parent.width)
         // (centered in image mode, text-like in sticker mode)
-        x: appSettings.showStickersAsImages ? (parent.width - width) / 2 :
-            isOwnSticker ? (parent.width - width) : 0
-        anchors.verticalCenter: parent.verticalCenter
-
-        Loader {
-            id: animatedStickerLoader
-            anchors.fill: parent
-            active: animated && !asEmoji
-            sourceComponent: Component {
-                AnimatedImage {
-                    id: animatedSticker
-                    anchors.fill: parent
-                    source: file.path
-                    asynchronous: true
-                    paused: !Qt.application.active
-                    cache: false
-                    layer.enabled: thisItem.highlighted
-                    layer.effect: PressEffect { source: animatedSticker }
-                }
-            }
+        anchors {
+            horizontalCenter: appSettings.showStickersAsImages ? parent.horizontalCenter : undefined
+            right: !appSettings.showStickersAsImages && isOwnSticker ? parent.right : undefined
+            verticalCenter: parent.verticalCenter
         }
 
-        Loader {
-            id: staticStickerLoader
-            anchors.fill: parent
-            active: !animated || asEmoji
-            sourceComponent: Component {
-                Image {
-                    id: staticSticker
-                    anchors.fill: parent
-                    source: asEmoji ? Emoji.getEmojiPath(stickerData.emoji) : file.path
-                    sourceSize {
-                        width: width
-                        height: height
-                    }
-                    fillMode: Image.PreserveAspectFit
-                    autoTransform: true
-                    asynchronous: true
-                    visible: opacity > 0
-                    opacity: status === Image.Ready ? 1 : 0
-                    Behavior on opacity { FadeAnimation {} }
-                    layer.enabled: thisItem.highlighted
-                    layer.effect: PressEffect { source: staticSticker }
-                }
-            }
-        }
-
-        Loader {
-            anchors.fill: parent
-            sourceComponent: Component {
-                BackgroundImage {}
-            }
-
-            active: opacity > 0
-            opacity: !stickerVisible && !placeHolderDelayTimer.running ? 0.15 : 0
-            Behavior on opacity { FadeAnimation {} }
-        }
+        stickerData: stickerMessage.stickerData
     }
 
     onClicked: {
         stickerSetOverlayLoader.stickerSetId = stickerData.set_id
         stickerSetOverlayLoader.active = true
-    }
-
-    Timer {
-        id: placeHolderDelayTimer
-        interval: 1000
-        running: true
     }
 }
