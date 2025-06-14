@@ -219,7 +219,7 @@ QString FernschreiberUtils::getMessageShortText(TDLibWrapper *tdLibWrapper, cons
     if (contentType == "messageExpiredVideoNote")
         return myself ? tr("sent a self-destructing video note that is expired", "myself") : tr("sent a self-destructing video note that is expired");
     
-        if (contentType == "messageScreenshotTaken") {
+    if (contentType == "messageScreenshotTaken") {
         return myself ? tr("created a screenshot in this chat", "myself") : tr("created a screenshot in this chat");
     }
     if (contentType == "messageGameScore") {
