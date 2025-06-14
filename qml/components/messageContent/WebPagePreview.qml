@@ -103,9 +103,15 @@ Item {
             case 'linkPreviewTypeApp':
             case 'linkPreviewTypeArticle':
             case 'linkPreviewTypeWebApp':
-
-            case 'linkPreviewTypeChat':
+            case 'linkPreviewTypeChat': // chatPhoto is compatible with photo
                 return photoComponent
+            case 'linkPreviewTypeVideo':
+                return linkPreviewData.type.cover ? videoCoverComponent
+                                                  : (linkPreviewData.type.video.thumbnail || linkPreviewData.type.video.minithumbnail
+                                                     ? videoThumbnailComponent : undefined)
+            case 'linkPreviewTypeSticker':
+            case 'linkPreviewTypeStickerSet': // not really compatible
+                return stickerComponent
             default: return undefined
             }
 
@@ -118,6 +124,37 @@ Item {
                     anchors.fill: parent
                     onClicked: pageStack.push(Qt.resolvedUrl("../../pages/ImagePage.qml"), {photoData: photo})
                 }
+            }
+        }
+
+        Component {
+            id: videoCoverComponent
+            TDLibPhoto {
+                anchors.fill: parent
+                photo: linkPreviewData.type.cover
+                // TODO: open video on click
+            }
+        }
+        Component {
+            id: videoThumbnailComponent
+            TDLibThumbnail {
+                width: parent.width //don't use anchors here for easier custom scaling
+                height: parent.height
+                highlighted: parent.highlighted
+                thumbnail: linkPreviewData.type.video.thumbnail
+                minithumbnail: linkPreviewData.type.video.minithumbnail
+
+                // TODO: open video on click
+            }
+        }
+
+        Component {
+            id: stickerComponent
+            TDLibSticker {
+                stickerData: linkPreviewData.type['@type'] === 'linkPreviewTypeStickerSet' ? linkPreviewData.type.stickers[0] : linkPreviewData.type.sticker
+                width: Math.min(implicitWidth, parent.width)
+                height: Math.min(implicitHeight, parent.height)
+                anchors.centerIn: parent
             }
         }
     }
