@@ -350,7 +350,7 @@ ListItem {
         messageDateText.text = getMessageStatusText(myMessage, messageIndex, chatView.lastReadSentIndex, messageDateText.useElapsed)
         updateMessageText()
         if (webPagePreviewLoader.item)
-            webPagePreviewLoader.item.webPageData = myMessage.content.web_page
+            webPagePreviewLoader.item.linkPreviewData = myMessage.content.link_preview
     }
 
     Timer {
@@ -366,7 +366,7 @@ ListItem {
                             "../components/messageContent/" + type.charAt(0).toUpperCase() + type.substring(1) + albumComponentPart + ".qml",
                             { messageListItem: messageListItem })
             } else
-                if (typeof myMessage.content.web_page !== "undefined") // only in messageText
+                if (typeof myMessage.content.link_preview !== "undefined") // only in messageText
                     webPagePreviewLoader.active = true
         }
     }
@@ -594,11 +594,11 @@ ListItem {
                     active: false
                     asynchronous: true
                     width: parent.width * getContentWidthMultiplier()
-                    height: (status === Loader.Ready) ? item.implicitHeight : myMessage.content.web_page ? precalculatedValues.webPagePreviewHeight : 0
+                    height: (status === Loader.Ready) ? item.implicitHeight : myMessage.content.link_preview ? precalculatedValues.webPagePreviewHeight : 0
 
                     sourceComponent: Component {
                         WebPagePreview {
-                            webPageData: myMessage.content.web_page
+                            linkPreviewData: myMessage.content.link_preview
                             width: parent.width
                             highlighted: messageListItem.highlighted
                         }

@@ -31,6 +31,7 @@ Label {
     wrapMode: Text.Wrap
     textFormat: Text.StyledText
     truncationMode: TruncationMode.Elide
+    visible: !!rawText
 
     // lineCount is unreliable for StyledText with images and line breaks
     readonly property int fontSize: font.pixelSize

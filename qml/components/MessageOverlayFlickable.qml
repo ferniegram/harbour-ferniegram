@@ -71,7 +71,7 @@ Flickable {
                             {
                                 overlayFlickable: messageOverlayFlickable
                             })
-            } else if(overlayMessage.content && overlayMessage.content.web_page) {
+            } else if(overlayMessage.content && overlayMessage.content.link_preview) {
                 overlayWebPagePreviewLoader.active = true;
             }
         }
@@ -170,7 +170,7 @@ Flickable {
                         overlayWebPagePreviewLoader.height = webPagePreview.implicitHeight;
                     }
 
-                    webPageData: overlayMessage.content.web_page
+                    linkPreviewData: overlayMessage.content.link_preview
                     largerFontSize: true
                     width: parent.width
                 }
