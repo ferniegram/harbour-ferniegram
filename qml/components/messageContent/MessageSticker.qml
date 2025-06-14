@@ -31,13 +31,6 @@ MessageContentBase {
     implicitWidth: stickerData.width
     implicitHeight: stickerData.height
 
-    TDLibFile {
-        id: file
-        tdlib: tdLibWrapper
-        fileInformation: stickerData.sticker
-        autoLoad: true
-    }
-
     TDLibSticker {
         width: Math.min(implicitWidth, parent.width)
         // (centered in image mode, text-like in sticker mode)

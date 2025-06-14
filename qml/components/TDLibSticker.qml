@@ -16,6 +16,13 @@ Item {
     implicitWidth: stickerData.width
     implicitHeight: width * aspectRatio
 
+    TDLibFile {
+        id: file
+        tdlib: tdLibWrapper
+        fileInformation: stickerData.sticker
+        autoLoad: true
+    }
+
     Loader {
         id: stickerLoader
         anchors.fill: parent
