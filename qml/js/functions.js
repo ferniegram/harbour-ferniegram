@@ -249,16 +249,20 @@ function getShortenedCount(count) {
     }
 }
 
+function formatDate(timestamp, formatType) {
+    return Silica.Format.formatDate(new Date(timestamp * 1000), formatType)
+}
+
 function getDateTimeElapsed(timestamp) {
-    return Silica.Format.formatDate(new Date(timestamp * 1000), Silica.Formatter.DurationElapsed);
+    return formatDate(timestamp, Silica.Formatter.DurationElapsed)
 }
 
 function getDateTimeTranslated(timestamp) {
-    return new Date(timestamp * 1000).toLocaleString();
+    return new Date(timestamp * 1000).toLocaleString()
 }
 
 function getDateTimeTimepoint(timestamp) {
-    return Silica.Format.formatDate(new Date(timestamp * 1000), Silica.Formatter.TimepointRelative);
+    return formatDate(timestamp, Silica.Formatter.Timepoint)
 }
 
 function handleHtmlEntity(messageText, messageInsertions, originalString, replacementString) {
