@@ -46,7 +46,6 @@ public:
     enum MessageTextType {
         Default,
         Simple,
-        VerySimple
     };
     Q_ENUM(MessageTextType)
 
