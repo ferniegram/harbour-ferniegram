@@ -430,10 +430,6 @@ QString FernschreiberUtils::getMessageText(const QVariantMap &message, const Mes
             : tr("sent an unsupported message: %1", "%1 is message type").arg(contentType.mid(7));
 }
 
-inline QString FernschreiberUtils::getMessageText(const QVariantMap &message, const bool simple, const bool ignoreEntities) {
-    return getMessageText(message, simple ? MessageTextType::Simple : MessageTextType::Default, ignoreEntities);
-}
-
 QString FernschreiberUtils::getUserName(const QVariantMap &userInformation)
 {
     const QString firstName = userInformation.value("first_name").toString();

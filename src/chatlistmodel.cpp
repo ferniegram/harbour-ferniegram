@@ -217,7 +217,7 @@ qlonglong ChatListModel::ChatData::senderMessageDate() const
 
 QString ChatListModel::ChatData::senderMessageText() const
 {
-    return fernschreiberUtils->getMessageText(lastMessage(), true);
+    return fernschreiberUtils->getMessageText(lastMessage(), FernschreiberUtils::Simple);
 }
 
 
