@@ -292,34 +292,34 @@ QString FernschreiberUtils::getMessageText(const QVariantMap &message, const boo
     if (contentType == MESSAGE_CONTENT_TYPE_ANIMATED_EMOJI)
         return simple ? messageContent.value(ANIMATED_EMOJI).toMap().value(STICKER).toMap().value(EMOJI).toString() : "";
     if (contentType == MESSAGE_CONTENT_TYPE_PHOTO) {
-        if (const QString caption = getCaption(tr("Picture: %1")); caption.isEmpty())
+        if (const QString caption = getCaption(tr("Picture: %1")); !caption.isEmpty())
             return caption;
         else return simple ? (myself ? tr("sent a picture", "myself") : tr("sent a picture")) : "";
     }
     if (contentType == MESSAGE_CONTENT_TYPE_VIDEO) {
-        if (const QString caption = getCaption(tr("Video: %1")); caption.isEmpty())
+        if (const QString caption = getCaption(tr("Video: %1")); !caption.isEmpty())
             return caption;
         else return simple ? (myself ? tr("sent a video", "myself") : tr("sent a video")) : "";
     }
     if (contentType == MESSAGE_CONTENT_TYPE_VIDEO_NOTE)
         return simple ? (myself ? tr("sent a video message", "myself") : tr("sent a video message")) : "";
     if (contentType == MESSAGE_CONTENT_TYPE_ANIMATION) {
-        if (const QString caption = getCaption(tr("Animation: %1")); caption.isEmpty())
+        if (const QString caption = getCaption(tr("Animation: %1")); !caption.isEmpty())
             return caption;
-        else return simple ? (myself ? tr("sent a animation", "myself") : tr("sent a animation")) : "";
+        else return simple ? (myself ? tr("sent an animation", "myself") : tr("sent an animation")) : "";
     }
     if (contentType == MESSAGE_CONTENT_TYPE_AUDIO) {
-        if (const QString caption = getCaption(tr("Audio: %1")); caption.isEmpty())
+        if (const QString caption = getCaption(tr("Audio: %1")); !caption.isEmpty())
             return caption;
         else return simple ? (myself ? tr("sent an audio", "myself") : tr("sent an audio")) : "";
     }
     if (contentType == MESSAGE_CONTENT_TYPE_VOICE_NOTE) {
-        if (const QString caption = getCaption(tr("Voice message: %1")); caption.isEmpty())
+        if (const QString caption = getCaption(tr("Voice message: %1")); !caption.isEmpty())
             return caption;
         else return simple ? (myself ? tr("sent a voice message", "myself") : tr("sent a voice message")) : "";
     }
     if (contentType == MESSAGE_CONTENT_TYPE_VOICE_NOTE) {
-        if (const QString caption = getCaption(tr("Document: %1")); caption.isEmpty())
+        if (const QString caption = getCaption(tr("Document: %1")); !caption.isEmpty())
             return caption;
         else return simple ? (myself ? tr("sent a document", "myself") : tr("sent a document")) : "";
     }
@@ -387,12 +387,18 @@ QString FernschreiberUtils::getMessageText(const QVariantMap &message, const boo
         return myself ? tr("sent a self-destructing photo that is expired", "myself") : tr("sent a self-destructing photo that is expired");
     if (contentType == "messageExpiredVideo")
         return myself ? tr("sent a self-destructing video that is expired", "myself") : tr("sent a self-destructing video that is expired");
+    if (contentType == "messageExpiredVoiceNote")
+        return myself ? tr("sent a self-destructing voice message that is expired", "myself") : tr("sent a self-destructing voice message that is expired");
+    if (contentType == "messageExpiredVideoNote")
+        return myself ? tr("sent a self-destructing video message that is expired", "myself") : tr("sent a self-destructing video message that is expired");
     if (contentType == "messageScreenshotTaken")
         return myself ? tr("created a screenshot in this chat", "myself") : tr("created a screenshot in this chat");
     if (contentType == "messageGame")
         return simple ? (myself ? tr("sent a game", "myself") : tr("sent a game")) : "";
-    if (contentType == "messageGameScore")
-        return myself ? tr("scored %Ln points", "myself", messageContent.value(SCORE).toInt()) : tr("scored %Ln points", "myself", messageContent.value(SCORE).toInt());
+    if (contentType == "messageGameScore") {
+        qint32 score = messageContent.value("score").toInt();
+        return myself ? tr("scored %Ln points", "myself", score) : tr("scored %Ln points", "", score);
+    }
     if (contentType == "messageUnsupported")
         return myself ? tr("sent an unsupported message", "myself") : tr("sent an unsupported message");
     if (contentType == "messageBotWriteAccessAllowed") {
@@ -407,17 +413,20 @@ QString FernschreiberUtils::getMessageText(const QVariantMap &message, const boo
         return tr("you allowed this bot to message you"); // botWriteAccessAllowReasonAcceptedRequest
     }
     if (contentType == "messageChatBoost")
-        return (myself ? tr("boosted this chat %Ln times", "myself") : tr("boosted this chat %Ln times")).arg(messageContent.value("boost_count").toInt());
+        return (myself ? tr("boosted this chat %Ln times", "myself") : tr("boosted this chat %Ln times"))
+                .arg(messageContent.value("boost_count").toInt());
     if (contentType == "messageGift")
         // TODO: make this only for simple and add an actual message for gift
         return myself ? tr("sent a gift", "myself") : tr("sent a gift");
     if (contentType == "messageGiveawayCreated")
         // TODO: same as for gift
         return myself ? tr("started a giveaway", "myself") : tr("started a giveaway");
+    if (contentType == "messageGiveawayCompleted")
+        return myself ? tr("a giveaway was completed", "myself") : tr("a giveaway was completed");
 
     return myself
-            ? tr("sent an unsupported message: %1", "myself; %1 is message type").arg(messageContent.value(_TYPE).toString().remove(0, 7))
-            : tr("sent an unsupported message: %1", "%1 is message type").arg(messageContent.value(_TYPE).toString().remove(0, 7));
+            ? tr("sent an unsupported message: %1", "myself; %1 is message type").arg(contentType.mid(7))
+            : tr("sent an unsupported message: %1", "%1 is message type").arg(contentType.mid(7));
 }
 
 QString FernschreiberUtils::getMessageShortText(const QVariantMap &messageContent, const bool isChannel, const QVariantMap &messageSender)
