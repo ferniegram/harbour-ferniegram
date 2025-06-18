@@ -76,48 +76,18 @@ Page {
             }
 
             SectionHeader { text: "Translating" }
-            TextField {
-                id: languageCodeField
-                width: parent.width
-                label: "Target language code"
-                text: "en"
-            }
-
             TextArea {
                 id: translateArea
                 width: parent.width
-                label: "Source text"
+                label: "Text to translate"
             }
-
             Button {
-                text: "Translate"
                 anchors.horizontalCenter: parent.horizontalCenter
-                onClicked: tdLibWrapper.translateText({'@type': 'formattedText', text: translateArea.text}, languageCodeField.text, -1)
-            }
-
-            ListItem {
-                width: parent.width
-                contentHeight: translatedLabel.height
-                Label {
-                    id: translatedLabel
-                    x: Theme.horizontalPageMargin
-                    width: parent.width - 2*x
-                    wrapMode: Text.Wrap
-                    text: "Translated text will be here..."
-
-                    Connections {
-                        target: tdLibWrapper
-                        onTranslationResultReceived:
-                            if (extraId == -1) translatedLabel.text = Functions.enhanceMessageText(formattedText)
-                    }
-                }
-
-                menu: Component { ContextMenu {
-                        MenuItem {
-                            text: "Copy"
-                            onClicked: Clipboard.text = translatedLabel.text
-                        }
-                    } }
+                text: qsTr("Translate")
+                onClicked: pageStack.push(Qt.resolvedUrl("TranslatePage.qml"), {
+                                              messageId: -1,
+                                              sourceText: fernschreiberUtils.makeDummyFormattedText(translateArea.text)
+                                          })
             }
         }
 
