@@ -590,7 +590,7 @@ ListItem {
                     }
                     horizontalAlignment: messageListItem.textAlign
                     linkColor: Theme.highlightColor
-                    visible: (text !== "")
+                    visible: !!text
                 }
 
                 Loader {
