@@ -84,6 +84,11 @@ Item {
         }
     }
 
+    MouseArea {
+        anchors.fill: infoColumn
+        onClicked: Functions.handleLink(linkPreviewData.url)
+    }
+
     Loader {
         id: mediaItem
         width: !sourceComponent ? 0 : linkPreviewData.show_large_media ? parent.width : Theme.iconSizeLarge
