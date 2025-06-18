@@ -21,6 +21,7 @@
 .import "debug.js" as Debug
 .import "twemoji.js" as Emoji
 .import Sailfish.Silica 1.0 as Silica
+.import WerkWolf.Fernschreiber 1.0 as Fernschreiber
 
 var tdLibWrapper, appNotification, stickerManager, createTdlibFile, fernschreiberUtils
 function setGlobals(globals) {
@@ -44,7 +45,7 @@ function getUserName(userInformation) {
 }
 
 function getMessageText(message, simple, currentUserId, ignoreEntities, asFormattedText, emojiSize) {
-    return fernschreiberUtils.getMessageText(message, simple, ignoreEntities)
+    return fernschreiberUtils.getMessageText(message, simple ? Fernschreiber.FernschreiberUtilities.Simple : Fernschreiber.FernschreiberUtilities.Default, ignoreEntities)
 }
 
 function getChatPartnerStatusText(statusType, was_online, asTimepoint) {
