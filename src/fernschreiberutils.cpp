@@ -443,7 +443,7 @@ QString FernschreiberUtils::getMessageText(const QVariantMap &message, const boo
 }
 
 QVariantMap FernschreiberUtils::getFormattedMessageText(const QVariantMap &message, const bool simple) {
-    const QVariant text = getMessageText(message, simple);
+    const QVariant text = getMaybeFormattedMessageText(message, simple);
     if (text.userType() == QMetaType::QString)
         return makeDummyFormattedText(text.toString());
     return text.toMap();
