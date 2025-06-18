@@ -18,7 +18,6 @@
 */
 
 #include "notificationmanager.h"
-#include "fernschreiberutils.h"
 #include "chatmodel.h"
 #include <sailfishapp.h>
 #include <QListIterator>
@@ -365,7 +364,7 @@ void NotificationManager::publishNotification(const NotificationGroup *notificat
             }
             notificationBody += fullName.trimmed() + ": ";
         }
-        notificationBody += fernschreiberUtils->getMessageText(messageMap, FernschreiberUtils::Simple);
+        notificationBody += fernschreiberUtils->getMessageText(messageMap, true);
     }
 
     const QString summary(chatInformation ? chatInformation->title : QString());

@@ -45,7 +45,7 @@ function getUserName(userInformation) {
 }
 
 function getMessageText(message, simple, currentUserId, ignoreEntities, asFormattedText, emojiSize) {
-    return fernschreiberUtils.getMessageText(message, simple ? Fernschreiber.FernschreiberUtilities.Simple : Fernschreiber.FernschreiberUtilities.Default, ignoreEntities)
+    return fernschreiberUtils.getMessageText(message, simple, ignoreEntities)
 }
 
 function getChatPartnerStatusText(statusType, was_online, asTimepoint) {

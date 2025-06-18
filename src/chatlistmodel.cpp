@@ -18,7 +18,6 @@
 */
 
 #include "chatlistmodel.h"
-#include "fernschreiberutils.h"
 #include <QListIterator>
 
 #define DEBUG_MODULE ChatListModel
@@ -217,7 +216,7 @@ qlonglong ChatListModel::ChatData::senderMessageDate() const
 
 QString ChatListModel::ChatData::senderMessageText() const
 {
-    return fernschreiberUtils->getMessageText(lastMessage(), FernschreiberUtils::Simple);
+    return fernschreiberUtils->getMessageText(lastMessage(), true);
 }
 
 

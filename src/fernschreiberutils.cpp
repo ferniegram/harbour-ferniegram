@@ -274,12 +274,11 @@ QString FernschreiberUtils::enhanceMessageText(const QVariantMap &formattedText,
     return messageText;
 }
 
-QVariant FernschreiberUtils::getMaybeFormattedMessageText(const QVariantMap &message, const MessageTextType type) {
+QVariant FernschreiberUtils::getMaybeFormattedMessageText(const QVariantMap &message, const bool simple) {
     const qlonglong messageSenderUserId = message.value(SENDER_ID).toMap().value(USER_ID).toLongLong();
     const QVariantMap messageContent = message.value(CONTENT).toMap();
     const QString contentType = messageContent.value(_TYPE).toString();
     const QString messageSenderType = message.value(SENDER_ID).toMap().value(_TYPE).toString();
-    const bool simple = type == MessageTextType::Simple;
 
     const bool myself = message.value(_TYPE).toString() != SPONSORED_MESSAGE
             && messageSenderType == MESSAGE_SENDER_USER
@@ -436,15 +435,15 @@ QVariant FernschreiberUtils::getMaybeFormattedMessageText(const QVariantMap &mes
             : tr("sent an unsupported message: %1", "%1 is message type").arg(contentType.mid(7));
 }
 
-QString FernschreiberUtils::getMessageText(const QVariantMap &message, const MessageTextType type, const bool ignoreEntities) {
-    const QVariant text = getMaybeFormattedMessageText(message, type);
+QString FernschreiberUtils::getMessageText(const QVariantMap &message, const bool simple, const bool ignoreEntities) {
+    const QVariant text = getMaybeFormattedMessageText(message, simple);
     if (text.userType() == QMetaType::QVariantMap)
         return enhanceMessageText(text.toMap(), ignoreEntities);
     return text.toString();
 }
 
-QVariantMap FernschreiberUtils::getFormattedMessageText(const QVariantMap &message, const MessageTextType type) {
-    const QVariant text = getMessageText(message, type);
+QVariantMap FernschreiberUtils::getFormattedMessageText(const QVariantMap &message, const bool simple) {
+    const QVariant text = getMessageText(message, simple);
     if (text.userType() == QMetaType::QString)
         return makeDummyFormattedText(text.toString());
     return text.toMap();
