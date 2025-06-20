@@ -1361,6 +1361,13 @@
     </message>
 </context>
 <context>
+    <name>MessageVideo</name>
+    <message>
+        <source>Error loading video! %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MessageVoiceNote</name>
     <message>
         <source>Voice Note</source>
@@ -1631,7 +1638,7 @@
     <name>PinnedMessageItem</name>
     <message>
         <source>You</source>
-        <translation>Sie</translation>
+        <translation type="unfinished">Sie</translation>
     </message>
     <message>
         <source>Pinned Message</source>

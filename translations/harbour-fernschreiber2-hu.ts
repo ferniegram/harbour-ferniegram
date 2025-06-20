@@ -1341,6 +1341,13 @@
     </message>
 </context>
 <context>
+    <name>MessageVideo</name>
+    <message>
+        <source>Error loading video! %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MessageVoiceNote</name>
     <message>
         <source>Voice Note</source>

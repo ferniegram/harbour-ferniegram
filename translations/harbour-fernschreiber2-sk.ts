@@ -273,7 +273,7 @@
     </message>
     <message>
         <source>You</source>
-        <translation>Ja</translation>
+        <translation type="unfinished">Ja</translation>
     </message>
     <message>
         <source>You don&apos;t have any groups in common with this user.</source>
@@ -1378,6 +1378,13 @@
         <source>via %1</source>
         <comment>message posted via bot user</comment>
         <translation>prostredníctvom %1</translation>
+    </message>
+</context>
+<context>
+    <name>MessageVideo</name>
+    <message>
+        <source>Error loading video! %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
