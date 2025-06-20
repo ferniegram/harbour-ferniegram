@@ -3,7 +3,7 @@ import Sailfish.Silica 1.0
 import WerkWolf.Fernschreiber 1.0
 import QtMultimedia 5.6
 import QtGraphicalEffects 1.0
-import "../../"
+import "../.."
 
 TDLibVideo {
     id: video
@@ -39,40 +39,32 @@ TDLibVideo {
         onClicked: page.overlayActive = !page.overlayActive
     }
 
-    RadialGradient { // white videos = invisible button. I can't tell since which SFOS version the opaque button is available, so:
-        id: buttonBg
-        anchors.centerIn: parent
-        width: Theme.itemSizeLarge; height: Theme.itemSizeLarge
-        property color baseColor: Theme.rgba(palette.overlayBackgroundColor, 0.2)
-
-        enabled: videoUI.active || !downloadingCompleted
-        opacity: enabled ? 1 : 0
-        Behavior on opacity { FadeAnimator {} }
-        gradient: Gradient {
-
-            GradientStop { position: 0.0; color: buttonBg.baseColor }
-            GradientStop { position: 0.3; color: buttonBg.baseColor }
-            GradientStop { position: 0.5; color: 'transparent' }
-        }
-
-        IconButton {
-            anchors.fill: parent
-            icon.source: "image://theme/icon-l-"+(video.isPlaying || video.shouldPlay ? 'pause' : 'play')+"?" + (pressed
-                         ? Theme.highlightColor
-                         : Theme.lightPrimaryColor)
-            onClicked: {
-                toggle()
-                if (video.isPlaying) delayedOverlayHide.start()
+    Timer {
+        id: delayedOverlayHide
+        interval: 500
+        onTriggered: {
+            if(video.isPlaying) {
+                page.overlayActive = false
             }
         }
     }
+    onPlaying: delayedOverlayHide.start()
+
+    OpaqueButton {
+        anchors.centerIn: parent
+        enabled: videoUI.active || !downloadingCompleted
+        opacity: enabled ? 1 : 0
+        Behavior on opacity { FadeAnimator {} }
+
+        icon.source: "image://theme/icon-l-"+(video.isPlaying || video.shouldPlay ? 'pause' : 'play')
+        onClicked: toggle()
+    }
 
     ProgressCircle {
-        property bool active: file.isDownloadingActive
-        opacity: active ? 1 : 0
+        opacity: file.isDownloadingActive ? 1 : 0
         Behavior on opacity { FadeAnimator {} }
         anchors.centerIn: parent
-        value: file.progress
+        value: file.isDownloadingCompleted ? 1 : (file.downloadedSize / file.size)
     }
     Item {
         id: videoUI
@@ -149,7 +141,7 @@ TDLibVideo {
                 bottom: parent.bottom
                 bottomMargin: Theme.itemSizeMedium
             }
-            valueText: value > 0 || down ? Format.formatDuration((value)/1000, Formatter.Duration) : ''
+            valueText: value > 0 || down ? Format.formatDuration(value/1000) : ''
             leftMargin: Theme.horizontalPageMargin
             rightMargin: Theme.horizontalPageMargin
             onDownChanged: {
@@ -167,21 +159,11 @@ TDLibVideo {
                 }
                 font.pixelSize: Theme.fontSizeExtraSmall
                 text: file.isDownloadingCompleted
-                      ? Format.formatDuration((parent.maximumValue - parent.value)/1000, Formatter.Duration)
+                      ? Format.formatDuration((parent.maximumValue - parent.value)/1000)
                       : (video.videoData.duration
                         ? Format.formatDuration(video.videoData.duration, Formatter.Duration) + ', '
                         : '') + Format.formatFileSize(file.size || file.expectedSize)
                 color: Theme.secondaryColor
-            }
-        }
-
-        Timer {
-            id: delayedOverlayHide
-            interval: 500
-            onTriggered: {
-                if(video.isPlaying) {
-                    page.overlayActive = false
-                }
             }
         }
     }
