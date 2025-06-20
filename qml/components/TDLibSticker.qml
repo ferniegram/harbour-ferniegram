@@ -26,7 +26,6 @@ Item {
     Loader {
         id: stickerLoader
         anchors.fill: parent
-        active: !animated || asEmoji
         sourceComponent: !animated || asEmoji ? staticComponent : animatedComponent
 
         Component {
