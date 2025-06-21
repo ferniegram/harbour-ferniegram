@@ -1,5 +1,6 @@
 import QtQuick 2.6
 import Sailfish.Silica 1.0
+import QtMultimedia 5.6
 import WerkWolf.Fernschreiber 1.0
 import "../js/twemoji.js" as Emoji
 
@@ -26,7 +27,13 @@ Item {
     Loader {
         id: stickerLoader
         anchors.fill: parent
-        sourceComponent: !animated || asEmoji ? staticComponent : animatedComponent
+        sourceComponent: stickerData.format["@type"] === "stickerFormatWebm" ? videoComponent
+                                                                             : (!animated || asEmoji ? staticComponent : animatedComponent)
+
+        function reload() {
+            active = false
+            active = true
+        }
 
         Component {
             id: staticComponent
@@ -61,6 +68,46 @@ Item {
                 layer.enabled: sticker.highlighted
                 layer.effect: PressEffect { source: animatedSticker }
             }
+        }
+
+        Component {
+            id: videoComponent
+            Item{}
+            /*Video {
+                id: video
+                anchors.fill: parent
+
+                source: file.path
+                Component.onCompleted: play()
+                //autoPlay: true
+
+                /*onStatusChanged: if (status == MediaPlayer.EndOfMedia)
+                                     parent.reload()
+*/
+                /*Connections {
+                    target: Qt.application
+                    onActiveChanged: if (!Qt.application.active) video.pause()
+                                     else video.play()
+                }*\/
+
+                layer.enabled: sticker.highlighted
+                layer.effect: PressEffect { source: video }
+//                Component.onCompleted: console.log("Hello ther")
+                //Component.onDestruction: video.stop()
+            }*/
+        }
+    }
+
+    Video {
+        id: vid
+        anchors.fill: parent
+        visible: stickerData.format["@type"] === "stickerFormatWebm"
+        source: visible ? file.path : ''
+        //autoPlay: true
+        Timer {
+            interval: 50
+            running: true
+            onTriggered: vid.play()
         }
     }
 
