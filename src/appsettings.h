@@ -49,6 +49,7 @@ class AppSettings : public QObject {
     Q_PROPERTY(bool superCompactMessageMenu READ superCompactMessageMenu WRITE setSuperCompactMessageMenu NOTIFY superCompactMessageMenuChanged)
     Q_PROPERTY(qreal voiceNoteVolume READ voiceNoteVolume WRITE setVoiceNoteVolume NOTIFY voiceNoteVolumeChanged)
     Q_PROPERTY(bool showTranslateOption READ showTranslateOption WRITE setShowTranslateOption NOTIFY showTranslateOptionChanged)
+    Q_PROPERTY(bool formattedTranslate READ formattedTranslate WRITE setFormattedTranslate NOTIFY formattedTranslateChanged)
     Q_PROPERTY(bool videoStickers READ videoStickers WRITE setVideoStickers NOTIFY videoStickersChanged)
 public:
     enum SponsoredMess {
@@ -143,6 +144,9 @@ public:
     bool showTranslateOption() const;
     void setShowTranslateOption(bool value);
 
+    bool formattedTranslate() const;
+    void setFormattedTranslate(bool value);
+
     bool videoStickers() const;
     void setVideoStickers(bool value);
 
@@ -173,6 +177,7 @@ signals:
     void voiceNoteVolumeChanged();
     void showTranslateOptionChanged();
     void videoStickersChanged();
+    void formattedTranslateChanged();
 
 private:
     QSettings settings;

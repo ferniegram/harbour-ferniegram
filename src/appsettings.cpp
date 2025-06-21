@@ -46,6 +46,7 @@ namespace {
     const QString KEY_SUPER_COMPACT_MESSAGE_MENU("superCompactMessageMenu");
     const QString KEY_VOICE_NOTE_VOLUME("voiceNoteVolumne");
     const QString SHOW_TRANSLATE_OPTION("showTranslateOption");
+    const QString FORMATTED_TRANSLATE("formattedTranslate");
     const QString VIDEO_STICKERS("videoStickers");
 }
 
@@ -402,5 +403,16 @@ void AppSettings::setVideoStickers(bool value) {
         LOG(VIDEO_STICKERS << value);
         settings.setValue(VIDEO_STICKERS, value);
         emit videoStickersChanged();
+    }
+}
+
+bool AppSettings::formattedTranslate() const {
+    return settings.value(FORMATTED_TRANSLATE).toBool();
+}
+void AppSettings::setFormattedTranslate(bool value) {
+    if (formattedTranslate() != value) {
+        LOG(FORMATTED_TRANSLATE << value);
+        settings.setValue(FORMATTED_TRANSLATE, value);
+        emit formattedTranslateChanged();
     }
 }

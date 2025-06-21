@@ -16,13 +16,21 @@ Page {
     property string translated
 
     property string language: {
-        var l = Qt.locale().name.slice(0, 2)
+        var l = Qt.locale().name.slice(0, 2) // for locales like ru_RU and en_US
         if (supportedLanguages.indexOf(l) != -1) return l
         return "en"
     }
 
+    /*
+        How does appSettings.formattedTranslate work:
+        1. Instead of putting formatted text with entities, we put HTML text to translateText function
+        2. When receiving translated version, we don't escape HTML tag characters when running fernschreiberUtils.enhanceMessageText().
+    */
+
     function checkMessage() {
-        if (message) sourceText = fernschreiberUtils.getFormattedMessageText(message)
+        if (message) sourceText = appSettings.formattedTranslate
+                     ? fernschreiberUtils.makeDummyFormattedText(fernschreiberUtils.getMessageText(message))
+                     : fernschreiberUtils.getFormattedMessageText(message)
     }
     function translate() {
         translating = true
@@ -43,7 +51,7 @@ Page {
     Connections {
         target: tdLibWrapper
         onTranslationResultReceived: if (extraId == messageId) {
-                                         translated = Emoji.emojify(Functions.enhanceMessageText(formattedText))
+                                         translated = Emoji.emojify(fernschreiberUtils.enhanceMessageText(formattedText, false, !appSettings.formattedTranslate))
                                          translating = false
                                      }
     }
@@ -138,7 +146,9 @@ Page {
                 wrapMode: Text.Wrap
                 font.pixelSize: Theme.fontSizeMedium
                 textFormat: Text.StyledText
+                linkColor: Theme.highlightColor
                 text: translated
+                onLinkActivated: Functions.handleLink(link)
             }
         }
     }
