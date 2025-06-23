@@ -218,55 +218,58 @@ ListItem {
                 FancyMenuRow {
                     // NOTE: In places like this we should generally use `enabled` instead of `visible` so people can rely on spatial memory.
                     // See `compactContextMenuComponent`
-                    FancyMenuIcon {
+                    IconRowMenuItem {
                         icon.source: "image://theme/icon-m-select-all"
                         onClicked: page.toggleMessageSelection(myMessage)
                     }
-                    FancyMenuIcon {
+                    IconRowMenuItem {
                         visible: appSettings.showTranslateOption
                         enabled: !!messageText.text
                         icon.source: "image://theme/icon-m-region"
                         onClicked: translate()
                     }
-                    FancyMenuIcon {
+                    IconRowMenuItem {
                         icon.source: "image://theme/icon-m-clipboard"
                         onClicked: copyMessageToClipboard()
                     }
-                    FancyMenuIcon {
-                        enabled: !!messageProperties.can_be_pinned // FIXME: should we use enabled or visible here? for spatial memory
+                    IconRowMenuItem {
+                        visible: !!messageProperties.can_be_pinned // FIXME: should we use enabled or visible here? for spatial memory
                         icon.source: "../../images/icon-m-" + (myMessage.is_pinned ? 'un' : '') + "pin.svg"
                         onClicked: togglePinned()
                     }
                 }
                 FancyMenuRow {
-                    property bool useShortText: visibleChildren.length > 1 && Screen.sizeCategory >= Screen.Large
-                    FancyAloneMenuItem {
+                    checkShort: function (ratio) { return Screen.sizeCategory <= Screen.Large && ratio > 1 }
+                    IconTextRowMenuItem {
                         visible: messageProperties.can_be_forwarded
                         icon.source: "image://theme/icon-m-message-forward"
-                        text: parent.useShortText ? qsTr("Forward", 'Short version for "Forward Message"') : qsTr("Forward Message")
+                        shortText: qsTr("Forward", 'Short version for "Forward Message"')
+                        longText: qsTr("Forward Message")
                         onClicked: forwardMessage()
                     }
-                    FancyAloneMenuItem {
+                    IconTextRowMenuItem {
                         visible: canReplyToMessage
-                        Component.onCompleted: console.log(canReplyToMessage)
                         icon.source: "image://theme/icon-m-message-reply"
-                        text: parent.useShortText ? qsTr("Reply", 'Short version for "Reply to Message"') : qsTr("Reply to Message")
+                        shortText: qsTr("Reply", 'Short version for "Reply to Message"')
+                        longText: qsTr("Reply to Message")
                         onClicked: replyToMessage()
                     }
                 }
                 FancyMenuRow {
                     visible: !appSettings.superCompactMessageMenu
-                    property bool useShortText: visibleChildren.length > 1 && Screen.sizeCategory >= Screen.Large
-                    FancyIconMenuItem {
+                    checkShort: function (ratio, size) { return Screen.sizeCategory <= Screen.Large && ratio > 1 }
+                    IconTextRowMenuItem {
                         visible: canDeleteMessage
                         icon.source: "image://theme/icon-m-delete"
-                        text: parent.useShortText ? qsTr("Delete", 'Short version for "Delete Message"') : qsTr("Delete Message")
+                        shortText: qsTr("Delete", 'Short version for "Delete Message"')
+                        longText: qsTr("Delete Message")
                         onClicked: deleteMessage()
                     }
-                    FancyIconMenuItem {
+                    IconTextRowMenuItem {
                         visible: !!messageProperties.can_be_edited
                         icon.source: "image://theme/icon-m-edit"
-                        text: parent.useShortText ? qsTr("Edit", 'Short version for "Edit Message"') : qsTr("Edit Message")
+                        shortText: qsTr("Edit", 'Short version for "Edit Message"')
+                        longText: qsTr("Edit Message")
                         onClicked: editMessage()
                     }
                 }
@@ -283,75 +286,46 @@ ListItem {
                     // See `contextMenuComponent` (the top row)
 
                     // in general, FIXME: should this be simply removed?
-                    FancyMenuIcon {
+                    IconRowMenuItem {
                         enabled: appSettings.superCompactMessageMenu && canDeleteMessage
                         icon.source: "image://theme/icon-m-delete"
                         onClicked: deleteMessage()
                     }
-                    FancyMenuIcon {
+                    IconRowMenuItem {
                         icon.source: "image://theme/icon-m-select-all"
                         onClicked: page.toggleMessageSelection(myMessage)
                     }
-                    FancyMenuIcon {
+                    IconRowMenuItem {
                         enabled: !!messageProperties.can_be_pinned
                         icon.source: "../../images/icon-m-" + (myMessage.is_pinned ? 'un' : '') + "pin.svg"
                         onClicked: togglePinned()
                     }
 
-                    FancyMenuIcon {
+                    IconRowMenuItem {
                         enabled: canReplyToMessage
                         icon.source: "image://theme/icon-m-message-reply"
                         onClicked: replyToMessage()
                     }
-                    FancyMenuIcon {
+                    IconRowMenuItem {
                         enabled: !!messageProperties.can_be_edited
                         icon.source: "image://theme/icon-m-edit"
                         onClicked: editMessage()
                     }
 
-                    FancyMenuIcon {
+                    IconRowMenuItem {
                         enabled: messageProperties.can_be_forwarded
                         icon.source: "image://theme/icon-m-message-forward"
                         onClicked: forwardMessage()
                     }
-                    FancyMenuIcon {
+                    IconRowMenuItem {
                         icon.source: "image://theme/icon-m-clipboard"
                         onClicked: copyMessageToClipboard()
                     }
-                    FancyMenuIcon {
+                    IconRowMenuItem {
                         visible: appSettings.showTranslateOption
                         enabled: !!messageText.text
                         icon.source: "image://theme/icon-m-region"
                         onClicked: translate()
-                    }
-
-                }
-                FancyMenuRow {
-                    FancyMenuIcon {
-                        icon.source: "image://theme/icon-m-message-forward"
-                        onClicked: forwardMessage()
-                    }
-                    FancyAloneMenuItem {
-                        visible: canReplyToMessage
-                        icon.source: "image://theme/icon-m-message-reply"
-                        text: qsTr("Reply to Message")
-                        onClicked: replyToMessage()
-                    }
-                }
-                FancyMenuRow {
-                    visible: !appSettings.superCompactMessageMenu
-                    property bool useShortText: visibleChildren.length > 1 && Screen.sizeCategory >= Screen.Large
-                    FancyIconMenuItem {
-                        visible: canDeleteMessage
-                        icon.source: "image://theme/icon-m-delete"
-                        text: useShortText ? qsTr("Delete", 'Short version for "Delete message"') : qsTr("Delete Message")
-                        onClicked: deleteMessage()
-                    }
-                    FancyIconMenuItem {
-                        visible: !!messageProperties.can_be_edited
-                        icon.source: "image://theme/icon-m-edit"
-                        text: useShortText ? qsTr("Edit", 'Short version for "Edit message"') : qsTr("Edit Message")
-                        onClicked: editMessage()
                     }
                 }
             }
