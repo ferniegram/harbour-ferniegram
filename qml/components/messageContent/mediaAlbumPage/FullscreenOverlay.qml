@@ -22,6 +22,7 @@ import WerkWolf.Fernschreiber 1.0
 import Sailfish.Silica 1.0
 import "../../../js/functions.js" as Functions
 import "../../../js/twemoji.js" as Emoji
+import "../.."
 
 
 Item {
@@ -255,6 +256,12 @@ Item {
         }
         // Progress is already displayed on play button
     }
+
+    MessagePropertiesLoader {
+        id: propertiesLoader
+        message: overlay.message
+    }
+
     Row {
         id: buttons
         height: Theme.itemSizeSmall
@@ -289,7 +296,7 @@ Item {
         }
 
         IconButton {
-            enabled: message.properties.can_be_forwarded
+            enabled: propertiesLoader.properties.can_be_forwarded
             opacity: enabled ? 1.0 : 0.2
             icon.source: "image://theme/icon-m-share?" + (pressed
                       ? Theme.highlightColor
