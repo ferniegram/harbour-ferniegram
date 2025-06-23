@@ -24,22 +24,32 @@ Row {
 
     spacing: 0
 
-    property Item contextMenu: parent.parent // FancyContextMenu
-    property bool isPulley: contextMenu && (typeof contextMenu._isPullDownMenu !== 'undefined')
+    property var checkIconOnly: function() { return false }
+    property var checkShort: function() { return false }
 
-    // the x position we need to track
-    property real xPos
-    // calculated item width, equally divided
-    property real itemWidth
+    function _checkIconOnly(size) { return checkIconOnly(sizedCount / size, size) }
+    function _checkShort(size) { return checkShort(sizedCount / size, size) }
+
+    property Item menu: parent.parent // FancyContextMenu/FancyPullDownMenu
+    property bool isPulley: menu && (typeof menu._isPullDownMenu !== 'undefined')
+    property real xPos: width / 2 // the x position we need to track
+
+    property int count: visibleChildren.length
+    property real sizedCount
+    property real itemWidth // calculated item width, equally divided
+
+    // these get fed from ContextMenu/PullDownMenu
+    property bool down
+    property bool highlighted
+    property bool _invertColors
 
     signal clicked
     signal earlyClick
     signal delayedClick
 
-    // these get fed from ContextMenu
-    property bool down
-    property bool highlighted
-    property bool _invertColors
+    // Pulley menus don't feed the down property
+    // we still do this to items inside the row just in case
+    property bool selected: isPulley ? highlighted : down
 
     // magic needed so jolla's contextmenu recognizes the Row as a menuitem
     property int __silica_menuitem
@@ -47,33 +57,57 @@ Row {
     // current highlighted item
     property Item _highlightedItem
 
+    property bool enabled: !_highlightedItem || _highlightedItem.enabled // makes the menu know if the item is enabled (only makes visual improvemenyd)
+
     function updateHighlightbarFor(item) {
-        contextMenu._highlightBar.x = item ? item.x : parent.x
-        contextMenu._highlightBar.width = item && item.enabled ? item.width : 0
+        menu._highlightBar.x = item ? item.x : parent.x
+        menu._highlightBar.width = item && item.enabled ? item.width : 0
     }
 
     function resetHighlightbar() {
-        contextMenu._highlightBar.x = parent.x // or simply 0? pulleyMenu/*(parent here)*/.x breaks landscape in FancyPullDownMenu
-        contextMenu._highlightBar.width = contextMenu.width
+        menu._highlightBar.x = 0 //parent.x // or simply 0? pulleyMenu/*(parent here)*/.x breaks landscape in FancyPullDownMenu
+        menu._highlightBar.width = menu.width
+    }
+
+    function resetXPos() {
+        xPos = width / 2
     }
 
     function calculateItemWidth() {
-        var count = menuRow.visibleChildren.length;
-        itemWidth = count > 0 ? width/count : width
-        width -= (count-1) * spacing
+        var count = menuRow.visibleChildren.length
+        if (count === 0) {
+            itemWidth = width
+            return
+        }
+
+        var _sizedCount = 0
+        for (var i=0; i<count; i++)
+            _sizedCount += menuRow.visibleChildren[i].size
+        sizedCount = _sizedCount
+
+        itemWidth = (width - (count-1) * spacing) / sizedCount
     }
+
+    // TODO: pulley menus: shared XPos when switching stuff
 
     // first xpos change event is received _after_ we receive the events from
     // the contextmenu, so this is for initialising xpos in those cases.
     function updateXPosFromMenu() {
-        if (contextMenu.listItem/* && settings.commentsTapToHide*/) { // if listItem is set, events are produced relative listItem
-            xPos = contextMenu._contentColumn.mapFromItem(contextMenu.listItem, contextMenu.listItem.mouseX, contextMenu.listItem.mouseY).x
+        if (isPulley) return // TODO
+
+        if (menu.listItem/* && settings.commentsTapToHide*/) { // if listItem is set, events are produced relative listItem
+            xPos = menu._contentColumn.mapFromItem(menu.listItem, menu.listItem.mouseX, menu.listItem.mouseY).x
         } else {
-            xPos = contextMenu._contentColumn.mapFromItem(contextMenu, contextMenu.mouseX, contextMenu.mouseY).x
+            xPos = menu._contentColumn.mapFromItem(menu, menu.mouseX, menu.mouseY).x
         }
     }
 
     onXPosChanged: {
+        if (!selected) return
+
+        if (xPos < 0) xPos = 0
+        if (xPos > width) xPos = width
+
         var item = childAt(xPos, 0);
         if (item !== _highlightedItem) {
             if (_highlightedItem)
@@ -85,8 +119,8 @@ Row {
         }
     }
 
-    onDownChanged: {
-        if (down) {
+    onSelectedChanged: {
+        if (selected) {
             updateXPosFromMenu();
             var item = childAt(xPos, 0);
             updateHighlightbarFor(item);
@@ -94,6 +128,7 @@ Row {
             if (_highlightedItem)
                 _highlightedItem.down = true
         } else {
+            resetXPos()
             resetHighlightbar();
             if (_highlightedItem)
                 _highlightedItem.down = false
@@ -113,14 +148,7 @@ Row {
     Binding {
         target: menuRow
         property: "width"
-        value: contextMenu.width
-    }
-
-    Binding {
-        target: menuRow
-        property: 'down'
-        value: menuRow.highlighted
-        when: isPulley
+        value: menu.width
     }
 
     onWidthChanged: calculateItemWidth()

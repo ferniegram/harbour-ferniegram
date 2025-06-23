@@ -47,7 +47,6 @@ ListItem {
         return existingMessage.id === messageId
     })
     readonly property bool isOwnMessage: page.myUserId === myMessage.sender_id.user_id
-    readonly property bool canEdit: !!messageProperties.can_be_edited
     readonly property bool canDeleteMessage: !!messageProperties.can_be_deleted_for_all_users || (!!messageProperties.can_be_deleted_only_for_self && myMessage.chat_id === page.myUserId)
     property bool hasContentComponent
     property bool additionalOptionsOpened
@@ -75,6 +74,22 @@ ListItem {
 
     function copyMessageToClipboard() {
         Clipboard.text = Functions.getMessageText(myMessage, true, userInformation.id, true)
+    }
+
+    function translate() {
+        pageStack.push(Qt.resolvedUrl("../pages/TranslatePage.qml"), {
+                           messageId: messageId,
+                           message: myMessage,
+                       })
+    }
+
+    function togglePinned() {
+        if (myMessage.is_pinned)
+            Remorse.popupAction(page, qsTr("Message unpinned"), function() {
+                tdLibWrapper.unpinMessage(chatId, messageId)
+                pinnedMessageItem.requestCloseMessage()
+            })
+        else tdLibWrapper.pinMessage(chatId, messageId)
     }
 
     function openContextMenu() {
@@ -194,12 +209,82 @@ ListItem {
                 messageListItem.openMenu()
             }
         }
-        sourceComponent: Component {
+        sourceComponent: appSettings.superCompactMessageMenu ? compactContextMenuComponent : contextMenuComponent
+
+        Component {
+            id: contextMenuComponent
             FancyContextMenu {
                 listItem: messageListItem
                 FancyMenuRow {
+                    // NOTE: In places like this we should generally use `enabled` instead of `visible` so people can rely on spatial memory.
+                    // See `compactContextMenuComponent`
                     FancyMenuIcon {
-                        visible: appSettings.superCompactMessageMenu && canDeleteMessage
+                        icon.source: "image://theme/icon-m-select-all"
+                        onClicked: page.toggleMessageSelection(myMessage)
+                    }
+                    FancyMenuIcon {
+                        visible: appSettings.showTranslateOption
+                        enabled: !!messageText.text
+                        icon.source: "image://theme/icon-m-region"
+                        onClicked: translate()
+                    }
+                    FancyMenuIcon {
+                        icon.source: "image://theme/icon-m-clipboard"
+                        onClicked: copyMessageToClipboard()
+                    }
+                    FancyMenuIcon {
+                        enabled: !!messageProperties.can_be_pinned // FIXME: should we use enabled or visible here? for spatial memory
+                        icon.source: "../../images/icon-m-" + (myMessage.is_pinned ? 'un' : '') + "pin.svg"
+                        onClicked: togglePinned()
+                    }
+                }
+                FancyMenuRow {
+                    property bool useShortText: visibleChildren.length > 1 && Screen.sizeCategory >= Screen.Large
+                    FancyAloneMenuItem {
+                        visible: messageProperties.can_be_forwarded
+                        icon.source: "image://theme/icon-m-message-forward"
+                        text: parent.useShortText ? qsTr("Forward", 'Short version for "Forward Message"') : qsTr("Forward Message")
+                        onClicked: forwardMessage()
+                    }
+                    FancyAloneMenuItem {
+                        visible: canReplyToMessage
+                        Component.onCompleted: console.log(canReplyToMessage)
+                        icon.source: "image://theme/icon-m-message-reply"
+                        text: parent.useShortText ? qsTr("Reply", 'Short version for "Reply to Message"') : qsTr("Reply to Message")
+                        onClicked: replyToMessage()
+                    }
+                }
+                FancyMenuRow {
+                    visible: !appSettings.superCompactMessageMenu
+                    property bool useShortText: visibleChildren.length > 1 && Screen.sizeCategory >= Screen.Large
+                    FancyIconMenuItem {
+                        visible: canDeleteMessage
+                        icon.source: "image://theme/icon-m-delete"
+                        text: parent.useShortText ? qsTr("Delete", 'Short version for "Delete Message"') : qsTr("Delete Message")
+                        onClicked: deleteMessage()
+                    }
+                    FancyIconMenuItem {
+                        visible: !!messageProperties.can_be_edited
+                        icon.source: "image://theme/icon-m-edit"
+                        text: parent.useShortText ? qsTr("Edit", 'Short version for "Edit Message"') : qsTr("Edit Message")
+                        onClicked: editMessage()
+                    }
+                }
+            }
+        }
+
+        Component {
+            id: compactContextMenuComponent
+            FancyContextMenu {
+                listItem: messageListItem
+                FancyMenuRow {
+                    // NOTE: We should generally use `enabled` instead of `visible` in places like this so people can rely spatial memory.
+                    // Things which can be disabled in settings should use `visible` because that is not changed that often and instead waste space.
+                    // See `contextMenuComponent` (the top row)
+
+                    // in general, FIXME: should this be simply removed?
+                    FancyMenuIcon {
+                        enabled: appSettings.superCompactMessageMenu && canDeleteMessage
                         icon.source: "image://theme/icon-m-delete"
                         onClicked: deleteMessage()
                     }
@@ -208,6 +293,24 @@ ListItem {
                         onClicked: page.toggleMessageSelection(myMessage)
                     }
                     FancyMenuIcon {
+                        enabled: !!messageProperties.can_be_pinned
+                        icon.source: "../../images/icon-m-" + (myMessage.is_pinned ? 'un' : '') + "pin.svg"
+                        onClicked: togglePinned()
+                    }
+
+                    FancyMenuIcon {
+                        enabled: canReplyToMessage
+                        icon.source: "image://theme/icon-m-message-reply"
+                        onClicked: replyToMessage()
+                    }
+                    FancyMenuIcon {
+                        enabled: !!messageProperties.can_be_edited
+                        icon.source: "image://theme/icon-m-edit"
+                        onClicked: editMessage()
+                    }
+
+                    FancyMenuIcon {
+                        enabled: messageProperties.can_be_forwarded
                         icon.source: "image://theme/icon-m-message-forward"
                         onClicked: forwardMessage()
                     }
@@ -216,51 +319,47 @@ ListItem {
                         onClicked: copyMessageToClipboard()
                     }
                     FancyMenuIcon {
-                        visible: appSettings.superCompactMessageMenu && canEdit
-                        icon.source: "image://theme/icon-m-edit"
-                        onClicked: editMessage()
+                        visible: appSettings.showTranslateOption
+                        enabled: !!messageText.text
+                        icon.source: "image://theme/icon-m-region"
+                        onClicked: translate()
                     }
+
+                }
+                FancyMenuRow {
                     FancyMenuIcon {
-                        visible: appSettings.superCompactMessageMenu && canReplyToMessage
+                        icon.source: "image://theme/icon-m-message-forward"
+                        onClicked: forwardMessage()
+                    }
+                    FancyAloneMenuItem {
+                        visible: canReplyToMessage
                         icon.source: "image://theme/icon-m-message-reply"
+                        text: qsTr("Reply to Message")
                         onClicked: replyToMessage()
                     }
                 }
-                FancyAloneMenuItem {
-                    visible: !appSettings.superCompactMessageMenu && canReplyToMessage
-                    icon.source: "image://theme/icon-m-message-reply"
-                    text: qsTr("Reply to Message")
-                    onClicked: replyToMessage()
-                }
                 FancyMenuRow {
                     visible: !appSettings.superCompactMessageMenu
+                    property bool useShortText: visibleChildren.length > 1 && Screen.sizeCategory >= Screen.Large
                     FancyIconMenuItem {
                         visible: canDeleteMessage
                         icon.source: "image://theme/icon-m-delete"
-                        text: parent.visibleChildren.length > 1 ? qsTr("Delete", "message") : qsTr("Delete Message")
+                        text: useShortText ? qsTr("Delete", 'Short version for "Delete message"') : qsTr("Delete Message")
                         onClicked: deleteMessage()
                     }
                     FancyIconMenuItem {
-                        visible: canEdit
+                        visible: !!messageProperties.can_be_edited
                         icon.source: "image://theme/icon-m-edit"
-                        text: parent.visibleChildren.length > 1 ? qsTr("Edit", "message") : qsTr("Edit Message")
+                        text: useShortText ? qsTr("Edit", 'Short version for "Edit message"') : qsTr("Edit Message")
                         onClicked: editMessage()
                     }
-                }
-                FancyAloneMenuItem {
-                    visible: appSettings.showTranslateOption && !!messageText.text
-                    text: qsTr("Translate")
-                    onClicked: pageStack.push(Qt.resolvedUrl("../pages/TranslatePage.qml"), {
-                                                  messageId: messageId,
-                                                  message: myMessage,
-                                              })
                 }
             }
         }
     }
 
     // Just in case we will need them back
-    property bool __otherTranslations: qsTr("Copy Message to Clipboard") + qsTr("Select Message") + qsTr("Forward Message") + qsTr("More Options...")
+    property bool __otherTranslations: qsTr("Copy Message to Clipboard") + qsTr("Select Message") + qsTr("More Options...") + qsTr("Unpin Message") + qsTr("Pin Message")
 
     function updateIsUnread() {
         messageBackground.isUnread = messageIndex > chatModel.getLastReadMessageIndex() && myMessage['@type'] !== "sponsoredMessage"

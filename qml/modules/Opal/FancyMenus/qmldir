@@ -4,9 +4,10 @@ module Opal.FancyMenus
 # SPDX-FileCopyrightText: 2024 roundedrectangle
 # SPDX-License-Identifier: GPL-3.0-or-later
 FancyContextMenu 1.0 FancyContextMenu.qml
-FancyAloneMenuItem 1.0 FancyAloneMenuItem.qml
-FancyIconMenuItem 1.0 FancyIconMenuItem.qml
-FancyMenuIcon 1.0 FancyMenuIcon.qml
 FancyMenuItem 1.0 FancyMenuItem.qml
+IconTextRowMenuItem 1.0 IconTextRowMenuItem.qml
+IconRowMenuItem 1.0 IconRowMenuItem.qml
+RowMenuItem 1.0 RowMenuItem.qml
 FancyMenuRow 1.0 FancyMenuRow.qml
 FancyPullDownMenu 1.0 FancyPullDownMenu.qml
+FancyPushUpMenu 1.0 FancyPushUpMenu.qml

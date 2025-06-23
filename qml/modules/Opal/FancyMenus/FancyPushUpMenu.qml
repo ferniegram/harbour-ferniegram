@@ -2,7 +2,7 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 import 'private/Util.js' as Util
 
-PullDownMenu {
+PushUpMenu {
     id: pulleyMenu
     property Item _highlightBar
     property real _oldContentX
@@ -43,7 +43,7 @@ PullDownMenu {
         onMovementEnded:  _oldContentX = 0
 
         onContentYChanged: {
-            if (flickable.contentY - _finalPosition < 0) { // < -1.0
+            if (flickable.contentY - _finalPosition > 0) { // > 1.0
                 flickable.contentY = _finalPosition
                 flickable.contentItem.opacity = 1
             }

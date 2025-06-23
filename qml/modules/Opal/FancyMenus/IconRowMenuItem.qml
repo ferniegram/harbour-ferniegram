@@ -6,10 +6,13 @@ Item {
     signal clicked
     property alias icon: icon
 
-    width: parent.itemWidth
+    property real size: 1
+    width: parent.itemWidth * size
     height: Theme.itemSizeSmall//icon.height
+
     Icon {
         id: icon
+        opacity: parent.enabled ? 1.0 : Theme.opacityLow
         anchors.centerIn: parent
     }
 
