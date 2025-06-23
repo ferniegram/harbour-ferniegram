@@ -190,6 +190,7 @@ ListItem {
             id: propertiesLoader
             chatId: messageListItem.chatId
             messageId: messageListItem.messageId
+            autoLoad: false
         }
         property alias messageProperties: propertiesLoader.properties
         readonly property bool canDeleteMessage: !!messageProperties.can_be_deleted_for_all_users || (!!messageProperties.can_be_deleted_only_for_self && myMessage.chat_id === page.myUserId)

@@ -2,8 +2,11 @@ import QtQuick 2.0
 
 QtObject {
     id: loader
-    property var chatId
-    property var messageId
+    property var message: ({})
+    // we use var in MessageListViewItem instead of int, so
+    property var chatId: message.chat_id
+    property var messageId: message.id
+    property bool autoLoad: true
 
     property var properties: ({stub: true})
 
@@ -24,4 +27,6 @@ QtObject {
     function reset() {
         properties = {stub: true}
     }
+
+    Component.onCompleted: if (autoLoad) load()
 }
