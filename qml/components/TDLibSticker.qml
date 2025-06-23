@@ -10,9 +10,11 @@ Item {
     property var stickerData
 
     property bool asEmoji: appSettings.showStickersAsEmojis
+    readonly property bool useThumbnail: !appSettings.videoStickers && stickerData.format['@type'] === 'stickerFormatWebm'
     readonly property bool animated: stickerData.format["@type"] === "stickerFormatTgs" && appSettings.animateStickers
     readonly property bool stickerVisible: !!(stickerLoader.item && stickerLoader.item.visible)
     property real aspectRatio: stickerData.width / stickerData.height
+    Component.onCompleted: console.log(stickerData.thumbnail)
 
     implicitWidth: stickerData.width
     implicitHeight: width * aspectRatio
@@ -20,15 +22,23 @@ Item {
     TDLibFile {
         id: file
         tdlib: tdLibWrapper
-        fileInformation: stickerData.sticker
+        // in this implementation video (MPEG4) thumbnails are not supported, but they don't seem to appear in stickers
+        fileInformation: useThumbnail ? stickerData.thumbnail.file : stickerData.sticker
         autoLoad: true
     }
 
     Loader {
         id: stickerLoader
         anchors.fill: parent
-        sourceComponent: stickerData.format["@type"] === "stickerFormatWebm" ? (appSettings.videoStickers ? videoComponent : undefined)
-                                                                             : (!animated || asEmoji ? staticComponent : animatedComponent)
+        sourceComponent: {
+            if (asEmoji) return staticComponent
+
+            if (stickerData.format['@type'] === 'stickerFormatWebm' && appSettings.videoStickers)
+                return videoComponent
+            if (animated) return animatedComponent
+
+            return staticComponent
+        }
 
         Component {
             id: staticComponent
@@ -56,7 +66,7 @@ Item {
             AnimatedImage {
                 id: animatedSticker
                 anchors.fill: parent
-                source: file.path
+                source: stickerData.thumbnail
                 asynchronous: true
                 paused: !Qt.application.active
                 cache: false
