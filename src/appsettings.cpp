@@ -27,6 +27,7 @@ namespace {
     const QString KEY_SHOW_STICKERS_AS_EMOJIS("showStickersAsEmojis");
     const QString KEY_SHOW_STICKERS_AS_IMAGES("showStickersAsImages");
     const QString KEY_ANIMATE_STICKERS("animateStickers");
+    const QString VIDEO_STICKERS("videoStickers");
     const QString KEY_NOTIFICATION_TURNS_DISPLAY_ON("notificationTurnsDisplayOn");
     const QString KEY_NOTIFICATION_SOUNDS_ENABLED("notificationSoundsEnabled");
     const QString KEY_NOTIFICATION_SUPPRESS_ENABLED("notificationSuppressContent");
@@ -47,7 +48,6 @@ namespace {
     const QString KEY_VOICE_NOTE_VOLUME("voiceNoteVolumne");
     const QString SHOW_TRANSLATE_OPTION("showTranslateOption");
     const QString FORMATTED_TRANSLATE("formattedTranslate");
-    const QString VIDEO_STICKERS("videoStickers");
 }
 
 AppSettings::AppSettings(QObject *parent) : QObject(parent), settings(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/io.github.roundedrectangle/fernschreiber2/settings.conf", QSettings::NativeFormat)
@@ -112,7 +112,7 @@ void AppSettings::setShowStickersAsEmojis(bool showAsEmojis)
 
 bool AppSettings::showStickersAsImages() const
 {
-    return settings.value(KEY_SHOW_STICKERS_AS_IMAGES, true).toBool();
+    return settings.value(KEY_SHOW_STICKERS_AS_IMAGES, false).toBool();
 }
 
 void AppSettings::setShowStickersAsImages(bool showAsImages)
@@ -135,6 +135,17 @@ void AppSettings::setAnimateStickers(bool animate)
         LOG(KEY_ANIMATE_STICKERS << animate);
         settings.setValue(KEY_ANIMATE_STICKERS, animate);
         emit animateStickersChanged();
+    }
+}
+
+bool AppSettings::videoStickers() const {
+    return settings.value(VIDEO_STICKERS, true).toBool();
+}
+void AppSettings::setVideoStickers(bool value) {
+    if (videoStickers() != value) {
+        LOG(VIDEO_STICKERS << value);
+        settings.setValue(VIDEO_STICKERS, value);
+        emit videoStickersChanged();
     }
 }
 
@@ -392,17 +403,6 @@ void AppSettings::setShowTranslateOption(bool value) {
         LOG(SHOW_TRANSLATE_OPTION << value);
         settings.setValue(SHOW_TRANSLATE_OPTION, value);
         emit showTranslateOptionChanged();
-    }
-}
-
-bool AppSettings::videoStickers() const {
-    return settings.value(VIDEO_STICKERS).toBool();
-}
-void AppSettings::setVideoStickers(bool value) {
-    if (videoStickers() != value) {
-        LOG(VIDEO_STICKERS << value);
-        settings.setValue(VIDEO_STICKERS, value);
-        emit videoStickersChanged();
     }
 }
 
