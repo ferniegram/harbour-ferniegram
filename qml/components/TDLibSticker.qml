@@ -11,7 +11,7 @@ Item {
 
     property bool asEmoji: appSettings.showStickersAsEmojis
     readonly property bool useThumbnail: !appSettings.videoStickers && stickerData.format['@type'] === 'stickerFormatWebm'
-    readonly property bool animated: stickerData.format["@type"] === "stickerFormatTgs" && appSettings.animateStickers
+    readonly property bool animated: appSettings.animateStickers && stickerData.format["@type"] === "stickerFormatTgs"
     readonly property bool stickerVisible: !!(stickerLoader.item && stickerLoader.item.visible)
     property real aspectRatio: stickerData.width / stickerData.height
     Component.onCompleted: console.log(stickerData.thumbnail)
@@ -66,7 +66,7 @@ Item {
             AnimatedImage {
                 id: animatedSticker
                 anchors.fill: parent
-                source: stickerData.thumbnail
+                source: file.path
                 asynchronous: true
                 paused: !Qt.application.active
                 cache: false
