@@ -186,36 +186,23 @@ ListItem {
         active: false
         asynchronous: true
 
-        property var messageProperties: ({stub: true})
-        property bool messagePropertiesLoading
-        Connections {
-            target: tdLibWrapper
-            onMessagePropertiesReceived: if (messageListItem.messageId === messageId) {
-                                             contextMenuLoader.messageProperties = messageProperties
-                                             contextMenuLoader.messagePropertiesLoading = false
-                                         }
+        MessagePropertiesLoader {
+            id: propertiesLoader
+            chatId: messageListItem.chatId
+            messageId: messageListItem.messageId
         }
-
-        function loadProperties() {
-            if (messagePropertiesLoading || !messageProperties.stub) return
-            tdLibWrapper.getMessageProperties(messageListItem.chatId, messageListItem.messageId)
-            messagePropertiesLoading = true
-        }
-        function resetProperties() {
-            messageProperties = {stub: true}
-        }
-
+        property alias messageProperties: propertiesLoader.properties
         readonly property bool canDeleteMessage: !!messageProperties.can_be_deleted_for_all_users || (!!messageProperties.can_be_deleted_only_for_self && myMessage.chat_id === page.myUserId)
 
         onStatusChanged: {
             if (status == Loader.Loading || status == Loader.Ready)
-                loadProperties()
+                propertiesLoader.load()
 
             if(status === Loader.Ready) {
                 messageListItem.menu = item
                 messageListItem.openMenu()
             } else if (status != Loader.Loading)
-                resetProperties()
+                propertiesLoader.reset()
         }
 
         sourceComponent: appSettings.superCompactMessageMenu ? compactContextMenuComponent : contextMenuComponent
@@ -224,8 +211,8 @@ ListItem {
             id: contextMenuComponent
             FancyContextMenu {
                 listItem: messageListItem
-                onActiveChanged: if (active) contextMenuLoader.loadProperties()
-                onClosed: contextMenuLoader.resetProperties() // closed is called at end of animation, and active is set to false at the start, so we use closed() for tracking close and active for tracking open
+                onActiveChanged: if (active) propertiesLoader.load()
+                onClosed: propertiesLoader.reset() // closed is called at end of animation, and active is set to false at the start, so we use closed() for tracking close and active for tracking open
                 FancyMenuRow {
                     // NOTE: In places like this we should generally use `enabled` instead of `visible` so people can rely on spatial memory.
                     // See `compactContextMenuComponent`
@@ -291,8 +278,8 @@ ListItem {
             id: compactContextMenuComponent
             FancyContextMenu {
                 listItem: messageListItem
-                onActiveChanged: if (active) contextMenuLoader.loadProperties()
-                onClosed: contextMenuLoader.resetProperties()
+                onActiveChanged: if (active) propertiesLoader.load()
+                onClosed: propertiesLoader.reset()
                 FancyMenuRow {
                     // NOTE: We should generally use `enabled` instead of `visible` in places like this so people can rely spatial memory.
                     // Things which can be disabled in settings should use `visible` because that is not changed that often and instead waste space.
