@@ -38,11 +38,11 @@ Page {
     property var chatInformation
     property var secretChatDetails
     property alias chatPicture: chatPictureThumbnail.photoData
-    property bool isPrivateChat: false
-    property bool isSecretChat: false
+    property bool isPrivateChat: chatInformation.type['@type'] === "chatTypePrivate"
+    property bool isSecretChat: chatInformation.type['@type'] === "chatTypeSecret"
     property bool isSecretChatReady: false
-    property bool isBasicGroup: false
-    property bool isSuperGroup: false
+    property bool isBasicGroup: chatInformation.type['@type'] === "chatTypeBasicGroup"
+    property bool isSuperGroup: chatInformation.type['@type'] === "chatTypeSupergroup"
     property bool isChannel: false
     property bool isDeletedUser: false
     property bool containsSponsoredMessages: false
@@ -145,42 +145,6 @@ Page {
             else chatStatusText.text = qsTr("%1 members", "", chatGroupInformation.member_count).arg(Functions.getShortenedCount(chatGroupInformation.member_count))
         }
         joinLeaveChatMenuItem.text = chatPage.userIsMember ? qsTr("Leave Chat") : qsTr("Join Chat")
-    }
-
-    function initializePage() {
-        Debug.log("[ChatPage] Initializing chat page...")
-        chatView.currentIndex = -1
-        chatView.lastReadSentIndex = -1
-        var chatType = chatInformation.type['@type']
-        isPrivateChat = chatType === "chatTypePrivate"
-        isSecretChat = chatType === "chatTypeSecret"
-        isBasicGroup = ( chatType === "chatTypeBasicGroup" )
-        isSuperGroup = ( chatType === "chatTypeSupergroup" )
-        if (isPrivateChat || isSecretChat) {
-            chatPartnerInformation = tdLibWrapper.getUserInformation(chatInformation.type.user_id)
-            updateChatPartnerStatusText()
-            if (isSecretChat)
-                tdLibWrapper.getSecretChat(chatInformation.type.secret_chat_id)
-            if(chatPartnerInformation.type["@type"] === "userTypeBot")
-                tdLibWrapper.getUserFullInfo(chatPartnerInformation.id)
-        }
-        else if (isBasicGroup) {
-            chatGroupInformation = tdLibWrapper.getBasicGroup(chatInformation.type.basic_group_id)
-            updateGroupStatusText()
-        }
-        else if (isSuperGroup) {
-            chatGroupInformation = tdLibWrapper.getSuperGroup(chatInformation.type.supergroup_id)
-            isChannel = chatGroupInformation.is_channel
-            updateGroupStatusText()
-        }
-        if (stickerManager.needsReload()) {
-            Debug.log("[ChatPage] Recent stickers will be reloaded!")
-            tdLibWrapper.getRecentStickers()
-            stickerManager.setNeedsReload(false)
-        }
-        tdLibWrapper.getChatPinnedMessage(chatInformation.id)
-        tdLibWrapper.toggleChatIsMarkedAsUnread(chatInformation.id, false)
-        availableReactions = tdLibWrapper.getChatReactions(chatInformation.id)
     }
 
     function getMessageStatusText(message, listItemIndex, lastReadSentIndex, useElapsed) {
@@ -388,7 +352,7 @@ Page {
         if(initialRun) {
             chatPage.messageIdToScrollTo = messageId
         }
-        if (chatPage.messageIdToScrollTo && chatPage.messageIdToScrollTo != "") {
+        if (chatPage.messageIdToScrollTo) {
             var index = chatModel.getMessageIndex(chatPage.messageIdToScrollTo)
             var proxyIndex = chatProxyModel.mapRowFromSource(index, -1)
             if(proxyIndex !== -1) {
@@ -410,10 +374,8 @@ Page {
         onTriggered: {
             if(chatPage.loading)
                 forwardMessagesTimer.start()
-            else {
-                var forwardedToSecretChat = chatInformation.type["@type"] === "chatTypeSecret"
-                tdLibWrapper.forwardMessages(chatInformation.id, fromChatId, messageIds, forwardedToSecretChat, false)
-            }
+            else
+                tdLibWrapper.forwardMessages(chatInformation.id, fromChatId, messageIds, isSecretChat /* forwardedToSecretChat */, false)
         }
     }
 
@@ -428,8 +390,36 @@ Page {
         }
     }
 
-    Component.onCompleted:
-        initializePage()
+    Component.onCompleted: {
+        Debug.log("[ChatPage] Initializing chat page...")
+        chatView.currentIndex = -1
+        chatView.lastReadSentIndex = -1
+        if (isPrivateChat || isSecretChat) {
+            chatPartnerInformation = tdLibWrapper.getUserInformation(chatInformation.type.user_id)
+            updateChatPartnerStatusText()
+            if (isSecretChat)
+                tdLibWrapper.getSecretChat(chatInformation.type.secret_chat_id)
+            if(chatPartnerInformation.type["@type"] === "userTypeBot")
+                tdLibWrapper.getUserFullInfo(chatPartnerInformation.id)
+        }
+        else if (isBasicGroup) {
+            chatGroupInformation = tdLibWrapper.getBasicGroup(chatInformation.type.basic_group_id)
+            updateGroupStatusText()
+        }
+        else if (isSuperGroup) {
+            chatGroupInformation = tdLibWrapper.getSuperGroup(chatInformation.type.supergroup_id)
+            isChannel = chatGroupInformation.is_channel
+            updateGroupStatusText()
+        }
+        if (stickerManager.needsReload()) {
+            Debug.log("[ChatPage] Recent stickers will be reloaded!")
+            tdLibWrapper.getRecentStickers()
+            stickerManager.setNeedsReload(false)
+        }
+        tdLibWrapper.getChatPinnedMessage(chatInformation.id)
+        tdLibWrapper.toggleChatIsMarkedAsUnread(chatInformation.id, false)
+        availableReactions = tdLibWrapper.getChatReactions(chatInformation.id)
+    }
 
     Component.onDestruction: {
         if (chatPage.canSendMessages && !chatPage.isDeletedUser)
