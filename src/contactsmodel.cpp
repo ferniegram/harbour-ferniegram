@@ -41,8 +41,7 @@ ContactsModel::ContactsModel(TDLibWrapper *tdLibWrapper, QObject *parent)
     connect(this->tdLibWrapper, SIGNAL(usersReceived(QString, QVariantList, int)), this, SLOT(handleUsersReceived(QString, QVariantList, int)));
 }
 
-QHash<int, QByteArray> ContactsModel::roleNames() const
-{
+QHash<int, QByteArray> ContactsModel::roleNames() const {
     QHash<int,QByteArray> roles;
     roles.insert(ContactRole::RoleDisplay, "display");
     roles.insert(ContactRole::RoleTitle, "title");
@@ -55,15 +54,13 @@ QHash<int, QByteArray> ContactsModel::roleNames() const
     return roles;
 }
 
-int ContactsModel::rowCount(const QModelIndex &) const
-{
-    return this->contacts.size();
+int ContactsModel::rowCount(const QModelIndex &) const {
+    return this->contactIds.size();
 }
 
-QVariant ContactsModel::data(const QModelIndex &index, int role) const
-{
+QVariant ContactsModel::data(const QModelIndex &index, int role) const {
     if (index.isValid()) {
-        QVariantMap requestedContact = contacts.value(index.row()).toMap();
+        QVariantMap requestedContact = this->tdLibWrapper->getUserInformation(this->contactIds.value(index.row()));
         switch (static_cast<ContactRole>(role)) {
             case ContactRole::RoleDisplay: return requestedContact;
             case ContactRole::RoleTitle: return QString(requestedContact.value("first_name").toString() + " " + requestedContact.value("last_name").toString()).trimmed();
@@ -83,24 +80,25 @@ void ContactsModel::handleUsersReceived(const QString &extra, const QVariantList
     if (extra == "contactsRequested") {
         LOG("Received contacts list..." << totalUsers);
         this->contactIds.clear();
-        QListIterator<QVariant> userIdIterator(userIds);
-        while (userIdIterator.hasNext()) {
-            QString nextUserId = userIdIterator.next().toString();
-            if (!this->tdLibWrapper->hasUserInformation(nextUserId)) {
-                this->tdLibWrapper->getUserFullInfo(nextUserId);
+        for (const QVariant &userIdVariant : userIds) {
+            const QString userId = userIdVariant.toString();
+            if (!this->tdLibWrapper->hasUserInformation(userId)) {
+                this->tdLibWrapper->getUserFullInfo(userId);
             }
-            this->contactIds.append(nextUserId);
+            this->contactIds.append(userId);
         }
+        std::sort(this->contactIds.begin(), this->contactIds.end(),
+                  [this](const QString &a, const QString &b) { return compareUsers(a, b); }
+        );
     }
 }
 
-static bool compareUsers(const QVariant &user1, const QVariant &user2)
-{
-    const QVariantMap userMap1 = user1.toMap();
-    const QVariantMap userMap2 = user2.toMap();
+bool ContactsModel::compareUsers(const QString &userId1, const QString &userId2) {
+    const QVariantMap user1 = this->tdLibWrapper->getUserInformation(userId1);
+    const QVariantMap user2 = this->tdLibWrapper->getUserInformation(userId2);
 
-    const QString lastName1 = userMap1.value(LAST_NAME).toString();
-    const QString lastName2 = userMap2.value(LAST_NAME).toString();
+    const QString lastName1 = user1.value(LAST_NAME).toString();
+    const QString lastName2 = user2.value(LAST_NAME).toString();
     if (!lastName1.isEmpty()) {
         if (lastName1 < lastName2) {
             return true;
@@ -109,35 +107,21 @@ static bool compareUsers(const QVariant &user1, const QVariant &user2)
         }
     }
 
-    const QString firstName1 = userMap1.value(FIRST_NAME).toString();
-    const QString firstName2 = userMap2.value(FIRST_NAME).toString();
+    const QString firstName1 = user1.value(FIRST_NAME).toString();
+    const QString firstName2 = user2.value(FIRST_NAME).toString();
     if (firstName1 < firstName2) {
         return true;
     } else if (firstName1 > firstName2) {
         return false;
     }
-    const QString userName1 = userMap1.value(USERNAME).toString();
-    const QString userName2 = userMap2.value(USERNAME).toString();
+    const QString userName1 = user1.value(USERNAME).toString();
+    const QString userName2 = user2.value(USERNAME).toString();
     if (userName1 < userName2) {
         return true;
     } else if (userName1 > userName2) {
         return false;
     }
-    return userMap1.value(ID).toLongLong() < userMap2.value(ID).toLongLong();
-}
-
-void ContactsModel::hydrateContacts()
-{
-    LOG("Hydrating contacts...");
-    this->contacts.clear();
-    QListIterator<QString> userIdIterator(contactIds);
-    while (userIdIterator.hasNext()) {
-        QString nextUserId = userIdIterator.next();
-        LOG("Hydrating contact:" << nextUserId);
-        this->contacts.append(this->tdLibWrapper->getUserInformation(nextUserId));
-    }
-    LOG("Hydrated contacts:" << this->contacts.size());
-    std::sort(this->contacts.begin(), this->contacts.end(), compareUsers);
+    return user1.value(ID).toLongLong() < user2.value(ID).toLongLong();
 }
 
 void ContactsModel::startImportingContacts()
@@ -158,7 +142,7 @@ void ContactsModel::importContact(const QVariantMap &singlePerson)
     QString firstName = singlePerson.value("firstName").toString();
     QVariantList phoneNumbers = singlePerson.value("phoneNumbers").toList();
     if (!firstName.isEmpty() && !phoneNumbers.isEmpty()) {
-        for (QVariant phoneNumber : phoneNumbers) {
+        for (const QVariant &phoneNumber : phoneNumbers) {
             QVariantMap singleContact;
             singleContact.insert("first_name", firstName);
             singleContact.insert("last_name", singlePerson.value("lastName").toString());

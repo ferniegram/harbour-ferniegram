@@ -47,7 +47,6 @@ public:
     virtual int rowCount(const QModelIndex &) const override;
     virtual QVariant data(const QModelIndex &index, int role) const override;
 
-    Q_INVOKABLE void hydrateContacts();
     Q_INVOKABLE void startImportingContacts();
     Q_INVOKABLE void stopImportingContacts();
     Q_INVOKABLE void importContact(const QVariantMap &singlePerson);
@@ -57,10 +56,11 @@ public slots:
 
 private:
     TDLibWrapper *tdLibWrapper;
-    QVariantList contacts;
     QList<QString> contactIds;
     QString filter;
     QVariantList deviceContacts;
+
+    bool compareUsers(const QString &userId1, const QString &userId2);
 };
 
 #endif // CONTACTSMODEL_H

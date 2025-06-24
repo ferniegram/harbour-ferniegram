@@ -36,22 +36,19 @@ Page {
     }
 
     function reloadContacts() {
-        contactsModel.hydrateContacts();
-        contactsListView.model = contactsProxyModel;
-        newChatPage.isLoading = false;
+        contactsListView.model = contactsProxyModel
+        newChatPage.isLoading = false
     }
 
     onStatusChanged: {
-        if (status === PageStatus.Active) {
-            reloadContacts();
-        }
+        if (status === PageStatus.Active) reloadContacts()
     }
 
     Connections {
         target: tdLibWrapper
         onContactsImported: {
-            reloadContacts();
-            appNotification.show(qsTr("Contacts successfully synchronized with Telegram."));
+            reloadContacts()
+            appNotification.show(qsTr("Contacts successfully synchronized with Telegram."))
         }
     }
 
@@ -80,8 +77,8 @@ Page {
             visible: newChatPage.syncSupported
             MenuItem {
                 onClicked: {
-                    newChatPage.isLoading = true;
-                    contactSyncLoader.item.synchronize();
+                    newChatPage.isLoading = true
+                    contactSyncLoader.item.synchronize()
                     // Success message is not fired before TDLib returned "Contacts imported" (see above)
                 }
                 text: qsTr("Synchronize Contacts with Telegram")
