@@ -228,6 +228,7 @@ public:
     Q_INVOKABLE void getSecretChat(qlonglong secretChatId);
     Q_INVOKABLE void closeSecretChat(qlonglong secretChatId);
     Q_INVOKABLE void importContacts(const QVariantList &contacts);
+    Q_INVOKABLE void addContact(const QString &phone, const QString &firstName, const QString &lastName, qlonglong userId, bool sharePhoneNumber);
     Q_INVOKABLE void searchChatMessages(qlonglong chatId, const QString &query, qlonglong fromMessageId = 0);
     Q_INVOKABLE void searchPublicChats(const QString &query);
     Q_INVOKABLE void readAllChatMentions(qlonglong chatId);

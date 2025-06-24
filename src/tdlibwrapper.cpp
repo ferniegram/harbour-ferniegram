@@ -43,6 +43,7 @@ namespace {
     const QString STATUS("status");
     const QString ID("id");
     const QString CHAT_ID("chat_id");
+    const QString USER_ID("user_id");
     const QString MESSAGE_ID("message_id");
     const QString TYPE("type");
     const QString LAST_NAME("last_name");
@@ -69,6 +70,8 @@ namespace {
     const QString TYPE_INPUT_MESSAGE_REPLY_TO_MESSAGE("inputMessageReplyToMessage");
     const QString TEXT("text");
     const QString TRANSLATION("translation");
+    const QString CONTACT("contact");
+    const QString PHONE_NUMBER("phone_number");
     const QStringList ALL_FILE_TYPES(QStringList()
                                      << "fileTypeAnimation"
                                      << "fileTypeAudio"
@@ -266,7 +269,7 @@ void TDLibWrapper::setAuthenticationPhoneNumber(const QString &phoneNumber)
     LOG("Set authentication phone number " << phoneNumber);
     QVariantMap requestObject;
     requestObject.insert(_TYPE, "setAuthenticationPhoneNumber");
-    requestObject.insert("phone_number", phoneNumber);
+    requestObject.insert(PHONE_NUMBER, phoneNumber);
     QVariantMap phoneNumberSettings;
     phoneNumberSettings.insert("allow_flash_call", false);
     phoneNumberSettings.insert("is_current_phone_number", true);
@@ -504,7 +507,7 @@ void TDLibWrapper::sendTextMessage(qlonglong chatId, const QString &message, qlo
             entity.insert("length", replacementPlainText.length());
             QVariantMap entityType;
             entityType.insert(_TYPE, "textEntityTypeMentionName");
-            entityType.insert("user_id", nextReplacement.value("userId").toString());
+            entityType.insert(USER_ID, nextReplacement.value("userId").toString());
             entity.insert(TYPE, entityType);
             entities.append(entity);
             offsetCorrection += replacementLength - replacementPlainText.length();
@@ -896,7 +899,7 @@ void TDLibWrapper::getUserFullInfo(const QString &userId)
     QVariantMap requestObject;
     requestObject.insert(_TYPE, "getUserFullInfo");
     requestObject.insert(_EXTRA, userId);
-    requestObject.insert("user_id", userId);
+    requestObject.insert(USER_ID, userId);
     this->sendRequest(requestObject);
 }
 
@@ -905,7 +908,7 @@ void TDLibWrapper::createPrivateChat(const QString &userId, const QString &extra
     LOG("Creating Private Chat");
     QVariantMap requestObject;
     requestObject.insert(_TYPE, "createPrivateChat");
-    requestObject.insert("user_id", userId);
+    requestObject.insert(USER_ID, userId);
     requestObject.insert(_EXTRA, extra); //"openDirectly"/"openAndSendStartToBot:[optional parameter]" gets matched in qml
     this->sendRequest(requestObject);
 }
@@ -915,7 +918,7 @@ void TDLibWrapper::createNewSecretChat(const QString &userId, const QString &ext
     LOG("Creating new secret chat");
     QVariantMap requestObject;
     requestObject.insert(_TYPE, "createNewSecretChat");
-    requestObject.insert("user_id", userId);
+    requestObject.insert(USER_ID, userId);
     requestObject.insert(_EXTRA, extra); //"openDirectly" gets matched in qml
     this->sendRequest(requestObject);
 }
@@ -946,7 +949,7 @@ void TDLibWrapper::getGroupsInCommon(const QString &userId, int limit, int offse
     QVariantMap requestObject;
     requestObject.insert(_TYPE, "getGroupsInCommon");
     requestObject.insert(_EXTRA, userId);
-    requestObject.insert("user_id", userId);
+    requestObject.insert(USER_ID, userId);
     requestObject.insert("offset", offset);
     requestObject.insert("limit", limit);
     this->sendRequest(requestObject);
@@ -958,7 +961,7 @@ void TDLibWrapper::getUserProfilePhotos(const QString &userId, int limit, int of
     QVariantMap requestObject;
     requestObject.insert(_TYPE, "getUserProfilePhotos");
     requestObject.insert(_EXTRA, userId);
-    requestObject.insert("user_id", userId);
+    requestObject.insert(USER_ID, userId);
     requestObject.insert("offset", offset);
     requestObject.insert("limit", limit);
     this->sendRequest(requestObject);
@@ -1128,6 +1131,13 @@ void TDLibWrapper::importContacts(const QVariantList &contacts)
     QVariantMap requestObject;
     requestObject.insert(_TYPE, "importContacts");
     requestObject.insert("contacts", contacts);
+    this->sendRequest(requestObject);
+}
+
+void TDLibWrapper::addContact(const QString &phone, const QString &firstName, const QString &lastName, qlonglong userId, bool sharePhoneNumber) {
+    LOG("Adding contact");
+    QVariantMap contact{{_TYPE, CONTACT}, {PHONE_NUMBER, phone}, {FIRST_NAME, firstName}, {LAST_NAME, lastName}, {USER_ID, userId}};
+    QVariantMap requestObject{{_TYPE, "addContact"}, {CONTACT, contact}, {"share_phone_number", sharePhoneNumber}};
     this->sendRequest(requestObject);
 }
 
@@ -1311,8 +1321,8 @@ void TDLibWrapper::setName(const QString &firstName, const QString &lastName)
     LOG("Set name of current user" << firstName << lastName);
     QVariantMap requestObject;
     requestObject.insert(_TYPE, "setName");
-    requestObject.insert("first_name", firstName);
-    requestObject.insert("last_name", lastName);
+    requestObject.insert(FIRST_NAME, firstName);
+    requestObject.insert(LAST_NAME, lastName);
 
     this->sendRequest(requestObject);
 }
@@ -1968,7 +1978,7 @@ void TDLibWrapper::handleChatReceived(const QVariantMap &chatInformation)
         } else if (receivedChatType == ChatTypePrivate) {
             LOG("Found private chat for active search" << this->activeChatSearchName);
             this->activeChatSearchName.clear();
-            this->createPrivateChat(chatType.value("user_id").toString(), "openDirectly");
+            this->createPrivateChat(chatType.value(USER_ID).toString(), "openDirectly");
         }
     }
 }
