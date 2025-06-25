@@ -53,6 +53,7 @@ public:
 
 public slots:
     void handleUsersReceived(const QString &extra, const QVariantList &userIds, int totalUsers);
+    void handleUserUpdated(const QString &userId);
 
 private:
     TDLibWrapper *tdLibWrapper;

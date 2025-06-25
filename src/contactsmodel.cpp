@@ -38,7 +38,8 @@ ContactsModel::ContactsModel(TDLibWrapper *tdLibWrapper, QObject *parent)
     : QAbstractListModel(parent)
 {
     this->tdLibWrapper = tdLibWrapper;
-    connect(this->tdLibWrapper, SIGNAL(usersReceived(QString, QVariantList, int)), this, SLOT(handleUsersReceived(QString, QVariantList, int)));
+    connect(this->tdLibWrapper, &TDLibWrapper::usersReceived, this, &ContactsModel::handleUsersReceived);
+    connect(this->tdLibWrapper, &TDLibWrapper::userUpdated, this, &ContactsModel::handleUserUpdated);
 }
 
 QHash<int, QByteArray> ContactsModel::roleNames() const {
@@ -90,6 +91,23 @@ void ContactsModel::handleUsersReceived(const QString &extra, const QVariantList
         std::sort(this->contactIds.begin(), this->contactIds.end(),
                   [this](const QString &a, const QString &b) { return compareUsers(a, b); }
         );
+    }
+}
+
+void ContactsModel::handleUserUpdated(const QString &userId) {
+    int i = contactIds.indexOf(userId);
+    LOG("User" << userId << "updated, checking if we have it in " << contactIds << (i > -1));
+    if (i > -1) {
+        const QModelIndex modelIndex = index(i);
+        emit dataChanged(modelIndex, modelIndex);
+        LOG("Updating user" << userId << data(modelIndex, ContactRole::RoleUserStatus));
+
+
+        //auto newIndex = std::upper_bound(contactIds.begin(), contactIds.end(), i);//, [this](const QString &a, const QString &b) { return compareUsers(a, b); });
+        //newIndex;
+        //QModelIndex parent;
+        //beginMoveRows(parent, a, b, parent, c);
+        // todo: sort, and somehow notify the model about this...
     }
 }
 
