@@ -662,11 +662,13 @@ void TDLibReceiver::processError(const QVariantMap &receivedInformation)
     emit errorReceived(receivedInformation.value("code").toInt(), receivedInformation.value(MESSAGE).toString(), receivedInformation.value(_EXTRA));
 }
 
-void TDLibReceiver::ok(const QVariantMap &receivedInformation)
-{
+void TDLibReceiver::ok(const QVariantMap &receivedInformation) {
     LOG("Received an OK");
     if (receivedInformation.contains(_EXTRA)) {
-        emit okReceived(receivedInformation.value(_EXTRA).toString());
+        QVariant extra = receivedInformation[_EXTRA];
+        if (extra.userType() == QMetaType::QVariantMap)
+            emit okMapReceived(extra.toMap());
+        emit okReceived(extra.toString());
     }
 }
 
