@@ -209,7 +209,7 @@ void TDLibWrapper::initializeTDLibReceiver() {
     connect(this->tdLibReceiver, SIGNAL(usersReceived(QString, QVariantList, int)), this, SIGNAL(usersReceived(QString, QVariantList, int)));
     connect(this->tdLibReceiver, SIGNAL(messageSendersReceived(QString, QVariantList, int)), this, SIGNAL(messageSendersReceived(QString, QVariantList, int)));
     connect(this->tdLibReceiver, SIGNAL(errorReceived(int, QString, QVariant)), this, SLOT(handleErrorReceived(int, QString, QVariant)));
-    connect(this->tdLibReceiver, SIGNAL(contactsImported(QVariantList, QVariantList)), this, SIGNAL(contactsImported(QVariantList, QVariantList)));
+    connect(this->tdLibReceiver, SIGNAL(contactsImported(QVariantList, QVariantList, QString)), this, SIGNAL(contactsImported(QVariantList, QVariantList, QString)));
     connect(this->tdLibReceiver, SIGNAL(messageEditedUpdated(qlonglong, qlonglong, QVariantMap)), this, SIGNAL(messageEditedUpdated(qlonglong, qlonglong, QVariantMap)));
     connect(this->tdLibReceiver, SIGNAL(chatIsMarkedAsUnreadUpdated(qlonglong, bool)), this, SIGNAL(chatIsMarkedAsUnreadUpdated(qlonglong, bool)));
     connect(this->tdLibReceiver, SIGNAL(chatDraftMessageUpdated(qlonglong, QVariantMap, QString)), this, SIGNAL(chatDraftMessageUpdated(qlonglong, QVariantMap, QString)));
@@ -1125,13 +1125,9 @@ void TDLibWrapper::closeSecretChat(qlonglong secretChatId)
     this->sendRequest(requestObject);
 }
 
-void TDLibWrapper::importContacts(const QVariantList &contacts)
-{
+void TDLibWrapper::importContacts(const QVariantList &contacts, const QString &extra) {
     LOG("Importing contacts");
-    QVariantMap requestObject;
-    requestObject.insert(_TYPE, "importContacts");
-    requestObject.insert("contacts", contacts);
-    this->sendRequest(requestObject);
+    this->sendRequest(QVariantMap{{_TYPE, "importContacts"}, {"contacts", contacts}, {_EXTRA, extra}});
 }
 
 void TDLibWrapper::addContact(const QString &phone, const QString &firstName, const QString &lastName, qlonglong userId, bool sharePhoneNumber) {

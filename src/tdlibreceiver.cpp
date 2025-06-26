@@ -694,7 +694,7 @@ void TDLibReceiver::processUpdateMessageEdited(const QVariantMap &receivedInform
 void TDLibReceiver::processImportedContacts(const QVariantMap &receivedInformation)
 {
     LOG("Contacts were imported");
-    emit contactsImported(receivedInformation.value("importer_count").toList(), receivedInformation.value("user_ids").toList());
+    emit contactsImported(receivedInformation.value("importer_count").toList(), receivedInformation.value("user_ids").toList(), receivedInformation.value(_EXTRA).toString());
 }
 
 void TDLibReceiver::processUpdateChatIsMarkedAsUnread(const QVariantMap &receivedInformation)
