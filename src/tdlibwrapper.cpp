@@ -1148,7 +1148,11 @@ void TDLibWrapper::addContact(qlonglong userId, const QString &firstName, const 
 }
 
 void TDLibWrapper::removeContacts(QStringList userIds) {
-    sendRequest(QVariantMap{{_TYPE, REMOVE_CONTACTS}, {"user_ids", userIds}});
+    LOG("Removing" << userIds.size() << "contacts");
+    const QVariantMap extra{{_TYPE, REMOVE_CONTACTS}, {"user_ids", userIds}};
+    QVariantMap requestObject = extra;
+    requestObject.insert(_EXTRA, extra);
+    sendRequest(requestObject);
 }
 
 void TDLibWrapper::removeContact(QString userId) {
