@@ -103,7 +103,7 @@ signals:
     void userPrivacySettingRulesUpdated(const QVariantMap &updatedRules);
     void messageInteractionInfoUpdated(qlonglong chatId, qlonglong messageId, const QVariantMap &updatedInfo);
     void okReceived(const QString &extra);
-    void okMapReceived(const QVariantMap &extra);
+    void okMapReceived(const QString &type, const QVariantMap &extra);
     void sessionsReceived(int inactive_session_ttl_days, const QVariantList &sessions);
     void availableReactionsReceived(qlonglong messageId, const QStringList &reactions);
     void chatUnreadMentionCountUpdated(qlonglong chatId, int unreadMentionCount);
