@@ -54,6 +54,9 @@ public:
 
 signals:
     void contactsRemoved(bool single);
+    void contactNotFound();
+    void singleContactAdded(const QString &userId);
+    void contactsImported();
 
 public slots:
     void handleUsersReceived(const QString &extra, const QVariantList &userIds, int totalUsers);

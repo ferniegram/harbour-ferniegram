@@ -30,17 +30,13 @@ Page {
     Component.onDestruction: contactsProxyModel.setFilterWildcard('*')
 
     Connections {
-        target: tdLibWrapper
+        target: contactsModel
         onContactsImported: {
             busyLabel.running = false
-            appNotification.show(single ? qsTr("Contact imported") : qsTr("Contacts successfully synchronized with Telegram."))
+            appNotification.show(qsTr("Contacts successfully synchronized with Telegram."))
         }
-    }
-
-    Connections {
-        target: contactsModel
-        // is this needed? or only useful for debugging?
-        onContactsRemoved: appNotification.show(single ? qsTr("Contact removed") : qsTr("Contacts removed"))
+        onSingleContactAdded: tdLibWrapper.createPrivateChat(userId, 'openDirectly')
+        onContactNotFound: appNotification.show(qsTr("contact has not joined telegram yet")) // todo: show contact's name
     }
 
     ContactSync {

@@ -115,23 +115,28 @@ void ContactsModel::handleUserUpdated(const QString &userId) {
     }
 }
 
-void ContactsModel::handleContactsImported(const QVariantList &/*importerCount*/, const QVariantList &userIds, bool /*single*/) {
+void ContactsModel::handleContactsImported(const QVariantList &/*importerCount*/, const QVariantList &userIds, bool single) {
     LOG("Imported" << userIds.size() << "contacts");
     for (const QVariant &userIdVariant : userIds) {
+        const QString userId = userIdVariant.toString();
+        if (userId == "0") continue;
         beginInsertRows(QModelIndex(), contactIds.size(), contactIds.size());
-        addUser(userIdVariant.toString());
+        addUser(userId);
         endInsertRows();
     }
+    if (single) {
+        QString userId = userIds[0].toString();
+        if (userId == "0")
+            emit contactNotFound();
+        else emit singleContactAdded(userId);
+    } else emit contactsImported();
     // todo: sort
 }
 
 void ContactsModel::handleOkMapReceived(const QString &type, const QVariantMap &extra) {
     if (type == "removeContacts") {
-        QStringList list = extra["user_ids"].toStringList();
-        LOG("Removed" << list.size() << "contacts");
-        if (list.isEmpty()) return;
-
-        for (QString userId : list) {
+        LOG("Removing contacts");
+        for (QString userId : extra["user_ids"].toStringList()) {
             int i = contactIds.indexOf(userId);
             if (i < 0) return;
             beginRemoveRows(QModelIndex(), i, i);
@@ -139,7 +144,6 @@ void ContactsModel::handleOkMapReceived(const QString &type, const QVariantMap &
             endRemoveRows();
             // here no need to sort
         }
-        contactsRemoved(list.size() == 1);
     }
 }
 
