@@ -54,7 +54,6 @@ Page {
         }
         onErrorReceived: {
             searchChatsPage.isLoading = false;
-            Functions.handleErrorMessage(code, message, extra);
         }
     }
 

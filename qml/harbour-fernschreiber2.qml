@@ -43,12 +43,9 @@ ApplicationWindow
 
     Connections {
         target: tdLibWrapper
-        onOpenFileExternally: {
-            Qt.openUrlExternally(filePath)
-        }
-        onTgUrlFound: {
-            Functions.handleLink(tgUrl)
-        }
+        onOpenFileExternally: Qt.openUrlExternally(filePath)
+        onTgUrlFound: Functions.handleLink(tgUrl)
+        onErrorReceived: Functions.handleErrorMessage(code, message, extra)
     }
 
     AppNotification {
