@@ -2,122 +2,21 @@
 
 ## Code Styling
 
-In Fernschreiber, the code styling is very mixed. In Ferniegram, it can be mixed too. If it will not be abandoned by me, I will probably fix it later anyways.
-
-## Message types
-
-Completed (may not always be up-to-date):
-
-- messageAnimatedEmoji
-- messageAnimation
-- messageChatChangeTitle
-- messageExpiredVideo
-- messageGiveawayCreated
-- messageContactRegistered
-- messageChatBoost
-- messageChatAddMembers
-- messageChatDeletePhoto
-- messagePinMessage
-- messageUnsupported
-- messageLocation
-- messageGame
-- messageChatUpgradeTo
-- messageChatUpgradeFrom
-- messageDocument
-- messageText
-- messageSticker
-- messageBotWriteAccessAllowed
-- messageCustomServiceAction
-- messageGiveawayCompleted
-- messageVideoNote
-- messageChatChangePhoto
-- messageGift
-- messageVoiceNote
-- messageChatJoinByLink
-- messageExpiredVideoNote
-- messageGameScore
-- messagePoll
-- messageChatSetMessageAutoDeleteTime
-- messageScreenshotTaken
-- messageVideo
-- messageVenue
-- messagePhoto
-- messageExpiredPhoto
-- messageExpiredVoiceNote
-- messageSupergroupChatCreate
-- messageBasicGroupChatCreate
-- messageChatDeleteMember
-- messageAudio
-
-Not yet finished (by the state of TDLib 1.8.46):
-
-- messageCall
-- messageChatJoinByRequest
-- messageChatSetBackground
-- messageChatSetTheme
-- messageChatShared
-- messageContact
-- messageDice
-- messageForumTopicCreated
-- messageForumTopicEdited
-- messageForumTopicIsClosedToggled
-- messageForumTopicIsHiddenToggled
-- messageGiftedPremium
-- messageGiftedStars
-- messageGiveaway
-- messageGiveawayPrizeStars
-- messageGiveawayWinners
-- messageInviteVideoChatParticipants
-- messageInvoice
-- messagePaidMedia
-- messagePassportDataReceived
-- messagePassportDataSent
-- messagePaymentRefunded
-- messagePaymentSuccessful
-- messagePaymentSuccessfulBot
-- messagePremiumGiftCode
-- messageProximityAlertTriggered
-- messageRefundedUpgradedGift
-- messageStory
-- messageSuggestProfilePhoto
-- messageUpgradedGift
-- messageUsersShared
-- messageVideoChatEnded
-- messageVideoChatScheduled
-- messageVideoChatStarted
-- messageWebAppDataReceived
-- messageWebAppDataSent
+In Fernschreiber, the code styling is very mixed. In Ferniegram, it can be mixed too. If it will not be abandoned by me, I will probably try to fix it later anyways.
 
 ## Some notes
 
-- setMessageProperties could probably be implemented better. Currently it is hardcoded in several places, including new message success callback. It is also not same as other set* chat list functions, others simply scrap data from the message, but this one sends a tdlib request. Not sure if this should also be added to handleMessageContentUpdated, handleMessageEditedUpdated or anything similar. Probably not, but who knows
+- ~~setMessageProperties could probably be implemented better. Currently it is hardcoded in several places, including new message success callback. It is also not same as other set* chat list functions, others simply scrap data from the message, but this one sends a tdlib request. Not sure if this should also be added to handleMessageContentUpdated, handleMessageEditedUpdated or anything similar. Probably not, but who knows~~ Nevermind, messageProperties should only be received when opening a menu. That's what we do now
 
-## Message entity types
+## Error handling
 
-Implemented types (may be out of date):
+Links:
+- [error tdlib object documentation](https://core.telegram.org/tdlib/docs/classtd_1_1td__api_1_1error.html)
+- [errors documentation in telegram API](https://core.telegram.org/api/errors) (contains a database of all errors and some more info)
 
-- textEntityTypeCode
-- textEntityTypePhoneNumber
-- textEntityTypePreCode
-- textEntityTypeBold
-- textEntityTypeBotCommand
-- textEntityTypePre
-- textEntityTypeStrikethrough
-- textEntityTypeMention
-- textEntityTypeTextUrl
-- textEntityTypeMentionName
-- textEntityTypeUrl
-- textEntityTypeItalic
-- textEntityTypeUnderline
-- textEntityTypeEmailAddress
+406 errors are handled using [updateServiceNotification](https://core.telegram.org/tdlib/docs/classtd_1_1td__api_1_1update_service_notification.html). `error` objects with them should be ignored.
+This update's [TL API analog](https://core.telegram.org/constructor/updateServiceNotification) also has a boolean property `popup`. It is not yet checked if this is handled automatically by tdlib somehow.
 
-Not yet finished (by the state of TDLib 1.8.46):
-
-- textEntityTypeBankCardNumber
-- textEntityTypeBlockQuote
-- textEntityTypeExpandableBlockQuote
-- textEntityTypeCashtag
-- textEntityTypeCustomEmoji
-- textEntityTypeHashtag
-- textEntityTypeMediaTimestamp
-- textEntityTypeSpoiler
+Some other links with error databases (but, official page is better and always up-to-date):
+- https://github.com/KurimuzonAkuma/pyrogram/tree/4c367aaec5b4aa9d055d1334da117487ef9fabfa/compiler/errors/source
+- https://github.com/xelaj/mtproto/blob/main/errors.go

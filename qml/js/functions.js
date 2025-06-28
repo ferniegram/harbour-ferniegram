@@ -278,13 +278,9 @@ function getMessagesArrayText(messages) {
     return lines.join("\n");
 }
 
-// From https://github.com/KurimuzonAkuma/pyrogram/tree/4c367aaec5b4aa9d055d1334da117487ef9fabfa/compiler/errors/source
-// Another possible source could be https://github.com/xelaj/mtproto/blob/main/errors.go
+// See doc/development.md
 var ALL_ERRORS = {
-// TODO...
-// also we need to keep in mind that TDLib can parse some errors too, that's probably why code 406 should never be used
-// for example like updateMessageSendFailed
-// 
+    // TODO
 }
 
 function handleErrorMessage(code, message, extra) {
