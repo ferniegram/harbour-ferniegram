@@ -133,6 +133,37 @@
     </message>
 </context>
 <context>
+    <name>AddContactDialog</name>
+    <message>
+        <source>First name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>First name must have 1-255 characters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Last name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share my phone number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use the international format, e.g. %1</source>
+        <translation type="unfinished">Используйте международный формат, например %1</translation>
+    </message>
+    <message>
+        <source>Phone number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Last name length must be less than 256</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>BackgroundProgressIndicator</name>
     <message>
         <source>%1 %</source>
@@ -314,7 +345,7 @@
     </message>
     <message>
         <source>You</source>
-        <translation>Я</translation>
+        <translation>Вы</translation>
     </message>
     <message>
         <source>User Info</source>
@@ -511,34 +542,6 @@
         <translation>Местоположение (%1/%2)</translation>
     </message>
     <message>
-        <source>Copy Message to Clipboard</source>
-        <translation>Скопировать в буфер обмена</translation>
-    </message>
-    <message>
-        <source>Message unpinned</source>
-        <translation>Сообщение откреплено</translation>
-    </message>
-    <message>
-        <source>Unpin Message</source>
-        <translation>Открепить сообщение</translation>
-    </message>
-    <message>
-        <source>Pin Message</source>
-        <translation>Закрепить сообщение</translation>
-    </message>
-    <message>
-        <source>Additional Options</source>
-        <translation>Дополнительные опции</translation>
-    </message>
-    <message>
-        <source>Delete Message</source>
-        <translation>Удалить сообщение</translation>
-    </message>
-    <message>
-        <source>Forward Message</source>
-        <translation>Переслать сообщение</translation>
-    </message>
-    <message>
         <source>Unknown address</source>
         <translation>Неизвестный адрес</translation>
     </message>
@@ -633,6 +636,13 @@
             <numerusform>новых
 сообщений</numerusform>
         </translation>
+    </message>
+</context>
+<context>
+    <name>DebugPage</name>
+    <message>
+        <source>Options</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1162,7 +1172,7 @@
     <name>InReplyToRow</name>
     <message>
         <source>You</source>
-        <translation>Я</translation>
+        <translation>Вы</translation>
     </message>
     <message>
         <source>Unknown</source>
@@ -1259,7 +1269,7 @@
     </message>
     <message>
         <source>You</source>
-        <translation>Я</translation>
+        <translation>Вы</translation>
     </message>
     <message>
         <source>Forwarded Message</source>
@@ -1326,7 +1336,7 @@
     <name>MessageListViewItemSimple</name>
     <message>
         <source>You</source>
-        <translation>Я</translation>
+        <translation>Вы</translation>
     </message>
     <message numerus="yes">
         <source>scored %Ln points in %2</source>
@@ -1350,7 +1360,7 @@
     <name>MessageOverlayFlickable</name>
     <message>
         <source>You</source>
-        <translation>Я</translation>
+        <translation>Вы</translation>
     </message>
     <message>
         <source>This message was forwarded. Original author: %1</source>
@@ -1461,6 +1471,22 @@
     <message>
         <source>No contacts found.</source>
         <translation>Контакты не найдены.</translation>
+    </message>
+    <message>
+        <source>Add contact</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contact removed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>contact has not joined telegram yet</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1683,7 +1709,7 @@
     <name>PinnedMessageItem</name>
     <message>
         <source>You</source>
-        <translation>Я</translation>
+        <translation>Вы</translation>
     </message>
     <message>
         <source>Pinned Message</source>
@@ -2080,16 +2106,20 @@
         <translation>Показывать опцию перевода для сообщений</translation>
     </message>
     <message>
-        <source>Trnslate formatted text</source>
-        <translation>Переводить форматированный текст</translation>
-    </message>
-    <message>
         <source>Without Telegram Premium</source>
         <translation>Без Telegram Premium</translation>
     </message>
     <message>
         <source>Voice messages volume</source>
         <translation>Громкость голосовых сообщений</translation>
+    </message>
+    <message>
+        <source>Translate formatted text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Parse markdown in messages</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

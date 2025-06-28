@@ -132,6 +132,37 @@
     </message>
 </context>
 <context>
+    <name>AddContactDialog</name>
+    <message>
+        <source>First name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>First name must have 1-255 characters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Last name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share my phone number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use the international format, e.g. %1</source>
+        <translation type="unfinished">Use the international format, e.g. %1</translation>
+    </message>
+    <message>
+        <source>Phone number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Last name length must be less than 256</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>BackgroundProgressIndicator</name>
     <message>
         <source>%1 %</source>
@@ -500,34 +531,6 @@
         <translation>Location (%1/%2)</translation>
     </message>
     <message>
-        <source>Copy Message to Clipboard</source>
-        <translation>Copy Message to Clipboard</translation>
-    </message>
-    <message>
-        <source>Message unpinned</source>
-        <translation>Message unpinned</translation>
-    </message>
-    <message>
-        <source>Unpin Message</source>
-        <translation>Unpin Message</translation>
-    </message>
-    <message>
-        <source>Pin Message</source>
-        <translation>Pin Message</translation>
-    </message>
-    <message>
-        <source>Additional Options</source>
-        <translation>Additional Options</translation>
-    </message>
-    <message>
-        <source>Delete Message</source>
-        <translation>Delete Message</translation>
-    </message>
-    <message>
-        <source>Forward Message</source>
-        <translation>Forward Message</translation>
-    </message>
-    <message>
         <source>Unknown address</source>
         <translation>Unknown address</translation>
     </message>
@@ -619,6 +622,13 @@ message</numerusform>
             <numerusform>unread
 messages</numerusform>
         </translation>
+    </message>
+</context>
+<context>
+    <name>DebugPage</name>
+    <message>
+        <source>Options</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1439,6 +1449,22 @@ messages</numerusform>
         <source>No contacts found.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Add contact</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contact removed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>contact has not joined telegram yet</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NotificationManager</name>
@@ -2046,15 +2072,19 @@ messages</numerusform>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Trnslate formatted text</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Without Telegram Premium</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Voice messages volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Translate formatted text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Parse markdown in messages</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

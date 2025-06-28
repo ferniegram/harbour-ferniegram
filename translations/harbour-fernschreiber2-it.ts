@@ -132,6 +132,37 @@
     </message>
 </context>
 <context>
+    <name>AddContactDialog</name>
+    <message>
+        <source>First name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>First name must have 1-255 characters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Last name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share my phone number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use the international format, e.g. %1</source>
+        <translation type="unfinished">Utilizza il formato internazionale, es. %1</translation>
+    </message>
+    <message>
+        <source>Phone number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Last name length must be less than 256</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>BackgroundProgressIndicator</name>
     <message>
         <source>%1 %</source>
@@ -500,34 +531,6 @@
         <translation>Posizione(%1/%2)</translation>
     </message>
     <message>
-        <source>Copy Message to Clipboard</source>
-        <translation>Copia messaggio nella clipboard</translation>
-    </message>
-    <message>
-        <source>Message unpinned</source>
-        <translation>Messaggio non più in evidenza</translation>
-    </message>
-    <message>
-        <source>Unpin Message</source>
-        <translation>Togli messaggio in evidenza</translation>
-    </message>
-    <message>
-        <source>Pin Message</source>
-        <translation>Metti messaggio in evidenza</translation>
-    </message>
-    <message>
-        <source>Additional Options</source>
-        <translation>Impostazioni addizionali</translation>
-    </message>
-    <message>
-        <source>Delete Message</source>
-        <translation>Cancella messaggio</translation>
-    </message>
-    <message>
-        <source>Forward Message</source>
-        <translation>Inoltra Messaggio</translation>
-    </message>
-    <message>
         <source>Unknown address</source>
         <translation>Indirizzo sconosciuto</translation>
     </message>
@@ -617,6 +620,13 @@
             <numerusform>messaggio non letto</numerusform>
             <numerusform>messaggi non letti</numerusform>
         </translation>
+    </message>
+</context>
+<context>
+    <name>DebugPage</name>
+    <message>
+        <source>Options</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1437,6 +1447,22 @@
         <source>No contacts found.</source>
         <translation>Nessun contatto trovato</translation>
     </message>
+    <message>
+        <source>Add contact</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contact removed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>contact has not joined telegram yet</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NotificationManager</name>
@@ -2044,16 +2070,20 @@
         <translation>Mostra l&apos;opzione traduci per i messaggi</translation>
     </message>
     <message>
-        <source>Trnslate formatted text</source>
-        <translation>Traduci testo formattato</translation>
-    </message>
-    <message>
         <source>Without Telegram Premium</source>
         <translation>Senza Telegram Premium</translation>
     </message>
     <message>
         <source>Voice messages volume</source>
         <translation>Volume messaggi vocali</translation>
+    </message>
+    <message>
+        <source>Translate formatted text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Parse markdown in messages</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
