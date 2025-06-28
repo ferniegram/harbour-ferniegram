@@ -14,7 +14,6 @@ Item {
     readonly property bool animated: appSettings.animateStickers && stickerData.format["@type"] === "stickerFormatTgs"
     readonly property bool stickerVisible: !!(stickerLoader.item && stickerLoader.item.visible)
     property real aspectRatio: stickerData.width / stickerData.height
-    Component.onCompleted: console.log(stickerData.thumbnail)
 
     implicitWidth: stickerData.width
     implicitHeight: width * aspectRatio
