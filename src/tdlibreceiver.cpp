@@ -665,7 +665,7 @@ void TDLibReceiver::processError(const QVariantMap &receivedInformation)
 void TDLibReceiver::ok(const QVariantMap &receivedInformation) {
     LOG("Received an OK");
     if (receivedInformation.contains(_EXTRA)) {
-        QVariant extra = receivedInformation[_EXTRA];
+        QVariant extra = receivedInformation.value(_EXTRA);
         LOG(extra.userType());
         if (extra.userType() == QMetaType::QVariantMap) {
             QVariantMap map = extra.toMap();

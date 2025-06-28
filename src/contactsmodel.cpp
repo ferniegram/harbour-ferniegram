@@ -120,7 +120,7 @@ void ContactsListModel::handleContactsImported(const QVariantList &/*importerCou
         endInsertRows();
     }
     if (single) {
-        QString userId = userIds[0].toString();
+        QString userId = userIds.value(0).toString();
         if (userId == "0")
             emit contactNotFound();
         else emit singleContactAdded(userId);
@@ -131,7 +131,7 @@ void ContactsListModel::handleContactsImported(const QVariantList &/*importerCou
 void ContactsListModel::handleOkMapReceived(const QString &type, const QVariantMap &extra) {
     if (type == "removeContacts") {
         LOG("Removing contacts");
-        for (QString userId : extra["user_ids"].toStringList()) {
+        for (QString userId : extra.value("user_ids").toStringList()) {
             int i = contactIds.indexOf(userId);
             if (i < 0) return;
             beginRemoveRows(QModelIndex(), i, i);
@@ -162,8 +162,8 @@ bool ContactsListModel::compareUsersByName(const QVariantMap &user1, const QVari
 }
 
 bool ContactsListModel::compare(const QModelIndex &index1, const QModelIndex &index2) const {
-    const QVariantMap user1 = tdLibWrapper->getUserInformation(contactIds[index1.row()]);
-    const QVariantMap user2 = tdLibWrapper->getUserInformation(contactIds[index2.row()]);
+    const QVariantMap user1 = tdLibWrapper->getUserInformation(contactIds.value(index1.row()));
+    const QVariantMap user2 = tdLibWrapper->getUserInformation(contactIds.value(index2.row()));
 
     // todo: compare by status (and add an option to compare by name, like right now)
     return compareUsersByName(user1, user2);

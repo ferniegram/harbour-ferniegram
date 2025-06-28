@@ -1953,7 +1953,7 @@ void TDLibWrapper::handleUserStatusUpdated(const QString &userId, const QVariant
         this->userInformation.insert(STATUS, userStatusInformation);
     }
     QVariantMap updatedUserInformation = this->usersById.value(userId).toMap();
-    if(updatedUserInformation[STATUS] == userStatusInformation) {
+    if(updatedUserInformation.value(STATUS) == userStatusInformation) {
         return;
     }
     LOG("User status information updated:" << userId << userStatusInformation.value(_TYPE).toString());
