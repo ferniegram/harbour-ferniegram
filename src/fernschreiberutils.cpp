@@ -608,7 +608,7 @@ QVariantList FernschreiberUtils::decodeWaveform(QString encodedData) {
         result.insert(i, ((waveform[j] | ((j + 1 < waveform.size() ? waveform[j + 1] : 0) << 8)) >> shift & 0x1F) / 31.0);
     }
 
-    return result;
+    return result.mid(0, 100);
 }
 
 QString FernschreiberUtils::encodeWaveform(QVariantList waveform) {
