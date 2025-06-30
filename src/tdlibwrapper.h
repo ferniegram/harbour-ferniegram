@@ -339,6 +339,7 @@ signals:
     void usersReceived(const QString &extra, const QVariantList &userIds, int totalUsers);
     void messageSendersReceived(const QString &extra, const QVariantList &senders, int totalUsers);
     void errorReceived(int code, const QString &message, const QVariant &extra);
+    void serviceNotificationReceived(const QString &type, const QVariantMap &content);
     void contactsImported(const QVariantList &importerCount, const QVariantList &userIds, bool single);
     void messageNotFound(qlonglong chatId, qlonglong messageId);
     void chatIsMarkedAsUnreadUpdated(qlonglong chatId, bool chatIsMarkedAsUnread);

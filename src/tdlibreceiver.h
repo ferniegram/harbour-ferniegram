@@ -92,6 +92,7 @@ signals:
     void usersReceived(const QString &extra, const QVariantList &senders, int totalUsers);
     void messageSendersReceived(const QString &extra, const QVariantList &userIds, int totalUsers);
     void errorReceived(const int code, const QString &message, const QVariant &extra);
+    void serviceNotificationReceived(const QString &type, const QVariantMap &content);
     void secretChat(qlonglong secretChatId, const QVariantMap &secretChat);
     void secretChatUpdated(qlonglong secretChatId, const QVariantMap &secretChat);
     void contactsImported(const QVariantList &importerCount, const QVariantList &userIds, bool single);
@@ -183,6 +184,7 @@ private:
     void processUsers(const QVariantMap &receivedInformation);
     void processMessageSenders(const QVariantMap &receivedInformation);
     void processError(const QVariantMap &receivedInformation);
+    void processUpdateServiceNotification(const QVariantMap &receivedInformation);
     void processSecretChat(const QVariantMap &receivedInformation);
     void processUpdateSecretChat(const QVariantMap &receivedInformation);
     void processUpdateMessageEdited(const QVariantMap &receivedInformation);

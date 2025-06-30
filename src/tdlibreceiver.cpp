@@ -166,6 +166,7 @@ TDLibReceiver::TDLibReceiver(void *tdLibClient, QObject *parent) : QThread(paren
     handlers.insert("messageSenders", &TDLibReceiver::processMessageSenders);
     handlers.insert("error", &TDLibReceiver::processError);
     handlers.insert("ok", &TDLibReceiver::ok);
+    handlers.insert("updateServiceNotification", &TDLibReceiver::processUpdateServiceNotification);
     handlers.insert("secretChat", &TDLibReceiver::processSecretChat);
     handlers.insert("updateSecretChat", &TDLibReceiver::processUpdateSecretChat);
     handlers.insert("importedContacts", &TDLibReceiver::processImportedContacts);
@@ -673,6 +674,11 @@ void TDLibReceiver::ok(const QVariantMap &receivedInformation) {
         } else
             emit okReceived(extra.toString());
     }
+}
+
+void TDLibReceiver::processUpdateServiceNotification(const QVariantMap &receivedInformation) {
+    LOG("Received updateServiceNotification");
+    emit serviceNotificationReceived(receivedInformation.value("type").toString(), receivedInformation.value(CONTENT).toMap());
 }
 
 void TDLibReceiver::processSecretChat(const QVariantMap &receivedInformation)
