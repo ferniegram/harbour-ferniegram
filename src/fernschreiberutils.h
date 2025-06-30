@@ -55,6 +55,7 @@ public:
     Q_INVOKABLE QString enhanceMessageText(const QVariantMap &formattedText, bool ignoreEntities = false, bool escapeReserved = true);
     Q_INVOKABLE QString getMessageText(const QVariantMap &message, bool simple = false, bool ignoreEntities = false, bool escapeReserved = true);
     Q_INVOKABLE QVariantMap getFormattedMessageText(const QVariantMap &message, bool simple = false);
+    Q_INVOKABLE QString getMessageContentText(const QVariantMap messageContent, bool simple = false, bool ignoreEntities = false, bool escapeReserved = true);
 
     inline QString getVoiceNotePath() const { return audioRecorder.outputLocation().toLocalFile(); }
     VoiceNoteRecordingState getVoiceNoteRecordingState() const;
@@ -88,7 +89,8 @@ private:
 
     QString getTemporaryDirectoryPath();
 
-    QVariant getMaybeFormattedMessageText(const QVariantMap &message, bool simple = false) const;
+    QVariant getMaybeFormattedMessageText(const QVariantMap &messageContent, const QString &messageSenderType, qlonglong messageSenderUserId, bool isSponsored, bool simple) const;
+    QVariant inline getMaybeFormattedMessageText(const QVariantMap &message, bool simple = false) const;
 };
 
 #endif // FERNSCHREIBERUTILS_H

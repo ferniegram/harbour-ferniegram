@@ -48,6 +48,7 @@ namespace {
     const QString USER_ID("user_id");
 
     const QString MESSAGE_SENDER_TYPE_USER("messageSenderUser");
+    const QString MESSAGE_SENDER_TYPE_CHAT("messageSenderChat");
 
     const QString MESSAGE_CONTENT_TYPE_TEXT("messageText");
     const QString MESSAGE_CONTENT_TYPE_STICKER("messageSticker");
@@ -141,7 +142,7 @@ QString FernschreiberUtils::fixReservedHtmlCharacters(const QString &text) {
     return QString(text).replace(LT, HTML_LT).replace(GT, HTML_GT).replace(RAW_NEW_LINE_RE, HTML_BR_TAG);
 }
 
-// TODO: Use a custom class instead of QVariantMap for messageInstertions
+// TODO: (possibly) Use a custom class instead of QVariantMap for messageInstertions
 void FernschreiberUtils::handleHtmlEntity(const QString &messageText, QList<QVariantMap> &messageInsertions, const QString &originalString, const QString &replacementString) {
     int nextIndex = -1;
     while ((nextIndex = messageText.indexOf(originalString, nextIndex + 1)) > -1) {
@@ -285,13 +286,9 @@ QString FernschreiberUtils::enhanceMessageText(const QVariantMap &formattedText,
     return messageText;
 }
 
-QVariant FernschreiberUtils::getMaybeFormattedMessageText(const QVariantMap &message, bool simple) const {
-    const qlonglong messageSenderUserId = message.value(SENDER_ID).toMap().value(USER_ID).toLongLong();
-    const QVariantMap messageContent = message.value(CONTENT).toMap();
+QVariant FernschreiberUtils::getMaybeFormattedMessageText(const QVariantMap &messageContent, const QString &messageSenderType, qlonglong messageSenderUserId, bool isSponsored, bool simple) const {
     const QString contentType = messageContent.value(_TYPE).toString();
-    const QString messageSenderType = message.value(SENDER_ID).toMap().value(_TYPE).toString();
-
-    const bool myself = message.value(_TYPE).toString() != SPONSORED_MESSAGE
+    const bool myself = !isSponsored
             && messageSenderType == MESSAGE_SENDER_USER
             && messageSenderUserId == this->tdLibWrapper->getUserInformation().value(ID).toLongLong();
 
@@ -456,6 +453,17 @@ QVariant FernschreiberUtils::getMaybeFormattedMessageText(const QVariantMap &mes
             : tr("sent an unsupported message: %1", "%1 is message type").arg(contentType.mid(7));
 }
 
+QVariant FernschreiberUtils::getMaybeFormattedMessageText(const QVariantMap &message, bool simple) const {
+    const QVariantMap messageSender = message.value(SENDER_ID).toMap();
+    return getMaybeFormattedMessageText(
+                message.value(CONTENT).toMap(),
+                messageSender.value(_TYPE).toString(),
+                messageSender.value(USER_ID).toLongLong(),
+                message.value(_TYPE).toString() == SPONSORED_MESSAGE,
+                simple
+                );
+}
+
 QString FernschreiberUtils::getMessageText(const QVariantMap &message, bool simple, bool ignoreEntities, bool escapeReserved) {
     const QVariant text = getMaybeFormattedMessageText(message, simple);
     if (text.userType() == QMetaType::QVariantMap)
@@ -468,6 +476,19 @@ QVariantMap FernschreiberUtils::getFormattedMessageText(const QVariantMap &messa
     if (text.userType() == QMetaType::QString)
         return makeDummyFormattedText(text.toString());
     return text.toMap();
+}
+
+QString FernschreiberUtils::getMessageContentText(const QVariantMap messageContent, bool simple, bool ignoreEntities, bool escapeReserved) {
+    const QVariant text = getMaybeFormattedMessageText(
+                messageContent,
+                MESSAGE_SENDER_TYPE_CHAT, // Skips all user-related checks
+                0,
+                false,
+                simple
+                );
+    if (text.userType() == QMetaType::QVariantMap)
+        return enhanceMessageText(text.toMap(), ignoreEntities, escapeReserved);
+    return text.toString();
 }
 
 QString FernschreiberUtils::getUserName(const QVariantMap &userInformation) {

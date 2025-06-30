@@ -282,7 +282,7 @@ var ALL_ERRORS = {
 }
 
 function handleErrorMessage(code, message, extra) {
-    //if (code === 406) return // https://core.telegram.org/tdlib/docs/classtd_1_1td__api_1_1error.html
+    //if (code === 406) return // handle using updateServiceNotification instead (for now both are used for testing)
     if (code === 404 ||
             (code === 400 &&
              (message === "USERNAME_INVALID" || message === "USERNAME_NOT_OCCUPIED"))) {

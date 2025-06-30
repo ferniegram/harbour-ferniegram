@@ -41,6 +41,7 @@ ApplicationWindow {
         onOpenFileExternally: Qt.openUrlExternally(filePath)
         onTgUrlFound: Functions.handleLink(tgUrl)
         onErrorReceived: Functions.handleErrorMessage(code, message, extra)
+        onServiceNotificationReceived: appNotification.show(fernschreiberUtils.getMessageContentText(content, true))
     }
 
     AppNotification {
