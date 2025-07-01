@@ -66,6 +66,7 @@ MessageContentFileInfoBase {
         id: audioPlayer
         source: file.isDownloadingCompleted ? file.path : ""
         autoPlay: false
+        onPositionChanged: if (!slider.pressed) slider.value = audioPlayer.position
     }
 
     Slider {
@@ -82,18 +83,17 @@ MessageContentFileInfoBase {
         minimumValue: 0
         maximumValue: audioPlayer.duration ? audioPlayer.duration : 0.1
         stepSize: 1
-        value: audioPlayer.position
         enabled: audioPlayer.seekable
-        visible: file.isDownloadingCompleted && audioPlayer.playbackState === Audio.PlayingState || audioPlayer.playbackState === Audio.PausedState
+        visible: file.isDownloadingCompleted && (audioPlayer.playbackState === Audio.PlayingState || audioPlayer.playbackState === Audio.PausedState)
         opacity: visible ? 1.0 : 0.0
-        Behavior on opacity { FadeAnimation {} }
+        Behavior on opacity { FadeAnimator {} }
         height: visible ? implicitHeight : 0
         Behavior on height { NumberAnimation { duration: 200 } }
 
         highlighted: contentItem.highlighted || down
         onReleased: {
-            audioPlayer.seek(Math.floor(value));
-            audioPlayer.play();
+            audioPlayer.seek(Math.floor(sliderValue))
+            audioPlayer.play()
         }
     }
 }
