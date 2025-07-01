@@ -501,9 +501,8 @@ ListItem {
                 height: messageTextColumn.height + precalculatedValues.paddingMediumDouble
                 width: precalculatedValues.backgroundWidth
                 property bool isUnread: messageIndex > chatModel.getLastReadMessageIndex() && myMessage['@type'] !== "sponsoredMessage"
-                color: Theme.colorScheme === Theme.LightOnDark ? (isUnread ? Theme.secondaryHighlightColor : Theme.secondaryColor) : (isUnread ? Theme.backgroundGlowColor : Theme.overlayBackgroundColor)
+                color: isUnread ? Theme.rgba(Theme.highlightBackgroundColor, Theme.highlightBackgroundOpacity) : Theme.rgba(Theme.colorScheme == Theme.DarkOnLight ? Theme.highlightColor : Theme.primaryColor, Theme.opacityFaint)
                 radius: parent.width / 50
-                opacity: isUnread ? 0.5 : 0.2
                 visible: appSettings.showStickersAsImages || (myMessage.content['@type'] !== "messageSticker" && myMessage.content['@type'] !== "messageAnimatedEmoji")
                 Behavior on color { ColorAnimation { duration: 200 } }
                 Behavior on opacity { FadeAnimation {} }
