@@ -634,15 +634,30 @@ QString FernschreiberUtils::encodeWaveform(QVariantList waveform) {
 }
 
 QVariantList FernschreiberUtils::getWaveformData(QString encodedData, int count) {
+    if (count < 1) return QVariantList();
     QVariantList waveform = decodeWaveform(encodedData);
-    if (waveform.size() <= count) return waveform;
+    if (waveform.size() == count) return waveform;
 
     QVariantList result;
-    const double chunk = waveform.size() / count;
 
-    for (int i = 0; i < count; i++) {
-        const double sum = std::accumulate(waveform.begin() + i*chunk, waveform.begin() + (i+1)*chunk, 0.0, [](double a, const QVariant &b) { return a + b.toDouble(); });
-        result.append(((sum / chunk) + 0.06) / 1.06); // make 0 visible
+    if (waveform.size() > count) {
+        auto sumQVariantDoubles = [](double a, const QVariant &b) { return a + b.toDouble(); };
+        const int chunk = waveform.size() / count,
+                remainder = waveform.size() % count;
+
+        for (int i = 0; i < count - 1; i++) {
+            const double sum = std::accumulate(waveform.begin() + i*chunk, waveform.begin() + (i+1)*chunk, 0.0, sumQVariantDoubles);
+            result.append(((sum / chunk) + 0.06) / 1.06); // make 0 visible
+            LOG(((sum / chunk) + 0.06) / 1.06);
+        }
+
+        const double sum = std::accumulate(waveform.end() - 1 - remainder, waveform.end(), 0.0, sumQVariantDoubles);
+        result.append(((sum / (chunk + remainder)) + 0.06) / 1.06); // make 0 visible
+    } else {
+        for (int i=0; i < waveform.size(); i++)
+            result.append(waveform[i]);
+        for (int i=0; i < count - waveform.size(); i++)
+            result.append(0.06 / 1.06);
     }
 
     return result;

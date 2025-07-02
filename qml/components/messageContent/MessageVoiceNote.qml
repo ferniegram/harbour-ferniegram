@@ -61,10 +61,12 @@ MessageAudio {
         slider._highlightItem.visible = false
 
         progressBarProxy.height = slider._progressBarItem.height
+        highlightProxy.height = slider._highlightItem.height
+        highlightProxy.width = slider._highlightItem.width
 
         slider._backgroundItem = background
         slider._progressBarItem = progressBarProxy
-        slider._highlightItem = highlight
+        slider._highlightItem = highlight//Proxy
     }
 
     Row {
@@ -100,26 +102,29 @@ MessageAudio {
         width: slider._progressBarWidth
     }
 
+    Item {
+        id: highlightProxy
+        visible: false
+    }
+
     GlassItem {
         id: highlight
+        parent: slider
 
         x: slider._highlightX
-        width: Theme.itemSizeMedium
-        height: background.height
+        width: (slider.colorScheme === Theme.DarkOnLight ? 1.0 : 0.5) * Theme.itemSizeSmall
+        height: background.height + 2*Theme.paddingMedium
         visible: slider.handleVisible && background.visible
         z: 2
-        radius: 0.17
-        falloffRadius: 0.20
         anchors.verticalCenter: background.verticalCenter
-        dimmed: true
-        color: slider.highlighted ? slider.highlightColor : slider.color
+
+        dimmed: false
+        radius: 1.40//slider.colorScheme === Theme.DarkOnLight ? 0.14 : 0.10
+        falloffRadius: 0.15//slider.colorScheme === Theme.DarkOnLight ? 0.05 : 0.04
+        ratio: 0.0
+
+        color: !slider.highlighted ? slider.highlightColor : slider.color
         backgroundColor: slider.backgroundGlowColor
-        onXChanged: {
-            console.log(slider.leftMargin + slider._highlightPadding - slider._highlightItem.width/2
-                        + (slider.maximumValue > slider.minimumValue
-                           ? (slider.sliderValue - slider.minimumValue) / (slider.maximumValue - slider.minimumValue)
-                             * (slider._grooveWidth - 2 * slider._highlightPadding)
-                           : 0), slider._progressBarItem.width, slider.leftMargin, slider._highlightPadding, (slider.sliderValue - slider.minimumValue) / (slider.maximumValue - slider.minimumValue), slider._grooveWidth)
-        }
     }
+
 }
