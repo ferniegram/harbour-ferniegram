@@ -17,8 +17,8 @@
     along with Fernschreiber. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef FERNSCHREIBERUTILS_H
-#define FERNSCHREIBERUTILS_H
+#ifndef UTILITIES_H
+#define UTILITIES_H
 
 #include <QObject>
 #include <QAudioRecorder>
@@ -27,7 +27,7 @@
 #include <QNetworkAccessManager>
 #include "tdlibwrapper.h"
 
-class FernschreiberUtils : public QObject
+class Utilities : public QObject
 {
     Q_OBJECT
 
@@ -35,8 +35,8 @@ class FernschreiberUtils : public QObject
     Q_PROPERTY(QString voiceNotePath READ getVoiceNotePath)
     Q_PROPERTY(qlonglong voiceNoteDuration READ getVoiceNoteDuration NOTIFY voiceNoteDurationChanged)
 public:
-    explicit FernschreiberUtils(AppSettings *settings = nullptr, TDLibWrapper *tdLibWrapper = nullptr, QObject *parent = nullptr);
-    ~FernschreiberUtils();
+    explicit Utilities(AppSettings *settings = nullptr, TDLibWrapper *tdLibWrapper = nullptr, QObject *parent = nullptr);
+    ~Utilities();
 
     enum VoiceNoteRecordingState {
         Unavailable,
@@ -98,4 +98,4 @@ private:
     QVariantList decodeWaveform(QString encodedData);
 };
 
-#endif // FERNSCHREIBERUTILS_H
+#endif // UTILITIES_H

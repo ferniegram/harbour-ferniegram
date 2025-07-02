@@ -23,11 +23,11 @@
 .import Sailfish.Silica 1.0 as Silica
 .import WerkWolf.Fernschreiber 1.0 as Fernschreiber
 
-var tdLibWrapper, appNotification, fernschreiberUtils
+var tdLibWrapper, appNotification, utilities
 function setGlobals(globals) {
     tdLibWrapper = globals.tdLibWrapper
     appNotification = globals.appNotification
-    fernschreiberUtils = globals.fernschreiberUtils
+    utilities = globals.utilities
 }
 function formatUnreadCount(value) {
     if(value < 1000) {
@@ -43,7 +43,7 @@ function getUserName(userInformation) {
 }
 
 function getMessageText(message, simple, currentUserId, ignoreEntities, asFormattedText, emojiSize) {
-    return fernschreiberUtils.getMessageText(message, simple, ignoreEntities)
+    return utilities.getMessageText(message, simple, ignoreEntities)
 }
 
 function getChatPartnerStatusText(statusType, was_online, asTimepoint) {
@@ -149,7 +149,7 @@ function textFixReserved(text) {
 
 function enhanceMessageText(formattedText, ignoreEntities, emojiSize, reloader) {
     if (typeof formattedText === 'undefined') return ''
-    return fernschreiberUtils.enhanceMessageText(formattedText, ignoreEntities)
+    return utilities.enhanceMessageText(formattedText, ignoreEntities)
 }
 
 function handleTMeLink(link, usedPrefix) {

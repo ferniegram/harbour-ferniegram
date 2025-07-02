@@ -98,8 +98,8 @@ Loader {
         } else {
             queued = false;
             var location = null;
-            if(inlineBotInformation.type.need_location && fernschreiberUtils.supportsGeoLocation()) {
-                fernschreiberUtils.startGeoLocationUpdates();
+            if(inlineBotInformation.type.need_location && utilities.supportsGeoLocation()) {
+                utilities.startGeoLocationUpdates();
                 if(!attachmentPreviewRow.locationData.latitude) {
                     queued = true;
                     return;
@@ -127,7 +127,7 @@ Loader {
     }
 
     Connections {
-        target: fernschreiberUtils
+        target: utilities
         onNewPositionInformation: {
             attachmentPreviewRow.locationData = positionInformation;
             if (inlineQueryLoader.queued) {

@@ -200,7 +200,7 @@ Page {
         attachmentPreviewRow.fileProperties = null
         attachmentPreviewRow.locationData = null
         attachmentPreviewRow.attachmentDescription = ""
-        fernschreiberUtils.stopGeoLocationUpdates()
+        utilities.stopGeoLocationUpdates()
     }
 
     function controlSendButton() {
@@ -224,7 +224,7 @@ Page {
                 if (attachmentPreviewRow.isVideo) basecall(tdLibWrapper.sendVideoMessage)
                 if (attachmentPreviewRow.isDocument) basecall(tdLibWrapper.sendDocumentMessage)
                 if (attachmentPreviewRow.isVoiceNote)
-                    tdLibWrapper.sendVoiceNoteMessage(chatInformation.id, fernschreiberUtils.voiceNotePath, newMessageTextField.text, newMessageColumn.replyToMessageId)
+                    tdLibWrapper.sendVoiceNoteMessage(chatInformation.id, utilities.voiceNotePath, newMessageTextField.text, newMessageColumn.replyToMessageId)
                 if (attachmentPreviewRow.isLocation)
                     tdLibWrapper.sendLocationMessage(chatInformation.id, attachmentPreviewRow.locationData.latitude, attachmentPreviewRow.locationData.longitude, attachmentPreviewRow.locationData.horizontalAccuracy, newMessageColumn.replyToMessageId)
                 clearAttachmentPreviewRow()
@@ -238,7 +238,7 @@ Page {
         newMessageInReplyToRow.inReplyToMessage = null
         newMessageColumn.editMessageId = "0"
         newMessageColumn.editIsCaption = false
-        fernschreiberUtils.stopGeoLocationUpdates()
+        utilities.stopGeoLocationUpdates()
     }
 
     function getWordBoundaries(text, cursorPosition) {
@@ -435,7 +435,7 @@ Page {
             tdLibWrapper.setChatDraftMessage(chatInformation.id, 0, newMessageColumn.replyToMessageId, newMessageTextField.text,
                 newMessageInReplyToRow.inReplyToMessage ? newMessageInReplyToRow.inReplyToMessage.id : 0)
 
-        fernschreiberUtils.stopGeoLocationUpdates()
+        utilities.stopGeoLocationUpdates()
         tdLibWrapper.closeChat(chatInformation.id)
     }
 
@@ -1409,7 +1409,7 @@ Page {
                     height: active ? parent.height : 0
                     source: "../components/VoiceNoteOverlay.qml"
                     onActiveChanged: if (!active)
-                        fernschreiberUtils.stopRecordingVoiceNote()
+                        utilities.stopRecordingVoiceNote()
                 }
 
                 Loader {
@@ -1664,14 +1664,14 @@ Page {
                             }
                         }
                         IconButton {
-                            visible: fernschreiberUtils.supportsGeoLocation() && newMessageTextField.text === ""
+                            visible: utilities.supportsGeoLocation() && newMessageTextField.text === ""
                             icon.source: "image://theme/icon-m-location"
                             icon.sourceSize {
                                 width: Theme.iconSizeMedium
                                 height: Theme.iconSizeMedium
                             }
                             onClicked: {
-                                fernschreiberUtils.startGeoLocationUpdates()
+                                utilities.startGeoLocationUpdates()
                                 attachmentOptionsFlickable.isNeeded = false
                                 attachmentPreviewRow.isLocation = true
                                 attachmentPreviewRow.attachmentDescription = qsTr("Location: Obtaining position...")
@@ -1719,7 +1719,7 @@ Page {
                     }
 
                     Connections {
-                        target: fernschreiberUtils
+                        target: utilities
                         onNewPositionInformation: {
                             attachmentPreviewRow.locationData = positionInformation
                             if (attachmentPreviewRow.isLocation)

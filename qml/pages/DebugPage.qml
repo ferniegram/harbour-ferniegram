@@ -86,7 +86,7 @@ Page {
                 text: "Translate"
                 onClicked: pageStack.push(Qt.resolvedUrl("TranslatePage.qml"), {
                                               messageId: -1,
-                                              sourceText: fernschreiberUtils.makeDummyFormattedText(translateArea.text)
+                                              sourceText: utilities.makeDummyFormattedText(translateArea.text)
                                           })
             }
 

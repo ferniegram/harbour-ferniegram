@@ -41,7 +41,7 @@ ApplicationWindow {
         onOpenFileExternally: Qt.openUrlExternally(filePath)
         onTgUrlFound: Functions.handleLink(tgUrl)
         onErrorReceived: Functions.handleErrorMessage(code, message, extra)
-        onServiceNotificationReceived: appNotification.show(fernschreiberUtils.getMessageContentText(content, true))
+        onServiceNotificationReceived: appNotification.show(utilities.getMessageContentText(content, true))
     }
 
     AppNotification {
@@ -61,7 +61,7 @@ ApplicationWindow {
         Functions.setGlobals({
             tdLibWrapper: tdLibWrapper,
             appNotification: appNotification,
-            fernschreiberUtils: fernschreiberUtils,
+            utilities: utilities,
         })
     }
 }

@@ -24,13 +24,13 @@ Page {
     /*
         How does appSettings.formattedTranslate work:
         1. Instead of putting formatted text with entities, we put HTML text to translateText function
-        2. When receiving translated version, we don't escape HTML tag characters when running fernschreiberUtils.enhanceMessageText().
+        2. When receiving translated version, we don't escape HTML tag characters when running utilities.enhanceMessageText().
     */
 
     function checkMessage() {
         if (message) sourceText = appSettings.formattedTranslate
-                     ? fernschreiberUtils.makeDummyFormattedText(fernschreiberUtils.getMessageText(message))
-                     : fernschreiberUtils.getFormattedMessageText(message)
+                     ? utilities.makeDummyFormattedText(utilities.getMessageText(message))
+                     : utilities.getFormattedMessageText(message)
     }
     function translate() {
         translating = true
@@ -51,7 +51,7 @@ Page {
     Connections {
         target: tdLibWrapper
         onTranslationResultReceived: if (extraId == messageId) {
-                                         translated = Emoji.emojify(fernschreiberUtils.enhanceMessageText(formattedText, false, !appSettings.formattedTranslate))
+                                         translated = Emoji.emojify(utilities.enhanceMessageText(formattedText, false, !appSettings.formattedTranslate))
                                          translating = false
                                      }
     }

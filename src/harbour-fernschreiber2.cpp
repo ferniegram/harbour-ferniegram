@@ -53,7 +53,7 @@
 #include "textfiltermodel.h"
 #include "boolfiltermodel.h"
 #include "tgsplugin.h"
-#include "fernschreiberutils.h"
+#include "utilities.h"
 #include "knownusersmodel.h"
 #include "contactsmodel.h"
 
@@ -144,20 +144,20 @@ int main(int argc, char *argv[])
     context->setContextProperty("tdLibWrapper", tdLibWrapper);
     qmlRegisterUncreatableType<TDLibWrapper>(uri, 1, 0, "TelegramAPI", QString());
 
-    FernschreiberUtils *fernschreiberUtils = new FernschreiberUtils(appSettings, tdLibWrapper, view.data());
-    context->setContextProperty("fernschreiberUtils", fernschreiberUtils);
-    qmlRegisterUncreatableType<FernschreiberUtils>(uri, 1, 0, "FernschreiberUtilities", QString());
+    Utilities *utilities = new Utilities(appSettings, tdLibWrapper, view.data());
+    context->setContextProperty("utilities", utilities);
+    qmlRegisterUncreatableType<Utilities>(uri, 1, 0, "Utilities", QString());
 
     DBusAdaptor *dBusAdaptor = tdLibWrapper->getDBusAdaptor();
     context->setContextProperty("dBusAdaptor", dBusAdaptor);
 
-    ChatListModel chatListModel(tdLibWrapper, appSettings, fernschreiberUtils);
+    ChatListModel chatListModel(tdLibWrapper, appSettings, utilities);
     context->setContextProperty("chatListModel", &chatListModel);
 
     ChatModel chatModel(tdLibWrapper);
     context->setContextProperty("chatModel", &chatModel);
 
-    NotificationManager notificationManager(tdLibWrapper, appSettings, mceInterface, &chatModel, fernschreiberUtils);
+    NotificationManager notificationManager(tdLibWrapper, appSettings, mceInterface, &chatModel, utilities);
     context->setContextProperty("notificationManager", &notificationManager);
 
     ProcessLauncher processLauncher;

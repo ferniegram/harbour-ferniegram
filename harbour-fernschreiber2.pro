@@ -30,7 +30,7 @@ SOURCES += src/harbour-fernschreiber2.cpp \
     src/dbusadaptor.cpp \
     src/dbusinterface.cpp \
     src/emojisearchworker.cpp \
-    src/fernschreiberutils.cpp \
+    src/utilities.cpp \
     src/knownusersmodel.cpp \
     src/mceinterface.cpp \
     src/namedaction.cpp \
@@ -235,7 +235,7 @@ HEADERS += \
     src/debuglog.h \
     src/debuglogjs.h \
     src/emojisearchworker.h \
-    src/fernschreiberutils.h \
+    src/utilities.h \
     src/knownusersmodel.h \
     src/mceinterface.h \
     src/namedaction.h \

@@ -124,15 +124,15 @@ NotificationManager::NotificationGroup::~NotificationGroup()
     delete nemoNotification;
 }
 
-NotificationManager::NotificationManager(TDLibWrapper *tdLibWrapper, AppSettings *appSettings, MceInterface *mceInterface, ChatModel *chatModel, FernschreiberUtils *fernschreiberUtils) :
+NotificationManager::NotificationManager(TDLibWrapper *tdLibWrapper, AppSettings *appSettings, MceInterface *mceInterface, ChatModel *chatModel, Utilities *utilities) :
+    tdLibWrapper(tdLibWrapper),
+    appSettings(appSettings),
+    mceInterface(mceInterface),
+    chatModel(chatModel),
+    utilities(utilities),
     appIconFile(SailfishApp::pathTo("images/fernschreiber2-notification.png").toLocalFile())
 {
     LOG("Initializing...");
-    this->tdLibWrapper = tdLibWrapper;
-    this->appSettings = appSettings;
-    this->mceInterface = mceInterface;
-    this->chatModel = chatModel;
-    this->fernschreiberUtils = fernschreiberUtils;
 
     connect(this->tdLibWrapper, SIGNAL(activeNotificationsUpdated(QVariantList)), this, SLOT(handleUpdateActiveNotifications(QVariantList)));
     connect(this->tdLibWrapper, SIGNAL(notificationGroupUpdated(QVariantMap)), this, SLOT(handleUpdateNotificationGroup(QVariantMap)));
@@ -360,11 +360,11 @@ void NotificationManager::publishNotification(const NotificationGroup *notificat
             if (senderInformation.value(_TYPE).toString() == "messageSenderChat") {
                 fullName = tdLibWrapper->getChat(senderInformation.value(CHAT_ID).toString()).value(TITLE).toString();
             } else {
-                fullName = FernschreiberUtils::getUserName(tdLibWrapper->getUserInformation(senderInformation.value(USER_ID).toString()));
+                fullName = Utilities::getUserName(tdLibWrapper->getUserInformation(senderInformation.value(USER_ID).toString()));
             }
             notificationBody += fullName.trimmed() + ": ";
         }
-        notificationBody += fernschreiberUtils->getMessageText(messageMap, true);
+        notificationBody += utilities->getMessageText(messageMap, true);
     }
 
     const QString summary(chatInformation ? chatInformation->title : QString());

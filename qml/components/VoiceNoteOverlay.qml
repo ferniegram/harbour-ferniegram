@@ -27,7 +27,7 @@ Item {
     id: voiceNoteOverlayItem
     anchors.fill: parent
 
-    property int recordingDuration: Math.round(fernschreiberUtils.voiceNoteDuration / 1000)
+    property int recordingDuration: Math.round(utilities.voiceNoteDuration / 1000)
     property bool recordingDone: false;
 
     function getTwoDigitString(numberToBeConverted) {
@@ -113,7 +113,7 @@ Item {
                             recordButton.visible = false;
                             recordingDone = false;
                             recordingDurationLabel.text = "00:00"
-                            fernschreiberUtils.startRecordingVoiceNote();
+                            utilities.startRecordingVoiceNote();
                         }
                     }
                 }
@@ -129,7 +129,7 @@ Item {
                         anchors.fill: parent
                         onClicked: {
                             recordButton.visible = true;
-                            fernschreiberUtils.stopRecordingVoiceNote();
+                            utilities.stopRecordingVoiceNote();
                             recordingDone = true;
                         }
                     }
@@ -143,7 +143,7 @@ Item {
                 horizontalAlignment: Text.AlignHCenter
                 font.pixelSize: Theme.fontSizeMedium
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: switch (fernschreiberUtils.voiceNoteRecordingState) {
+                text: switch (utilities.voiceNoteRecordingState) {
                 case FernschreiberUtilities.Unavailable: return qsTr("Unavailable")
                 case FernschreiberUtilities.Ready: return qsTr("Ready")
                 case FernschreiberUtilities.Starting: return qsTr("Starting")

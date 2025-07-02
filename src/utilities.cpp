@@ -17,7 +17,7 @@
     along with Fernschreiber. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "fernschreiberutils.h"
+#include "utilities.h"
 #include <QMap>
 #include <QVariant>
 #include <QAudioEncoderSettings>
@@ -34,7 +34,7 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 
-#define DEBUG_MODULE FernschreiberUtils
+#define DEBUG_MODULE Utilities
 #include "debuglog.h"
 
 namespace {
@@ -91,7 +91,7 @@ namespace {
     const QString HTML_BR_TAG("<br>");
 }
 
-FernschreiberUtils::FernschreiberUtils(AppSettings *settings, TDLibWrapper *tdLibWrapper, QObject *parent)
+Utilities::Utilities(AppSettings *settings, TDLibWrapper *tdLibWrapper, QObject *parent)
     : QObject(parent)
     , appSettings(settings)
     , tdLibWrapper(tdLibWrapper)
@@ -112,8 +112,8 @@ FernschreiberUtils::FernschreiberUtils(AppSettings *settings, TDLibWrapper *tdLi
     this->audioRecorder.setEncodingSettings(encoderSettings);
     this->audioRecorder.setContainerFormat("ogg");
 
-    connect(&audioRecorder, &QAudioRecorder::durationChanged, this, &FernschreiberUtils::voiceNoteDurationChanged);
-    connect(&audioRecorder, &QAudioRecorder::statusChanged, this, &FernschreiberUtils::voiceNoteRecordingStateChanged);
+    connect(&audioRecorder, &QAudioRecorder::durationChanged, this, &Utilities::voiceNoteDurationChanged);
+    connect(&audioRecorder, &QAudioRecorder::statusChanged, this, &Utilities::voiceNoteRecordingStateChanged);
 
     this->geoPositionInfoSource = QGeoPositionInfoSource::createDefaultSource(this);
     if (this->geoPositionInfoSource) {
@@ -125,7 +125,7 @@ FernschreiberUtils::FernschreiberUtils(AppSettings *settings, TDLibWrapper *tdLi
     }
 }
 
-FernschreiberUtils::~FernschreiberUtils() {
+Utilities::~Utilities() {
     if (this->geoPositionInfoSource)
         this->geoPositionInfoSource->stopUpdates();
     QString temporaryDirectoryPath = this->getTemporaryDirectoryPath();
@@ -138,12 +138,12 @@ FernschreiberUtils::~FernschreiberUtils() {
     }
 }
 
-QString FernschreiberUtils::fixReservedHtmlCharacters(const QString &text) {
+QString Utilities::fixReservedHtmlCharacters(const QString &text) {
     return QString(text).replace(LT, HTML_LT).replace(GT, HTML_GT).replace(RAW_NEW_LINE_RE, HTML_BR_TAG);
 }
 
 // TODO: (possibly) Use a custom class instead of QVariantMap for messageInstertions
-void FernschreiberUtils::handleHtmlEntity(const QString &messageText, QList<QVariantMap> &messageInsertions, const QString &originalString, const QString &replacementString) {
+void Utilities::handleHtmlEntity(const QString &messageText, QList<QVariantMap> &messageInsertions, const QString &originalString, const QString &replacementString) {
     int nextIndex = -1;
     while ((nextIndex = messageText.indexOf(originalString, nextIndex + 1)) > -1) {
         const QVariantMap insertion{
@@ -160,11 +160,11 @@ bool messageInsertionSorter(const QVariantMap &a, const QVariantMap &b) {
     return b.value(OFFSET).toInt() + b.value(REMOVE_LENGTH).toInt() < a.value(OFFSET).toInt() + a.value(REMOVE_LENGTH).toInt();
 }
 
-QVariantMap FernschreiberUtils::makeDummyFormattedText(const QString &text) {
+QVariantMap Utilities::makeDummyFormattedText(const QString &text) {
     return QVariantMap{{_TYPE, "formattedText"}, {TEXT, text}};
 }
 
-QString FernschreiberUtils::enhanceMessageText(const QVariantMap &formattedText, bool ignoreEntities, bool escapeReserved) {
+QString Utilities::enhanceMessageText(const QVariantMap &formattedText, bool ignoreEntities, bool escapeReserved) {
     if (formattedText.isEmpty()) return "";
 
     QString messageText = formattedText.value(TEXT).toString();
@@ -286,7 +286,7 @@ QString FernschreiberUtils::enhanceMessageText(const QVariantMap &formattedText,
     return messageText;
 }
 
-QVariant FernschreiberUtils::getMaybeFormattedMessageText(const QVariantMap &messageContent, const QString &messageSenderType, qlonglong messageSenderUserId, bool isSponsored, bool simple) const {
+QVariant Utilities::getMaybeFormattedMessageText(const QVariantMap &messageContent, const QString &messageSenderType, qlonglong messageSenderUserId, bool isSponsored, bool simple) const {
     const QString contentType = messageContent.value(_TYPE).toString();
     const bool myself = !isSponsored
             && messageSenderType == MESSAGE_SENDER_USER
@@ -453,7 +453,7 @@ QVariant FernschreiberUtils::getMaybeFormattedMessageText(const QVariantMap &mes
             : tr("sent an unsupported message: %1", "%1 is message type").arg(contentType.mid(7));
 }
 
-QVariant FernschreiberUtils::getMaybeFormattedMessageText(const QVariantMap &message, bool simple) const {
+QVariant Utilities::getMaybeFormattedMessageText(const QVariantMap &message, bool simple) const {
     const QVariantMap messageSender = message.value(SENDER_ID).toMap();
     return getMaybeFormattedMessageText(
                 message.value(CONTENT).toMap(),
@@ -464,21 +464,21 @@ QVariant FernschreiberUtils::getMaybeFormattedMessageText(const QVariantMap &mes
                 );
 }
 
-QString FernschreiberUtils::getMessageText(const QVariantMap &message, bool simple, bool ignoreEntities, bool escapeReserved) {
+QString Utilities::getMessageText(const QVariantMap &message, bool simple, bool ignoreEntities, bool escapeReserved) {
     const QVariant text = getMaybeFormattedMessageText(message, simple);
     if (text.userType() == QMetaType::QVariantMap)
         return enhanceMessageText(text.toMap(), ignoreEntities, escapeReserved);
     return text.toString();
 }
 
-QVariantMap FernschreiberUtils::getFormattedMessageText(const QVariantMap &message, bool simple) {
+QVariantMap Utilities::getFormattedMessageText(const QVariantMap &message, bool simple) {
     const QVariant text = getMaybeFormattedMessageText(message, simple);
     if (text.userType() == QMetaType::QString)
         return makeDummyFormattedText(text.toString());
     return text.toMap();
 }
 
-QString FernschreiberUtils::getMessageContentText(const QVariantMap messageContent, bool simple, bool ignoreEntities, bool escapeReserved) {
+QString Utilities::getMessageContentText(const QVariantMap messageContent, bool simple, bool ignoreEntities, bool escapeReserved) {
     const QVariant text = getMaybeFormattedMessageText(
                 messageContent,
                 MESSAGE_SENDER_TYPE_CHAT, // Skips all user-related checks
@@ -491,35 +491,35 @@ QString FernschreiberUtils::getMessageContentText(const QVariantMap messageConte
     return text.toString();
 }
 
-QString FernschreiberUtils::getUserName(const QVariantMap &userInformation) {
+QString Utilities::getUserName(const QVariantMap &userInformation) {
     const QString firstName = userInformation.value("first_name").toString();
     const QString lastName = userInformation.value("last_name").toString();
     return QString(firstName + " " + lastName).trimmed();
 }
 
-void FernschreiberUtils::startRecordingVoiceNote() {
+void Utilities::startRecordingVoiceNote() {
     LOG("Start recording voice note...");
     this->audioRecorder.setOutputLocation(QUrl::fromLocalFile(this->getTemporaryDirectoryPath() + "/voicenote-" + QDateTime::currentDateTime().toString("yyyy-MM-dd-HH-mm-ss") + ".ogg"));
     this->audioRecorder.setVolume(appSettings->voiceNoteVolume());
     this->audioRecorder.record();
 }
 
-void FernschreiberUtils::stopRecordingVoiceNote() {
+void Utilities::stopRecordingVoiceNote() {
     LOG("Stop recording voice note...");
     this->audioRecorder.stop();
 }
 
-void FernschreiberUtils::startGeoLocationUpdates() {
+void Utilities::startGeoLocationUpdates() {
     if (this->geoPositionInfoSource)
         this->geoPositionInfoSource->startUpdates();
 }
 
-void FernschreiberUtils::stopGeoLocationUpdates() {
+void Utilities::stopGeoLocationUpdates() {
     if (this->geoPositionInfoSource)
         this->geoPositionInfoSource->stopUpdates();
 }
 
-void FernschreiberUtils::initiateReverseGeocode(double latitude, double longitude)
+void Utilities::initiateReverseGeocode(double latitude, double longitude)
 {
     LOG("Initiating reverse geocode:" << latitude << longitude);
     QUrl url = QUrl("https://nominatim.openstreetmap.org/reverse");
@@ -529,7 +529,7 @@ void FernschreiberUtils::initiateReverseGeocode(double latitude, double longitud
     urlQuery.addQueryItem("format", "json");
     url.setQuery(urlQuery);
     QNetworkRequest request(url);
-    request.setHeader(QNetworkRequest::UserAgentHeader, "Fernschreiber (Sailfish OS)");
+    request.setHeader(QNetworkRequest::UserAgentHeader, "Ferniegram (Sailfish OS)");
     request.setRawHeader("Accept", "application/json");
     request.setRawHeader("Accept-Charset", "utf-8");
     request.setRawHeader("Connection", "close");
@@ -538,7 +538,7 @@ void FernschreiberUtils::initiateReverseGeocode(double latitude, double longitud
     connect(reply, SIGNAL(finished()), this, SLOT(handleReverseGeocodeFinished()));
 }
 
-FernschreiberUtils::VoiceNoteRecordingState FernschreiberUtils::getVoiceNoteRecordingState() const {
+Utilities::VoiceNoteRecordingState Utilities::getVoiceNoteRecordingState() const {
     switch (this->audioRecorder.status()) {
     case QMediaRecorder::LoadedStatus:
     case QMediaRecorder::PausedStatus:
@@ -554,7 +554,7 @@ FernschreiberUtils::VoiceNoteRecordingState FernschreiberUtils::getVoiceNoteReco
     }
 }
 
-void FernschreiberUtils::handleGeoPositionUpdated(const QGeoPositionInfo &info)
+void Utilities::handleGeoPositionUpdated(const QGeoPositionInfo &info)
 {
     LOG("Geo position was updated");
     QVariantMap positionInformation;
@@ -577,9 +577,9 @@ void FernschreiberUtils::handleGeoPositionUpdated(const QGeoPositionInfo &info)
     emit newPositionInformation(positionInformation);
 }
 
-void FernschreiberUtils::handleReverseGeocodeFinished()
+void Utilities::handleReverseGeocodeFinished()
 {
-    qDebug() << "FernschreiberUtils::handleReverseGeocodeFinished";
+    qDebug() << "Utilities::handleReverseGeocodeFinished";
     QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
     reply->deleteLater();
     if (reply->error() != QNetworkReply::NoError) {
@@ -594,12 +594,12 @@ void FernschreiberUtils::handleReverseGeocodeFinished()
     }
 }
 
-QString FernschreiberUtils::getTemporaryDirectoryPath()
+QString Utilities::getTemporaryDirectoryPath()
 {
     return QStandardPaths::writableLocation(QStandardPaths::TempLocation) +  + "/harbour-fernschreiber2";
 }
 
-QVariantList FernschreiberUtils::decodeWaveform(QString encodedData) {
+QVariantList Utilities::decodeWaveform(QString encodedData) {
     QByteArray waveform = QByteArray::fromBase64(encodedData.toUtf8());
 
     QVariantList result;
@@ -611,7 +611,7 @@ QVariantList FernschreiberUtils::decodeWaveform(QString encodedData) {
     return result.mid(0, 100);
 }
 
-QString FernschreiberUtils::encodeWaveform(QVariantList waveform) {
+QString Utilities::encodeWaveform(QVariantList waveform) {
     // idk how some parts work in this but it works
 
     const int numBits = waveform.length() * 5;
@@ -633,7 +633,7 @@ QString FernschreiberUtils::encodeWaveform(QVariantList waveform) {
     return QString::fromUtf8(result.toBase64());
 }
 
-QVariantList FernschreiberUtils::getWaveformData(QString encodedData, int count) {
+QVariantList Utilities::getWaveformData(QString encodedData, int count) {
     if (count < 1) return QVariantList();
     QVariantList waveform = decodeWaveform(encodedData);
     if (waveform.size() == count) return waveform;

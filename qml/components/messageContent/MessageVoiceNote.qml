@@ -43,7 +43,7 @@ MessageAudio {
 
         readonly property real itemWidth: Theme.paddingSmall
         spacing: Theme.paddingSmall
-        property var waveform: fernschreiberUtils.getWaveformData(rawMessage.content.voice_note.waveform, (width + spacing) / (itemWidth + spacing))
+        property var waveform: utilities.getWaveformData(rawMessage.content.voice_note.waveform, (width + spacing) / (itemWidth + spacing))
         Repeater {
             model: parent.waveform.length
             Rectangle {
