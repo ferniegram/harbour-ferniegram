@@ -42,11 +42,6 @@ void TextFilterModel::setSourceModel(QAbstractItemModel *model)
     }
 }
 
-QString TextFilterModel::getFilterRoleName() const
-{
-    return filterRoleName;
-}
-
 void TextFilterModel::setFilterRoleName(QString role)
 {
     if (filterRoleName != role) {
@@ -55,11 +50,6 @@ void TextFilterModel::setFilterRoleName(QString role)
         updateFilterRole();
         emit filterRoleNameChanged();
     }
-}
-
-QString TextFilterModel::getFilterText() const
-{
-    return filterText;
 }
 
 void TextFilterModel::setFilterText(QString text)

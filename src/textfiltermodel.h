@@ -23,8 +23,8 @@
 class TextFilterModel : public QSortFilterProxyModel
 {
     Q_OBJECT
-    Q_PROPERTY(QString filterRoleName READ getFilterRoleName WRITE setFilterRoleName NOTIFY filterRoleNameChanged)
-    Q_PROPERTY(QString filterText READ getFilterText WRITE setFilterText NOTIFY filterTextChanged)
+    Q_PROPERTY(QString filterRoleName MEMBER filterRoleName WRITE setFilterRoleName NOTIFY filterRoleNameChanged)
+    Q_PROPERTY(QString filterText MEMBER filterText WRITE setFilterText NOTIFY filterTextChanged)
     Q_PROPERTY(QObject* sourceModel READ sourceModel WRITE setSource NOTIFY sourceChanged)
 
 public:
@@ -33,10 +33,7 @@ public:
     void setSource(QObject* model);
     void setSourceModel(QAbstractItemModel *model) Q_DECL_OVERRIDE;
 
-    QString getFilterRoleName() const;
     void setFilterRoleName(QString role);
-
-    QString getFilterText() const;
     void setFilterText(QString text);
 
 signals:
