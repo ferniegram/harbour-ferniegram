@@ -28,6 +28,8 @@ MessageAudio {
     thumbnail: null
     minithumbnail: null
 
+    slider.anchors.topMargin: 0
+
     Row {
         id: background
 
