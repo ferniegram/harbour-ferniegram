@@ -3,6 +3,8 @@ import Sailfish.Silica 1.0
 import Sailfish.WebView 1.0
 
 FullscreenContentPage {
+    allowedOrientations: Orientation.All
+
     property var linkPreviewType: ({})
 
     MouseArea {
@@ -13,10 +15,11 @@ FullscreenContentPage {
 
     WebView {
         id: webView
+        anchors.centerIn: parent
         url: linkPreviewType.url
-        width: parent.width
-        height: width / (linkPreviewType.width / linkPreviewType.height)
-        anchors.verticalCenter: parent.verticalCenter
+
+        width: parent.width > parent.height ? (parent.height / (linkPreviewType.height / linkPreviewType.width)) : parent.width
+        height: parent.width <= parent.height ? (parent.width / (linkPreviewType.width / linkPreviewType.height)) : parent.height
     }
 
     MouseArea {
