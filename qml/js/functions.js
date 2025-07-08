@@ -265,7 +265,7 @@ var ALL_ERRORS = {
 }
 
 function handleErrorMessage(code, message, extra) {
-    //if (code === 406) return // handle using updateServiceNotification instead (for now both are used for testing)
+    // if code is 406, next updateServiceNotification will replace this message; in case it will not be received this message will not be replaced and will be shown
     if (code === 404 ||
             (code === 400 &&
              (message === "USERNAME_INVALID" || message === "USERNAME_NOT_OCCUPIED"))) {
