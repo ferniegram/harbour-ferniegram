@@ -342,11 +342,6 @@ QVariant Utilities::getMaybeFormattedMessageText(const QVariantMap &messageConte
             return caption;
         else return simple ? (myself ? tr("sent a voice message", "myself") : tr("sent a voice message")) : "";
     }
-    if (contentType == MESSAGE_CONTENT_TYPE_VOICE_NOTE) {
-        if (const QVariant caption = getCaption(tr("Document: %1")); caption.isValid())
-            return caption;
-        else return simple ? (myself ? tr("sent a document", "myself") : tr("sent a document")) : "";
-    }
     if (contentType == MESSAGE_CONTENT_TYPE_LOCATION)
         return simple ? (myself ? tr("sent a location", "myself") : tr("sent a location")) : "";
     if (contentType == MESSAGE_CONTENT_TYPE_VENUE)
