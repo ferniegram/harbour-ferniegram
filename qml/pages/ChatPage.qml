@@ -203,16 +203,6 @@ Page {
         utilities.stopGeoLocationUpdates()
     }
 
-    function controlSendButton() {
-        newMessageSendButton.enabled =
-            newMessageTextField.text.length !== 0
-            || attachmentPreviewRow.isPicture
-            || attachmentPreviewRow.isDocument
-            || attachmentPreviewRow.isVideo
-            || attachmentPreviewRow.isVoiceNote
-            || attachmentPreviewRow.isLocation
-    }
-
     function sendMessage() {
         if (newMessageColumn.editMessageId !== "0")
             (newMessageColumn.editIsCaption ? tdLibWrapper.editMessageCaption : tdLibWrapper.editMessageText)
@@ -234,7 +224,6 @@ Page {
             if(appSettings.focusTextAreaAfterSend)
                 lostFocusTimer.start()
         }
-        controlSendButton()
         newMessageInReplyToRow.inReplyToMessage = null
         newMessageColumn.editMessageId = "0"
         newMessageColumn.editIsCaption = false
@@ -1597,7 +1586,6 @@ Page {
                                     Debug.log("Selected document: ", picker.selectedContentProperties.filePath )
                                     attachmentPreviewRow.fileProperties = picker.selectedContentProperties
                                     attachmentPreviewRow.isPicture = true
-                                    controlSendButton()
                                 })
                             }
                         }
@@ -1613,7 +1601,6 @@ Page {
                                     Debug.log("Selected video: ", picker.selectedContentProperties.filePath )
                                     attachmentPreviewRow.fileProperties = picker.selectedContentProperties
                                     attachmentPreviewRow.isVideo = true
-                                    controlSendButton()
                                 })
                             }
                         }
@@ -1643,7 +1630,6 @@ Page {
                                     Debug.log("Selected document: ", picker.selectedContentProperties.filePath)
                                     attachmentPreviewRow.fileProperties = picker.selectedContentProperties
                                     attachmentPreviewRow.isDocument = true
-                                    controlSendButton()
                                 })
                             }
                         }
@@ -1684,7 +1670,6 @@ Page {
                                 attachmentOptionsFlickable.isNeeded = false
                                 attachmentPreviewRow.isLocation = true
                                 attachmentPreviewRow.attachmentDescription = qsTr("Location: Obtaining position...")
-                                controlSendButton()
                             }
                         }
                         IconButton {
@@ -1746,7 +1731,6 @@ Page {
                         icon.source: "image://theme/icon-m-clear"
                         onClicked: {
                             clearAttachmentPreviewRow()
-                            controlSendButton()
                         }
                     }
 
@@ -1994,7 +1978,6 @@ Page {
                         EnterKey.iconSource: "image://theme/icon-m-" + (appSettings.sendByEnter ? "chat" : "enter")
 
                         onTextChanged: {
-                            controlSendButton()
                             textReplacementTimer.restart()
                         }
                     }
@@ -2022,7 +2005,12 @@ Page {
                         anchors.bottom: parent.bottom
                         anchors.bottomMargin: Theme.paddingSmall
                         visible: !inlineQuery.userNameIsValid && (!appSettings.sendByEnter || (!appSettings.sendAttachmentByEnter && attachmentPreviewRow.visible))
-                        enabled: false
+                        enabled: newMessageTextField.text.length !== 0
+                                 || attachmentPreviewRow.isPicture
+                                 || attachmentPreviewRow.isDocument
+                                 || attachmentPreviewRow.isVideo
+                                 || attachmentPreviewRow.isVoiceNote
+                                 || attachmentPreviewRow.isLocation
                         onClicked: {
                             sendMessage()
                             newMessageTextField.text = ""
