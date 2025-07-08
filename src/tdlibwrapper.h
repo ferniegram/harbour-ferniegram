@@ -245,7 +245,7 @@ public:
     Q_INVOKABLE void cancelUploadFile(int fileId);
     Q_INVOKABLE void deleteFile(int fileId);
     Q_INVOKABLE void setName(const QString &firstName, const QString &lastName);
-    Q_INVOKABLE void setUsername(const QString &userName);
+    Q_INVOKABLE void setUsername(const QString &username);
     Q_INVOKABLE void setUserPrivacySettingRule(UserPrivacySetting setting, UserPrivacySettingRule rule);
     Q_INVOKABLE void getUserPrivacySettingRules(UserPrivacySetting setting);
     Q_INVOKABLE void setProfilePhoto(const QString &filePath);
@@ -403,7 +403,7 @@ private:
     QVariantMap &fillTdlibParameters(QVariantMap &parameters);
     const Group *updateGroup(qlonglong groupId, const QVariantMap &groupInfo, QHash<qlonglong,Group*> *groups);
     QVariantMap newSendMessageRequest(qlonglong chatId, qlonglong replyToMessageId);
-    QVariantMap newFormattedText(const QString &text, const QVariantList entities = QVariantList());
+    void sendFileMessage(const QString &messageType, const QString &fileType, qlonglong chatId, const QString &filePath, const QString &message, qlonglong replyToMessageId);
     void initializeTDLibReceiver();
     void updateUserInformation(const QString &userId, const QVariantMap &userInformation);
 

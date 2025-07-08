@@ -64,6 +64,7 @@ namespace {
     const QString MESSAGE_CONTENT_TYPE_VENUE("messageVenue");
 
     const QString ENTITIES("entities");
+    const QString TYPE_PLAIN_TEXT("plainText");
     const QString TEXT_ENTITY("textEntity");
     const QString OFFSET("offset");
     const QString LENGTH("length");
@@ -89,6 +90,8 @@ namespace {
     const QString HTML_GT("&gt;");
     const QRegularExpression RAW_NEW_LINE_RE("\r?\n");
     const QString HTML_BR_TAG("<br>");
+
+    const QRegularExpression AT_METION_ID_RE("\\@(?<type>\\d+)\\((?<text>[^\\)]+)\\)");
 }
 
 Utilities::Utilities(AppSettings *settings, TDLibWrapper *tdLibWrapper, QObject *parent)
@@ -160,8 +163,69 @@ bool messageInsertionSorter(const QVariantMap &a, const QVariantMap &b) {
     return b.value(OFFSET).toInt() + b.value(REMOVE_LENGTH).toInt() < a.value(OFFSET).toInt() + a.value(REMOVE_LENGTH).toInt();
 }
 
-QVariantMap Utilities::makeDummyFormattedText(const QString &text) {
-    return QVariantMap{{_TYPE, "formattedText"}, {TEXT, text}};
+QVariantMap Utilities::newFormattedText(const QString &text, const QVariantList &entities) {
+    QVariantMap formattedText{{_TYPE, "formattedText"}, {TEXT, text}};
+    if (entities.length() > 0)
+        formattedText.insert("entities", entities);
+    return formattedText;
+}
+
+static bool compareReplacements(const QVariant &replacement1, const QVariant &replacement2) {
+    return replacement1.toMap().value("startIndex").toInt() < replacement2.toMap().value("startIndex").toInt();
+}
+
+QList<QVariantMap> Utilities::findFormattedTextReplacements(const QRegularExpression &re, const QString &text, const QString &entityType, const QString &typeParameter) {
+    QList<QVariantMap> replacements;
+
+    QRegularExpressionMatchIterator iterator = re.globalMatch(text);
+    while (iterator.hasNext()) {
+        QRegularExpressionMatch match = iterator.next();
+        LOG("Found match for formatted text replacements");
+        QVariantMap type{{_TYPE, entityType}};
+        if (!typeParameter.isEmpty()) {
+            const QString typeParameterValue = match.captured(TYPE);
+            if (!typeParameterValue.isEmpty()) type.insert(typeParameter, typeParameterValue);
+        }
+        replacements.append(QVariantMap{
+                                {"startIndex", match.capturedStart(0)},
+                                {"length", match.capturedLength(0)},
+                                {TYPE, type},
+                                {TYPE_PLAIN_TEXT, match.captured(TEXT)}
+                            });
+    }
+    return replacements;
+}
+
+QVariantList Utilities::formattedTextEntitiesFromReplacements(QList<QVariantMap> &replacements, QString &text) {
+    QVariantList entities;
+    if (!replacements.isEmpty()) {
+        std::sort(replacements.begin(), replacements.end(), compareReplacements);
+        int offsetCorrection = 0;
+        for (const QVariantMap &replacement : replacements) {
+            int replacementStartOffset = replacement.value("startIndex").toInt();
+            int replacementLength = replacement.value("length").toInt();
+            const QString replacementPlainText = replacement.value(TYPE_PLAIN_TEXT).toString();
+            text.replace(replacementStartOffset - offsetCorrection, replacementLength, replacementPlainText);
+            entities.append(QVariantMap{
+                {"offset", replacementStartOffset - offsetCorrection},
+                {"length", replacementPlainText.length()},
+                {TYPE, replacement.value(TYPE).toMap()}
+            });
+            offsetCorrection += replacementLength - replacementPlainText.length();
+        }
+    }
+    return entities;
+}
+
+QVariantMap Utilities::enhanceInputText(const QString &originalText) {
+    // Postprocess message (e.g. for @-mentioning)
+    QString text = originalText;
+
+    QList<QVariantMap> replacements;
+    replacements += findFormattedTextReplacements(AT_METION_ID_RE, text, "textEntityTypeMentionName", USER_ID);
+
+    const QVariantList entities = Utilities::formattedTextEntitiesFromReplacements(replacements, text);
+    return newFormattedText(text, entities);
 }
 
 QString Utilities::enhanceMessageText(const QVariantMap &formattedText, bool ignoreEntities, bool escapeReserved) {
@@ -469,7 +533,7 @@ QString Utilities::getMessageText(const QVariantMap &message, bool simple, bool 
 QVariantMap Utilities::getFormattedMessageText(const QVariantMap &message, bool simple) {
     const QVariant text = getMaybeFormattedMessageText(message, simple);
     if (text.userType() == QMetaType::QString)
-        return makeDummyFormattedText(text.toString());
+        return newFormattedText(text.toString());
     return text.toMap();
 }
 

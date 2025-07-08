@@ -51,11 +51,16 @@ public:
     
     Q_INVOKABLE static QString fixReservedHtmlCharacters(const QString &text);
     Q_INVOKABLE void handleHtmlEntity(const QString &messageText, QList<QVariantMap> &messageInsertions, const QString &originalString, const QString &replacementString);
-    Q_INVOKABLE static QVariantMap makeDummyFormattedText(const QString &text);
     Q_INVOKABLE QString enhanceMessageText(const QVariantMap &formattedText, bool ignoreEntities = false, bool escapeReserved = true);
     Q_INVOKABLE QString getMessageText(const QVariantMap &message, bool simple = false, bool ignoreEntities = false, bool escapeReserved = true);
     Q_INVOKABLE QVariantMap getFormattedMessageText(const QVariantMap &message, bool simple = false);
     Q_INVOKABLE QString getMessageContentText(const QVariantMap messageContent, bool simple = false, bool ignoreEntities = false, bool escapeReserved = true);
+
+    Q_INVOKABLE static QVariantMap newFormattedText(const QString &text, const QVariantList &entities = QVariantList());
+    Q_INVOKABLE static QVariantList formattedTextEntitiesFromReplacements(QList<QVariantMap> &replacements, QString &text);
+    Q_INVOKABLE static QList<QVariantMap> findFormattedTextReplacements(const QRegularExpression &re, const QString &text, const QString &entityType, const QString &typeParameter);
+    Q_INVOKABLE static QVariantMap enhanceInputText(const QString &text);
+
 
     inline QString getVoiceNotePath() const { return audioRecorder.outputLocation().toLocalFile(); }
     VoiceNoteRecordingState getVoiceNoteRecordingState() const;

@@ -30,7 +30,7 @@ Page {
 
     function checkMessage() {
         if (message) sourceText = appSettings.formattedTranslate
-                     ? utilities.makeDummyFormattedText(utilities.getMessageText(message))
+                     ? utilities.newFormattedText(utilities.getMessageText(message))
                      : utilities.getFormattedMessageText(message)
     }
     function translate() {
