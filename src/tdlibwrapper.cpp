@@ -401,12 +401,12 @@ void TDLibWrapper::unpinMessage(const QString &chatId, const QString &messageId)
 QVariantMap TDLibWrapper::newSendMessageRequest(qlonglong chatId, qlonglong replyToMessageId)
 {
     QVariantMap request{{_TYPE, "sendMessage"}, {CHAT_ID, chatId}};
-    if (replyToMessageId) {
-        QVariantMap replyTo;
-        replyTo.insert(_TYPE, TYPE_INPUT_MESSAGE_REPLY_TO_MESSAGE);
-        replyTo.insert(MESSAGE_ID, replyToMessageId);
-        request.insert(REPLY_TO, replyTo);
-    }
+    if (replyToMessageId != 0)
+        request.insert(REPLY_TO, QVariantMap{
+            {_TYPE, TYPE_INPUT_MESSAGE_REPLY_TO_MESSAGE},
+            {MESSAGE_ID, replyToMessageId}
+        });
+
     return request;
 }
 
@@ -569,11 +569,7 @@ void TDLibWrapper::getChatPinnedMessage(qlonglong chatId) {
 void TDLibWrapper::getChatSponsoredMessage(qlonglong chatId) {
     LOG("Retrieving sponsored message" << chatId);
     this->sendRequest(QVariantMap{
-        // getChatSponsoredMessage has been replaced with getChatSponsoredMessages
-        // between 1.8.7 and 1.8.8
-        // See https://github.com/tdlib/td/commit/ec1310a
-        {_TYPE, QString((versionNumber > VERSION_NUMBER(1,8,7)) ?
-            "getChatSponsoredMessages" : "getChatSponsoredMessage")},
+        {_TYPE, "getChatSponsoredMessages"},
         {CHAT_ID, chatId},
         {_EXTRA, chatId} // see TDLibReceiver::processSponsoredMessage
     });
@@ -992,13 +988,11 @@ void TDLibWrapper::setChatDraftMessage(qlonglong chatId, qlonglong threadId, qlo
         }}
     };
 
-    if (versionNumber > VERSION_NUMBER(1,8,20)) {
+    if (replyToMessageId != 0)
         draftMessage.insert(REPLY_TO, QVariantMap{
             {_TYPE, TYPE_INPUT_MESSAGE_REPLY_TO_MESSAGE},
-            {CHAT_ID, chatId},
             {MESSAGE_ID, replyToMessageId}
         });
-    } else draftMessage.insert(REPLY_TO_MESSAGE_ID, replyToMessageId);
 
     requestObject.insert("draft_message", draftMessage);
     this->sendRequest(requestObject);
@@ -1226,43 +1220,24 @@ void TDLibWrapper::getPageSource(const QString &address) {
 }
 
 void TDLibWrapper::addMessageReaction(qlonglong chatId, qlonglong messageId, const QString &reaction) {
-    QVariantMap requestObject{
-        {CHAT_ID, chatId},
-        {MESSAGE_ID, messageId},
-        {"is_big", false}
-    };
-    if (versionNumber > VERSION_NUMBER(1,8,5)) {
-        // "reaction_type": {
-        //     "@type": "reactionTypeEmoji",
-        //     "emoji": "..."
-        // }
-        requestObject.insert(REACTION_TYPE, QVariantMap{{_TYPE, REACTION_TYPE_EMOJI}, {EMOJI, reaction}});
-        requestObject.insert(_TYPE, "addMessageReaction");
-        LOG("Add message reaction" << chatId << messageId << reaction);
-    } else {
-        requestObject.insert("reaction", reaction);
-        requestObject.insert(_TYPE, "setMessageReaction");
-        LOG("Toggle message reaction" << chatId << messageId << reaction);
-    }
-    this->sendRequest(requestObject);
+    LOG("Add message reaction" << chatId << messageId << reaction);
+    this->sendRequest(QVariantMap{
+                          {_TYPE, "addMessageReaction"},
+                          {CHAT_ID, chatId},
+                          {MESSAGE_ID, messageId},
+                          {"is_big", false},
+                          {REACTION_TYPE, QVariantMap{{_TYPE, REACTION_TYPE_EMOJI}, {EMOJI, reaction}}},
+                      });
 }
 
 void TDLibWrapper::removeMessageReaction(qlonglong chatId, qlonglong messageId, const QString &reaction) {
-    QVariantMap requestObject{{CHAT_ID, chatId}, {MESSAGE_ID, messageId}};
-    if (versionNumber > VERSION_NUMBER(1,8,5)) {
-        // "reaction_type": {
-        //     "@type": "reactionTypeEmoji",
-        //     "emoji": "..."
-        // }
-        requestObject.insert(REACTION_TYPE, QVariantMap{{_TYPE, REACTION_TYPE_EMOJI}, {EMOJI, reaction}});
-        requestObject.insert(_TYPE, "removeMessageReaction");
-        LOG("Remove message reaction" << chatId << messageId << reaction);
-    } else {
-        requestObject.insert("reaction", reaction);
-        requestObject.insert(_TYPE, "setMessageReaction");
-        LOG("Toggle message reaction" << chatId << messageId << reaction);
-    }
-    this->sendRequest(requestObject);
+    LOG("Remove message reaction" << chatId << messageId << reaction);
+    this->sendRequest(QVariantMap{
+                          {_TYPE, "removeMessageReaction"},
+                          {CHAT_ID, chatId},
+                          {MESSAGE_ID, messageId},
+                          {REACTION_TYPE, QVariantMap{{_TYPE, REACTION_TYPE_EMOJI}, {EMOJI, reaction}}}
+                      });
 }
 
 void TDLibWrapper::setNetworkType(NetworkType networkType) {
@@ -1937,15 +1912,7 @@ void TDLibWrapper::setInitialParameters() {
     LOG("Sending initial parameters to TD Lib");
     QVariantMap requestObject;
     requestObject.insert(_TYPE, "setTdlibParameters");
-    // tdlibParameters were inlined between 1.8.5 and 1.8.6
-    // See https://github.com/tdlib/td/commit/f6a2ecd
-    if (versionNumber > VERSION_NUMBER(1,8,5)) {
-        fillTdlibParameters(requestObject);
-    } else {
-        QVariantMap initialParameters;
-        fillTdlibParameters(initialParameters);
-        requestObject.insert("parameters", initialParameters);
-    }
+    fillTdlibParameters(requestObject);
     this->sendRequest(requestObject);
 }
 
