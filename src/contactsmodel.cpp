@@ -43,6 +43,7 @@ namespace {
         {ContactsListModel::ContactRole::RolePhotoSmall, "photo_small"},
         {ContactsListModel::ContactRole::RoleUserStatus, "user_status"},
         {ContactsListModel::ContactRole::RoleUserLastOnline, "user_last_online"},
+        {ContactsListModel::ContactRole::RoleIsSupport, "is_support"},
         {ContactsListModel::ContactRole::RoleFilter, "filter"},
     };
 }
@@ -76,6 +77,7 @@ QVariant ContactsListModel::data(const QModelIndex &index, int role) const {
             case ContactRole::RolePhotoSmall: return requestedContact.value("profile_photo").toMap().value("small");
             case ContactRole::RoleUserStatus: return requestedContact.value(STATUS).toMap().value(_TYPE);
             case ContactRole::RoleUserLastOnline: return requestedContact.value(STATUS).toMap().value("was_online");
+            case ContactRole::RoleIsSupport: return requestedContact.value("is_support").toBool();
             case ContactRole::RoleFilter: return QString(
                         requestedContact.value(FIRST_NAME).toString()
                         + " " + requestedContact.value(LAST_NAME).toString()
@@ -135,7 +137,6 @@ void ContactsListModel::handleContactsImported(const QVariantList &/*importerCou
             emit contactNotFound();
         else emit singleContactAdded(userId);
     } else emit contactsImported();
-    // todo: sort
 }
 
 void ContactsListModel::handleOkMapReceived(const QString &type, const QVariantMap &extra) {
@@ -208,8 +209,7 @@ bool ContactsModel::lessThan(const QModelIndex &source_left, const QModelIndex &
     return contactsListModel.compare(source_left, source_right);
 }
 
-void ContactsModel::startImportingContacts()
-{
+void ContactsModel::startImportingContacts() {
     this->deviceContacts.clear();
 }
 
@@ -225,8 +225,7 @@ void ContactsModel::importContact(const QString &firstName, const QString &lastN
     LOG("Found contact" << firstName << lastName << phoneNumber);
 }
 
-void ContactsModel::importContact(const QVariantMap &singlePerson)
-{
+void ContactsModel::importContact(const QVariantMap &singlePerson) {
     QString firstName = singlePerson.value("firstName").toString();
     QVariantList phoneNumbers = singlePerson.value("phoneNumbers").toList();
     if (!firstName.isEmpty() && !phoneNumbers.isEmpty()) {

@@ -122,7 +122,7 @@ Page {
     function updateChatPartnerStatusText() {
         if (chatPage.isSelecting)
             return
-        var statusText = Functions.getChatPartnerStatusText(chatPartnerInformation.status['@type'], chatPartnerInformation.status.was_online, timepointStatus)
+        var statusText = Functions.getChatPartnerStatusText(chatPartnerInformation.status['@type'], chatPartnerInformation.status.was_online, chatPartnerInformation.is_support, timepointStatus)
         if (chatPage.secretChatDetails) {
             var secretChatStatus = Functions.getSecretChatStatus(chatPage.secretChatDetails)
             if (statusText && secretChatStatus)

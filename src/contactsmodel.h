@@ -38,6 +38,7 @@ public:
         RolePhoneNumber,
         RoleUserStatus,
         RoleUserLastOnline,
+        RoleIsSupport,
         RoleFilter
     };
 

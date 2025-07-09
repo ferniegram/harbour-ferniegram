@@ -46,7 +46,8 @@ function getMessageText(message, simple, currentUserId, ignoreEntities, asFormat
     return utilities.getMessageText(message, simple, ignoreEntities)
 }
 
-function getChatPartnerStatusText(statusType, was_online, asTimepoint) {
+function getChatPartnerStatusText(statusType, was_online, isSupport, asTimepoint) {
+    if (isSupport) return qsTr("service notifications")
     switch(statusType) {
     case "userStatusEmpty":
         return qsTr("was never online");
