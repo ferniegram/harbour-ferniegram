@@ -445,7 +445,7 @@ Page {
             break
         case PageStatus.Active:
             if (!chatPage.isInitialized) {
-                chatModel.initialize(chatInformation)
+                chatModel.initialize(chatInformation, messageIdToShow)
                 pageStack.pushAttached(Qt.resolvedUrl("ChatInformationPage.qml"), {
                                            chatInformation: chatInformation,
                                            privateChatUserInformation: chatPartnerInformation,
@@ -508,11 +508,7 @@ Page {
             if (chatInformation.draft_message && messageId === chatInformation.draft_message.reply_to_message_id) {
                 newMessageInReplyToRow.inReplyToMessage = message
             }
-            Debug.log("Received message ID: " + messageId + ", message ID to show: " + chatPage.messageIdToShow)
-            if (chatPage.messageIdToShow && chatPage.messageIdToShow === String(messageId)) {
-                messageOverlayLoader.overlayMessage = message
-                messageOverlayLoader.active = true
-            }
+            Debug.log("Received message ID: " + messageId)
         }
         onSecretChatReceived: {
             if (secretChatId === chatInformation.type.secret_chat_id) {
@@ -1007,8 +1003,6 @@ Page {
                                 messageOverlayLoader.overlayMessage = chatPage.messageToShow
                                 messageOverlayLoader.active = true
                             }
-                            if (chatPage.messageIdToShow)
-                                tdLibWrapper.getMessage(chatPage.chatInformation.id, chatPage.messageIdToShow)
                         }
                     }
                 }
@@ -1082,6 +1076,7 @@ Page {
                     }
 
                     onContentYChanged: {
+                        console.log(contentY, chatPage.loading, chatView.inCooldown)
                         if (!chatPage.loading && !chatView.inCooldown) {
                             if (chatView.indexAt(chatView.contentX, chatView.contentY) < 10) {
                                 Debug.log("[ChatPage] Trying to get older history items...")

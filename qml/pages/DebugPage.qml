@@ -28,6 +28,8 @@ Page {
     id: debugPage
     allowedOrientations: Orientation.All
 
+    property var overviewPage
+
     SilicaFlickable {
         id: aboutContainer
         contentHeight: column.height
@@ -73,6 +75,35 @@ Page {
                     enabled: chatId.text.length > 0
                     onClicked: tdLibWrapper.joinChat(chatId.text)
                 }
+            }
+
+            Row {
+                width: parent.width
+                TextField {
+                    id: chatIdWithMessage
+                    anchors.bottom: parent.bottom
+                    width: parent.width / 2
+                    placeholderText: "Chat id"
+                    labelVisible: false
+                    EnterKey.iconSource: "image://theme/icon-m-enter-next"
+                    EnterKey.enabled: text.length > 0
+                    EnterKey.onClicked: messageId.focus = true
+                }
+                TextField {
+                    id: messageId
+                    anchors.bottom: parent.bottom
+                    width: parent.width / 2
+                    placeholderText: "Message id"
+                    labelVisible: false
+                    EnterKey.iconSource: "image://theme/icon-m-enter-accept"
+                    EnterKey.enabled: text.length > 0
+                    EnterKey.onClicked: overviewPage.openChatWithMessageId(chatIdWithMessage.text, messageId.text)
+                }
+            }
+            Button {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: "Open"
+                onClicked: overviewPage.openChatWithMessageId(chatIdWithMessage.text, messageId.text)
             }
 
             SectionHeader { text: "Translating" }

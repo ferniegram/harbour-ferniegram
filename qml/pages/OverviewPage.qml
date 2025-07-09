@@ -286,7 +286,7 @@ Page {
             MenuItem {
                 text: "Debug"
                 visible: DebugLog.enabled
-                onClicked: pageStack.push(Qt.resolvedUrl("../pages/DebugPage.qml"))
+                onClicked: pageStack.push(Qt.resolvedUrl("../pages/DebugPage.qml"), {overviewPage: overviewPage})
             }
             MenuItem {
                 text: qsTr("About Ferniegram")
