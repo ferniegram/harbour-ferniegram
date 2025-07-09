@@ -133,6 +133,7 @@ CoverBackground {
                 return qsTr("Connected")
             case TelegramAPI.Updating:
                 return qsTr("Updating content...")
+            default: return ''
             }
             font.pixelSize: Theme.fontSizeLarge
             color: Theme.highlightColor
