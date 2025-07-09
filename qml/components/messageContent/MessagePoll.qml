@@ -20,6 +20,7 @@
 import QtQuick 2.6
 import Sailfish.Silica 1.0
 import WerkWolf.Fernschreiber 1.0
+import "../../modules/Opal/FancyMenus"
 
 import "../../js/functions.js" as Functions
 import "../../js/twemoji.js" as Emoji
@@ -31,25 +32,28 @@ MessageContentBase {
     readonly property string chatId: rawMessage.chat_id
     readonly property bool isOwnMessage: messageListItem ? messageListItem.isOwnMessage : overlayFlickable.isOwnMessage
     readonly property string messageId: rawMessage.id
-    readonly property bool canEdit: messageProperties.can_be_edited
     readonly property var pollData: rawMessage.content.poll
     property var chosenPollData:({})
     property var chosenIndexes: []
     readonly property bool hasAnswered: pollData.options.filter(function(option){ return option.is_chosen }).length > 0
     readonly property bool canAnswer: !hasAnswered && !pollData.is_closed
     readonly property bool isQuiz: pollData.type['@type'] === "pollTypeQuiz"
-    property list<NamedAction> extraContextMenuItems: [
-        NamedAction {
-            visible: !pollData.is_closed && pollMessageComponent.canEdit
-            name: qsTr("Close Poll")
-            action: function () { tdLibWrapper.stopPoll(pollMessageComponent.chatId, pollMessageComponent.messageId) }
-        },
-        NamedAction {
-            visible: !pollData.is_closed && !pollMessageComponent.isQuiz && pollMessageComponent.hasAnswered
-            name: qsTr("Reset Answer")
-            action: function () { pollMessageComponent.resetChosen() }
-        }
-    ]
+    property list<Item> extraContextMenuItems: [
+            FancyMenuRow {
+                property bool canEdit
+                function processProperties(properties) { canEdit = !!properties.can_be_edited }
+                IconTextRowMenuItem {
+                    visible: !pollData.is_closed && canEdit
+                    text: qsTr("Close Poll")
+                    onClicked: tdLibWrapper.stopPoll(pollMessageComponent.chatId, pollMessageComponent.messageId)
+                }
+                IconTextRowMenuItem {
+                    visible: !pollData.is_closed && !pollMessageComponent.isQuiz && pollMessageComponent.hasAnswered
+                    text: qsTr("Reset Answer")
+                    onClicked: pollMessageComponent.resetChosen()
+                }
+            }
+        ]
 
     function handleChoose(index) {
         if(!pollData.type.allow_multiple_answers) {

@@ -272,6 +272,23 @@ ListItem {
                         onClicked: editMessage()
                     }
                 }
+
+                Component.onCompleted: {
+                    if (!extraContentLoader.item || !extraContentLoader.item.extraContextMenuItems) return
+                    for (var i=0; i<extraContentLoader.item.extraContextMenuItems.length; i++) {
+                        if (extraContentLoader.item.extraContextMenuItems[i].processProperties)
+                            extraContentLoader.item.extraContextMenuItems[i].processProperties(messageProperties)
+                        extraContentLoader.item.extraContextMenuItems[i].parent = _contentColumn
+                    }
+                }
+                Component.onDestruction: {
+                    if (!extraContentLoader.item || !extraContentLoader.item.extraContextMenuItems) return
+                    for (var i=0; i<extraContentLoader.item.extraContextMenuItems.length; i++) {
+                        if (extraContentLoader.item.extraContextMenuItems[i].processProperties)
+                            extraContentLoader.item.extraContextMenuItems[i].processProperties({})
+                        extraContentLoader.item.extraContextMenuItems[i].parent = null
+                    }
+                }
             }
         }
 
