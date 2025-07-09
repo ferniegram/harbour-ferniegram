@@ -82,7 +82,7 @@ function getChatMemberStatusText(statusType) {
     case "chatMemberStatusBanned":
         return qsTr("Banned", "channel user role");
     case "chatMemberStatusCreator":
-        return qsTr("Creator", "channel user role");
+        return qsTr("Owner", "channel user role");
     case "chatMemberStatusRestricted":
         return qsTr("Restricted", "channel user role");
     case "chatMemberStatusLeft":
