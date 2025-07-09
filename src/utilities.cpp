@@ -145,7 +145,7 @@ QString Utilities::fixReservedHtmlCharacters(const QString &text) {
     return QString(text).replace(LT, HTML_LT).replace(GT, HTML_GT).replace(RAW_NEW_LINE_RE, HTML_BR_TAG);
 }
 
-// TODO: (possibly) Use a custom class instead of QVariantMap for messageInstertions
+// FIXME: (possibly) Use a custom class instead of QVariantMap for messageInstertions
 void Utilities::handleHtmlEntity(const QString &messageText, QList<QVariantMap> &messageInsertions, const QString &originalString, const QString &replacementString) {
     int nextIndex = -1;
     while ((nextIndex = messageText.indexOf(originalString, nextIndex + 1)) > -1) {
