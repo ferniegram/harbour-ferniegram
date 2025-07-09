@@ -1,5 +1,6 @@
 import QtQuick 2.6
 import Sailfish.Silica 1.0
+import "../js/debug.js" as Debug
 
 Rectangle {
     id: notification
@@ -20,6 +21,7 @@ Rectangle {
     property var clickedAction // using signals would be harder
 
     function show(message, onClicked) {
+        Debug.log("app notification", message)
         text.text = message
         clickedAction = onClicked
         opacity = 1
