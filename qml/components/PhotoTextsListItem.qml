@@ -179,12 +179,14 @@ ListItem {
                 color: Theme.highlightColor
                 textFormat: Text.StyledText
                 truncationMode: TruncationMode.Fade
+                maximumLineCount: 1
             }
             Label {
                 id: secondaryText
                 font.pixelSize: Theme.fontSizeExtraSmall
                 width: parent.width - Theme.paddingMedium - prologSecondaryText.width
                 truncationMode: TruncationMode.Fade
+                maximumLineCount: 1
                 textFormat: Text.StyledText
                 visible: prologSecondaryText.width < ( parent.width - Theme.paddingLarge )
             }
