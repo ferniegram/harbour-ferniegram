@@ -46,7 +46,7 @@ public:
     Q_INVOKABLE QVariantMap getMessage(int index);
     Q_INVOKABLE QVariantList getMessageIdsForAlbum(qlonglong albumId);
     Q_INVOKABLE QVariantList getMessagesForAlbum(qlonglong albumId, int startAt);
-    Q_INVOKABLE int getLastReadMessageIndex(bool onlyKnown = true);
+    Q_INVOKABLE int getLastReadMessageIndex(bool classic = true);
     Q_INVOKABLE void setSearchQuery(const QString newSearchQuery);
 
     Q_INVOKABLE int getMessageIndex(qlonglong messageId);
@@ -92,7 +92,7 @@ private:
     void setMessagesAlbum(const QList<MessageData*> newMessages);
     void setMessagesAlbum(MessageData *message);
     QVariantMap enhanceMessage(const QVariantMap &message);
-    int calculateLastKnownMessageId(bool onlyKnown = true);
+    int calculateLastKnownMessageId(bool classic = true);
     int calculateLastReadSentMessageId();
     int calculateScrollPosition(int listInboxPosition);
     bool isMostRecentMessageLoaded();
