@@ -554,6 +554,16 @@ Page {
     }
 
     Connections {
+        id: destructiveChatActionConnection
+        property var pendingChatId
+        target: typeof pendingChatId !== 'undefined' ? tdLibWrapper : undefined
+        onOkReceived: if (request == "leaveChat:"+pendingChatId || request == "deleteChat:"+pendingChatId)
+                          pageStack.pop(pageStack.find(function(page){ return(page._depth === 0)}))
+        //onErrorReceived: if (extra == "leaveChat:"+pendingChatId || extra == "deleteChat:"+pendingChatId)
+        //                     pendingChatId = undefined
+    }
+
+    Connections {
         target: chatModel
         onMessagesReceived: {
             var proxyIndex = chatProxyModel.mapRowFromSource(modelIndex, -1)
@@ -740,9 +750,9 @@ Page {
                 visible: chatPage.isPrivateChat
                 onClicked: {
                     var privateChatId = chatInformation.id
-                    Remorse.popupAction(chatPage, qsTr("Deleting chat"), function() {
+                    Remorse.popupAction(chatPage, qsTr("Chat deleted"), function() {
+                        destructiveChatActionConnection.pendingChatId = chatInformation.id
                         tdLibWrapper.deleteChat(privateChatId)
-                        pageStack.pop(pageStack.find(function(page){ return(page._depth === 0)}))
                     }, 10000)
                 }
                 text: qsTr("Delete Chat")
@@ -764,13 +774,11 @@ Page {
                 onClicked: {
                     if (chatPage.userIsMember) {
                         var chatId = chatInformation.id
-                        Remorse.popupAction(chatPage, qsTr("Leaving chat"), function() {
+                        Remorse.popupAction(chatPage, qsTr("Left chat"), function() {
+                            destructiveChatActionConnection.pendingChatId = chatInformation.id
                             tdLibWrapper.leaveChat(chatId)
-                            // this does not care about the response (ideally type "ok" without further reference) for now
-                            pageStack.pop(pageStack.find( function(page){ return(page._depth === 0)} ))
                         })
-                    } else
-                        tdLibWrapper.joinChat(chatInformation.id)
+                    } else tdLibWrapper.joinChat(chatInformation.id)
                 }
                 text: chatPage.userIsMember ? qsTr("Leave Chat") : qsTr("Join Chat")
             }
@@ -2010,7 +2018,7 @@ Page {
 
                         onTextChanged: {
                             textReplacementTimer.restart()
-                            tdLibWrapper.sendChatAction(chatInformation.id, "chatActionTyping")
+                            tdLibWrapper.sendChatAction(chatInformation.id, text ? "chatActionTyping" : "chatActionCancel")
                         }
                     }
 

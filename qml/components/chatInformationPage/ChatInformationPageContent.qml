@@ -203,11 +203,10 @@ SilicaFlickable {
                 // ensure it's done even if the page is closed:
                 if (chatInformationPage.userIsMember) {
                     var chatId = chatInformationPage.chatInformation.id;
-                    Remorse.popupAction(chatInformationPage, qsTr("Leaving chat"), function() {
-                        tdLibWrapper.leaveChat(chatId);
-                        // this does not care about the response (ideally type "ok" without further reference) for now
-                        pageStack.pop(pageStack.find( function(page){ return(page._depth === 0)} ));
-                    });
+                    Remorse.popupAction(chatInformationPage, qsTr("Left chat"), function() {
+                        destructiveChatActionConnection.pendingChatId = chatInformation.id
+                        tdLibWrapper.leaveChat(chatId)
+                    })
                 } else {
                     tdLibWrapper.joinChat(chatInformationPage.chatInformation.id);
                 }

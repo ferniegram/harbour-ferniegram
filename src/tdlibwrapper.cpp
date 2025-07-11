@@ -334,12 +334,12 @@ void TDLibWrapper::joinChat(const QString &chatId) {
 
 void TDLibWrapper::leaveChat(const QString &chatId) {
     LOG("Leaving chat " << chatId);
-    this->sendRequest(QVariantMap{{_TYPE, "leaveChat"}, {CHAT_ID, chatId}});
+    this->sendRequest(QVariantMap{{_TYPE, "leaveChat"}, {CHAT_ID, chatId}, {_EXTRA, "leaveChat:" + chatId}});
 }
 
 void TDLibWrapper::deleteChat(qlonglong chatId) {
     LOG("Deleting chat " << chatId);
-    this->sendRequest(QVariantMap{{_TYPE, "deleteChat"}, {CHAT_ID, chatId}});
+    this->sendRequest(QVariantMap{{_TYPE, "deleteChat"}, {CHAT_ID, chatId}, {_EXTRA, "deleteChat:" + chatId}});
 }
 
 void TDLibWrapper::getChatHistory(qlonglong chatId, qlonglong fromMessageId, int offset, int limit, bool onlyLocal) {
