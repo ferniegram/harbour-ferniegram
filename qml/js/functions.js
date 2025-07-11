@@ -158,13 +158,11 @@ function getChatActionsText(chatActionsByChats, chatActionsByUsers, privateOrSec
 }
 
 function getShortenedCount(count) {
-    if (count >= 1000000) {
-        return qsTr("%1M").arg((count / 1000000).toLocaleString(Qt.locale(), 'f', 0));
-    } else if (count >= 1000 ) {
-        return qsTr("%1K").arg((count / 1000).toLocaleString(Qt.locale(), 'f', 0));
-    } else {
-        return count;
-    }
+    if (count >= 1000000)
+        return qsTr("%1M").arg((count / 1000000).toLocaleString(Qt.locale(), 'f', 0))
+    if (count >= 1000)
+        return qsTr("%1K").arg((count / 1000).toLocaleString(Qt.locale(), 'f', 0))
+    return count
 }
 
 function formatDate(timestamp, formatType) {
@@ -189,11 +187,6 @@ function handleHtmlEntity(messageText, messageInsertions, originalString, replac
         messageInsertions.push({ offset: nextIndex, insertionString: replacementString, removeLength: originalString.length });
     }
 }
-
-var rawNewLineRegExp = /\r?\n/g;
-var ampRegExp = /&/g;
-var ltRegExp = /</g;
-var gtRegExp = />/g;
 
 
 function enhanceMessageText(formattedText, ignoreEntities, emojiSize, reloader) {
@@ -323,11 +316,6 @@ function getMessagesArrayText(messages) {
         lines.push("");
     }
     return lines.join("\n");
-}
-
-// See doc/development.md
-var ALL_ERRORS = {
-    // TODO
 }
 
 function handleErrorMessage(code, message, extra) {
