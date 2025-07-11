@@ -25,7 +25,7 @@ Rectangle {
         text.text = message
         clickedAction = onClicked
         opacity = 1
-        resetTimer.start() // for some reason text.height == height here, so we use signals to stop timer
+        resetTimer.restart() // for some reason text.height == height here, so we use signals to stop timer
     }
 
     Timer {
