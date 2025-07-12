@@ -67,12 +67,11 @@ function getChatPartnerStatusText(statusType, was_online, isSupport, asTimepoint
 function getSecretChatStatus(secretChatDetails) {
     switch (secretChatDetails.state["@type"]) {
     case "secretChatStateClosed":
-        return "<b>" + qsTr("Closed!") + "</b>";
+        return "<b>" + qsTr("Closed!") + "</b>"
     case "secretChatStatePending":
-        return qsTr("Pending acknowledgement");
-    case "secretChatStateReady":
-        return "";
+        return qsTr("Pending acknowledgement")
     }
+    return '' // secretChatStateReady
 }
 
 function getChatMemberStatusText(statusType) {
