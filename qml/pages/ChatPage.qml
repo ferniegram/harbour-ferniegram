@@ -120,26 +120,7 @@ Page {
     }
 
     function updateStatusText() {
-        if (chatPage.isSelecting) return
-        var status = Functions.getChatActionsText(chatModel.chatActionsByChats, chatModel.chatActionsByUsers, isPrivateChat || isSecretChat)
-
-        if (!status) {
-            if (isBasicGroup || isSuperGroup) {
-                status = Functions.getGroupStatusText(chatGroupInformation.member_count, chatOnlineMemberCount, isChannel)
-            } else {
-                status = Functions.getChatPartnerStatusText(chatPartnerInformation.status['@type'], chatPartnerInformation.status.was_online, chatPartnerInformation.is_support, timepointStatus)
-
-                if (chatPage.secretChatDetails) {
-                    var secretChatStatus = Functions.getSecretChatStatus(chatPage.secretChatDetails)
-                    if (status && secretChatStatus)
-                        status += " - "
-                    if (secretChatStatus)
-                        status += secretChatStatus
-                }
-            }
-        }
-
-        if (status) chatStatusText.text = status
+        chatStatusText.reload = !chatStatusText.reload
     }
 
     function getMessageStatusText(message, listItemIndex, lastReadSentIndex, useElapsed) {
@@ -392,7 +373,6 @@ Page {
             chatGroupInformation = tdLibWrapper.getSuperGroup(chatInformation.type.supergroup_id)
             isChannel = chatGroupInformation.is_channel
         }
-        updateStatusText()
         if (stickerManager.needsReload()) {
             Debug.log("[ChatPage] Recent stickers will be reloaded!")
             tdLibWrapper.getRecentStickers()
@@ -454,26 +434,22 @@ Page {
         onUserUpdated: {
             if ((isPrivateChat || isSecretChat) && chatPartnerInformation.id.toString() === userId) {
                 chatPartnerInformation = userInformation
-                updateStatusText()
             }
         }
         onBasicGroupUpdated: {
             if (isBasicGroup && chatGroupInformation.id === groupId) {
                 chatGroupInformation = tdLibWrapper.getBasicGroup(groupId)
-                updateStatusText()
             }
         }
         onSuperGroupUpdated: {
             if (isSuperGroup && chatGroupInformation.id === groupId) {
                 chatGroupInformation = tdLibWrapper.getSuperGroup(groupId)
-                updateStatusText()
             }
         }
         onChatOnlineMemberCountUpdated: {
             Debug.log(isSuperGroup, "/", isBasicGroup, "/", chatInformation.id.toString(), "/", chatId);
             if ((isSuperGroup || isBasicGroup) && chatInformation.id.toString() === chatId) {
                 chatOnlineMemberCount = onlineMemberCount
-                updateStatusText()
             }
         }
         onFileUpdated: {
@@ -502,7 +478,6 @@ Page {
             if (secretChatId === chatInformation.type.secret_chat_id) {
                 Debug.log("[ChatPage] Received detailed information about this secret chat")
                 chatPage.secretChatDetails = secretChat
-                updateStatusText()
                 chatPage.isSecretChatReady = chatPage.secretChatDetails.state["@type"] === "secretChatStateReady"
             }
         }
@@ -510,7 +485,6 @@ Page {
             if (secretChatId.toString() === chatInformation.type.secret_chat_id.toString()) {
                 Debug.log("[ChatPage] Detailed information about this secret chat was updated")
                 chatPage.secretChatDetails = secretChat
-                updateStatusText()
                 chatPage.isSecretChatReady = chatPage.secretChatDetails.state["@type"] === "secretChatStateReady"
             }
         }
@@ -632,7 +606,6 @@ Page {
                 tdLibWrapper.getMessage(chatInformation.id, chatInformation.pinned_message_id)
             } else pinnedMessageItem.pinnedMessage = undefined
         }
-        onChatActionsChanged: updateStatusText()
     }
 
     Connections {
@@ -801,10 +774,9 @@ Page {
                     chatPage.selectedMessages = []
                 else pageStack.navigateForward()
             }
-            onPressAndHold: if (isPrivateChat || isSecretChat) {
-                timepointStatus = !timepointStatus
-                updateStatusText()
-            }
+            onPressAndHold:
+                if (isPrivateChat || isSecretChat)
+                    timepointStatus = !timepointStatus
         }
 
         Column {
@@ -910,7 +882,29 @@ Page {
                             right: parent.right
                             bottom: parent.bottom
                         }
-                        text: ""
+                        property bool reload
+                        text: {
+                            // https://stackoverflow.com/questions/48325115/qml-programmatically-update-binding
+                            if (reload && !reload) return ''
+
+                            var status = Functions.getChatActionsText(chatModel.chatActionsByChats, chatModel.chatActionsByUsers, isPrivateChat || isSecretChat)
+                            if (status) return status
+
+                            if (isBasicGroup || isSuperGroup)
+                                return Functions.getGroupStatusText(chatGroupInformation.member_count, chatOnlineMemberCount, isChannel)
+
+
+                            status = Functions.getChatPartnerStatusText(chatPartnerInformation.status['@type'], chatPartnerInformation.status.was_online, chatPartnerInformation.is_support, timepointStatus)
+                            if (chatPage.secretChatDetails) {
+                                var secretChatStatus = Functions.getSecretChatStatus(chatPage.secretChatDetails)
+                                if (status && secretChatStatus)
+                                    status += " - "
+                                if (secretChatStatus)
+                                    status += secretChatStatus
+                            }
+                            return status
+                        }
+
                         textFormat: Text.StyledText
                         font.pixelSize: chatPage.isPortrait ? Theme.fontSizeExtraSmall : Theme.fontSizeTiny
                         minimumPixelSize: Theme.fontSizeTiny
