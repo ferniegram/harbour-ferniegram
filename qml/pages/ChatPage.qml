@@ -119,44 +119,35 @@ Page {
         }
     }
 
-    function updateChatPartnerStatusText() {
-        if (chatPage.isSelecting)
-            return
+    function updateStatusText() {
+        if (chatPage.isSelecting) return
+        var status = Functions.getChatActionsText(chatModel.chatActionsByChats, chatModel.chatActionsByUsers, isPrivateChat || isSecretChat)
 
-        var statusText = Functions.getChatActionsText(chatModel.chatActionsByChats, chatModel.chatActionsByUsers, isPrivateChat || isSecretChat)
-                || Functions.getChatPartnerStatusText(chatPartnerInformation.status['@type'], chatPartnerInformation.status.was_online, chatPartnerInformation.is_support, timepointStatus)
+        if (!status) {
+            if (isBasicGroup || isSuperGroup) {
+                status = Functions.getGroupStatusText(chatGroupInformation.member_count, chatOnlineMemberCount, isChannel)
+            } else {
+                status = Functions.getChatPartnerStatusText(chatPartnerInformation.status['@type'], chatPartnerInformation.status.was_online, chatPartnerInformation.is_support, timepointStatus)
 
-        if (chatPage.secretChatDetails) {
-            var secretChatStatus = Functions.getSecretChatStatus(chatPage.secretChatDetails)
-            if (statusText && secretChatStatus)
-                statusText += " - "
-            if (secretChatStatus)
-                statusText += secretChatStatus
+                if (chatPage.secretChatDetails) {
+                    var secretChatStatus = Functions.getSecretChatStatus(chatPage.secretChatDetails)
+                    if (status && secretChatStatus)
+                        status += " - "
+                    if (secretChatStatus)
+                        status += secretChatStatus
+                }
+            }
         }
-        if (statusText)
-            chatStatusText.text = statusText
-        if (chatPartnerInformation.type['@type'] === "userTypeDeleted") {
-            chatNameText.text = qsTr("Deleted User")
-            chatPage.isDeletedUser = true
-        }
-    }
 
-    function updateGroupStatusText() {
-        if (chatPage.isSelecting) {
-            return
-        }
-        if (chatOnlineMemberCount > 0) {
-            chatStatusText.text = qsTr("%1, %2", "combination of '[x members], [y online]', which are separate translations")
-                .arg(qsTr("%1 members", "", chatGroupInformation.member_count)
-                    .arg(Functions.getShortenedCount(chatGroupInformation.member_count)))
-                .arg(qsTr("%1 online", "", chatOnlineMemberCount)
-                    .arg(Functions.getShortenedCount(chatOnlineMemberCount)))
-        } else {
-            if (isChannel)
-                chatStatusText.text = qsTr("%1 subscribers", "", chatGroupInformation.member_count).arg(Functions.getShortenedCount(chatGroupInformation.member_count))
-            else chatStatusText.text = qsTr("%1 members", "", chatGroupInformation.member_count).arg(Functions.getShortenedCount(chatGroupInformation.member_count))
-        }
-        joinLeaveChatMenuItem.text = chatPage.userIsMember ? qsTr("Leave Chat") : qsTr("Join Chat")
+        if (status) chatStatusText.text = status
+
+        if (isBasicGroup || isSuperGroup)
+        {}//joinLeaveChatMenuItem.text = chatPage.userIsMember ? qsTr("Leave Chat") : qsTr("Join Chat")
+        else
+            if (chatPartnerInformation.type['@type'] === "userTypeDeleted") {
+                chatNameText.text = qsTr("Deleted User")
+                chatPage.isDeletedUser = true
+            }
     }
 
     function getMessageStatusText(message, listItemIndex, lastReadSentIndex, useElapsed) {
@@ -397,7 +388,6 @@ Page {
         chatView.lastReadSentIndex = -1
         if (isPrivateChat || isSecretChat) {
             chatPartnerInformation = tdLibWrapper.getUserInformation(chatInformation.type.user_id)
-            updateChatPartnerStatusText()
             if (isSecretChat)
                 tdLibWrapper.getSecretChat(chatInformation.type.secret_chat_id)
             if(chatPartnerInformation.type["@type"] === "userTypeBot")
@@ -405,13 +395,12 @@ Page {
         }
         else if (isBasicGroup) {
             chatGroupInformation = tdLibWrapper.getBasicGroup(chatInformation.type.basic_group_id)
-            updateGroupStatusText()
         }
         else if (isSuperGroup) {
             chatGroupInformation = tdLibWrapper.getSuperGroup(chatInformation.type.supergroup_id)
             isChannel = chatGroupInformation.is_channel
-            updateGroupStatusText()
         }
+        updateStatusText()
         if (stickerManager.needsReload()) {
             Debug.log("[ChatPage] Recent stickers will be reloaded!")
             tdLibWrapper.getRecentStickers()
@@ -473,26 +462,26 @@ Page {
         onUserUpdated: {
             if ((isPrivateChat || isSecretChat) && chatPartnerInformation.id.toString() === userId ) {
                 chatPartnerInformation = userInformation
-                updateChatPartnerStatusText()
+                updateStatusText()
             }
         }
         onBasicGroupUpdated: {
             if (isBasicGroup && chatGroupInformation.id.toString() === groupId ) {
                 chatGroupInformation = groupInformation
-                updateGroupStatusText()
+                updateStatusText()
             }
         }
         onSuperGroupUpdated: {
             if (isSuperGroup && chatGroupInformation.id.toString() === groupId ) {
                 chatGroupInformation = groupInformation
-                updateGroupStatusText()
+                updateStatusText()
             }
         }
         onChatOnlineMemberCountUpdated: {
             Debug.log(isSuperGroup, "/", isBasicGroup, "/", chatInformation.id.toString(), "/", chatId);
             if ((isSuperGroup || isBasicGroup) && chatInformation.id.toString() === chatId) {
                 chatOnlineMemberCount = onlineMemberCount
-                updateGroupStatusText()
+                updateStatusText()
             }
         }
         onFileUpdated: {
@@ -521,7 +510,7 @@ Page {
             if (secretChatId === chatInformation.type.secret_chat_id) {
                 Debug.log("[ChatPage] Received detailed information about this secret chat")
                 chatPage.secretChatDetails = secretChat
-                updateChatPartnerStatusText()
+                updateStatusText()
                 chatPage.isSecretChatReady = chatPage.secretChatDetails.state["@type"] === "secretChatStateReady"
             }
         }
@@ -529,7 +518,7 @@ Page {
             if (secretChatId.toString() === chatInformation.type.secret_chat_id.toString()) {
                 Debug.log("[ChatPage] Detailed information about this secret chat was updated")
                 chatPage.secretChatDetails = secretChat
-                updateChatPartnerStatusText()
+                updateStatusText()
                 chatPage.isSecretChatReady = chatPage.secretChatDetails.state["@type"] === "secretChatStateReady"
             }
         }
@@ -650,7 +639,7 @@ Page {
                 tdLibWrapper.getMessage(chatInformation.id, chatInformation.pinned_message_id)
             } else pinnedMessageItem.pinnedMessage = undefined
         }
-        onChatActionsChanged: updateChatPartnerStatusText()
+        onChatActionsChanged: updateStatusText()
     }
 
     Connections {
@@ -683,7 +672,7 @@ Page {
         running: isPrivateChat || isSecretChat
         repeat: true
         onTriggered:
-            updateChatPartnerStatusText()
+            updateStatusText()
     }
     Timer {
         id: viewMessageTimer
@@ -821,7 +810,7 @@ Page {
             }
             onPressAndHold: if (isPrivateChat || isSecretChat) {
                 timepointStatus = !timepointStatus
-                updateChatPartnerStatusText()
+                updateStatusText()
             }
         }
 

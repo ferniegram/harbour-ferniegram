@@ -125,6 +125,18 @@ function getChatActionText(action, privateOrSecretChat, single) {
     return ''
 }
 
+function getGroupStatusText(memberCount, onlineCount, isChannel) {
+    if (onlineCount > 0) {
+        return qsTr("%1, %2", "combination of '[x members], [y online]', which are separate translations")
+            .arg(qsTr("%1 members", "", memberCount)
+                .arg(getShortenedCount(memberCount)))
+            .arg(qsTr("%1 online", "", onlineCount)
+                .arg(getShortenedCount(onlineCount)))
+    }
+    return (isChannel ? qsTr("%1 subscribers", "", memberCount) : qsTr("%1 members", "", memberCount))
+        .arg(getShortenedCount(memberCount))
+}
+
 function getChatActionsObject(chatActionsByChats, chatActionsByUsers) {
     var result = {}
     for (var chatId in chatActionsByChats) {
