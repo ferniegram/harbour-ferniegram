@@ -213,16 +213,10 @@ ListItem {
                 onClosed: propertiesLoader.reset() // closed is called at end of animation, and active is set to false at the start, so we use closed() for tracking close and active for tracking open
                 FancyMenuRow {
                     // NOTE: In places like this we should generally use `enabled` instead of `visible` so people can rely on spatial memory.
-                    // See `compactContextMenuComponent`
+                    // NOTE2: When a user selects a message, the finger first goes to the (horizontal) center of the message, so the most used options should be there
                     IconRowMenuItem {
                         icon.source: "image://theme/icon-m-select-all"
                         onClicked: page.toggleMessageSelection(myMessage)
-                    }
-                    IconRowMenuItem {
-                        visible: appSettings.showTranslateOption
-                        enabled: !!messageText.text
-                        icon.source: "image://theme/icon-m-region"
-                        onClicked: translate()
                     }
                     IconRowMenuItem {
                         icon.source: "image://theme/icon-m-clipboard"
@@ -232,6 +226,12 @@ ListItem {
                         visible: !!messageProperties.can_be_pinned // FIXME: should we use enabled or visible here? for spatial memory
                         icon.source: "../../images/icon-m-" + (myMessage.is_pinned ? 'un' : '') + "pin.svg"
                         onClicked: togglePinned()
+                    }
+                    IconRowMenuItem {
+                        visible: appSettings.showTranslateOption
+                        enabled: !!messageText.text
+                        icon.source: "image://theme/icon-m-region"
+                        onClicked: translate()
                     }
                 }
                 FancyMenuRow {
