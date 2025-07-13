@@ -158,14 +158,10 @@ SilicaFlickable {
     }
 
     Connections {
-        id: destructiveChatActionConnection
-        property var pendingChatId
         ignoreUnknownSignals: true
-        target: (chatInformationPage.status === PageStatus.Active && typeof pendingChatId !== 'undefined') ? tdLibWrapper : undefined
-        onOkReceived: if (request == "leaveChat:"+pendingChatId)
-                          pageStack.pop(pageStack.find(function(page){ return(page._depth === 0)}))
-        //onErrorReceived: if (extra == "leaveChat:"+pendingChatId)
-        //                     pendingChatId = undefined
+        target: chatInformationPage.status === PageStatus.Active ? chatInformationPage : null
+        onUserIsMemberChanged: if (!chatInformationPage.userIsMember)
+                                   pageStack.pop(pageStack.find(function(page){ return(page._depth === 0)}))
     }
 
     Component.onCompleted: {
@@ -229,10 +225,7 @@ SilicaFlickable {
                 // ensure it's done even if the page is closed:
                 if (chatInformationPage.userIsMember) {
                     var chatId = chatInformationPage.chatInformation.id;
-                    Remorse.popupAction(chatInformationPage, qsTr("Left chat"), function() {
-                        destructiveChatActionConnection.pendingChatId = chatInformation.id
-                        tdLibWrapper.leaveChat(chatId)
-                    })
+                    Remorse.popupAction(chatInformationPage, qsTr("Left chat"), function() { tdLibWrapper.leaveChat(chatId) })
                 } else {
                     tdLibWrapper.joinChat(chatInformationPage.chatInformation.id);
                 }

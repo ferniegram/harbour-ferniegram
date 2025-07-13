@@ -326,6 +326,11 @@ Page {
         }
     }
 
+    // TODO: close when chat is deleted
+    // left the chat, even if from another device; this follows the behaviour in Telegram Desktop
+    onUserIsMemberChanged: if (!userIsMember)
+                               pageStack.pop(pageStack.find(function(page){ return(page._depth === 0)}))
+
     Timer {
         id: forwardMessagesTimer
         interval: 200
@@ -502,17 +507,6 @@ Page {
         }
         onSponsoredMessageReceived: chatPage.containsSponsoredMessages = true
         onReactionsUpdated: availableReactions = tdLibWrapper.getChatReactions(chatInformation.id)
-    }
-
-    Connections {
-        id: destructiveChatActionConnection
-        property var pendingChatId
-        ignoreUnknownSignals: true
-        target: typeof pendingChatId !== 'undefined' ? tdLibWrapper : null
-        onOkReceived: if (request == "leaveChat:"+pendingChatId || request == "deleteChat:"+pendingChatId)
-                          pageStack.pop(pageStack.find(function(page){ return(page._depth === 0)}))
-        //onErrorReceived: if (extra == "leaveChat:"+pendingChatId || extra == "deleteChat:"+pendingChatId)
-        //                     pendingChatId = undefined
     }
 
     Connections {
@@ -700,10 +694,7 @@ Page {
                 visible: chatPage.isPrivateChat
                 onClicked: {
                     var privateChatId = chatInformation.id
-                    Remorse.popupAction(chatPage, qsTr("Chat deleted"), function() {
-                        destructiveChatActionConnection.pendingChatId = chatInformation.id
-                        tdLibWrapper.deleteChat(privateChatId)
-                    }, 10000)
+                    Remorse.popupAction(chatPage, qsTr("Chat deleted"), function() { tdLibWrapper.deleteChat(privateChatId) }, 10000)
                 }
                 text: qsTr("Delete Chat")
             }
@@ -724,10 +715,7 @@ Page {
                 onClicked: {
                     if (chatPage.userIsMember) {
                         var chatId = chatInformation.id
-                        Remorse.popupAction(chatPage, qsTr("Left chat"), function() {
-                            destructiveChatActionConnection.pendingChatId = chatInformation.id
-                            tdLibWrapper.leaveChat(chatId)
-                        })
+                        Remorse.popupAction(chatPage, qsTr("Left chat"), function() { tdLibWrapper.leaveChat(chatId) })
                     } else tdLibWrapper.joinChat(chatInformation.id)
                 }
                 text: chatPage.userIsMember ? qsTr("Leave Chat") : qsTr("Join Chat")

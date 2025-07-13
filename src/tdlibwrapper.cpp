@@ -334,7 +334,7 @@ void TDLibWrapper::joinChat(const QString &chatId) {
 
 void TDLibWrapper::leaveChat(const QString &chatId) {
     LOG("Leaving chat " << chatId);
-    this->sendRequest(QVariantMap{{_TYPE, "leaveChat"}, {CHAT_ID, chatId}, {_EXTRA, "leaveChat:" + chatId}});
+    this->sendRequest(QVariantMap{{_TYPE, "leaveChat"}, {CHAT_ID, chatId}});
 }
 
 void TDLibWrapper::deleteChat(qlonglong chatId) {
