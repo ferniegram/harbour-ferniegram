@@ -91,7 +91,7 @@ Rectangle {
         anchors.verticalCenter: button.state == 'right' ? parent.verticalCenter : undefined
 
         color: Theme.primaryColor
-        font.pixelSize: Theme.fontSizeSmall //Theme.fontSizeExtraSmall
+        font.pixelSize: Theme.fontSizeExtraSmall
         wrapMode: Text.Wrap
         horizontalAlignment: Text.AlignHCenter
 
