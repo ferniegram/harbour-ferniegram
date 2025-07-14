@@ -47,6 +47,14 @@ ApplicationWindow {
     AppNotification {
         id: appNotification
         parent: contentItem
+        layoutMaxWidth: orientation & Orientation.LandscapeMask ? parent.height : parent.width
+        rotation: switch (appWindow.orientation) {
+                      // 90 * (appWindow.orientation-1) would work, but it can break
+                  case Orientation.Portrait: return 0
+                  case Orientation.Landscape: return 90
+                  case Orientation.PortraitInverted: return 180
+                  case Orientation.LandscapeInverted: return 270
+                  }
     }
 
     Component {

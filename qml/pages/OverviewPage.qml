@@ -256,7 +256,7 @@ Page {
             }
         }
         onCopyToDownloadsSuccessful: {
-            appNotification.show(qsTr("Download of %1 successful.").arg(fileName), tdLibWrapper.openFileOnDevice(filePath));
+            appNotification.show(qsTr("Download of %1 successful.").arg(fileName), function() { tdLibWrapper.openFileOnDevice(filePath) }, qsTr("Open", "Button to open downloaded file, shown in an in-app notification"));
         }
 
         onCopyToDownloadsError: {
@@ -402,9 +402,7 @@ Page {
             model: chatListProxyModel.sourceModel ? chatListProxyModel : chatListModel
             delegate: ChatListViewItem {
                 ownUserId: overviewPage.ownUserId
-                isVerified: !!verification_status.is_verified
-                scam: !!verification_status.is_scam
-                fake: !!verification_status.is_fake
+                verificationStatus: verification_status
                 onClicked: {
                     pageStack.push(Qt.resolvedUrl("../pages/ChatPage.qml"), {
                         chatInformation : display,

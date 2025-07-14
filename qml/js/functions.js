@@ -67,12 +67,11 @@ function getChatPartnerStatusText(statusType, was_online, isSupport, asTimepoint
 function getSecretChatStatus(secretChatDetails) {
     switch (secretChatDetails.state["@type"]) {
     case "secretChatStateClosed":
-        return "<b>" + qsTr("Closed!") + "</b>";
+        return "<b>" + qsTr("Closed!") + "</b>"
     case "secretChatStatePending":
-        return qsTr("Pending acknowledgement");
-    case "secretChatStateReady":
-        return "";
+        return qsTr("Pending acknowledgement")
     }
+    return '' // secretChatStateReady
 }
 
 function getChatMemberStatusText(statusType) {
@@ -117,13 +116,25 @@ function getChatActionText(action, privateOrSecretChat, single) {
     case "chatActionUploadingVideo":
         return privateOrSecretChat ? qsTr("sending a video") : (single ? qsTr("%1 is sending a video") : qsTr("%1 are is sending a video"))
     case "chatActionUploadingVideoNote":
-        return privateOrSecretChat ? qsTr("sending a video note") : (single ? qsTr("%1 is sending a video note") : qsTr("%1 are sending a video note"))
+        return privateOrSecretChat ? qsTr("sending a video message") : (single ? qsTr("%1 is sending a video message") : qsTr("%1 are sending a video message"))
     case "chatActionUploadingVoiceNote":
-        return privateOrSecretChat ? qsTr("sending a voice note") : (single ? qsTr("%1 is sending a voice note") : qsTr("%1 are sending a voice note"))
+        return privateOrSecretChat ? qsTr("sending a voice message") : (single ? qsTr("%1 is sending a voice message") : qsTr("%1 are sending a voice message"))
     //case "chatActionWatchingAnimations":
     //    return single ? qsTr("%1 is watching animations") : qsTr("%1 are watching animations")
     }
     return ''
+}
+
+function getGroupStatusText(memberCount, onlineCount, isChannel) {
+    if (onlineCount > 0) {
+        return qsTr("%1, %2", "combination of '[x members], [y online]', which are separate translations")
+            .arg(qsTr("%1 members", "", memberCount)
+                .arg(getShortenedCount(memberCount)))
+            .arg(qsTr("%1 online", "", onlineCount)
+                .arg(getShortenedCount(onlineCount)))
+    }
+    return (isChannel ? qsTr("%1 subscribers", "", memberCount) : qsTr("%1 members", "", memberCount))
+        .arg(getShortenedCount(memberCount))
 }
 
 function getChatActionsObject(chatActionsByChats, chatActionsByUsers) {
@@ -158,13 +169,11 @@ function getChatActionsText(chatActionsByChats, chatActionsByUsers, privateOrSec
 }
 
 function getShortenedCount(count) {
-    if (count >= 1000000) {
-        return qsTr("%1M").arg((count / 1000000).toLocaleString(Qt.locale(), 'f', 0));
-    } else if (count >= 1000 ) {
-        return qsTr("%1K").arg((count / 1000).toLocaleString(Qt.locale(), 'f', 0));
-    } else {
-        return count;
-    }
+    if (count >= 1000000)
+        return qsTr("%1M").arg((count / 1000000).toLocaleString(Qt.locale(), 'f', 0))
+    if (count >= 1000)
+        return qsTr("%1K").arg((count / 1000).toLocaleString(Qt.locale(), 'f', 0))
+    return count
 }
 
 function formatDate(timestamp, formatType) {
@@ -189,11 +198,6 @@ function handleHtmlEntity(messageText, messageInsertions, originalString, replac
         messageInsertions.push({ offset: nextIndex, insertionString: replacementString, removeLength: originalString.length });
     }
 }
-
-var rawNewLineRegExp = /\r?\n/g;
-var ampRegExp = /&/g;
-var ltRegExp = /</g;
-var gtRegExp = />/g;
 
 
 function enhanceMessageText(formattedText, ignoreEntities, emojiSize, reloader) {
@@ -325,13 +329,9 @@ function getMessagesArrayText(messages) {
     return lines.join("\n");
 }
 
-// See doc/development.md
-var ALL_ERRORS = {
-    // TODO
-}
-
 function handleErrorMessage(code, message, extra) {
     // if code is 406, next updateServiceNotification will replace this message; in case it will not be received this message will not be replaced and will be shown
+    Debug.log("TDLib Error:", code, message, JSON.stringify(extra))
     if (code === 404 ||
             (code === 400 &&
              (message === "USERNAME_INVALID" || message === "USERNAME_NOT_OCCUPIED" || (extra === "getInstalledStickerSets" && message === "File not found")))) {

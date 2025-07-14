@@ -44,7 +44,7 @@ Page {
     property bool isBasicGroup: chatInformation.type['@type'] === "chatTypeBasicGroup"
     property bool isSuperGroup: chatInformation.type['@type'] === "chatTypeSupergroup"
     property bool isChannel: false
-    property bool isDeletedUser: false
+    property bool isDeletedUser: !!chatPartnerInformation && chatPartnerInformation.type['@type'] === "userTypeDeleted"
     property bool containsSponsoredMessages: false
     property var chatPartnerInformation
     property var botInformation
@@ -117,46 +117,6 @@ Page {
                 }
             }
         }
-    }
-
-    function updateChatPartnerStatusText() {
-        if (chatPage.isSelecting)
-            return
-
-        var statusText = Functions.getChatActionsText(chatModel.chatActionsByChats, chatModel.chatActionsByUsers, isPrivateChat || isSecretChat)
-                || Functions.getChatPartnerStatusText(chatPartnerInformation.status['@type'], chatPartnerInformation.status.was_online, chatPartnerInformation.is_support, timepointStatus)
-
-        if (chatPage.secretChatDetails) {
-            var secretChatStatus = Functions.getSecretChatStatus(chatPage.secretChatDetails)
-            if (statusText && secretChatStatus)
-                statusText += " - "
-            if (secretChatStatus)
-                statusText += secretChatStatus
-        }
-        if (statusText)
-            chatStatusText.text = statusText
-        if (chatPartnerInformation.type['@type'] === "userTypeDeleted") {
-            chatNameText.text = qsTr("Deleted User")
-            chatPage.isDeletedUser = true
-        }
-    }
-
-    function updateGroupStatusText() {
-        if (chatPage.isSelecting) {
-            return
-        }
-        if (chatOnlineMemberCount > 0) {
-            chatStatusText.text = qsTr("%1, %2", "combination of '[x members], [y online]', which are separate translations")
-                .arg(qsTr("%1 members", "", chatGroupInformation.member_count)
-                    .arg(Functions.getShortenedCount(chatGroupInformation.member_count)))
-                .arg(qsTr("%1 online", "", chatOnlineMemberCount)
-                    .arg(Functions.getShortenedCount(chatOnlineMemberCount)))
-        } else {
-            if (isChannel)
-                chatStatusText.text = qsTr("%1 subscribers", "", chatGroupInformation.member_count).arg(Functions.getShortenedCount(chatGroupInformation.member_count))
-            else chatStatusText.text = qsTr("%1 members", "", chatGroupInformation.member_count).arg(Functions.getShortenedCount(chatGroupInformation.member_count))
-        }
-        joinLeaveChatMenuItem.text = chatPage.userIsMember ? qsTr("Leave Chat") : qsTr("Join Chat")
     }
 
     function getMessageStatusText(message, listItemIndex, lastReadSentIndex, useElapsed) {
@@ -279,7 +239,7 @@ Page {
 
     function setMessageText(text, doSend) {
         if(doSend)
-            tdLibWrapper.sendTextMessage(chatInformation.id, text, "0")
+            tdLibWrapper.sendTextMessage(chatInformation.id, text, 0)
         else {
             newMessageTextField.text = text
             newMessageTextField.cursorPosition = text.length
@@ -366,6 +326,11 @@ Page {
         }
     }
 
+    // TODO: close when chat is deleted
+    // left the chat, even if from another device; this follows the behaviour in Telegram Desktop
+    onUserIsMemberChanged: if (!userIsMember)
+                               pageStack.pop(pageStack.find(function(page){ return(page._depth === 0)}))
+
     Timer {
         id: forwardMessagesTimer
         interval: 200
@@ -397,7 +362,6 @@ Page {
         chatView.lastReadSentIndex = -1
         if (isPrivateChat || isSecretChat) {
             chatPartnerInformation = tdLibWrapper.getUserInformation(chatInformation.type.user_id)
-            updateChatPartnerStatusText()
             if (isSecretChat)
                 tdLibWrapper.getSecretChat(chatInformation.type.secret_chat_id)
             if(chatPartnerInformation.type["@type"] === "userTypeBot")
@@ -405,12 +369,10 @@ Page {
         }
         else if (isBasicGroup) {
             chatGroupInformation = tdLibWrapper.getBasicGroup(chatInformation.type.basic_group_id)
-            updateGroupStatusText()
         }
         else if (isSuperGroup) {
             chatGroupInformation = tdLibWrapper.getSuperGroup(chatInformation.type.supergroup_id)
             isChannel = chatGroupInformation.is_channel
-            updateGroupStatusText()
         }
         if (stickerManager.needsReload()) {
             Debug.log("[ChatPage] Recent stickers will be reloaded!")
@@ -471,28 +433,24 @@ Page {
     Connections {
         target: tdLibWrapper
         onUserUpdated: {
-            if ((isPrivateChat || isSecretChat) && chatPartnerInformation.id.toString() === userId ) {
+            if ((isPrivateChat || isSecretChat) && chatPartnerInformation.id.toString() === userId) {
                 chatPartnerInformation = userInformation
-                updateChatPartnerStatusText()
             }
         }
         onBasicGroupUpdated: {
-            if (isBasicGroup && chatGroupInformation.id.toString() === groupId ) {
-                chatGroupInformation = groupInformation
-                updateGroupStatusText()
+            if (isBasicGroup && chatGroupInformation.id === groupId) {
+                chatGroupInformation = tdLibWrapper.getBasicGroup(groupId)
             }
         }
         onSuperGroupUpdated: {
-            if (isSuperGroup && chatGroupInformation.id.toString() === groupId ) {
-                chatGroupInformation = groupInformation
-                updateGroupStatusText()
+            if (isSuperGroup && chatGroupInformation.id === groupId) {
+                chatGroupInformation = tdLibWrapper.getSuperGroup(groupId)
             }
         }
         onChatOnlineMemberCountUpdated: {
             Debug.log(isSuperGroup, "/", isBasicGroup, "/", chatInformation.id.toString(), "/", chatId);
             if ((isSuperGroup || isBasicGroup) && chatInformation.id.toString() === chatId) {
                 chatOnlineMemberCount = onlineMemberCount
-                updateGroupStatusText()
             }
         }
         onFileUpdated: {
@@ -517,7 +475,6 @@ Page {
             if (secretChatId === chatInformation.type.secret_chat_id) {
                 Debug.log("[ChatPage] Received detailed information about this secret chat")
                 chatPage.secretChatDetails = secretChat
-                updateChatPartnerStatusText()
                 chatPage.isSecretChatReady = chatPage.secretChatDetails.state["@type"] === "secretChatStateReady"
             }
         }
@@ -525,7 +482,6 @@ Page {
             if (secretChatId.toString() === chatInformation.type.secret_chat_id.toString()) {
                 Debug.log("[ChatPage] Detailed information about this secret chat was updated")
                 chatPage.secretChatDetails = secretChat
-                updateChatPartnerStatusText()
                 chatPage.isSecretChatReady = chatPage.secretChatDetails.state["@type"] === "secretChatStateReady"
             }
         }
@@ -539,11 +495,11 @@ Page {
         }
         onUserFullInfoReceived: {
             if ((isPrivateChat || isSecretChat) && userFullInfo["@extra"] === chatPartnerInformation.id.toString())
-                chatPage.botInformation = userFullInfo
+                chatPage.botInformation = userFullInfo.bot_info
         }
         onUserFullInfoUpdated: {
             if ((isPrivateChat || isSecretChat) && userId === chatPartnerInformation.id)
-                chatPage.botInformation = userFullInfo
+                chatPage.botInformation = userFullInfo.bot_info
         }
         onSponsoredMessageReceived: chatPage.containsSponsoredMessages = true
         onReactionsUpdated: availableReactions = tdLibWrapper.getChatReactions(chatInformation.id)
@@ -636,7 +592,6 @@ Page {
                 tdLibWrapper.getMessage(chatInformation.id, chatInformation.pinned_message_id)
             } else pinnedMessageItem.pinnedMessage = undefined
         }
-        onChatActionsChanged: updateChatPartnerStatusText()
     }
 
     Connections {
@@ -668,8 +623,7 @@ Page {
         interval: 60000
         running: isPrivateChat || isSecretChat
         repeat: true
-        onTriggered:
-            updateChatPartnerStatusText()
+        onTriggered: chatStatusText.update()
     }
     Timer {
         id: viewMessageTimer
@@ -736,10 +690,7 @@ Page {
                 visible: chatPage.isPrivateChat
                 onClicked: {
                     var privateChatId = chatInformation.id
-                    Remorse.popupAction(chatPage, qsTr("Deleting chat"), function() {
-                        tdLibWrapper.deleteChat(privateChatId)
-                        pageStack.pop(pageStack.find(function(page){ return(page._depth === 0)}))
-                    }, 10000)
+                    Remorse.popupAction(chatPage, qsTr("Chat deleted"), function() { tdLibWrapper.deleteChat(privateChatId) }, 10000)
                 }
                 text: qsTr("Delete Chat")
             }
@@ -760,13 +711,8 @@ Page {
                 onClicked: {
                     if (chatPage.userIsMember) {
                         var chatId = chatInformation.id
-                        Remorse.popupAction(chatPage, qsTr("Leaving chat"), function() {
-                            tdLibWrapper.leaveChat(chatId)
-                            // this does not care about the response (ideally type "ok" without further reference) for now
-                            pageStack.pop(pageStack.find( function(page){ return(page._depth === 0)} ))
-                        })
-                    } else
-                        tdLibWrapper.joinChat(chatInformation.id)
+                        Remorse.popupAction(chatPage, qsTr("Left chat"), function() { tdLibWrapper.leaveChat(chatId) })
+                    } else tdLibWrapper.joinChat(chatInformation.id)
                 }
                 text: chatPage.userIsMember ? qsTr("Leave Chat") : qsTr("Join Chat")
             }
@@ -807,10 +753,9 @@ Page {
                     chatPage.selectedMessages = []
                 else pageStack.navigateForward()
             }
-            onPressAndHold: if (isPrivateChat || isSecretChat) {
-                timepointStatus = !timepointStatus
-                updateChatPartnerStatusText()
-            }
+            onPressAndHold:
+                if (isPrivateChat || isSecretChat)
+                    timepointStatus = !timepointStatus
         }
 
         Column {
@@ -877,21 +822,36 @@ Page {
                     opacity: visible ? 1 : 0
                     Behavior on opacity { FadeAnimation {} }
                     width: parent.width - chatPictureThumbnail.width - Theme.paddingMedium
-                    height: chatNameText.height + chatStatusText.height
+                    height: chatNameRow.height + chatStatusText.height
                     anchors.bottom: parent.bottom
                     anchors.bottomMargin: chatPage.isPortrait ? Theme.paddingMedium : Theme.paddingSmall
-                    ChatHeaderText {
-                        id: chatNameText
+
+                    Row {
+                        id: chatNameRow
                         anchors.right: parent.right
+                        spacing: Theme.paddingMedium
 
-                        verificationStatus: chatGroupInformation ? chatGroupInformation.verification_status : null
-                        // do not show muted badge
+                        Label {
+                            id: chatNameText
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: Math.min(implicitWidth, chatOverviewItem.width - chatBadges.width - parent.spacing)
+                            text: chatPage.isDeletedUser ? qsTr("Deleted User") :
+                                                  chatInformation.title !== "" ?
+                                                      Emoji.emojify(utilities.fixReservedHtmlCharacters(chatInformation.title), font.pixelSize)
+                                                    : qsTr("Unknown")
+                            textFormat: Text.StyledText
+                            font.pixelSize: chatPage.isPortrait ? Theme.fontSizeLarge : Theme.fontSizeMedium
+                            font.family: Theme.fontFamilyHeading
+                            color: Theme.highlightColor
+                            truncationMode: TruncationMode.Fade
+                            maximumLineCount: 1
+                        }
 
-                        text: chatInformation.title !== "" ? Emoji.emojify(utilities.fixReservedHtmlCharacters(chatInformation.title), font.pixelSize) : qsTr("Unknown")
-                        font.pixelSize: chatPage.isPortrait ? Theme.fontSizeLarge : Theme.fontSizeMedium
-                        font.family: Theme.fontFamilyHeading
-                        color: Theme.highlightColor
-                        textItem.maximumLineCount: 1
+                        ChatBadges {
+                            id: chatBadges
+                            anchors.verticalCenter: parent.verticalCenter
+                            verificationStatus: chatGroupInformation ? chatGroupInformation.verification_status : null
+                        }
                     }
 
                     Label {
@@ -901,7 +861,30 @@ Page {
                             right: parent.right
                             bottom: parent.bottom
                         }
-                        text: ""
+                        property bool _reload
+                        function update() { _reload = !_reload }
+                        text: {
+                            // https://stackoverflow.com/questions/48325115/qml-programmatically-update-binding
+                            if (_reload && !_reload) return ''
+
+                            var status = Functions.getChatActionsText(chatModel.chatActionsByChats, chatModel.chatActionsByUsers, isPrivateChat || isSecretChat)
+                            if (status) return status
+
+                            if (isBasicGroup || isSuperGroup)
+                                return Functions.getGroupStatusText(chatGroupInformation.member_count, chatOnlineMemberCount, isChannel)
+
+
+                            status = Functions.getChatPartnerStatusText(chatPartnerInformation.status['@type'], chatPartnerInformation.status.was_online, chatPartnerInformation.is_support, timepointStatus)
+                            if (chatPage.secretChatDetails) {
+                                var secretChatStatus = Functions.getSecretChatStatus(chatPage.secretChatDetails)
+                                if (status && secretChatStatus)
+                                    status += " - "
+                                if (secretChatStatus)
+                                    status += secretChatStatus
+                            }
+                            return status
+                        }
+
                         textFormat: Text.StyledText
                         font.pixelSize: chatPage.isPortrait ? Theme.fontSizeExtraSmall : Theme.fontSizeTiny
                         minimumPixelSize: Theme.fontSizeTiny
@@ -1114,8 +1097,7 @@ Page {
                     model: chatProxyModel
                     header: Component {
                         Loader {
-                            active: !!chatPage.botInformation
-                                    && !!chatPage.botInformation.bot_info && chatPage.botInformation.bot_info.description.length > 0
+                            active: !!chatPage.botInformation && chatPage.botInformation.description.length > 0
                             asynchronous: true
                             width: chatView.width
                             sourceComponent: Component {
@@ -1125,7 +1107,7 @@ Page {
                                     bottomPadding: Theme.paddingLarge
                                     leftPadding: Theme.horizontalPageMargin
                                     rightPadding: Theme.horizontalPageMargin
-                                    text: Emoji.emojify(chatPage.botInformation.bot_info.description, font.pixelSize)
+                                    text: Emoji.emojify(chatPage.botInformation.description, font.pixelSize)
                                     font.pixelSize: Theme.fontSizeSmall
                                     color: Theme.highlightColor
                                     wrapMode: Text.Wrap
@@ -1206,6 +1188,7 @@ Page {
                     property var fullWidthWidescreenContentMessages: [
                         "messageDocument",
                         "messageAudio",
+                        "messagePoll",
                     ]
                     property var albumMessages: [
                         'messagePhoto',
@@ -1512,8 +1495,7 @@ Page {
                             width: parent.width
                             Repeater {
                                 id: botCommandsRepeater
-                                model: !botCommandsColumn.hidden && botInformation && botInformation.bot_info
-                                        ? botInformation.bot_info.commands : undefined
+                                model: !botCommandsColumn.hidden && botInformation ? botInformation.commands : undefined
 
                                 BackgroundItem {
                                     width: parent.width
@@ -1687,7 +1669,7 @@ Page {
                             }
                         }
                         IconButton {
-                            visible: !!botInformation && !!botInformation.bot_info && botInformation.bot_info.commands.length > 0
+                            visible: !!botInformation && botInformation.commands.length > 0
                             highlighted: down || !botCommandsColumn.hidden
                             icon.source: "image://theme/icon-m-menu"
                             onClicked: {
@@ -1993,7 +1975,7 @@ Page {
 
                         onTextChanged: {
                             textReplacementTimer.restart()
-                            tdLibWrapper.sendChatAction(chatInformation.id, "chatActionTyping")
+                            tdLibWrapper.sendChatAction(chatInformation.id, text ? "chatActionTyping" : "chatActionCancel")
                         }
                     }
 

@@ -261,8 +261,7 @@ void TDLibWrapper::sendRequest(const QVariantMap &requestObject)
     td_json_client_send(this->tdLibClient, requestDocument.toJson().constData());
 }
 
-void TDLibWrapper::setAuthenticationPhoneNumber(const QString &phoneNumber)
-{
+void TDLibWrapper::setAuthenticationPhoneNumber(const QString &phoneNumber) {
     LOG("Set authentication phone number " << phoneNumber);
     this->sendRequest(QVariantMap{
                           {_TYPE, "setAuthenticationPhoneNumber"},
@@ -274,20 +273,17 @@ void TDLibWrapper::setAuthenticationPhoneNumber(const QString &phoneNumber)
                       });
 }
 
-void TDLibWrapper::setAuthenticationCode(const QString &authenticationCode)
-{
+void TDLibWrapper::setAuthenticationCode(const QString &authenticationCode) {
     LOG("Set authentication code " << authenticationCode);
     this->sendRequest(QVariantMap{{_TYPE, "checkAuthenticationCode"}, {"code", authenticationCode}});
 }
 
-void TDLibWrapper::setAuthenticationPassword(const QString &authenticationPassword)
-{
+void TDLibWrapper::setAuthenticationPassword(const QString &authenticationPassword) {
     LOG("Set authentication password " << authenticationPassword);
     this->sendRequest(QVariantMap{{_TYPE, "checkAuthenticationPassword"}, {"password", authenticationPassword}});
 }
 
-void TDLibWrapper::registerUser(const QString &firstName, const QString &lastName)
-{
+void TDLibWrapper::registerUser(const QString &firstName, const QString &lastName) {
     LOG("Register User " << firstName << lastName);
     this->sendRequest(QVariantMap{
         {_TYPE, "registerUser"},
@@ -296,8 +292,7 @@ void TDLibWrapper::registerUser(const QString &firstName, const QString &lastNam
     });
 }
 
-void TDLibWrapper::logout()
-{
+void TDLibWrapper::logout() {
     LOG("Logging out");
     this->sendRequest(QVariantMap{{_TYPE, "logOut"}});
     this->isLoggingOut = true;
@@ -309,8 +304,7 @@ void TDLibWrapper::getChats() {
     this->sendRequest(QVariantMap{{_TYPE, "loadChats"}, {"limit", 5}});
 }
 
-void TDLibWrapper::downloadFile(int fileId)
-{
+void TDLibWrapper::downloadFile(int fileId) {
     LOG("Downloading file " << fileId);
     this->sendRequest(QVariantMap{
         {_TYPE, "downloadFile"},
@@ -322,39 +316,33 @@ void TDLibWrapper::downloadFile(int fileId)
     });
 }
 
-void TDLibWrapper::openChat(const QString &chatId)
-{
+void TDLibWrapper::openChat(const QString &chatId) {
     LOG("Opening chat " << chatId);
     this->sendRequest(QVariantMap{{_TYPE, "openChat"}, {CHAT_ID, chatId}});
 }
 
-void TDLibWrapper::closeChat(const QString &chatId)
-{
+void TDLibWrapper::closeChat(const QString &chatId) {
     LOG("Closing chat " << chatId);
     this->sendRequest(QVariantMap{{_TYPE, "closeChat"}, {CHAT_ID, chatId}});
 }
 
-void TDLibWrapper::joinChat(const QString &chatId)
-{
+void TDLibWrapper::joinChat(const QString &chatId) {
     LOG("Joining chat " << chatId);
     this->joinChatRequested = true;
     this->sendRequest(QVariantMap{{_TYPE, "joinChat"}, {CHAT_ID, chatId}});
 }
 
-void TDLibWrapper::leaveChat(const QString &chatId)
-{
+void TDLibWrapper::leaveChat(const QString &chatId) {
     LOG("Leaving chat " << chatId);
     this->sendRequest(QVariantMap{{_TYPE, "leaveChat"}, {CHAT_ID, chatId}});
 }
 
-void TDLibWrapper::deleteChat(qlonglong chatId)
-{
-    LOG("Deleting chat " << chatId);
+void TDLibWrapper::deleteChat(qlonglong chatId) {
+    LOG("Deleting chat" << chatId);
     this->sendRequest(QVariantMap{{_TYPE, "deleteChat"}, {CHAT_ID, chatId}});
 }
 
-void TDLibWrapper::getChatHistory(qlonglong chatId, qlonglong fromMessageId, int offset, int limit, bool onlyLocal)
-{
+void TDLibWrapper::getChatHistory(qlonglong chatId, qlonglong fromMessageId, int offset, int limit, bool onlyLocal) {
     LOG("Retrieving chat history" << chatId << fromMessageId << offset << limit << onlyLocal);
     this->sendRequest(QVariantMap{
         {_TYPE, "getChatHistory"},
@@ -366,8 +354,7 @@ void TDLibWrapper::getChatHistory(qlonglong chatId, qlonglong fromMessageId, int
     });
 }
 
-void TDLibWrapper::viewMessage(qlonglong chatId, qlonglong messageId, bool force)
-{
+void TDLibWrapper::viewMessage(qlonglong chatId, qlonglong messageId, bool force) {
     LOG("Mark message as viewed" << chatId << messageId);
     this->sendRequest(QVariantMap{
         {_TYPE, "viewMessages"},
@@ -377,8 +364,7 @@ void TDLibWrapper::viewMessage(qlonglong chatId, qlonglong messageId, bool force
     });
 }
 
-void TDLibWrapper::pinMessage(const QString &chatId, const QString &messageId, bool disableNotification)
-{
+void TDLibWrapper::pinMessage(const QString &chatId, const QString &messageId, bool disableNotification) {
     LOG("Pin message to chat" << chatId << messageId << disableNotification);
     this->sendRequest(QVariantMap{
         {_TYPE, "pinChatMessage"},
@@ -388,8 +374,7 @@ void TDLibWrapper::pinMessage(const QString &chatId, const QString &messageId, b
     });
 }
 
-void TDLibWrapper::unpinMessage(const QString &chatId, const QString &messageId)
-{
+void TDLibWrapper::unpinMessage(const QString &chatId, const QString &messageId) {
     LOG("Unpin message from chat" << chatId);
     this->sendRequest(QVariantMap{
         {_TYPE, "unpinChatMessage"},
@@ -399,8 +384,7 @@ void TDLibWrapper::unpinMessage(const QString &chatId, const QString &messageId)
     });
 }
 
-QVariantMap TDLibWrapper::newSendMessageRequest(qlonglong chatId, qlonglong replyToMessageId)
-{
+QVariantMap TDLibWrapper::newSendMessageRequest(qlonglong chatId, qlonglong replyToMessageId) {
     QVariantMap request{{_TYPE, "sendMessage"}, {CHAT_ID, chatId}};
     if (replyToMessageId != 0)
         request.insert(REPLY_TO, QVariantMap{
