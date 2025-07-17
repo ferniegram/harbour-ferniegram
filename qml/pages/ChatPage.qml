@@ -120,7 +120,8 @@ Page {
         }
     }
 
-    function getMessageStatusText(message, listItemIndex, lastReadSentIndex, useElapsed) {
+    function getMessageStatusText(message, listItemIndex, useElapsed) {
+        var lastReadSentIndex = chatModel.lastReadSentMessageIndex
         Debug.log("Last read sent index: " + lastReadSentIndex)
         var messageStatusSuffix = ""
 
@@ -133,6 +134,7 @@ Page {
 
         if (chatPage.myUserId === message.sender_id.user_id) {
             messageStatusSuffix += "&nbsp;&nbsp;"
+            Debug.log("Status: " + (listItemIndex <= lastReadSentIndex))
             if (listItemIndex <= lastReadSentIndex) {
                 // Read by other party
                 messageStatusSuffix += Emoji.emojify("✅", Theme.fontSizeTiny)
@@ -1015,7 +1017,6 @@ Page {
                     clip: true
                     highlightMoveDuration: 0
                     highlightResizeDuration: 0
-                    property int lastReadSentIndex: chatModel.lastReadSentMessageIndex
                     property bool inCooldown: false
                     property bool manuallyScrolledToBottom
                     property QtObject precalculatedValues: QtObject {

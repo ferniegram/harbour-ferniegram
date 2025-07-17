@@ -301,9 +301,8 @@ ListItem {
         onNewMessageReceived: updateIsUnread()
         onUnreadCountUpdated: updateIsUnread()
         onLastReadSentMessageUpdated: {
-            var lastReadSentIndex = chatModel.lastReadSentMessageIndex
-            Debug.log("[ChatModel] Messages in this chat were read, new last read: ", lastReadSentIndex, ", updating description for index ", index, ", status: ", (messageIndex <= lastReadSentIndex))
-            messageDateText.text = getMessageStatusText(myMessage, messageIndex, lastReadSentIndex, messageDateText.useElapsed)
+            Debug.log("[ChatModel] Messages in this chat were read (last read changed), updating description for index ", index)
+            messageDateText.text = getMessageStatusText(myMessage, messageIndex, messageDateText.useElapsed)
         }
     }
 
@@ -381,7 +380,7 @@ ListItem {
 
     onMyMessageChanged: {
         Debug.log("[ChatModel] This message was updated, index", messageIndex, ", updating content...")
-        messageDateText.text = getMessageStatusText(myMessage, messageIndex, chatView.lastReadSentIndex, messageDateText.useElapsed)
+        messageDateText.text = getMessageStatusText(myMessage, messageIndex, messageDateText.useElapsed)
         Emoji.emojify(Functions.getMessageText(myMessage, false, page.myUserId, false, Theme.fontSizeSmall), Theme.fontSizeSmall)
         if (webPagePreviewLoader.item)
             webPagePreviewLoader.item.linkPreviewData = myMessage.content.link_preview
@@ -683,7 +682,7 @@ ListItem {
                     running: true
                     repeat: true
                     onTriggered:
-                        messageDateText.text = getMessageStatusText(myMessage, messageIndex, chatView.lastReadSentIndex, messageDateText.useElapsed)
+                        messageDateText.text = getMessageStatusText(myMessage, messageIndex, messageDateText.useElapsed)
                 }
 
                 Text {
@@ -695,13 +694,13 @@ ListItem {
                     font.pixelSize: Theme.fontSizeTiny
                     color: messageListItem.isOwnMessage ? Theme.secondaryHighlightColor : Theme.secondaryColor
                     horizontalAlignment: messageListItem.textAlign
-                    text: getMessageStatusText(myMessage, messageIndex, chatView.lastReadSentIndex, messageDateText.useElapsed)
+                    text: getMessageStatusText(myMessage, messageIndex, messageDateText.useElapsed)
                     MouseArea {
                         anchors.fill: parent
                         enabled: !messageListItem.precalculatedValues.pageIsSelecting
                         onClicked: {
                             messageDateText.useElapsed = !messageDateText.useElapsed
-                            messageDateText.text = getMessageStatusText(myMessage, messageIndex, chatView.lastReadSentIndex, messageDateText.useElapsed)
+                            messageDateText.text = getMessageStatusText(myMessage, messageIndex, messageDateText.useElapsed)
                         }
                     }
                 }
