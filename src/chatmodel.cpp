@@ -561,7 +561,7 @@ void ChatModel::handleMessagesReceived(const QVariantList &messages, int totalCo
         LOG("No additional messages loaded, notifying chat UI...");
         this->inReload = false;
         int listInboxPosition = this->calculateLastKnownMessageId();
-        int listOutboxPosition = this->calculateLastReadSentMessageId();
+        int listOutboxPosition = this->calculateLastReadSentMessageIndex();
         listInboxPosition = this->calculateScrollPosition(listInboxPosition);
         if (this->inIncrementalUpdate) {
             this->inIncrementalUpdate = false;
@@ -604,7 +604,7 @@ void ChatModel::handleMessagesReceived(const QVariantList &messages, int totalCo
                 LOG("Messages loaded, notifying chat UI...");
                 this->inReload = false;
                 int listInboxPosition = this->calculateLastKnownMessageId();
-                int listOutboxPosition = this->calculateLastReadSentMessageId();
+                int listOutboxPosition = this->calculateLastReadSentMessageIndex();
                 listInboxPosition = this->calculateScrollPosition(listInboxPosition);
                 if (this->inIncrementalUpdate) {
                     this->inIncrementalUpdate = false;
@@ -678,7 +678,7 @@ void ChatModel::handleChatReadOutboxUpdated(const QString &id, const QString &la
 {
     if (id.toLongLong() == chatId) {
         this->chatInformation.insert(LAST_READ_OUTBOX_MESSAGE_ID, lastReadOutboxMessageId);
-        int sentIndex = calculateLastReadSentMessageId();
+        int sentIndex = calculateLastReadSentMessageIndex();
         LOG("Updating sent message ID, new index" << sentIndex);
         emit lastReadSentMessageUpdated(sentIndex);
     }
@@ -702,7 +702,7 @@ void ChatModel::handleMessageSendSucceeded(qlonglong messageId, qlonglong oldMes
         LOG("Message was replaced at index" << pos);
         const QModelIndex messageIndex(index(pos));
         emit dataChanged(messageIndex, messageIndex, changedRoles);
-        emit lastReadSentMessageUpdated(calculateLastReadSentMessageId());
+        emit lastReadSentMessageUpdated(calculateLastReadSentMessageIndex());
         tdLibWrapper->viewMessage(this->chatId, messageId, false);
     }
 }
@@ -1059,9 +1059,9 @@ int ChatModel::calculateLastKnownMessageId(bool classic) {
     return (listInboxPosition > listOwnPosition) ? listInboxPosition : listOwnPosition;
 }
 
-int ChatModel::calculateLastReadSentMessageId()
+int ChatModel::calculateLastReadSentMessageIndex()
 {
-    LOG("calculateLastReadSentMessageId");
+    LOG("calculateLastReadSentMessageIndex");
     qlonglong id = this->chatInformation.value(LAST_READ_OUTBOX_MESSAGE_ID).toLongLong();
     LOG("lastReadSentMessageId" << id);
     LOG("size messageIndexMap" << messageIndexMap.size());
