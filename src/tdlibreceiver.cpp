@@ -133,8 +133,7 @@ TDLibReceiver::TDLibReceiver(void *tdLibClient, QObject *parent) : QThread(paren
     handlers.insert("updateChatOnlineMemberCount", &TDLibReceiver::processChatOnlineMemberCountUpdated);
     handlers.insert("messages", &TDLibReceiver::processMessages);
     handlers.insert("foundChatMessages", &TDLibReceiver::processFoundChatMessages);
-    handlers.insert("sponsoredMessage", &TDLibReceiver::processSponsoredMessage);   // TdLib <= 1.8.7
-    handlers.insert("sponsoredMessages", &TDLibReceiver::processSponsoredMessages); // TdLib >= 1.8.8
+    handlers.insert("sponsoredMessages", &TDLibReceiver::processSponsoredMessages);
     handlers.insert("updateNewMessage", &TDLibReceiver::processUpdateNewMessage);
     handlers.insert("message", &TDLibReceiver::processMessage);
     handlers.insert("messageLinkInfo", &TDLibReceiver::processMessageLinkInfo);
@@ -186,7 +185,7 @@ TDLibReceiver::TDLibReceiver(void *tdLibClient, QObject *parent) : QThread(paren
     handlers.insert("updateChatUnreadMentionCount", &TDLibReceiver::processUpdateChatUnreadMentionCount);
     handlers.insert("updateChatUnreadReactionCount", &TDLibReceiver::processUpdateChatUnreadReactionCount);
     handlers.insert("updateActiveEmojiReactions", &TDLibReceiver::processUpdateActiveEmojiReactions);
-    handlers.insert("messageProperties", &TDLibReceiver::processMessageProperties); // TdLib >= 1.8.34
+    handlers.insert("messageProperties", &TDLibReceiver::processMessageProperties);
     handlers.insert("storageStatisticsFast", &TDLibReceiver::processStorageStatisticsFast);
     handlers.insert("storageStatistics", &TDLibReceiver::processStorageStatistics);
     handlers.insert("formattedText", &TDLibReceiver::processFormattedText);
@@ -421,24 +420,12 @@ void TDLibReceiver::processFoundChatMessages(const QVariantMap &receivedInformat
     emit messagesReceived(cleanupList(receivedInformation.value(MESSAGES).toList()), total_count);
 }
 
-void TDLibReceiver::processSponsoredMessage(const QVariantMap &receivedInformation)
-{
-    // TdLib <= 1.8.7
-    const qlonglong chatId = receivedInformation.value(_EXTRA).toLongLong(); // See TDLibWrapper::getChatSponsoredMessage
-    LOG("Received sponsored message for chat" << chatId);
-    emit sponsoredMessageReceived(chatId, receivedInformation);
-}
-
-void TDLibReceiver::processSponsoredMessages(const QVariantMap &receivedInformation)
-{
-    // TdLib >= 1.8.8
+void TDLibReceiver::processSponsoredMessages(const QVariantMap &receivedInformation) {
     const qlonglong chatId = receivedInformation.value(_EXTRA).toLongLong(); // See TDLibWrapper::getChatSponsoredMessage
     const QVariantList messages(receivedInformation.value(MESSAGES).toList());
     LOG("Received" << messages.count() << "sponsored messages for chat" << chatId);
-    QListIterator<QVariant> it(messages);
-    while (it.hasNext()) {
-        emit sponsoredMessageReceived(chatId, it.next().toMap());
-    }
+    for (const QVariant &message : messages)
+        emit sponsoredMessageReceived(chatId, message.toMap());
 }
 
 void TDLibReceiver::processUpdateNewMessage(const QVariantMap &receivedInformation)
