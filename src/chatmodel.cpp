@@ -1046,17 +1046,19 @@ int ChatModel::calculateLastKnownMessageId(bool classic) {
     LOG("size messageIndexMap" << messageIndexMap.size());
     LOG("contains last read ID?" << messageIndexMap.contains(lastKnownMessageId));
     LOG("contains last own ID?" << messageIndexMap.contains(lastOwnMessageId));
+
     int listInboxPosition = messageIndexMap.value(lastKnownMessageId, classic ? (messages.size() - 1) : -1);
     int listOwnPosition = messageIndexMap.value(lastOwnMessageId, -1);
-    if (listInboxPosition > messages.size() - 1) {
+
+    if (listInboxPosition > messages.size() - 1)
         listInboxPosition = classic ? (messages.size() - 1) : -1;
-    }
-    if (listOwnPosition > messages.size() - 1) {
+    if (listOwnPosition > messages.size() - 1)
         listOwnPosition = -1;
-    }
+
     LOG("Last known message is at position" << listInboxPosition);
     LOG("Last own message is at position" << listOwnPosition);
-    return (listInboxPosition > listOwnPosition) ? listInboxPosition : listOwnPosition;
+
+    return qMax(listInboxPosition, listOwnPosition);
 }
 
 int ChatModel::calculateLastReadSentMessageIndex() {
