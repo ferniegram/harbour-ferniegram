@@ -223,6 +223,8 @@ public:
     Q_INVOKABLE void searchPublicChat(const QString &userName, bool doOpenOnFound = false);
     Q_INVOKABLE void joinChatByInviteLink(const QString &inviteLink);
     Q_INVOKABLE void getDeepLinkInfo(const QString &link);
+    Q_INVOKABLE void getInternalLinkType(const QString &link);
+    Q_INVOKABLE void checkChatInviteLink(const QString &link);
     Q_INVOKABLE void getContacts();
     Q_INVOKABLE void getSecretChat(qlonglong secretChatId);
     Q_INVOKABLE void closeSecretChat(qlonglong secretChatId);
@@ -361,6 +363,8 @@ signals:
     void translationResultReceived(qlonglong extraId, const QVariantMap &formattedText);
     void chatActionUpdated(qlonglong chatId, const QVariantMap &sender, const QVariantMap &action, qlonglong messageThreadId);
     void emojiKeywordsReceived(const QString &text, const QVariantList &emojis);
+    void chatInviteLinkInfoReceived(const QVariantMap &linkInfo);
+    void deepLinkInfoReceived(const QString &text, bool updateRequired);
 
 public slots:
     // appSettings
@@ -394,6 +398,7 @@ public slots:
     void handleNetworkConfigurationChanged(const QNetworkConfiguration &config);
     void handleActiveEmojiReactionsUpdated(const QStringList& emojis);
     void handleGetPageSourceFinished();
+    void handleInternalLinkType(const QString &type, const QVariantMap &linkType);
 
 private:
     void setOption(const QString &name, const QString &type, const QVariant &value);

@@ -285,6 +285,19 @@ function handleLink(link) {
     }
 }
 
+function processInternalLink(link) {
+    switch (link['@type']) {
+    case 'internalLinkTypeMessage':
+        tdLibWrapper.getMessageLinkInfo(link, "openDirectly")
+        break
+    case 'internalLinkTypeChatInvite':
+        break
+    case 'internalLinkTypeUnknownDeepLink':
+        tdLibWrapper.getDeepLinkInfo(link.link)
+        break
+    }
+}
+
 function getVideoHeight(videoWidth, videoData) {
     if (typeof videoData !== "undefined") {
         if (videoData.height === 0) {

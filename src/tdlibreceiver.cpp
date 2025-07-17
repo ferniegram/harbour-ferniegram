@@ -17,6 +17,7 @@
     along with Fernschreiber. If not, see <http://www.gnu.org/licenses/>.
 */
 #include "tdlibreceiver.h"
+#include "utilities.h"
 
 #define DEBUG_MODULE TDLibReceiver
 #include "debuglog.h"
@@ -192,6 +193,7 @@ TDLibReceiver::TDLibReceiver(void *tdLibClient, QObject *parent) : QThread(paren
     handlers.insert("formattedText", &TDLibReceiver::processFormattedText);
     handlers.insert("updateChatAction", &TDLibReceiver::processUpdateChatAction);
     handlers.insert("emojiKeywords", &TDLibReceiver::processEmojiKeywords);
+    handlers.insert("deepLinkInfo", &TDLibReceiver::processDeepLinkInfo);
 }
 
 void TDLibReceiver::setActive(bool active)
@@ -1002,4 +1004,14 @@ void TDLibReceiver::processEmojiKeywords(const QVariantMap &receivedInformation)
     }
     //if (!emojis.isEmpty())
     emit emojiKeywordsReceived(receivedInformation.value(_EXTRA).toString(), emojis);
+}
+
+void TDLibReceiver::processInternalLinkType(const QVariantMap &receivedInformation) {
+    QVariantMap info = receivedInformation;
+    emit internalLinkTypeReceived(info.take(_TYPE).toString(), info);
+}
+
+void TDLibReceiver::processDeepLinkInfo(const QVariantMap &receivedInformation) {
+    LOG("Received deep link info");
+    emit deepLinkInfoReceived(Utilities::enhanceMessageText(receivedInformation.value(TEXT).toMap()), receivedInformation.value("need_update_application").toBool());
 }

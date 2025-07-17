@@ -42,6 +42,7 @@ ApplicationWindow {
         onTgUrlFound: Functions.handleLink(tgUrl)
         onErrorReceived: Functions.handleErrorMessage(code, message, extra)
         onServiceNotificationReceived: appNotification.show(utilities.getMessageContentText(content, true))
+        onDeepLinkInfoReceived: appNotification.show(text)
     }
 
     AppNotification {

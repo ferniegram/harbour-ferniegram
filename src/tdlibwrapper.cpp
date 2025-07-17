@@ -82,6 +82,9 @@ namespace {
     const QString REMOVE_CONTACTS("removeContacts");
     const QString INPUT_MESSAGE_CONTENT("input_message_content");
     const QString LOCATION("location");
+    const QString LINK("link");
+    const QString INVITE_LINK("invite_link");
+    const QString CODE("code");
     const QStringList ALL_FILE_TYPES(QStringList()
                                      << "fileTypeAnimation"
                                      << "fileTypeAudio"
@@ -244,6 +247,9 @@ void TDLibWrapper::initializeTDLibReceiver() {
     connect(this->tdLibReceiver, &TDLibReceiver::translationResultReceived, this, &TDLibWrapper::translationResultReceived);
     connect(this->tdLibReceiver, &TDLibReceiver::chatActionUpdated, this, &TDLibWrapper::chatActionUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::emojiKeywordsReceived, this, &TDLibWrapper::emojiKeywordsReceived);
+    connect(this->tdLibReceiver, &TDLibReceiver::internalLinkTypeReceived, this, &TDLibWrapper::handleInternalLinkType);
+    connect(this->tdLibReceiver, &TDLibReceiver::chatInviteLinkInfoReceived, this, &TDLibWrapper::chatInviteLinkInfoReceived);
+    connect(this->tdLibReceiver, &TDLibReceiver::deepLinkInfoReceived, this, &TDLibWrapper::deepLinkInfoReceived);
 
     this->tdLibReceiver->start();
 }
@@ -274,7 +280,7 @@ void TDLibWrapper::setAuthenticationPhoneNumber(const QString &phoneNumber) {
 
 void TDLibWrapper::setAuthenticationCode(const QString &authenticationCode) {
     LOG("Set authentication code " << authenticationCode);
-    this->sendRequest(QVariantMap{{_TYPE, "checkAuthenticationCode"}, {"code", authenticationCode}});
+    this->sendRequest(QVariantMap{{_TYPE, "checkAuthenticationCode"}, {CODE, authenticationCode}});
 }
 
 void TDLibWrapper::setAuthenticationPassword(const QString &authenticationPassword) {
@@ -845,16 +851,41 @@ void TDLibWrapper::searchPublicChat(const QString &userName, bool doOpenOnFound)
     });
 }
 
+
 void TDLibWrapper::joinChatByInviteLink(const QString &inviteLink) {
     LOG("Join chat by invite link" << inviteLink);
     this->joinChatRequested = true;
-    this->sendRequest(QVariantMap{{_TYPE, "joinChatByInviteLink"}, {"invite_link", inviteLink}});
+    this->sendRequest(QVariantMap{{_TYPE, "joinChatByInviteLink"}, {INVITE_LINK, inviteLink}});
 }
 
 void TDLibWrapper::getDeepLinkInfo(const QString &link) {
     LOG("Resolving TG deep link" << link);
-    this->sendRequest(QVariantMap{{_TYPE, "getDeepLinkInfo"}, {"link", link}});
+    this->sendRequest(QVariantMap{{_TYPE, "getDeepLinkInfo"}, {LINK, link}});
 }
+
+void TDLibWrapper::getInternalLinkType(const QString &link) {
+    this->sendRequest(QVariantMap{{_TYPE, "getInternalLinkType"}, {LINK, link}});
+}
+
+void TDLibWrapper::checkChatInviteLink(const QString &link) {
+    this->sendRequest(QVariantMap{{_TYPE, "checkChatInviteLink"}, {INVITE_LINK, link}});
+}
+
+void TDLibWrapper::handleInternalLinkType(const QString &type, const QVariantMap &linkType) {
+    LOG("Received internal link information" << type);
+    if (type == "internalLinkTypeMessage")
+        this->getMessageLinkInfo(linkType.value(LINK).toString(), "openDirectly");
+    else if (type == "internalLinkTypeChatInvite")
+        //this->checkChatInviteLink(linkType.value(INVITE_LINK).toString()); // todo
+        this->joinChatByInviteLink(linkType.value(INVITE_LINK).toString());
+    else if (type == "internalLinkTypeAuthenticationCode") {
+        if (this->authorizationState == AuthorizationState::WaitCode)
+            setAuthenticationCode(linkType.value(CODE).toString());
+    } else if (type == "internalLinkTypeUnknownDeepLink")
+        this->getDeepLinkInfo(linkType.value(LINK).toString());
+    // todo: internalLinkTypeUserPhoneNumber
+}
+
 
 void TDLibWrapper::getContacts() {
     LOG("Retrieving contacts");
