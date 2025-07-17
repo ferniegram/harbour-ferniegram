@@ -1077,11 +1077,7 @@ int ChatModel::calculateScrollPosition() {
         listInboxPosition = 0; // Go to the first message
 
     LOG("Calculating new scroll position, current:" << listInboxPosition << ", list size:" << this->messages.size());
-    if ((this->messages.size() - 1) > listInboxPosition) {
-        return listInboxPosition + 1;
-    } else {
-        return listInboxPosition;
-    }
+    return qMin(listInboxPosition + 1, this->messages.size() - 1);
 }
 
 bool ChatModel::isMostRecentMessageLoaded() {
