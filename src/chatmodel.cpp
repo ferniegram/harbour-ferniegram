@@ -1032,6 +1032,7 @@ int ChatModel::findLastSentMessageIndex() {
 
 int ChatModel::calculateLastReadMessageIndex(bool classic) {
     // classic: fallback to last message instead of returning -1 for incoming messages, get last loaded own message for outgoing ones
+    // classic will probably get removed in the future. currently it's left for existing stuff not to break.
     LOG("calculateLastReadMessageIndex classic:" << classic);
     const qlonglong lastReadMessageId = this->chatInformation.value(LAST_READ_INBOX_MESSAGE_ID).toLongLong(); // last read incoming message id
     LOG("lastReadMessageId" << lastReadMessageId);
