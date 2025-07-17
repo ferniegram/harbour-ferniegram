@@ -1065,12 +1065,11 @@ int ChatModel::calculateLastReadSentMessageIndex() {
     LOG("lastReadSentMessageId" << id);
     LOG("size messageIndexMap" << messageIndexMap.size());
     LOG("contains ID?" << messageIndexMap.contains(id));
-    LOG(messageIndexMap);
     int listOutboxPosition;
     if (messageIndexMap.contains(id))
         listOutboxPosition = messageIndexMap.value(id, -1);
     else {
-        LOG("Last read sent message is not loaded, falling back to last loaded own message");
+        LOG("Last read sent message is not loaded, falling back to last loaded sent message");
         listOutboxPosition = findLastSentMessageIndex();
     }
     LOG("Last read sent message" << id << "is at position" << listOutboxPosition);

@@ -1061,7 +1061,6 @@ Page {
                     }
 
                     onContentYChanged: {
-                        console.log(contentY, chatPage.loading, chatView.inCooldown)
                         if (!chatPage.loading && !chatView.inCooldown) {
                             if (chatView.indexAt(chatView.contentX, chatView.contentY) < 10) {
                                 Debug.log("[ChatPage] Trying to get older history items...")
