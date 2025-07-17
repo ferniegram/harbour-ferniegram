@@ -1033,7 +1033,6 @@ int ChatModel::calculateLastReadMessageIndex(bool classic) {
     // classic will probably get removed in the future. currently it's left for existing stuff not to break.
     LOG("calculateLastReadMessageIndex classic:" << classic);
     const qlonglong lastReadMessageId = this->chatInformation.value(LAST_READ_INBOX_MESSAGE_ID).toLongLong(); // last read incoming message id
-    LOG("lastReadMessageId" << lastReadMessageId);
 
     qlonglong lastOwnMessageId = 0; // last sent (and read if not classic) message id
     if (classic) {
@@ -1043,9 +1042,10 @@ int ChatModel::calculateLastReadMessageIndex(bool classic) {
     } else
         lastOwnMessageId = this->chatInformation.value(LAST_READ_OUTBOX_MESSAGE_ID).toLongLong();
 
-    LOG("size messageIndexMap" << messageIndexMap.size());
-    LOG("contains last read ID?" << messageIndexMap.contains(lastReadMessageId));
-    LOG("contains last (read if not classic) sent ID?" << messageIndexMap.contains(lastOwnMessageId));
+    LOG("lastReadMessageId" << lastReadMessageId << "lastOwnMessageId" << lastOwnMessageId);
+    LOG("size messageIndexMap" << messageIndexMap.size()
+        << "; contains last read ID?" << messageIndexMap.contains(lastReadMessageId)
+        << "; contains last (read if not classic) sent ID?" << messageIndexMap.contains(lastOwnMessageId));
 
     int listInboxPosition = messageIndexMap.value(lastReadMessageId, classic ? (messages.size() - 1) : -1);
     int listOwnPosition = messageIndexMap.value(lastOwnMessageId, -1);
@@ -1055,8 +1055,7 @@ int ChatModel::calculateLastReadMessageIndex(bool classic) {
     if (listOwnPosition > messages.size() - 1)
         listOwnPosition = -1;
 
-    LOG("Last known message is at position" << listInboxPosition);
-    LOG("Last own message is at position" << listOwnPosition);
+    LOG("Last known message is at position" << listInboxPosition << "; last own message is at position" << listOwnPosition);
 
     return qMax(listInboxPosition, listOwnPosition);
 }
