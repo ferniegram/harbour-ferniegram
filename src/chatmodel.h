@@ -97,7 +97,7 @@ private:
     void setMessagesAlbum(const QList<MessageData*> newMessages);
     void setMessagesAlbum(MessageData *message);
     QVariantMap enhanceMessage(const QVariantMap &message);
-    int calculateLastKnownMessageId(bool classic = true);
+    int calculateLastReadMessageIndex(bool classic = true);
     int calculateLastReadSentMessageIndex();
     int calculateScrollPosition(int listInboxPosition);
     int findLastSentMessageIndex();
