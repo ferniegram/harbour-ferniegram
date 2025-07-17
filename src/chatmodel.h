@@ -57,8 +57,8 @@ public:
     qlonglong getChatId() const;
 
 signals:
-    void messagesReceived(int modelIndex, int totalCount);
-    void messagesIncrementalUpdate(int modelIndex);
+    void messagesReceived(int scrollPosition, int totalCount);
+    void messagesIncrementalUpdate(int scrollPosition);
     void newMessageReceived(const QVariantMap &message);
     void unreadCountUpdated(int unreadCount, const QString &lastReadInboxMessageId);
     void lastReadMessageIndexChanged();
@@ -100,7 +100,7 @@ private:
     QVariantMap enhanceMessage(const QVariantMap &message);
     int calculateLastReadMessageIndex(bool classic = true);
     int calculateLastReadSentMessageIndex();
-    int calculateScrollPosition(int listInboxPosition);
+    int calculateScrollPosition();
     int findLastSentMessageIndex();
     bool isMostRecentMessageLoaded();
 

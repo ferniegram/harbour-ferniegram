@@ -515,8 +515,8 @@ Page {
     Connections {
         target: chatModel
         onMessagesReceived: {
-            var proxyIndex = chatProxyModel.mapRowFromSource(modelIndex, -1)
-            Debug.log("[ChatPage] Messages received, view has ", chatView.count, " messages, last known message index ", proxyIndex, "("+modelIndex+")")
+            var proxyIndex = chatProxyModel.mapRowFromSource(scrollPosition, -1)
+            Debug.log("[ChatPage] Messages received, view has ", chatView.count, " messages, possibly need to scroll to ", proxyIndex, "("+scrollPosition+")")
             if (totalCount === 0) {
                 if (chatPage.iterativeInitialization) {
                     chatPage.iterativeInitialization = false
@@ -570,8 +570,8 @@ Page {
             chatUnreadMessagesCount.text = Functions.formatUnreadCount(unreadCount)
         }
         onMessagesIncrementalUpdate: {
-            var proxyIndex = chatProxyModel.mapRowFromSource(modelIndex, -1)
-            Debug.log("Incremental update received. View now has ", chatView.count, " messages, view is on index ", proxyIndex, "("+modelIndex+")")
+            var proxyIndex = chatProxyModel.mapRowFromSource(scrollPosition, -1)
+            Debug.log("Incremental update received. View now has ", chatView.count, " messages, possibly need to scroll to ", proxyIndex, "("+scrollPosition+")")
             if ((!chatPage.isInitialized) && (proxyIndex > -1))
                 chatView.scrollToIndex(proxyIndex)
             if (chatView.height > chatView.contentHeight) {
