@@ -43,7 +43,7 @@ Page {
     property bool isSecretChatReady: false
     property bool isBasicGroup: chatInformation.type['@type'] === "chatTypeBasicGroup"
     property bool isSuperGroup: chatInformation.type['@type'] === "chatTypeSupergroup"
-    property bool isChannel: false
+    property bool isChannel: chatGroupInformation && chatGroupInformation.is_channel
     property bool isDeletedUser: !!chatPartnerInformation && chatPartnerInformation.type['@type'] === "userTypeDeleted"
     property bool containsSponsoredMessages: false
     property var chatPartnerInformation
@@ -366,20 +366,18 @@ Page {
     Component.onCompleted: {
         Debug.log("[ChatPage] Initializing chat page...")
         chatView.currentIndex = -1
+        
         if (isPrivateChat || isSecretChat) {
             chatPartnerInformation = tdLibWrapper.getUserInformation(chatInformation.type.user_id)
             if (isSecretChat)
                 tdLibWrapper.getSecretChat(chatInformation.type.secret_chat_id)
             if(chatPartnerInformation.type["@type"] === "userTypeBot")
                 tdLibWrapper.getUserFullInfo(chatPartnerInformation.id)
-        }
-        else if (isBasicGroup) {
+        } else if (isBasicGroup)
             chatGroupInformation = tdLibWrapper.getBasicGroup(chatInformation.type.basic_group_id)
-        }
-        else if (isSuperGroup) {
+        else if (isSuperGroup)
             chatGroupInformation = tdLibWrapper.getSuperGroup(chatInformation.type.supergroup_id)
-            isChannel = chatGroupInformation.is_channel
-        }
+
         if (stickerManager.needsReload()) {
             Debug.log("[ChatPage] Recent stickers will be reloaded!")
             tdLibWrapper.getRecentStickers()
@@ -961,8 +959,6 @@ Page {
                 Timer {
                     id: chatViewCooldownTimer
                     interval: 2000
-                    repeat: false
-                    running: false
                     onTriggered: {
                         Debug.log("[ChatPage] Cooldown completed...")
                         chatView.inCooldown = false
@@ -978,8 +974,6 @@ Page {
                 Timer {
                     id: chatViewStartupReadTimer
                     interval: 200
-                    repeat: false
-                    running: false
                     onTriggered: {
                         if (!chatPage.isInitialized) {
                             Debug.log("Page is initialized!")
@@ -1023,7 +1017,7 @@ Page {
                     property bool manuallyScrolledToBottom
                     property QtObject precalculatedValues: QtObject {
                         readonly property alias page: chatPage
-                        readonly property bool showUserInfo: page.isBasicGroup || ( page.isSuperGroup && !page.isChannel)
+                        readonly property bool showUserInfo: page.isBasicGroup || (page.isSuperGroup && (!page.isChannel || chatGroupInformation.show_message_sender))
                         readonly property int profileThumbnailDimensions: showUserInfo ? Theme.itemSizeSmall : 0
                         readonly property int pageMarginDouble: 2 * Theme.horizontalPageMargin
                         readonly property int paddingMediumDouble: 2 * Theme.paddingMedium

@@ -51,15 +51,70 @@ ChatInformationTabItemBase {
             // if creator (supergroup/channel)
             // - canTransferOwnership?
             //   - transferChatOwnership
+
             Loader {
-                active: (chatInformationPage.isBasicGroup || chatInformationPage.isSuperGroup) && chatInformationPage.groupInformation &&  (chatInformationPage.groupInformation.status.can_restrict_members || chatInformationPage.groupInformation.status.can_change_info || chatInformationPage.groupInformation.status["@type"] === "chatMemberStatusCreator")
+                active: (chatInformationPage.isBasicGroup || chatInformationPage.isSuperGroup)
+                        && !chatInformationPage.isChannel && chatInformationPage.groupInformation
+
+                        && (chatInformationPage.groupInformation.status.can_restrict_members || chatInformationPage.isCreator)
                 asynchronous: true
                 source: "./EditGroupChatPermissionsColumn.qml"
                 width: parent.width
             }
 
             Loader {
-                active: chatInformationPage.isSuperGroup && chatInformationPage.groupInformation &&  chatInformationPage.groupInformation.status.can_restrict_members || chatInformationPage.groupInformation.status["@type"] === "chatMemberStatusCreator"
+                active: chatInformationPage.isSuperGroup
+                        && (chatInformationPage.groupInformation.status.can_change_info || chatInformationPage.isCreator)
+                // todo: only show this for private groups
+                sourceComponent: Component {
+                    Column {
+                        width: parent.width
+                        SectionHeader {
+                            text: qsTr("New Members", "what can new group members do")
+                        }
+                        TextSwitch {
+                            automaticCheck: false
+                            onCheckedChanged: busy = false
+                            text: qsTr("New members can see older messages", "member permission")
+                            checked: chatInformationPage.groupFullInformation.is_all_history_available
+                            onClicked: {
+                                busy = true
+                                tdLibWrapper.toggleSupergroupIsAllHistoryAvailable(chatInformationPage.chatPartnerGroupId, !checked)
+                            }
+                        }
+                    }
+                }
+            }
+
+            Loader {
+                active: chatInformationPage.isSuperGroup && chatInformationPage.isCreator
+                width: parent.width
+                // todo: only show this for private groups
+                sourceComponent: Component {
+                    Column {
+                        width: parent.width
+                        SectionHeader {
+                            text: qsTr("Topics", "group topics")
+                        }
+                        TextSwitch {
+                            automaticCheck: false
+                            onCheckedChanged: busy = false
+                            text: qsTr("Enable Topics", "switch to toggle topics for a group")
+                            description: qsTr("The group chat will be divided into topics created by admins or users.")
+                            checked: chatInformationPage.groupInformation.is_forum
+                            onClicked: {
+                                busy = true
+                                tdLibWrapper.toggleSupergroupIsForum(chatInformationPage.chatInformation.id, !checked)
+                            }
+                        }
+                    }
+                }
+            }
+
+            Loader {
+                active: chatInformationPage.isSuperGroup && chatInformationPage.groupInformation
+                        && (chatInformationPage.groupInformation.status.can_restrict_members
+                            || chatInformationPage.isCreator)
                 asynchronous: true
                 source: "./EditSuperGroupSlowModeColumn.qml"
                 width: parent.width
