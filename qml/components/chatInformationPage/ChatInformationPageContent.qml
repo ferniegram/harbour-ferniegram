@@ -309,7 +309,6 @@ SilicaFlickable {
             }*/
             return status
         }
-        onDescriptionChanged: console.log(description)
     }
 
     SilicaFlickable {

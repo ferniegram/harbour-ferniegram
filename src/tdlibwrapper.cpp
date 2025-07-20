@@ -2107,3 +2107,7 @@ void TDLibWrapper::searchEmojis(const QString &text) {
 void TDLibWrapper::close() {
     sendRequest(QVariantMap{{_TYPE, "close"}});
 }
+
+void TDLibWrapper::toggleSupergroupIsForum(bool isForum) {
+    sendRequest(QVariantMap{{_TYPE, "toggleSupergroupIsForum"}, {"is_forum", isForum}});
+}

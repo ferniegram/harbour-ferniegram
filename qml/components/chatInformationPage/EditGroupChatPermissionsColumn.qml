@@ -137,21 +137,5 @@ Column {
         }
     }
 
-    SectionHeader {
-        visible: historyAvailableSwitch.visible
-        text: qsTr("New Members", "what can new group members do")
-    }
 
-
-    TextSwitch {
-        id: historyAvailableSwitch
-        visible: chatInformationPage.isSuperGroup && chatInformationPage.groupInformation.status && chatInformationPage.groupInformation.status.can_change_info
-        automaticCheck: false
-        text: qsTr("New members can see older messages", "member permission")
-        onCheckedChanged: {busy = false;}
-        checked: chatInformationPage.groupFullInformation.is_all_history_available
-        onClicked: {
-            tdLibWrapper.toggleSupergroupIsAllHistoryAvailable(chatInformationPage.chatPartnerGroupId, !checked);
-        }
-    }
 }

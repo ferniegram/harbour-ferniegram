@@ -158,7 +158,8 @@ public:
     DBusAdaptor *getDBusAdaptor();
 
     // Direct TDLib functions
-    Q_INVOKABLE void sendRequest(const QVariantMap &requestObject);
+    void sendRequest(const QVariantMap &requestObject);
+    void close();
     Q_INVOKABLE void setAuthenticationPhoneNumber(const QString &phoneNumber);
     Q_INVOKABLE void setAuthenticationCode(const QString &authenticationCode);
     Q_INVOKABLE void setAuthenticationPassword(const QString &authenticationPassword);
@@ -264,7 +265,7 @@ public:
     Q_INVOKABLE void translateText(const QVariantMap &text, const QString &languageCode, qlonglong extraId);
     Q_INVOKABLE void sendChatAction(qlonglong chatId, const QString &chatActionType);
     Q_INVOKABLE void searchEmojis(const QString &text);
-    void close();
+    Q_INVOKABLE void toggleSupergroupIsForum(bool isForum);
 
     // Others (candidates for extraction ;))
     Q_INVOKABLE void initializeOpenWith();
