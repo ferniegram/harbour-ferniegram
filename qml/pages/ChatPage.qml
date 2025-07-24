@@ -151,7 +151,7 @@ Page {
             }
         }
 
-        if (message.author_signature)
+        if (message.author_signature && !chatView.precalculatedValues.showUserInfo)
             messageStatusSuffix += " - " + message.author_signature
 
         return (useElapsed ? Functions.getDateTimeElapsed(message.date) : Functions.getDateTimeTranslated(message.date)) + messageStatusSuffix
