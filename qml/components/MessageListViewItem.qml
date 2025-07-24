@@ -642,7 +642,7 @@ ListItem {
                         // empty state is also a state
                         State {
                             name: "normal"
-                            when: myMessage.content.show_caption_above_media === false // don't accept undefined
+                            when: extraContentLoader.visible && !myMessage.content.show_caption_above_media
                             AnchorChanges {
                                 target: messageText
                                 anchors.top: extraContentLoader.bottom
@@ -655,7 +655,7 @@ ListItem {
                         },
                         State {
                             name: "inverted"
-                            when: !!myMessage.content.show_caption_above_media
+                            when: extraContentLoader.visible && !!myMessage.content.show_caption_above_media
                             AnchorChanges {
                                 target: extraContentLoader
                                 anchors.top: messageText.bottom
