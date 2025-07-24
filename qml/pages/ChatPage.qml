@@ -393,6 +393,7 @@ Page {
                 newMessageInReplyToRow.inReplyToMessage ? newMessageInReplyToRow.inReplyToMessage.id : 0)
 
         utilities.stopGeoLocationUpdates()
+        chatActionTimer.stop()
         tdLibWrapper.closeChat(chatInformation.id)
     }
 
@@ -1357,13 +1358,15 @@ Page {
                     id: chatActionTimer
                     property string action
                     triggeredOnStart: true
-                    interval: 5500 // from https://core.telegram.org/constructor/updateChatUserTyping: chat action update is valid for 6 seconds
-                    onTriggered: tdLibWrapper.sendChatAction(chatInformation.id, action)
+                    interval: 5000 // from https://core.telegram.org/constructor/updateChatUserTyping: chat action update is valid for 6 seconds
+                    repeat: true
+                    onTriggered: if (Qt.application.active)
+                                     tdLibWrapper.sendChatAction(chatInformation.id, action)
                     onRunningChanged: if (!running)
                                           tdLibWrapper.sendChatAction(chatInformation.id, "chatActionCancel")
                     function run(action) {
                         this.action = action
-                        start()
+                        restart()
                     }
                 }
 
