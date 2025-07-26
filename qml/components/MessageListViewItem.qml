@@ -19,6 +19,7 @@
 import QtQuick 2.6
 import Sailfish.Silica 1.0
 import "./messageContent"
+import WerkWolf.Fernschreiber 1.0
 import "../js/twemoji.js" as Emoji
 import "../js/functions.js" as Functions
 import "../js/debug.js" as Debug
@@ -268,6 +269,15 @@ ListItem {
                         longText: qsTr("Edit Message")
                         onClicked: editMessage()
                     }
+                }
+                FancyMenuItem {
+                    text: "Copy debug info"
+                    icon.source: "image://theme/icon-m-diagnostic"
+                    visible: DebugLog.enabled
+                    onClicked: Clipboard.text =
+                               "Message ID: " + messageId
+                               + "\nMessage object:\n" + JSON.stringify(myMessage, null, 2)
+                               + "\n\n\nMessage properties:\n" + JSON.stringify(messageProperties, null, 2)
                 }
 
                 Component.onCompleted: {
