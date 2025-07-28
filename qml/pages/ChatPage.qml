@@ -1197,6 +1197,7 @@ Page {
                         "messageDocument",
                         "messageAudio",
                         "messagePoll",
+                        "messageVoiceNote",
                     ]
                     property var albumMessages: [
                         'messagePhoto',
