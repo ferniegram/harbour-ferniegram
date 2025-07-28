@@ -26,53 +26,56 @@ MessageContentBase {
 
     readonly property var diceSticker: rawMessage.content.final_state || rawMessage.content.initial_state || {}
     readonly property string emoji: rawMessage.content.emoji
-    readonly property var stickerData: (diceSticker['@type'] === "diceStickersSlotMachine" ?
-                                                           {emoji: emoji, width: diceSticker.lever.width, height: diceSticker.lever.height} // for showing as emoji
-                                                         : diceSticker.sticker) || {}
+    readonly property var pureStickerData: (diceSticker['@type'] === "diceStickersSlotMachine" ? diceSticker.lever : diceSticker.sticker) || {}
+    readonly property var stickerData: (appSettings.showStickersAsEmojis
+                                        ? {emoji: emoji, width: pureStickerData.width, height: pureStickerData.height}
+                                        : pureStickerData) || {}
     readonly property bool isOwnSticker: typeof messageListItem !== 'undefined' ? messageListItem.isOwnMessage : overlayFlickable.isOwnMessage
 
     width: stickerData.width
     height: stickerData.height
 
     Loader {
-        id: loader
-        anchors.fill: parent
-        sourceComponent: diceSticker['@type'] === "diceStickersSlotMachine" && !appSettings.showStickersAsEmojis ? slotMachineComponent : regularComponent
-
-        Component {
-            id: regularComponent
-            TDLibSticker {
-                id: sticker
-                width: Math.min(implicitWidth, parent.width)
-                // (centered in image mode, text-like in sticker mode)
-                anchors {
-                    horizontalCenter: appSettings.showStickersAsImages ? parent.horizontalCenter : undefined
-                    right: !appSettings.showStickersAsImages && isOwnSticker ? parent.right : undefined
-                    verticalCenter: parent.verticalCenter
-                }
-
-                stickerData: stickerMessage.stickerData
-
-                loop: false
-
-                // TODO: do not play animation when viewing history
-                /*property bool needSeekToEnd: false
-                visible: !needSeekToEnd
-                Component.onCompleted: needSeekToEnd = rawMessage.content.value > 0
-                onLoadedChanged: if (loaded && needSeekToEnd) {
-                                     needSeekToEnd = false
-                                     seekToFrame(getFrameCount() - 3)
-                                     // pausing is done by loop=false
-                                 }*/
-            }
-        }
-
-        Component {
-            id: slotMachineComponent
+        anchors.fill: sticker
+        active: !appSettings.showStickersAsEmojis && diceSticker['@type'] === "diceStickersSlotMachine"
+        sourceComponent: Component {
             Item {
-                // TODO
+                anchors.fill: parent
+                Repeater {
+                    model: [diceSticker.background, diceSticker.left_reel, diceSticker.center_reel, diceSticker.right_reel]
+                    TDLibSticker {
+                        anchors.fill: parent
+                        loop: false
+                        stickerData: modelData
+                    }
+                }
             }
         }
+    }
+
+    TDLibSticker {
+        id: sticker
+        width: Math.min(implicitWidth, parent.width)
+        // (centered in image mode, text-like in sticker mode)
+        anchors {
+            horizontalCenter: appSettings.showStickersAsImages ? parent.horizontalCenter : undefined
+            right: !appSettings.showStickersAsImages && isOwnSticker ? parent.right : undefined
+            verticalCenter: parent.verticalCenter
+        }
+
+        stickerData: stickerMessage.stickerData
+
+        loop: false
+
+        // TODO: do not play animation when viewing history
+        /*property bool needSeekToEnd: false
+        visible: !needSeekToEnd
+        Component.onCompleted: needSeekToEnd = rawMessage.content.value > 0
+        onLoadedChanged: if (loaded && needSeekToEnd) {
+                             needSeekToEnd = false
+                             seekToFrame(getFrameCount() - 3)
+                             // pausing is done by loop=false
+                         }*/
     }
 
     onClicked:
