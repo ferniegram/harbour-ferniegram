@@ -42,9 +42,12 @@ ListItem {
     readonly property color textColor: isOwnMessage ? Theme.highlightColor : Theme.primaryColor
     readonly property int textAlign: isOwnMessage ? Text.AlignRight : Text.AlignLeft
     readonly property Page page: precalculatedValues.page
-    readonly property bool isSelected: messageListItem.precalculatedValues.pageIsSelecting && page.selectedMessages.some(function(existingMessage) {
-        return existingMessage.id === messageId
-    })
+    readonly property bool isSelected: messageListItem.precalculatedValues.pageIsSelecting
+                                       && page.selectedMessages.some(function(existingMessage) { return existingMessage.id === messageId })
+                                       && (messageAlbumMessageIds.length === 0 || messageAlbumMessageIds.every(function(id) {
+                                           return page.selectedMessages.some(function(m) { return m.id == id })
+                                       }))
+
     readonly property bool isOwnMessage: page.myUserId === myMessage.sender_id.user_id
     property bool hasContentComponent
     property bool fullWidthWidescreenContent
@@ -53,7 +56,7 @@ ListItem {
     property var chatReactions
     property var messageReactions
 
-    highlighted: (down || (isSelected && messageAlbumMessageIds.length === 0) || wasNavigatedTo) && !menuOpen
+    highlighted: (down || isSelected || wasNavigatedTo) && !menuOpen
     openMenuOnPressAndHold: !messageListItem.precalculatedValues.pageIsSelecting
 
     signal replyToMessage()
@@ -129,7 +132,7 @@ ListItem {
 
     onClicked: {
         if (messageListItem.precalculatedValues.pageIsSelecting) {
-            page.toggleMessageSelection(myMessage)
+            page.toggleMessageSelection(myMessage, messageAlbumMessageIds)
         } else {
             // Allow extra context to react to click
             var extraContent = extraContentLoader.item
@@ -217,7 +220,7 @@ ListItem {
                     // NOTE2: When a user selects a message, the finger first goes to the (horizontal) center of the message, so the most used options should be there
                     IconRowMenuItem {
                         icon.source: "image://theme/icon-m-select-all"
-                        onClicked: page.toggleMessageSelection(myMessage)
+                        onClicked: page.toggleMessageSelection(myMessage, messageAlbumMessageIds)
                     }
                     IconRowMenuItem {
                         icon.source: "image://theme/icon-m-clipboard"
@@ -537,7 +540,7 @@ ListItem {
                                 anchors.fill: parent
                                 onClicked: {
                                     if (precalculatedValues.pageIsSelecting) {
-                                        page.toggleMessageSelection(myMessage)
+                                        page.toggleMessageSelection(myMessage, messageAlbumMessageIds)
                                     } else {
                                         if(appSettings.goToQuotedMessage) {
                                             chatPage.showMessage(messageInReplyToRow.inReplyToMessage.id, true)

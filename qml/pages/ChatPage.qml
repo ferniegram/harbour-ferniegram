@@ -95,20 +95,59 @@ Page {
         }
     ]
 
-    function toggleMessageSelection(message) {
+    function deselectMessage(message) {
         for (var i = 0; i < selectedMessages.length; i++) {
             if(selectedMessages[i].id === message.id) {
                 delete selectedMessages[i].properties
                 selectedMessages.splice(i, 1)
-                selectedMessagesChanged()
-                return
+                return true
             }
         }
+        return false
+    }
+    function selectMessage(message) {
         message.properties = {}
         selectedMessages.push(message)
         tdLibWrapper.getMessageProperties(message.chat_id, message.id)
+    }
+
+    function toggleSingleMessageSelection(message) {
+        if (deselectMessage(message)) {
+            selectedMessagesChanged()
+            return
+        }
+
+        selectMessage(message)
         selectedMessagesChanged()
     }
+    function toggleMultipleMessagesSelection(messages) {
+        var i;
+        if (messages.every(function(m) {
+            return selectedMessages.some(function(selectedMessage) {
+                return selectedMessage.id === m.id
+            })
+        })) {
+            for (i=0; i < messages.length; i++)
+                deselectMessage(messages[i])
+            selectedMessagesChanged()
+            return
+        }
+
+        for (i=0; i < messages.length; i++)
+            selectMessage(messages[i]);
+        selectedMessagesChanged()
+    }
+
+    function toggleMessageSelection(message, albumMessageIds) {
+        if (!albumMessageIds || message.media_album_id === '0' || albumMessageIds.length <= 1)
+            toggleSingleMessageSelection(message)
+        else {
+            var albumMessages = [message]
+            chatModel.getMessagesForAlbum(message.media_album_id, 1).forEach(function(m) { albumMessages.push(m) })
+            toggleMultipleMessagesSelection(albumMessages)
+        }
+    }
+
     Connections {
         target: tdLibWrapper
         onMessagePropertiesReceived: {
