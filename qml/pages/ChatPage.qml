@@ -1887,7 +1887,7 @@ Page {
                                     MouseArea {
                                         anchors.fill: parent
                                         onClicked: {
-                                            replaceMessageText(emojiProposalsKeyword, newMessageTextField.cursorPosition, modelData)
+                                            replaceMessageText(newMessageTextField.text, newMessageTextField.cursorPosition, modelData)
                                             emojiProposals = null
                                             emojiProposalsKeyword = ''
                                         }
