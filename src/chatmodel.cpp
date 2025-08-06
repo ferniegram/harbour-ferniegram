@@ -589,7 +589,7 @@ void ChatModel::handleMessagesReceived(const QVariantList &messages, int totalCo
             emit messagesReceived(scrollPosition, totalCount);
         }
     } else {
-        if (this->isMostRecentMessageLoaded() || this->inIncrementalUpdate || this->inReload) {
+        if (this->inIncrementalUpdate || this->inReload || this->messages.size() == 0 || this->isMostRecentMessageLoaded()) {
             QList<MessageData*> messagesToBeAdded;
             QListIterator<QVariant> messagesIterator(messages);
 
@@ -657,7 +657,7 @@ void ChatModel::handleNewMessageReceived(qlonglong chatId, const QVariantMap &me
 {
     const qlonglong messageId = message.value(ID).toLongLong();
     if (chatId == this->chatId && !messageIndexMap.contains(messageId)) {
-        if (this->isMostRecentMessageLoaded() && !this->searchModeActive) {
+        if (!this->searchModeActive && this->isMostRecentMessageLoaded()) {
             LOG("New message received for this chat");
             QList<MessageData*> messagesToBeAdded;
             messagesToBeAdded.append(new MessageData(message, messageId));
@@ -1087,7 +1087,6 @@ int ChatModel::calculateScrollPosition() {
 bool ChatModel::isMostRecentMessageLoaded() {
     // Need to check if we can actually add messages (only possible if the previously latest messages are loaded)
     // some other things also depend on this now
-    if (this->messages.size() == 0) return true; // fixme (required for the first chunk in handleMessagesReceived)
 
     const qlonglong messageId = this->chatInformation.value(LAST_MESSAGE).toMap().value(ID).toLongLong();
     const bool result = this->messageIndexMap.contains(messageId);
