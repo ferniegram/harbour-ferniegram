@@ -36,14 +36,6 @@
         <translation>About Ferniegram</translation>
     </message>
     <message>
-        <source>Development</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Early testing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Translations</source>
         <translation type="unfinished"></translation>
     </message>
@@ -183,6 +175,11 @@
     <message>
         <source>FAKE</source>
         <comment>string for a user text badge, should not be too long. Badge shows that this may be a scam user.</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ad</source>
+        <comment>chat badge, indicates that the search result is sponsored</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -326,6 +323,33 @@
     <message>
         <source>Channel members are anonymous.</source>
         <translation>Channel members are anonymous.</translation>
+    </message>
+</context>
+<context>
+    <name>ChatInformationTabItemSettings</name>
+    <message>
+        <source>New Members</source>
+        <comment>what can new group members do</comment>
+        <translation type="unfinished">New Members</translation>
+    </message>
+    <message>
+        <source>New members can see older messages</source>
+        <comment>member permission</comment>
+        <translation type="unfinished">New members can see older messages</translation>
+    </message>
+    <message>
+        <source>Topics</source>
+        <comment>group topics</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Topics</source>
+        <comment>switch to toggle topics for a group</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The group chat will be divided into topics created by admins or users.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -612,54 +636,84 @@
 <context>
     <name>EditGroupChatPermissionsColumn</name>
     <message>
-        <source>Group Member Permissions</source>
-        <comment>what can normal group members do</comment>
-        <translation>Group Member Permissions</translation>
+        <source>Permissions</source>
+        <comment>What can members of this group do</comment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Send Messages</source>
+        <source>Send messages</source>
         <comment>member permission</comment>
-        <translation>Send Messages</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Send Media Messages</source>
+        <source>Send media</source>
         <comment>member permission</comment>
-        <translation>Send Media Messages</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Send Other Messages</source>
+        <source>Photos</source>
         <comment>member permission</comment>
-        <translation>Send Other Messages</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add Web Page Previews</source>
+        <source>Videos</source>
         <comment>member permission</comment>
-        <translation>Add Web Page Previews</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change Chat Info</source>
+        <source>Video messages</source>
         <comment>member permission</comment>
-        <translation>Change Chat Info</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Invite Users</source>
+        <source>Music</source>
         <comment>member permission</comment>
-        <translation>Invite Users</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Pin Messages</source>
+        <source>Voice messages</source>
         <comment>member permission</comment>
-        <translation>Pin Messages</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New Members</source>
-        <comment>what can new group members do</comment>
-        <translation>New Members</translation>
-    </message>
-    <message>
-        <source>New members can see older messages</source>
+        <source>Files</source>
         <comment>member permission</comment>
-        <translation>New members can see older messages</translation>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stickers &amp; GIFs</source>
+        <comment>member permission</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Embed links</source>
+        <comment>member permission</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Polls</source>
+        <comment>member permission</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add members</source>
+        <comment>member permission</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pin messages</source>
+        <comment>member permission</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change group info</source>
+        <comment>member permission</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create topics</source>
+        <comment>member permission</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -781,6 +835,19 @@
     <name>LicenseListPart</name>
     <message>
         <source>License text</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>MessageDice</name>
+    <message>
+        <source>Send a %1 emoji to any chat to try your luck.</source>
+        <comment>in-app notification text</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <comment>in-app notification button for &quot;Send a %1 emoji to any chat to try your luck.&quot;</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1193,14 +1260,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Download of %1 successful.</source>
-        <translation type="unfinished">Download of %1 successful.</translation>
-    </message>
-    <message>
-        <source>Download failed.</source>
-        <translation type="unfinished">Download failed.</translation>
-    </message>
-    <message>
         <source>Tap on the title bar to filter your chats</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1217,16 +1276,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Unable to open link.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>About Ferniegram</source>
         <translation>About Ferniegram</translation>
     </message>
     <message>
+        <source>Download of %1 successful.</source>
+        <comment>in-app notification text</comment>
+        <translation type="unfinished">Download of %1 successful.</translation>
+    </message>
+    <message>
         <source>Open</source>
-        <comment>Button to open downloaded file, shown in an in-app notification</comment>
+        <comment>in-app notification button: open downloaded file</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download failed.</source>
+        <comment>in-app notification text</comment>
+        <translation type="unfinished">Download failed.</translation>
+    </message>
+    <message>
+        <source>Unable to open link.</source>
+        <comment>in-app notification text</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1584,26 +1654,6 @@
     </message>
     <message>
         <source>Send attachments by enter</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sponsored messages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable or disable sponsored messages. Note that they will always be disabled for Premium subscribers.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Auto view</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ignore</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2472,10 +2522,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>service notifications</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Owner</source>
         <comment>channel user role</comment>
         <translation type="unfinished"></translation>
@@ -2661,6 +2707,16 @@
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
+    </message>
+    <message>
+        <source>service notifications</source>
+        <comment>used as a status for the service notifications chat</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>support</source>
+        <comment>used as a status for support chats, excluding the service notifications chat</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
