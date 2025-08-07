@@ -1998,7 +1998,7 @@
     <name>Utilities</name>
     <message>
         <source>Picture: %1</source>
-        <translatiob>Картинка: %1</translation>
+        <translation>Картинка: %1</translation>
     </message>
     <message>
         <source>sent a picture</source>
