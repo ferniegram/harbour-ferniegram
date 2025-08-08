@@ -17,13 +17,13 @@
     along with Fernschreiber. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CHATMODEL_H
-#define CHATMODEL_H
+#ifndef MESSAGESMODEL_H
+#define MESSAGESMODEL_H
 
 #include <QAbstractListModel>
 #include "tdlibwrapper.h"
 
-class ChatModel : public QAbstractListModel
+class MessagesModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(qlonglong chatId READ getChatId NOTIFY chatIdChanged)
@@ -36,8 +36,8 @@ class ChatModel : public QAbstractListModel
     Q_PROPERTY(QVariantMap chatActionsByChats MEMBER chatActionsByChats NOTIFY chatActionsChanged)
 
 public:
-    ChatModel(TDLibWrapper *tdLibWrapper);
-    ~ChatModel() override;
+    MessagesModel(TDLibWrapper *tdLibWrapper);
+    ~MessagesModel() override;
 
     virtual QHash<int,QByteArray> roleNames() const override;
     virtual int rowCount(const QModelIndex&) const override;
@@ -127,4 +127,4 @@ private:
     QVariantMap chatActionsByChats; //QMap<qlonglong, QString>
 };
 
-#endif // CHATMODEL_H
+#endif // MESSAGESMODEL_H

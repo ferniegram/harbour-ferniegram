@@ -18,7 +18,7 @@
 */
 
 #include "notificationmanager.h"
-#include "chatmodel.h"
+#include "messagesmodel.h"
 #include <sailfishapp.h>
 #include <QListIterator>
 #include <QUrl>
@@ -124,7 +124,7 @@ NotificationManager::NotificationGroup::~NotificationGroup()
     delete nemoNotification;
 }
 
-NotificationManager::NotificationManager(TDLibWrapper *tdLibWrapper, AppSettings *appSettings, MceInterface *mceInterface, ChatModel *chatModel, Utilities *utilities) :
+NotificationManager::NotificationManager(TDLibWrapper *tdLibWrapper, AppSettings *appSettings, MceInterface *mceInterface, MessagesModel *chatModel, Utilities *utilities) :
     tdLibWrapper(tdLibWrapper),
     appSettings(appSettings),
     mceInterface(mceInterface),
