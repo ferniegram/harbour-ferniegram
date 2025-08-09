@@ -27,7 +27,7 @@
 #include "mceinterface.h"
 #include "utilities.h"
 
-class MessagesModel;
+class ChatModel;
 
 class NotificationManager : public QObject
 {
@@ -37,7 +37,7 @@ class NotificationManager : public QObject
 
 public:
 
-    NotificationManager(TDLibWrapper *tdLibWrapper, AppSettings *appSettings, MceInterface *mceInterface, MessagesModel *chatModel, Utilities *utilities);
+    NotificationManager(TDLibWrapper *tdLibWrapper, AppSettings *appSettings, MceInterface *mceInterface, ChatModel *chatModel, Utilities *utilities);
     ~NotificationManager() override;
 
 public slots:
@@ -62,7 +62,7 @@ private:
     TDLibWrapper *tdLibWrapper;
     AppSettings *appSettings;
     MceInterface *mceInterface;
-    MessagesModel *chatModel;
+    ChatModel *chatModel;
     Utilities *utilities;
     QMap<qlonglong,ChatInfo*> chatMap;
     QMap<int,NotificationGroup*> notificationGroups;

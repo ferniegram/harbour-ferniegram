@@ -30,15 +30,10 @@
 namespace {
     const QString ID("id");
     const QString CHAT_ID("chat_id");
-    const QString PHOTO("photo");
-    const QString SMALL("small");
     const QString LAST_READ_INBOX_MESSAGE_ID("last_read_inbox_message_id");
     const QString LAST_READ_OUTBOX_MESSAGE_ID("last_read_outbox_message_id");
-    const QString USER_ID("user_id");
     const QString MESSAGE_ID("message_id");
-    const QString PINNED_MESSAGE_ID("pinned_message_id");
     const QString LAST_MESSAGE("last_message");
-    const QString _TYPE("@type");
 
     const QString MEDIA_ALBUM_ID("media_album_id");
 
@@ -61,10 +56,7 @@ MessagesModel::MessagesModel(TDLibWrapper *tdLibWrapper) :
     connect(this->tdLibWrapper, &TDLibWrapper::chatReadInboxUpdated, this, &MessagesModel::handleChatReadInboxUpdated);
     connect(this->tdLibWrapper, &TDLibWrapper::chatReadOutboxUpdated, this, &MessagesModel::handleChatReadOutboxUpdated);
     connect(this->tdLibWrapper, &TDLibWrapper::messageSendSucceeded, this, &MessagesModel::handleMessageSendSucceeded);
-    connect(this->tdLibWrapper, &TDLibWrapper::chatNotificationSettingsUpdated, this, &MessagesModel::handleChatNotificationSettingsUpdated);
     connect(this->tdLibWrapper, &TDLibWrapper::chatLastMessageUpdated, this, &MessagesModel::handleChatLastMessageUpdated);
-    connect(this->tdLibWrapper, &TDLibWrapper::chatPhotoUpdated, this, &MessagesModel::handleChatPhotoUpdated);
-    connect(this->tdLibWrapper, &TDLibWrapper::chatPinnedMessageUpdated, this, &MessagesModel::handleChatPinnedMessageUpdated);
     connect(this->tdLibWrapper, &TDLibWrapper::messageContentUpdated, this, &MessagesModel::handleMessageContentUpdated);
     connect(this->tdLibWrapper, &TDLibWrapper::messageEditedUpdated, this, &MessagesModel::handleMessageEditedUpdated);
     connect(this->tdLibWrapper, &TDLibWrapper::messageInteractionInfoUpdated, this, &MessagesModel::handleMessageInteractionInfoUpdated);
@@ -79,8 +71,6 @@ MessagesModel::MessagesModel(TDLibWrapper *tdLibWrapper) :
     // FIXME: can this be implemented better?
     connect(this, &MessagesModel::messagesIncrementalUpdate, this, &MessagesModel::historyEndLoadedChanged);
     connect(this, &MessagesModel::messagesReceived, this, &MessagesModel::historyEndLoadedChanged);
-
-    connect(this->tdLibWrapper, &TDLibWrapper::chatActionUpdated, this, &MessagesModel::handleChatActionUpdated);
 }
 
 MessagesModel::~MessagesModel()
@@ -125,7 +115,7 @@ QVariant MessagesModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-void MessagesModel::clear(bool contentOnly) {
+void MessagesModel::clear() {
     LOG("Clearing chat model");
     inReload = false;
     inIncrementalUpdate = false;
@@ -141,53 +131,23 @@ void MessagesModel::clear(bool contentOnly) {
         albumMessageMap.clear();
         endResetModel();
         emit historyEndLoadedChanged();
-    }
-
-    if (!contentOnly) {
-        if (!chatInformation.isEmpty()) {
-            chatInformation.clear();
-            emit smallPhotoChanged();
-        }
-        if (chatId) {
-            chatId = 0;
-            emit chatIdChanged();
-        }
-        if (!chatActionsByUsers.isEmpty()) {
-            chatActionsByUsers.clear();
-            emit chatActionsChanged();
-        }
-        if (!chatActionsByChats.isEmpty()) {
-            chatActionsByChats.clear();
-            emit chatActionsChanged();
-        }
         emit lastReadSentMessageUpdated();
     }
 }
 
-void MessagesModel::initialize(const QVariantMap &chatInformation, qlonglong fromMessageId) {
-    const qlonglong chatId = chatInformation.value(ID).toLongLong();
-    LOG("Initializing chat model..." << chatId << "from message id" << fromMessageId);
-    beginResetModel();
-    qDeleteAll(messages);
-    this->chatInformation = chatInformation;
-    this->chatId = chatId;
-    this->highlightedMessageId = fromMessageId;
-    this->loadingFullEnd = false;
-    this->messages.clear();
-    this->messageIndexMap.clear();
-    this->albumMessageMap.clear();
-    this->searchQuery.clear();
-    endResetModel();
-    emit chatIdChanged();
-    emit smallPhotoChanged();
-    emit historyEndLoadedChanged();
-    tdLibWrapper->getChatHistory(chatId, fromMessageId != 0 ? fromMessageId : this->chatInformation.value(LAST_READ_INBOX_MESSAGE_ID).toLongLong());
+void MessagesModel::reset() {
+    LOG("Resetting chat model");
+    clear();
+    if (chatId) {
+        chatId = 0;
+        emit chatIdChanged();
+    }
 }
 
 void MessagesModel::triggerLoadHistoryForMessage(qlonglong messageId) {
     if (!this->inIncrementalUpdate && !messages.isEmpty()) {
         LOG("Trigger loading message with id..." << messageId);
-        this->clear(true);
+        this->clear();
         this->highlightedMessageId = messageId;
         this->tdLibWrapper->getChatHistory(chatId, messageId);
     }
@@ -201,7 +161,7 @@ void MessagesModel::loadEnd(bool markAllAsRead) {
         //    this->tdLibWrapper->toggleChatIsMarkedAsUnread(this->chatId, false);
         this->loadingFullEnd = markAllAsRead;
 
-        this->clear(true);
+        this->clear();
         // TODO: fix markAllAsRead not properly working sometimes (maybe something is wrong about fromMessageId=0)
         tdLibWrapper->getChatHistory(chatId, markAllAsRead ? 0 : this->chatInformation.value(LAST_READ_INBOX_MESSAGE_ID).toLongLong());
     }
@@ -287,7 +247,7 @@ QVariantList MessagesModel::getMessagesForAlbum(qlonglong albumId, int startAt)
 void MessagesModel::setSearchQuery(const QString newSearchQuery)
 {
     if (this->searchQuery != newSearchQuery) {
-        this->clear(true);
+        this->clear();
         this->searchQuery = newSearchQuery;
         this->searchModeActive = !this->searchQuery.isEmpty();
         if (this->searchModeActive) {
@@ -296,16 +256,6 @@ void MessagesModel::setSearchQuery(const QString newSearchQuery)
             this->tdLibWrapper->getChatHistory(chatId, this->chatInformation.value(LAST_READ_INBOX_MESSAGE_ID).toLongLong());
         }
     }
-}
-
-QVariantMap MessagesModel::smallPhoto() const
-{
-    return chatInformation.value(PHOTO).toMap().value(SMALL).toMap();
-}
-
-qlonglong MessagesModel::getChatId() const
-{
-    return chatId;
 }
 
 void MessagesModel::handleMessagesReceived(const QVariantList &messages, int totalCount)
@@ -460,37 +410,10 @@ void MessagesModel::handleMessageSendSucceeded(qlonglong messageId, qlonglong ol
     }
 }
 
-void MessagesModel::handleChatNotificationSettingsUpdated(const QString &id, const QVariantMap &chatNotificationSettings)
-{
-    if (id.toLongLong() == chatId) {
-        this->chatInformation.insert("notification_settings", chatNotificationSettings);
-        LOG("Notification settings updated");
-        emit notificationSettingsUpdated();
-    }
-}
-
 void MessagesModel::handleChatLastMessageUpdated(const QString &id, const QString &/*order*/, const QVariantMap &lastMessage) {
     if (id.toLongLong() == chatId) {
         this->chatInformation.insert(LAST_MESSAGE, lastMessage);
         LOG("Last message updated");
-    }
-}
-
-void MessagesModel::handleChatPhotoUpdated(qlonglong id, const QVariantMap &photo)
-{
-    if (id == chatId) {
-        LOG("Chat photo updated" << chatId);
-        chatInformation.insert(PHOTO, photo);
-        emit smallPhotoChanged();
-    }
-}
-
-void MessagesModel::handleChatPinnedMessageUpdated(qlonglong id, qlonglong pinnedMessageId)
-{
-    if (id == chatId) {
-        LOG("Pinned message updated" << chatId);
-        chatInformation.insert(PINNED_MESSAGE_ID, pinnedMessageId);
-        emit pinnedMessageChanged();
     }
 }
 
@@ -833,24 +756,4 @@ bool MessagesModel::isMostRecentMessageLoaded() {
     const bool result = this->messageIndexMap.contains(messageId);
     LOG("Checking if most recent message is loaded" << messageId << result << messageIndexMap);
     return result;
-}
-
-void MessagesModel::handleChatActionUpdated(qlonglong chatId, const QVariantMap &sender, const QVariantMap &action, qlonglong messageThreadId) {
-    const QString actionType = action.value(_TYPE).toString();
-    if (messageThreadId == 0 && chatId == this->chatId) {
-        LOG("Chat action updated");
-        if (sender.value(_TYPE).toString() == "messageSenderChat") {
-            const QString senderChatId = sender.value(CHAT_ID).toString();
-            if (actionType == "chatActionCancel")
-                chatActionsByChats.remove(senderChatId);
-            else chatActionsByChats.insert(senderChatId, actionType);
-        } else {
-            const QString senderUserId = sender.value(USER_ID).toString();
-            if (actionType == "chatActionCancel")
-                chatActionsByUsers.remove(senderUserId);
-            else chatActionsByUsers.insert(senderUserId, actionType);
-        }
-        LOG(chatActionsByChats << chatActionsByUsers << chatId << sender << action);
-        emit chatActionsChanged();
-    }
 }

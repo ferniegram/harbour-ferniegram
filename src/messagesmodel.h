@@ -24,17 +24,13 @@
 #include "tdlibwrapper.h"
 #include "messagedata.h"
 
-class MessagesModel : public QAbstractListModel
-{
+class MessagesModel : public QAbstractListModel {
     Q_OBJECT
     Q_PROPERTY(qlonglong chatId READ getChatId NOTIFY chatIdChanged)
-    Q_PROPERTY(QVariantMap smallPhoto READ smallPhoto NOTIFY smallPhotoChanged)
     Q_PROPERTY(int lastReadSentMessageIndex READ calculateLastReadSentMessageIndex NOTIFY lastReadSentMessageUpdated)
     Q_PROPERTY(int lastReadMessageIndexInBounds READ calculateLastReadMessageIndexInBounds NOTIFY lastReadMessageIndexChanged)
     Q_PROPERTY(int lastReadIncomingMessageIndex READ getLastReadMessageIndex NOTIFY lastReadMessageIndexChanged)
     Q_PROPERTY(bool historyEndLoaded READ isMostRecentMessageLoaded NOTIFY historyEndLoadedChanged)
-    Q_PROPERTY(QVariantMap chatActionsByUsers MEMBER chatActionsByUsers NOTIFY chatActionsChanged)
-    Q_PROPERTY(QVariantMap chatActionsByChats MEMBER chatActionsByChats NOTIFY chatActionsChanged)
 
 public:
     MessagesModel(TDLibWrapper *tdLibWrapper);
@@ -44,8 +40,8 @@ public:
     virtual int rowCount(const QModelIndex&) const override;
     virtual QVariant data(const QModelIndex &index, int role) const override;
 
-    Q_INVOKABLE void clear(bool contentOnly = false);
-    Q_INVOKABLE void initialize(const QVariantMap &chatInformation, qlonglong fromMessageId = 0);
+    Q_INVOKABLE void clear();
+    Q_INVOKABLE virtual void reset();
     Q_INVOKABLE void triggerLoadMoreHistory();
     Q_INVOKABLE void triggerLoadMoreFuture();
     Q_INVOKABLE void triggerLoadHistoryForMessage(qlonglong messageId);
@@ -58,10 +54,10 @@ public:
     Q_INVOKABLE void setSearchQuery(const QString newSearchQuery);
 
     Q_INVOKABLE int getMessageIndex(qlonglong messageId);
-    QVariantMap smallPhoto() const;
-    qlonglong getChatId() const;
+    inline qlonglong getChatId() const { return chatId; }
 
 signals:
+    void chatIdChanged();
     void messagesReceived(int scrollPosition, int totalCount);
     void messagesIncrementalUpdate(int scrollPosition);
     void newMessageReceived(const QVariantMap &message);
@@ -69,12 +65,7 @@ signals:
     void lastReadMessageIndexChanged();
     void lastReadSentMessageUpdated();
     void historyEndLoadedChanged();
-    void notificationSettingsUpdated();
     void messageUpdated(int modelIndex);
-    void smallPhotoChanged();
-    void chatIdChanged();
-    void pinnedMessageChanged();
-    void chatActionsChanged();
 
 private slots:
     void handleMessagesReceived(const QVariantList &messages, int totalCount);
@@ -84,15 +75,11 @@ private slots:
     void handleChatReadInboxUpdated(const QString &chatId, const QString &lastReadInboxMessageId, int unreadCount);
     void handleChatReadOutboxUpdated(const QString &chatId, const QString &lastReadOutboxMessageId);
     void handleMessageSendSucceeded(qlonglong messageId, qlonglong oldMessageId, const QVariantMap &message);
-    void handleChatNotificationSettingsUpdated(const QString &chatId, const QVariantMap &chatNotificationSettings);
     void handleChatLastMessageUpdated(const QString &id, const QString &/*order*/, const QVariantMap &lastMessage);
-    void handleChatPhotoUpdated(qlonglong chatId, const QVariantMap &photo);
-    void handleChatPinnedMessageUpdated(qlonglong chatId, qlonglong pinnedMessageId);
     void handleMessageContentUpdated(qlonglong chatId, qlonglong messageId, const QVariantMap &newContent);
     void handleMessageEditedUpdated(qlonglong chatId, qlonglong messageId, const QVariantMap &replyMarkup);
     void handleMessageInteractionInfoUpdated(qlonglong chatId, qlonglong messageId, const QVariantMap &updatedInfo);
     void handleMessagesDeleted(qlonglong chatId, const QList<qlonglong> &messageIds);
-    void handleChatActionUpdated(qlonglong chatId, const QVariantMap &sender, const QVariantMap &chatAction, qlonglong messageThreadId);
 
 private:
     void removeRange(int firstDeleted, int lastDeleted);
@@ -109,22 +96,21 @@ private:
     int calculateScrollPosition();
     int findLastSentMessageIndex();
 
-private:
+protected:
     TDLibWrapper *tdLibWrapper;
+    qlonglong chatId;
+    QVariantMap chatInformation;
+
+private:
     QList<MessageData*> messages;
     QHash<qlonglong,int> messageIndexMap;
     QHash<qlonglong, QVariantList> albumMessageMap;
-    QVariantMap chatInformation;
-    qlonglong chatId;
     qlonglong highlightedMessageId;
     bool inReload;
     bool inIncrementalUpdate; // if we are waiting for messages after sending a request to load more of them
     bool loadingFullEnd;
     bool searchModeActive;
     QString searchQuery;
-
-    QVariantMap chatActionsByUsers; // QMap<qlonglong, QString>
-    QVariantMap chatActionsByChats; //QMap<qlonglong, QString>
 };
 
 #endif // MESSAGESMODEL_H
