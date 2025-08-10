@@ -14,7 +14,7 @@ namespace {
     const QString LAST_READ_INBOX_MESSAGE_ID("last_read_inbox_message_id");
 }
 
-ChatModel::ChatModel(TDLibWrapper *tdLibWrapper) : MessagesModel(tdLibWrapper), searchQuery() {
+ChatModel::ChatModel(TDLibWrapper *tdLibWrapper) : ReadableMessagesModel(tdLibWrapper), searchQuery() {
     connect(this->tdLibWrapper, &TDLibWrapper::chatPhotoUpdated, this, &ChatModel::handleChatPhotoUpdated);
     connect(this->tdLibWrapper, &TDLibWrapper::chatPinnedMessageUpdated, this, &ChatModel::handleChatPinnedMessageUpdated);
     connect(this->tdLibWrapper, &TDLibWrapper::chatActionUpdated, this, &ChatModel::handleChatActionUpdated);
@@ -73,11 +73,11 @@ void ChatModel::handleChatNotificationSettingsUpdated(const QString &id, const Q
 
 void ChatModel::clear() {
     this->searchQuery.clear();
-    MessagesModel::clear();
+    ReadableMessagesModel::clear();
 }
 
 void ChatModel::reset() {
-    MessagesModel::reset();
+    ReadableMessagesModel::reset();
 
     if (!chatInformation.isEmpty()) {
         chatInformation.clear();

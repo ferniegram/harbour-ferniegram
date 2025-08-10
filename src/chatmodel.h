@@ -1,9 +1,9 @@
 #ifndef CHATMODEL_H
 #define CHATMODEL_H
 
-#include "messagesmodel.h"
+#include "readablemessagesmodel.h"
 
-class ChatModel : public MessagesModel {
+class ChatModel : public ReadableMessagesModel {
     Q_OBJECT
     Q_PROPERTY(QVariantMap smallPhoto READ smallPhoto NOTIFY smallPhotoChanged)
     Q_PROPERTY(QVariantMap chatActionsByUsers MEMBER chatActionsByUsers NOTIFY chatActionsChanged)

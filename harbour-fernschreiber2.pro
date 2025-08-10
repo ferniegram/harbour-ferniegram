@@ -31,6 +31,7 @@ SOURCES += src/harbour-fernschreiber2.cpp \
     src/dbusinterface.cpp \
     src/messagedata.cpp \
     src/messagesmodel.cpp \
+    src/readablemessagesmodel.cpp \
     src/suggestedactionsmodel.cpp \
     src/utilities.cpp \
     src/knownusersmodel.cpp \
@@ -245,6 +246,7 @@ HEADERS += \
     src/debuglogjs.h \
     src/messagedata.h \
     src/messagesmodel.h \
+    src/readablemessagesmodel.h \
     src/suggestedactionsmodel.h \
     src/utilities.h \
     src/knownusersmodel.h \
