@@ -27,10 +27,8 @@
 class MessagesModel : public QAbstractListModel {
     Q_OBJECT
     Q_PROPERTY(qlonglong chatId READ getChatId NOTIFY chatIdChanged)
-    Q_PROPERTY(int lastReadSentMessageIndex READ calculateLastReadSentMessageIndex NOTIFY lastReadSentMessageUpdated)
     Q_PROPERTY(int lastReadMessageIndexInBounds READ calculateLastReadMessageIndexInBounds NOTIFY lastReadMessageIndexChanged)
     Q_PROPERTY(int lastReadIncomingMessageIndex READ getLastReadMessageIndex NOTIFY lastReadMessageIndexChanged)
-    Q_PROPERTY(bool historyEndLoaded READ isMostRecentMessageLoaded NOTIFY historyEndLoadedChanged)
 
 public:
     MessagesModel(TDLibWrapper *tdLibWrapper);
@@ -46,7 +44,6 @@ public:
     Q_INVOKABLE void triggerLoadMoreFuture();
     Q_INVOKABLE void triggerLoadHistoryForMessage(qlonglong messageId);
     Q_INVOKABLE void loadEnd(bool markAllAsRead = false);
-    Q_INVOKABLE bool isMostRecentMessageLoaded();
     Q_INVOKABLE QVariantMap getChatInformation();
     Q_INVOKABLE QVariantMap getMessage(int index);
     Q_INVOKABLE QVariantList getMessageIdsForAlbum(qlonglong albumId);
@@ -62,8 +59,6 @@ signals:
     void newMessageReceived(const QVariantMap &message);
     void unreadCountUpdated(int unreadCount, const QString &lastReadInboxMessageId);
     void lastReadMessageIndexChanged();
-    void lastReadSentMessageUpdated();
-    void historyEndLoadedChanged();
     void messageUpdated(int modelIndex);
 
 private slots:
@@ -90,9 +85,6 @@ private:
     void setMessagesAlbum(const QList<MessageData*> newMessages);
     void setMessagesAlbum(MessageData *message);
     int calculateLastReadMessageIndexInBounds();
-    int getLastReadMessageIndex();
-    int calculateLastReadSentMessageIndex();
-    int calculateScrollPosition();
     int findLastSentMessageIndex();
 
 protected:

@@ -150,7 +150,7 @@ void MessagesModel::triggerLoadHistoryForMessage(qlonglong messageId) {
 }
 
 void MessagesModel::loadEnd(bool markAllAsRead) {
-    if (!this->inIncrementalUpdate && !messages.isEmpty()) {
+    if (!this->inIncrementalUpdate && !messages.isEmpty() && !inReload) {
         LOG("Loading end of the chat... markAllAsRead:" << markAllAsRead << (markAllAsRead ? 0 : this->chatInformation.value(LAST_READ_INBOX_MESSAGE_ID).toLongLong()) << chatId);
 
         //if (markAllAsRead) // FIXME: is this really needed?
@@ -165,14 +165,14 @@ void MessagesModel::loadEnd(bool markAllAsRead) {
 void MessagesModel::triggerLoadMoreHistory() {
     if (!this->inIncrementalUpdate && !messages.isEmpty()) {
         this->inIncrementalUpdate = true;
-        LOG("Loading older history...");
+        LOG("Loading older messages...");
         this->loadMessages(messages.first()->messageId);
     }
 }
 
 void MessagesModel::triggerLoadMoreFuture() {
     if (canLoadMoreMessages() && !this->inIncrementalUpdate && !messages.isEmpty()) {
-        LOG("Trigger loading newer future...");
+        LOG("Loading newer messages...");
         this->inIncrementalUpdate = true;
         this->loadMessages(messages.last()->messageId, -49);
     }
@@ -660,59 +660,4 @@ int MessagesModel::calculateLastReadMessageIndexInBounds() {
     LOG("Last known message is at position" << listInboxPosition << "; last own message is at position" << listOwnPosition);
 
     return qMax(listInboxPosition, listOwnPosition);
-}
-
-int MessagesModel::getLastReadMessageIndex() {
-    int listInboxPosition = messageIndexMap.value(this->chatInformation.value(LAST_READ_INBOX_MESSAGE_ID).toLongLong(), -1);
-    if (listInboxPosition > messages.size() - 1) listInboxPosition = -1;
-    return listInboxPosition;
-}
-
-int MessagesModel::calculateLastReadSentMessageIndex() {
-    LOG("calculateLastReadSentMessageIndex");
-    qlonglong id = this->chatInformation.value(LAST_READ_OUTBOX_MESSAGE_ID).toLongLong();
-    LOG("lastReadSentMessageId" << id);
-    LOG("size messageIndexMap" << messageIndexMap.size());
-    LOG("contains ID?" << messageIndexMap.contains(id));
-    int listOutboxPosition;
-    if (messageIndexMap.contains(id))
-        listOutboxPosition = messageIndexMap.value(id, -1);
-    else {
-        LOG("Last read sent message is not loaded, falling back to last loaded sent message");
-        listOutboxPosition = findLastSentMessageIndex();
-    }
-    LOG("Last read sent message" << id << "is at position" << listOutboxPosition);
-    return listOutboxPosition;
-}
-
-int MessagesModel::calculateScrollPosition() {
-    if (loadingFullEnd) return this->messages.size() - 1;
-
-    int scrollPosition = this->messageIndexMap.value(this->highlightedMessageId, -1);
-    if (scrollPosition == -1) {
-        LOG("calculateLastScrollMessageIndex");
-
-        int listInboxPosition = messageIndexMap.value(this->chatInformation.value(LAST_READ_INBOX_MESSAGE_ID).toLongLong(), -1);
-        int listOwnPosition = findLastSentMessageIndex();
-
-        if (listInboxPosition > messages.size() - 1) listInboxPosition = -1;
-        if (listOwnPosition > messages.size() - 1) listOwnPosition = -1;
-
-        LOG("Last read received message is at position" << listInboxPosition << "; last read sent message is at position" << listOwnPosition);
-
-        scrollPosition = qMax(listInboxPosition, listOwnPosition);
-    }
-
-    LOG("Calculating new scroll position, current:" << scrollPosition << ", list size:" << this->messages.size());
-    return qMin(scrollPosition + 1, this->messages.size() - 1);
-}
-
-bool MessagesModel::isMostRecentMessageLoaded() {
-    // Need to check if we can actually add messages (only possible if the previously latest messages are loaded)
-    // some other things also depend on this now
-
-    const qlonglong messageId = this->chatInformation.value(LAST_MESSAGE).toMap().value(ID).toLongLong();
-    const bool result = this->messageIndexMap.contains(messageId);
-    LOG("Checking if most recent message is loaded" << messageId << result << messageIndexMap);
-    return result;
 }
