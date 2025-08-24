@@ -54,8 +54,7 @@ public:
 
 signals:
     void chatIdChanged();
-    void messagesReceived(int scrollPosition, int totalCount);
-    void messagesIncrementalUpdate(int scrollPosition);
+    void messagesReceived(int scrollPosition, int totalCount, bool fromIncrementalUpdate);
     void newMessageReceived(const QVariantMap &message);
     void unreadCountUpdated(int unreadCount, const QString &lastReadInboxMessageId);
     void lastReadMessageIndexChanged();

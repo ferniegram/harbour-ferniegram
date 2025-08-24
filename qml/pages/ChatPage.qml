@@ -558,8 +558,9 @@ Page {
         target: chatModel
         onMessagesReceived: {
             var proxyIndex = chatProxyModel.mapRowFromSource(scrollPosition, -1)
-            Debug.log("[ChatPage] Messages received, view has ", chatView.count, " messages, possibly need to scroll to ", proxyIndex, "("+scrollPosition+")")
-            if (totalCount === 0) {
+            Debug.log("[ChatPage] Messages received, from incremental update: ", fromIncrementalUpdate, ", view has ", chatView.count, " messages, possibly need to scroll to ", proxyIndex, "("+scrollPosition+")")
+
+            if (!fromIncrementalUpdate && totalCount === 0) {
                 if (chatPage.iterativeInitialization) {
                     chatPage.iterativeInitialization = false
                     Debug.log("[ChatPage] actually, skipping that: No Messages in Chat.")
@@ -570,30 +571,37 @@ Page {
                     chatPage.iterativeInitialization = true
             }
 
-            chatView.scrollToIndex(proxyIndex)
-            chatPage.loading = false
-            if (chatOverviewItem.visible && proxyIndex >= (chatView.count - 10)) {
-                chatView.inCooldown = true
-                chatModel.triggerLoadMoreFuture()
+            if (!fromIncrementalUpdate || (!chatPage.isInitialized && proxyIndex > -1))
+                chatView.scrollToIndex(proxyIndex)
+
+            if (!fromIncrementalUpdate) {
+                chatPage.loading = false
+                if (chatOverviewItem.visible && proxyIndex >= (chatView.count - 10)) {
+                    chatView.inCooldown = true
+                    chatModel.triggerLoadMoreFuture()
+                }
             }
 
             if (chatView.height > chatView.contentHeight) {
                 Debug.log("[ChatPage] Chat content quite small...")
                 viewMessageTimer.queueViewMessage(chatView.count - 1)
-            }
+            } else if (fromIncrementalUpdate && chatPage.messageIdToScrollTo && chatPage.messageIdToScrollTo != "")
+                showMessage(chatPage.messageIdToScrollTo, false)
 
             chatViewCooldownTimer.restart()
             chatViewStartupReadTimer.restart()
 
             /*
             // Double-tap for reactions is currently disabled, let's see if we'll ever need it again
-            var remainingDoubleTapHints = appSettings.remainingDoubleTapHints;
-            Debug.log("Remaining double tap hints: " + remainingDoubleTapHints);
-            if (remainingDoubleTapHints > 0) {
-                doubleTapHintTimer.start();
-                tapHint.visible = true;
-                tapHintLabel.visible = true;
-                appSettings.remainingDoubleTapHints = remainingDoubleTapHints - 1;
+            if (!fromIncrementalUpdate) {
+                var remainingDoubleTapHints = appSettings.remainingDoubleTapHints;
+                Debug.log("Remaining double tap hints: " + remainingDoubleTapHints);
+                if (remainingDoubleTapHints > 0) {
+                    doubleTapHintTimer.start();
+                    tapHint.visible = true;
+                    tapHintLabel.visible = true;
+                    appSettings.remainingDoubleTapHints = remainingDoubleTapHints - 1;
+                }
             }
              */
 
@@ -609,19 +617,6 @@ Page {
             Debug.log("[ChatPage] Unread count updated, new count: ", unreadCount)
             chatInformation.unread_count = unreadCount
             chatPage.unreadCount = chatInformation.unread_count
-        }
-        onMessagesIncrementalUpdate: {
-            var proxyIndex = chatProxyModel.mapRowFromSource(scrollPosition, -1)
-            Debug.log("Incremental update received. View now has ", chatView.count, " messages, possibly need to scroll to ", proxyIndex, "("+scrollPosition+")")
-            if ((!chatPage.isInitialized) && (proxyIndex > -1))
-                chatView.scrollToIndex(proxyIndex)
-            if (chatView.height > chatView.contentHeight) {
-                Debug.log("[ChatPage] Chat content quite small...")
-                viewMessageTimer.queueViewMessage(chatView.count - 1)
-            } else if (chatPage.messageIdToScrollTo && chatPage.messageIdToScrollTo != "")
-                showMessage(chatPage.messageIdToScrollTo, false)
-            chatViewCooldownTimer.restart()
-            chatViewStartupReadTimer.restart()
         }
         onNotificationSettingsUpdated: {
             chatInformation = chatModel.getChatInformation()

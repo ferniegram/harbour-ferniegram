@@ -63,12 +63,10 @@ MessagesModel::MessagesModel(TDLibWrapper *tdLibWrapper) :
 
     // FIXME: can this be implemented better?
     connect(this, &MessagesModel::messagesReceived, this, &MessagesModel::lastReadMessageIndexChanged);
-    connect(this, &MessagesModel::messagesIncrementalUpdate, this, &MessagesModel::lastReadMessageIndexChanged);
     connect(this, &MessagesModel::newMessageReceived, this, &MessagesModel::lastReadMessageIndexChanged);
     connect(this, &MessagesModel::unreadCountUpdated, this, &MessagesModel::lastReadMessageIndexChanged);
 
     // FIXME: can this be implemented better?
-    connect(this, &MessagesModel::messagesIncrementalUpdate, this, &MessagesModel::historyEndLoadedChanged);
     connect(this, &MessagesModel::messagesReceived, this, &MessagesModel::historyEndLoadedChanged);
 }
 
@@ -239,12 +237,10 @@ void MessagesModel::handleMessagesReceived(const QVariantList &messages, int tot
         this->inReload = false;
         const int scrollPosition = this->calculateScrollPosition();
         emit lastReadSentMessageUpdated();
-        if (this->inIncrementalUpdate) {
-            this->inIncrementalUpdate = false;
-            emit messagesIncrementalUpdate(scrollPosition);
-        } else {
-            emit messagesReceived(scrollPosition, totalCount);
-        }
+
+        bool fromIncrementalUpdate = this->inIncrementalUpdate;
+        this->inIncrementalUpdate = false;
+        emit messagesReceived(scrollPosition, totalCount, fromIncrementalUpdate);
     } else {
         if (this->inIncrementalUpdate || this->inReload || this->messages.size() == 0 || this->isMostRecentMessageLoaded()) {
             QList<MessageData*> messagesToBeAdded;
@@ -277,12 +273,10 @@ void MessagesModel::handleMessagesReceived(const QVariantList &messages, int tot
                 this->inReload = false;
                 const int scrollPosition = this->calculateScrollPosition();
                 emit lastReadSentMessageUpdated();
-                if (this->inIncrementalUpdate) {
-                    this->inIncrementalUpdate = false;
-                    emit messagesIncrementalUpdate(scrollPosition);
-                } else {
-                    emit messagesReceived(scrollPosition, totalCount);
-                }
+
+                bool fromIncrementalUpdate = this->inIncrementalUpdate;
+                this->inIncrementalUpdate = false;
+                emit messagesReceived(scrollPosition, totalCount, fromIncrementalUpdate);
             }
         } else {
             // Cleanup... Is that really needed? Well, let's see...
