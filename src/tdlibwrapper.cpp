@@ -61,7 +61,7 @@ namespace {
     const QString REPLY_TO("reply_to");
     const QString _TYPE("@type");
     const QString _EXTRA("@extra");
-    const QString CHAT_LIST_MAIN("chatListMain");
+    const QString TYPE_CHAT_LIST_MAIN("chatListMain");
     const QString CHAT_AVAILABLE_REACTIONS("available_reactions");
     const QString CHAT_AVAILABLE_REACTIONS_ALL("chatAvailableReactionsAll");
     const QString CHAT_AVAILABLE_REACTIONS_SOME("chatAvailableReactionsSome");
@@ -970,7 +970,7 @@ void TDLibWrapper::toggleChatIsPinned(qlonglong chatId, bool isPinned) {
     LOG("Toggle chat is pinned" << chatId << isPinned);
     this->sendRequest(QVariantMap{
         {_TYPE, "toggleChatIsPinned"},
-        {"chat_list", QVariantMap{{_TYPE, CHAT_LIST_MAIN}}},
+        {"chat_list", QVariantMap{{_TYPE, TYPE_CHAT_LIST_MAIN}}},
         {CHAT_ID, chatId},
         {"is_pinned", isPinned},
         {"is_marked_as_unread", isPinned}
@@ -1600,14 +1600,14 @@ void TDLibWrapper::handleChatReceived(const QVariantMap &chatInformation) {
 }
 
 void TDLibWrapper::handleUnreadMessageCountUpdated(const QVariantMap &messageCountInformation) {
-    if (messageCountInformation.value(CHAT_LIST_TYPE).toString() == CHAT_LIST_MAIN) {
+    if (messageCountInformation.value(CHAT_LIST_TYPE).toString() == TYPE_CHAT_LIST_MAIN) {
         this->unreadMessageInformation = messageCountInformation;
         emit unreadMessageCountUpdated(messageCountInformation);
     }
 }
 
 void TDLibWrapper::handleUnreadChatCountUpdated(const QVariantMap &chatCountInformation) {
-    if (chatCountInformation.value(CHAT_LIST_TYPE).toString() == CHAT_LIST_MAIN) {
+    if (chatCountInformation.value(CHAT_LIST_TYPE).toString() == TYPE_CHAT_LIST_MAIN) {
         this->unreadChatInformation = chatCountInformation;
         emit unreadChatCountUpdated(chatCountInformation);
     }
