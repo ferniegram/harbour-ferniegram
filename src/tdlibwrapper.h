@@ -288,13 +288,15 @@ signals:
     void connectionStateChanged(const TDLibWrapper::ConnectionState &connectionState);
     void fileUpdated(int fileId, const QVariantMap &fileInformation);
     void newChatDiscovered(qlonglong chatId, const QVariantMap &chatInformation);
-    void chatAddedToList(const QVariantMap &chatInformation, qlonglong order);
-    void chatRemovedFromList(qlonglong chatId);
+
+    void chatAddedToMainList(const QVariantMap &chatInformation, qlonglong order);
+    void chatRemovedFromMainList(qlonglong chatId);
+    void mainChatListChatLastMessageUpdated(qlonglong chatId, const QVariantMap &lastMessage, qlonglong order, bool isPinned);
+    void mainChatListChatDraftMessageUpdated(qlonglong chatId, const QVariantMap &draftMessage, qlonglong order, bool isPinned);
+    void mainChatListChatPositionUpdated(qlonglong chatId, qlonglong order, bool isPinned);
+
     void unreadMessageCountUpdated(const QVariantMap &messageCountInformation);
     void unreadChatCountUpdated(const QVariantMap &chatCountInformation);
-    void chatLastMessageUpdated(qlonglong chatId, const QVariant &order, const QVariantMap &lastMessage);
-    void chatOrderUpdated(qlonglong chatId, qlonglong order);
-    void chatPinnedUpdated(qlonglong chatId, bool isPinned);
     void chatReadInboxUpdated(const QString &chatId, const QString &lastReadInboxMessageId, int unreadCount);
     void chatReadOutboxUpdated(const QString &chatId, const QString &lastReadOutboxMessageId);
     void chatAvailableReactionsUpdated(qlonglong chatId, const QVariantMap &availableReactions);
@@ -347,7 +349,6 @@ signals:
     void contactsImported(const QVariantList &importerCount, const QVariantList &userIds, bool single);
     void messageNotFound(qlonglong chatId, qlonglong messageId);
     void chatIsMarkedAsUnreadUpdated(qlonglong chatId, bool chatIsMarkedAsUnread);
-    void chatDraftMessageUpdated(qlonglong chatId, const QVariantMap &draftMessage, const QVariant &order);
     void inlineQueryResults(const QString &inlineQueryId, const QString &nextOffset, const QVariantList &results, const QString &switchPmText, const QString &switchPmParameter, const QString &extra);
     void callbackQueryAnswer(const QString &text, bool alert, const QString &url);
     void userPrivacySettingUpdated(UserPrivacySetting setting, UserPrivacySettingRule rule);
@@ -383,7 +384,11 @@ public slots:
     void handleUserStatusUpdated(const QString &userId, const QVariantMap &userStatusInformation);
     void handleFileUpdated(const QVariantMap &fileInformation);
     void handleNewChatDiscovered(const QVariantMap &chatInformation);
-    void handleChatAddedToList(qlonglong id);
+    void handleChatAddedToList(const QVariantMap &chatList, qlonglong id);
+    void handleChatRemovedFromList(const QVariantMap &chatList, qlonglong id);
+    void handleChatPositionUpdated(qlonglong chatId, const QVariantMap &position);
+    void handleChatLastMessageUpdated(qlonglong chatId, const QVariantMap &lastMessage, const QVariantList &positions);
+    void handleChatDraftMessageUpdated(qlonglong chatId, const QVariantMap &draftMessage, const QVariantList &positions);
     void handleChatReceived(const QVariantMap &chatInformation);
     void handleUnreadMessageCountUpdated(const QVariantMap &messageCountInformation);
     void handleUnreadChatCountUpdated(const QVariantMap &chatCountInformation);

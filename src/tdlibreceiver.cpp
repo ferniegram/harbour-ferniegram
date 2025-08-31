@@ -83,8 +83,6 @@ namespace {
 
     const QString _TYPE("@type");
     const QString _EXTRA("@extra");
-    const QString TYPE_CHAT_POSITION("chatPosition");
-    const QString TYPE_CHAT_LIST_MAIN("chatListMain");
     const QString TYPE_STICKER_SET_INFO("stickerSetInfo");
     const QString TYPE_STICKER_SET("stickerSet");
     const QString TYPE_MESSAGE("message");
@@ -99,22 +97,6 @@ namespace {
     const QString TYPE_MESSAGE_DICE("messageDice");
     const QString TYPE_DICE_STICKERS_REGULAR("diceStickersRegular");
     const QString TYPE_DICE_STICKERS_SLOT_MACHINE("diceStickersSlotMachine");
-}
-
-QVariant TDLibReceiver::getChatPositionOrder(const QVariantMap &position) {
-    if (position.value(_TYPE).toString() == TYPE_CHAT_POSITION &&
-        position.value(LIST).toMap().value(_TYPE) == TYPE_CHAT_LIST_MAIN) {
-        return position.value(ORDER).toString();
-    }
-    return QVariant();
-}
-
-QVariant TDLibReceiver::findChatPositionOrder(const QVariantList &positions) {
-    for (QVariant position : positions) {
-        const QVariant order = getChatPositionOrder(position.toMap());
-        if (order.isValid()) return order;
-    }
-    return QVariant();
 }
 
 
@@ -308,20 +290,14 @@ void TDLibReceiver::processUpdateNewChat(const QVariantMap &receivedInformation)
 
 void TDLibReceiver::processUpdateChatAddedToList(const QVariantMap &receivedInformation) {
     qlonglong chatId = receivedInformation.value(CHAT_ID).toLongLong();
-    const QString chatListType = receivedInformation.value(CHAT_LIST).toMap().value(_TYPE).toString();
-    if (chatListType == TYPE_CHAT_LIST_MAIN) {
-        LOG("Chat added to list" << chatId);
-        emit chatAddedToList(chatId);
-    } else  LOG("Chat added to unused list" << chatId << chatListType);
+    LOG("Chat added to a list" << chatId);
+    emit chatAddedToList(receivedInformation.value(CHAT_LIST).toMap(), chatId);
 }
 
 void TDLibReceiver::processUpdateChatRemovedFromList(const QVariantMap &receivedInformation) {
     qlonglong chatId = receivedInformation.value(CHAT_ID).toLongLong();
-    const QString chatListType = receivedInformation.value(CHAT_LIST).toMap().value(_TYPE).toString();
-    if (chatListType == TYPE_CHAT_LIST_MAIN) {
-        LOG("Chat removed from list" << chatId);
-        emit chatRemovedFromList(chatId);
-    } else  LOG("Chat removed from unused list" << chatId << chatListType);
+    LOG("Chat removed from a list" << chatId);
+    emit chatRemovedFromList(receivedInformation.value(CHAT_LIST).toMap(), chatId);
 }
 
 void TDLibReceiver::processUpdateUnreadMessageCount(const QVariantMap &receivedInformation)
@@ -349,32 +325,20 @@ void TDLibReceiver::processUpdateUnreadChatCount(const QVariantMap &receivedInfo
 
 void TDLibReceiver::processUpdateChatLastMessage(const QVariantMap &receivedInformation) {
     qlonglong chatId = receivedInformation.value(CHAT_ID).toLongLong();
-    QVariant order = findChatPositionOrder(receivedInformation.value(POSITIONS).toList());
     const QVariantMap lastMessage = receivedInformation.value(LAST_MESSAGE).toMap();
-    LOG("Last message of chat" << chatId << "updated, order" << order << "type" << lastMessage.value(_TYPE).toString());
+    LOG("Last message of chat" << chatId << "updated, type" << lastMessage.value(_TYPE).toString());
     /*if (order.isValid() && order.toLongLong() == 0) // this seems to be already done by tdlib in updateChatRemovedFromList
         emit chatRemovedFromList(chatId);
     else*/
-    emit chatLastMessageUpdated(chatId, order, cleanupMap(lastMessage));
+    emit chatLastMessageUpdated(chatId, cleanupMap(lastMessage), receivedInformation.value(POSITIONS).toList());
 }
 
-void TDLibReceiver::processUpdateChatPosition(const QVariantMap &receivedInformation)
-{
+void TDLibReceiver::processUpdateChatPosition(const QVariantMap &receivedInformation) {
     qlonglong chatId = receivedInformation.value(CHAT_ID).toLongLong();
-    QVariantMap positionMap = receivedInformation.value(POSITION).toMap();
+    QVariantMap position = receivedInformation.value(POSITION).toMap();
 
-    QString updateForChatList = positionMap.value(LIST).toMap().value(_TYPE).toString();
-    qlonglong order = positionMap.value(ORDER).toLongLong();
-    bool isPinned = positionMap.value(IS_PINNED).toBool();
-
-    // We are only processing main chat list updates at the moment...
-    if (updateForChatList == TYPE_CHAT_LIST_MAIN) {
-        LOG("Chat position updated for ID" << chatId << "new order" << order << "is pinned" << isPinned);
-        emit chatOrderUpdated(chatId, order);
-        emit chatPinnedUpdated(chatId, isPinned);
-    } else {
-        LOG("Received chat position update for uninteresting list" << updateForChatList << "ID" << chatId << "new order" << order << "is pinned" << isPinned);
-    }
+    LOG("Chat position updated" << chatId);
+    emit chatPositionUpdated(chatId, position);
 }
 
 void TDLibReceiver::processUpdateChatReadInbox(const QVariantMap &receivedInformation)
@@ -731,7 +695,7 @@ void TDLibReceiver::processUpdateChatIsMarkedAsUnread(const QVariantMap &receive
 void TDLibReceiver::processUpdateChatDraftMessage(const QVariantMap &receivedInformation)
 {
     LOG("Draft message was updated");
-    emit chatDraftMessageUpdated(receivedInformation.value(CHAT_ID).toLongLong(), cleanupMap(receivedInformation.value(DRAFT_MESSAGE).toMap()), findChatPositionOrder(receivedInformation.value(POSITIONS).toList()));
+    emit chatDraftMessageUpdated(receivedInformation.value(CHAT_ID).toLongLong(), cleanupMap(receivedInformation.value(DRAFT_MESSAGE).toMap()), receivedInformation.value(POSITIONS).toList());
 }
 
 void TDLibReceiver::processInlineQueryResults(const QVariantMap &receivedInformation)

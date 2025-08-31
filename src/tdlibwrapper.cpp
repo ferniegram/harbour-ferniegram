@@ -61,6 +61,7 @@ namespace {
     const QString REPLY_TO("reply_to");
     const QString _TYPE("@type");
     const QString _EXTRA("@extra");
+    const QString TYPE_CHAT_POSITION("chatPosition");
     const QString TYPE_CHAT_LIST_MAIN("chatListMain");
     const QString CHAT_AVAILABLE_REACTIONS("available_reactions");
     const QString CHAT_AVAILABLE_REACTIONS_ALL("chatAvailableReactionsAll");
@@ -84,6 +85,9 @@ namespace {
     const QString LOCATION("location");
     const QString POSITIONS("positions");
     const QString CHAT_LISTS("chat_lists");
+    const QString LIST("list");
+    const QString ORDER("order");
+    const QString IS_PINNED("is_pinned");
     const QStringList ALL_FILE_TYPES(QStringList()
                                      << "fileTypeAnimation"
                                      << "fileTypeAudio"
@@ -111,12 +115,20 @@ namespace {
     );
 }
 
-bool hasChatList(const QVariantList &chatLists) {
-    for (const QVariant &chatList : chatLists) {
-        if (chatList.toMap().value(_TYPE) == TYPE_CHAT_LIST_MAIN)
-            return true;
+QVariant getChatPositionOrder(const QVariantMap &position) {
+    if (position.value(_TYPE).toString() == TYPE_CHAT_POSITION &&
+        position.value(LIST).toMap().value(_TYPE) == TYPE_CHAT_LIST_MAIN) {
+        return position.value(ORDER).toString();
     }
-    return false;
+    return QVariant();
+}
+
+QVariant findChatPositionOrder(const QVariantList &positions) {
+    for (QVariant position : positions) {
+        const QVariant order = getChatPositionOrder(position.toMap());
+        if (order.isValid()) return order;
+    }
+    return QVariant();
 }
 
 TDLibWrapper::TDLibWrapper(AppSettings *settings, MceInterface *mce, QObject *parent)
@@ -187,11 +199,12 @@ void TDLibWrapper::initializeTDLibReceiver() {
     connect(this->tdLibReceiver, &TDLibReceiver::fileUpdated, this, &TDLibWrapper::handleFileUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::newChatDiscovered, this, &TDLibWrapper::handleNewChatDiscovered);
     connect(this->tdLibReceiver, &TDLibReceiver::chatAddedToList, this, &TDLibWrapper::handleChatAddedToList);
-    connect(this->tdLibReceiver, &TDLibReceiver::chatRemovedFromList, this, &TDLibWrapper::chatRemovedFromList);
+    connect(this->tdLibReceiver, &TDLibReceiver::chatRemovedFromList, this, &TDLibWrapper::handleChatRemovedFromList);
+    connect(this->tdLibReceiver, &TDLibReceiver::chatPositionUpdated, this, &TDLibWrapper::handleChatPositionUpdated);
+    connect(this->tdLibReceiver, &TDLibReceiver::chatLastMessageUpdated, this, &TDLibWrapper::handleChatLastMessageUpdated);
+    connect(this->tdLibReceiver, &TDLibReceiver::chatDraftMessageUpdated, this, &TDLibWrapper::handleChatDraftMessageUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::unreadMessageCountUpdated, this, &TDLibWrapper::handleUnreadMessageCountUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::unreadChatCountUpdated, this, &TDLibWrapper::handleUnreadChatCountUpdated);
-    connect(this->tdLibReceiver, &TDLibReceiver::chatLastMessageUpdated, this, &TDLibWrapper::chatLastMessageUpdated);
-    connect(this->tdLibReceiver, &TDLibReceiver::chatOrderUpdated, this, &TDLibWrapper::chatOrderUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::chatReadInboxUpdated, this, &TDLibWrapper::chatReadInboxUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::chatReadOutboxUpdated, this, &TDLibWrapper::chatReadOutboxUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::chatAvailableReactionsUpdated, this, &TDLibWrapper::handleAvailableReactionsUpdated);
@@ -231,7 +244,6 @@ void TDLibWrapper::initializeTDLibReceiver() {
     connect(this->tdLibReceiver, &TDLibReceiver::chatPermissionsUpdated, this, &TDLibWrapper::chatPermissionsUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::chatPhotoUpdated, this, &TDLibWrapper::chatPhotoUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::chatTitleUpdated, this, &TDLibWrapper::chatTitleUpdated);
-    connect(this->tdLibReceiver, &TDLibReceiver::chatPinnedUpdated, this, &TDLibWrapper::chatPinnedUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::chatPinnedMessageUpdated, this, &TDLibWrapper::chatPinnedMessageUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::messageIsPinnedUpdated, this, &TDLibWrapper::handleMessageIsPinnedUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::usersReceived, this, &TDLibWrapper::usersReceived);
@@ -241,7 +253,6 @@ void TDLibWrapper::initializeTDLibReceiver() {
     connect(this->tdLibReceiver, &TDLibReceiver::contactsImported, this, &TDLibWrapper::contactsImported);
     connect(this->tdLibReceiver, &TDLibReceiver::messageEditedUpdated, this, &TDLibWrapper::messageEditedUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::chatIsMarkedAsUnreadUpdated, this, &TDLibWrapper::chatIsMarkedAsUnreadUpdated);
-    connect(this->tdLibReceiver, &TDLibReceiver::chatDraftMessageUpdated, this, &TDLibWrapper::chatDraftMessageUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::inlineQueryResults, this, &TDLibWrapper::inlineQueryResults);
     connect(this->tdLibReceiver, &TDLibReceiver::callbackQueryAnswer, this, &TDLibWrapper::callbackQueryAnswer);
     connect(this->tdLibReceiver, &TDLibReceiver::userPrivacySettingRules, this, &TDLibWrapper::handleUserPrivacySettingRules);
@@ -1589,18 +1600,78 @@ void TDLibWrapper::handleNewChatDiscovered(const QVariantMap &chatInformation) {
     this->chats.insert(chatId, chatInformation);
     emit newChatDiscovered(chatId, chatInformation);
 
-    if (hasChatList(chatInformation.value(CHAT_LISTS).toList())) {
-        qlonglong order = TDLibReceiver::findChatPositionOrder(chatInformation.value(POSITIONS).toList()).toLongLong(); // ignore if not found
-        emit chatAddedToList(chatInformation, order);
+    for (const QVariant &chatList : chatInformation.value(CHAT_LISTS).toList()) {
+        const QString chatListType = chatList.toMap().value(_TYPE).toString();
+        const QVariantList positions = chatInformation.value(POSITIONS).toList();
+        if (chatListType == TYPE_CHAT_LIST_MAIN) {
+            qlonglong order = findChatPositionOrder(positions).toLongLong(); // ignore if not found
+            emit chatAddedToMainList(chatInformation, order);
+        }
     }
 }
 
-void TDLibWrapper::handleChatAddedToList(qlonglong chatId) {
+void TDLibWrapper::handleChatAddedToList(const QVariantMap &chatList, qlonglong chatId) {
     if (this->chats.contains(chatId)) {
         const QVariantMap chatInformation = this->chats.value(chatId);
-        qlonglong order = TDLibReceiver::findChatPositionOrder(chatInformation.value(POSITIONS).toList()).toLongLong(); // ignore if not found
-        LOG("Chat added to list" << chatInformation.value(CHAT_ID).toLongLong());
-        emit chatAddedToList(chatInformation, order);
+        const QString chatListType = chatList.value(_TYPE).toString();
+        const QVariantList positions = chatInformation.value(POSITIONS).toList();
+
+        if (chatListType == TYPE_CHAT_LIST_MAIN) {
+            LOG("Chat added to main list" << chatId);
+            // TODO: update positions field when needed (probably)
+            emit chatAddedToMainList(chatInformation, findChatPositionOrder(positions).toLongLong()); // ignore if not found
+        } else LOG("Chat added to an unused list" << chatId);
+    }
+}
+
+void TDLibWrapper::handleChatRemovedFromList(const QVariantMap &chatList, qlonglong chatId) {
+    const QString chatListType = chatList.value(_TYPE).toString();
+    if (chatListType == TYPE_CHAT_LIST_MAIN) {
+        LOG("Chat removed from main list" << chatId);
+        emit chatRemovedFromMainList(chatId);
+    } else LOG("Chat removed from an unused list" << chatId);
+}
+
+void TDLibWrapper::handleChatPositionUpdated(qlonglong chatId, const QVariantMap &position) {
+    const QString chatListType = position.value(LIST).toMap().value(_TYPE).toString();
+    const qlonglong order = position.value(ORDER).toLongLong();
+    const bool isPinned = position.value(IS_PINNED).toBool();
+
+    // We are only processing main chat list updates at the moment...
+    if (chatListType == TYPE_CHAT_LIST_MAIN) {
+        LOG("Chat position updated for ID" << chatId << "new order" << order << "is pinned" << isPinned);
+        emit mainChatListChatPositionUpdated(chatId, order, isPinned);
+    } else {
+        LOG("Received chat position update for an unused list" << chatListType << "ID" << chatId << "new order" << order << "is pinned" << isPinned);
+    }
+}
+
+void TDLibWrapper::handleChatLastMessageUpdated(qlonglong chatId, const QVariantMap &lastMessage, const QVariantList &positions) {
+    // positions can be empty !!!!
+    for (const QVariant &positionVariant : positions) {
+        const QVariantMap position = positionVariant.toMap();
+        const QString chatListType = position.value(LIST).toMap().value(_TYPE).toString();
+        const qlonglong order = position.value(ORDER).toLongLong();
+        const bool isPinned = position.value(IS_PINNED).toBool();
+
+        if (chatListType == TYPE_CHAT_LIST_MAIN) {
+            LOG("Last message for chat updated in main list" << chatId);
+            emit mainChatListChatLastMessageUpdated(chatId, lastMessage, order, isPinned);
+        } else LOG("Last message for chat updated in an unused list" << chatId);
+    }
+}
+
+void TDLibWrapper::handleChatDraftMessageUpdated(qlonglong chatId, const QVariantMap &draftMessage, const QVariantList &positions) {
+    for (const QVariant &positionVariant : positions) {
+        const QVariantMap position = positionVariant.toMap();
+        const QString chatListType = position.value(LIST).toMap().value(_TYPE).toString();
+        const qlonglong order = position.value(ORDER).toLongLong();
+        const bool isPinned = position.value(IS_PINNED).toBool();
+
+        if (chatListType == TYPE_CHAT_LIST_MAIN) {
+            LOG("Last message for chat updated in main list" << chatId);
+            emit mainChatListChatDraftMessageUpdated(chatId, draftMessage, order, isPinned);
+        } else LOG("Last message for chat updated in an unused list" << chatId);
     }
 }
 

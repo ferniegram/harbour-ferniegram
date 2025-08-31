@@ -76,8 +76,8 @@ public:
 private slots:
     void handleChatAddedToList(const QVariantMap &chatInformation, qlonglong order);
     void handleChatRemovedFromList(qlonglong chatId);
-    void handleChatLastMessageUpdated(qlonglong chatId, const QVariant &order, const QVariantMap &lastMessage);
-    void handleChatOrderUpdated(qlonglong chatId, qlonglong order);
+    void handleChatLastMessageUpdated(qlonglong chatId, const QVariantMap &lastMessage, qlonglong order, bool isPinned);
+    void handleChatPositionUpdated(qlonglong chatId, qlonglong order, bool isPinned);
     void handleChatReadInboxUpdated(const QString &chatId, const QString &lastReadInboxMessageId, int unreadCount);
     void handleChatReadOutboxUpdated(const QString &chatId, const QString &lastReadOutboxMessageId);
     void handleChatPhotoUpdated(qlonglong chatId, const QVariantMap &photo);
@@ -89,7 +89,7 @@ private slots:
     void handleChatTitleUpdated(qlonglong chatId, const QString &title);
     void handleChatPinnedUpdated(qlonglong chatId, bool chatIsPinned);
     void handleChatIsMarkedAsUnreadUpdated(qlonglong chatId, bool chatIsMarkedAsUnread);
-    void handleChatDraftMessageUpdated(qlonglong chatId, const QVariantMap &draftMessage, const QVariant &order);
+    void handleChatDraftMessageUpdated(qlonglong chatId, const QVariantMap &draftMessage, qlonglong order, bool isPinned);
     void handleChatUnreadMentionCountUpdated(qlonglong chatId, int unreadMentionCount);
     void handleChatUnreadReactionCountUpdated(qlonglong chatId, int unreadReactionCount);
     void handleChatAvailableReactionsUpdated(qlonglong chatId, const QVariantMap availableReactions);
@@ -104,7 +104,8 @@ signals:
 
 private:
     class ChatData;
-    int updateChatOrder(int chatIndex);
+    int updateChatOrder(const int chatIndex);
+    void updateChatIsPinned(const int chatIndex, const bool isPinned);
     void enableRefreshTimer();
 
 private:

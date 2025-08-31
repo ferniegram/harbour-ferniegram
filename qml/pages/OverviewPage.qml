@@ -221,14 +221,14 @@ Page {
         onOwnUserIdFound: {
             overviewPage.ownUserId = ownUserId;
         }
-        onChatLastMessageUpdated: {
+        onMainChatListChatLastMessageUpdated: {
             if (!overviewPage.chatListCreated) {
                 chatListCreatedTimer.restart();
             } else {
                 chatListModel.calculateUnreadState();
             }
         }
-        onChatOrderUpdated: {
+        onMainChatListChatPositionUpdated: {
             if (!overviewPage.chatListCreated) {
                 chatListCreatedTimer.restart();
             } else {
