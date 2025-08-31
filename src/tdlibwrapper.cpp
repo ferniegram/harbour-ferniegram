@@ -83,6 +83,7 @@ namespace {
     const QString INPUT_MESSAGE_CONTENT("input_message_content");
     const QString LOCATION("location");
     const QString POSITIONS("positions");
+    const QString CHAT_LISTS("chat_lists");
     const QStringList ALL_FILE_TYPES(QStringList()
                                      << "fileTypeAnimation"
                                      << "fileTypeAudio"
@@ -108,6 +109,14 @@ namespace {
                                      << "fileTypeVoiceNote"
                                      << "fileTypeWallpaper"
     );
+}
+
+bool hasChatList(const QVariantList &chatLists) {
+    for (const QVariant chatList : chatLists) {
+        if (chatList.toMap().value(_TYPE) == TYPE_CHAT_LIST_MAIN)
+            return true;
+    }
+    return false;
 }
 
 TDLibWrapper::TDLibWrapper(AppSettings *settings, MceInterface *mce, QObject *parent)
@@ -1579,15 +1588,19 @@ void TDLibWrapper::handleNewChatDiscovered(const QVariantMap &chatInformation) {
     qlonglong chatId = chatInformation.value(ID).toLongLong();
     this->chats.insert(chatId, chatInformation);
     emit newChatDiscovered(chatId, chatInformation);
+
+    if (hasChatList(chatInformation.value(CHAT_LISTS).toList())) {
+        qlonglong order = TDLibReceiver::findChatPositionOrder(chatInformation.value(POSITIONS).toList()).toLongLong(); // ignore if not found
+        emit chatAddedToList(chatInformation, order);
+    }
 }
 
 void TDLibWrapper::handleChatAddedToList(qlonglong chatId) {
     if (this->chats.contains(chatId)) {
         const QVariantMap chatInformation = this->chats.value(chatId);
-        // ignore not found position:
-        qlonglong position = TDLibReceiver::findChatPositionOrder(chatInformation.value(POSITIONS).toList()).toLongLong();
+        qlonglong order = TDLibReceiver::findChatPositionOrder(chatInformation.value(POSITIONS).toList()).toLongLong(); // ignore if not found
         LOG("Chat added to list" << chatInformation.value(CHAT_ID).toLongLong());
-        emit chatAddedToList(chatInformation, position);
+        emit chatAddedToList(chatInformation, order);
     }
 }
 
