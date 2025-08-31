@@ -1646,33 +1646,19 @@ void TDLibWrapper::handleChatPositionUpdated(qlonglong chatId, const QVariantMap
     }
 }
 
-void TDLibWrapper::handleChatLastMessageUpdated(qlonglong chatId, const QVariantMap &lastMessage, const QVariantList &positions) {
-    // positions can be empty !!!!
-    for (const QVariant &positionVariant : positions) {
-        const QVariantMap position = positionVariant.toMap();
-        const QString chatListType = position.value(LIST).toMap().value(_TYPE).toString();
-        const qlonglong order = position.value(ORDER).toLongLong();
-        const bool isPinned = position.value(IS_PINNED).toBool();
+void TDLibWrapper::updateChatPositions(qlonglong chatId, const QVariantList &positions) {
+    for (const QVariant &position : positions)
+        handleChatPositionUpdated(chatId, position.toMap());
+}
 
-        if (chatListType == TYPE_CHAT_LIST_MAIN) {
-            LOG("Last message for chat updated in main list" << chatId);
-            emit mainChatListChatLastMessageUpdated(chatId, lastMessage, order, isPinned);
-        } else LOG("Last message for chat updated in an unused list" << chatId);
-    }
+void TDLibWrapper::handleChatLastMessageUpdated(qlonglong chatId, const QVariantMap &lastMessage, const QVariantList &positions) {
+    emit chatLastMessageUpdated(chatId, lastMessage);
+    updateChatPositions(chatId, positions); // FIXME: this might affect performance
 }
 
 void TDLibWrapper::handleChatDraftMessageUpdated(qlonglong chatId, const QVariantMap &draftMessage, const QVariantList &positions) {
-    for (const QVariant &positionVariant : positions) {
-        const QVariantMap position = positionVariant.toMap();
-        const QString chatListType = position.value(LIST).toMap().value(_TYPE).toString();
-        const qlonglong order = position.value(ORDER).toLongLong();
-        const bool isPinned = position.value(IS_PINNED).toBool();
-
-        if (chatListType == TYPE_CHAT_LIST_MAIN) {
-            LOG("Last message for chat updated in main list" << chatId);
-            emit mainChatListChatDraftMessageUpdated(chatId, draftMessage, order, isPinned);
-        } else LOG("Last message for chat updated in an unused list" << chatId);
-    }
+    emit chatDraftMessageUpdated(chatId, draftMessage);
+    updateChatPositions(chatId, positions); // FIXME: this might affect performance
 }
 
 void TDLibWrapper::handleChatReceived(const QVariantMap &chatInformation) {

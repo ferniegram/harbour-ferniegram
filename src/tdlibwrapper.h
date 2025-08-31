@@ -291,9 +291,10 @@ signals:
 
     void chatAddedToMainList(const QVariantMap &chatInformation, qlonglong order);
     void chatRemovedFromMainList(qlonglong chatId);
-    void mainChatListChatLastMessageUpdated(qlonglong chatId, const QVariantMap &lastMessage, qlonglong order, bool isPinned);
-    void mainChatListChatDraftMessageUpdated(qlonglong chatId, const QVariantMap &draftMessage, qlonglong order, bool isPinned);
     void mainChatListChatPositionUpdated(qlonglong chatId, qlonglong order, bool isPinned);
+
+    void chatLastMessageUpdated(qlonglong chatId, const QVariantMap &lastMessage);
+    void chatDraftMessageUpdated(qlonglong chatId, const QVariantMap &draftMessage);
 
     void unreadMessageCountUpdated(const QVariantMap &messageCountInformation);
     void unreadChatCountUpdated(const QVariantMap &chatCountInformation);
@@ -420,6 +421,7 @@ private:
     void sendFileMessage(const QString &messageType, const QString &fileType, qlonglong chatId, const QString &filePath, const QString &message, qlonglong replyToMessageId);
     void initializeTDLibReceiver();
     void updateUserInformation(const QString &userId, const QVariantMap &userInformation);
+    void updateChatPositions(qlonglong chatId, const QVariantList &positions);
 
 private:
     int tdLibClientId;

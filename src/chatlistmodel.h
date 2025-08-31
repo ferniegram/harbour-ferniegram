@@ -76,7 +76,7 @@ public:
 private slots:
     void handleChatAddedToList(const QVariantMap &chatInformation, qlonglong order);
     void handleChatRemovedFromList(qlonglong chatId);
-    void handleChatLastMessageUpdated(qlonglong chatId, const QVariantMap &lastMessage, qlonglong order, bool isPinned);
+    void handleChatLastMessageUpdated(qlonglong chatId, const QVariantMap &lastMessage);
     void handleChatPositionUpdated(qlonglong chatId, qlonglong order, bool isPinned);
     void handleChatReadInboxUpdated(const QString &chatId, const QString &lastReadInboxMessageId, int unreadCount);
     void handleChatReadOutboxUpdated(const QString &chatId, const QString &lastReadOutboxMessageId);
@@ -89,7 +89,7 @@ private slots:
     void handleChatTitleUpdated(qlonglong chatId, const QString &title);
     void handleChatPinnedUpdated(qlonglong chatId, bool chatIsPinned);
     void handleChatIsMarkedAsUnreadUpdated(qlonglong chatId, bool chatIsMarkedAsUnread);
-    void handleChatDraftMessageUpdated(qlonglong chatId, const QVariantMap &draftMessage, qlonglong order, bool isPinned);
+    void handleChatDraftMessageUpdated(qlonglong chatId, const QVariantMap &draftMessage);
     void handleChatUnreadMentionCountUpdated(qlonglong chatId, int unreadMentionCount);
     void handleChatUnreadReactionCountUpdated(qlonglong chatId, int unreadReactionCount);
     void handleChatAvailableReactionsUpdated(qlonglong chatId, const QVariantMap availableReactions);

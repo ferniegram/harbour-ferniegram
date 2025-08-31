@@ -360,9 +360,8 @@ ChatListModel::ChatListModel(TDLibWrapper *tdLibWrapper, AppSettings *appSetting
 
     connect(tdLibWrapper, &TDLibWrapper::mainChatListChatPositionUpdated, this, &ChatListModel::handleChatPositionUpdated);
 
-    connect(tdLibWrapper, &TDLibWrapper::mainChatListChatLastMessageUpdated, this, &ChatListModel::handleChatLastMessageUpdated);
-    connect(tdLibWrapper, &TDLibWrapper::mainChatListChatDraftMessageUpdated, this, &ChatListModel::handleChatDraftMessageUpdated);
-
+    connect(tdLibWrapper, &TDLibWrapper::chatLastMessageUpdated, this, &ChatListModel::handleChatLastMessageUpdated);
+    connect(tdLibWrapper, &TDLibWrapper::chatDraftMessageUpdated, this, &ChatListModel::handleChatDraftMessageUpdated);
     connect(tdLibWrapper, &TDLibWrapper::chatReadInboxUpdated, this, &ChatListModel::handleChatReadInboxUpdated);
     connect(tdLibWrapper, &TDLibWrapper::chatReadOutboxUpdated, this, &ChatListModel::handleChatReadOutboxUpdated);
     connect(tdLibWrapper, &TDLibWrapper::chatPhotoUpdated, this, &ChatListModel::handleChatPhotoUpdated);
@@ -621,15 +620,11 @@ void ChatListModel::handleChatRemovedFromList(qlonglong chatId) {
     }
 }
 
-void ChatListModel::handleChatLastMessageUpdated(qlonglong chatId, const QVariantMap &lastMessage, qlonglong order, bool isPinned) {
+void ChatListModel::handleChatLastMessageUpdated(qlonglong chatId, const QVariantMap &lastMessage) {
     if (chatIndexMap.contains(chatId)) {
         int chatIndex = chatIndexMap.value(chatId);
-        LOG("Updating last message for chat" << chatId <<" at index" << chatIndex << "new order" << order);
+        LOG("Updating last message for chat" << chatId <<" at index" << chatIndex);
         ChatData *chat = chatList.at(chatIndex);
-
-        chat->setOrder(order);
-        chatIndex = updateChatOrder(chatIndex);
-        updateChatIsPinned(chatIndex, isPinned);
 
         const QModelIndex modelIndex(index(chatIndex));
         emit dataChanged(modelIndex, modelIndex, chat->updateLastMessage(lastMessage));
@@ -813,7 +808,7 @@ void ChatListModel::handleChatIsMarkedAsUnreadUpdated(qlonglong chatId, bool cha
     }
 }
 
-void ChatListModel::handleChatDraftMessageUpdated(qlonglong chatId, const QVariantMap &draftMessage, qlonglong order, bool isPinned) {
+void ChatListModel::handleChatDraftMessageUpdated(qlonglong chatId, const QVariantMap &draftMessage) {
     LOG("Updating draft message for" << chatId);
     if (chatIndexMap.contains(chatId)) {
         const int chatIndex = chatIndexMap.value(chatId);
@@ -825,10 +820,6 @@ void ChatListModel::handleChatDraftMessageUpdated(qlonglong chatId, const QVaria
         changedRoles.append(ChatListModel::RoleDraftMessageText);
         const QModelIndex modelIndex(index(chatIndex));
         emit dataChanged(modelIndex, modelIndex, changedRoles);
-
-        chat->setOrder(order);
-        updateChatOrder(chatIndex);
-        updateChatIsPinned(chatIndex, isPinned);
     }
 }
 
