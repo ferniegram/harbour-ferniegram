@@ -36,6 +36,9 @@ public:
     explicit TDLibReceiver(int tdLibClientId, QObject *parent = nullptr);
     void setActive(bool active);
 
+    static QVariant getChatPositionOrder(const QVariantMap &position);
+    static QVariant findChatPositionOrder(const QVariantList &positions);
+
 signals:
     void versionDetected(const QString &version);
     void authorizationStateChanged(const QString &authorizationState, const QVariantMap &authorizationStateData);
@@ -45,6 +48,8 @@ signals:
     void userStatusUpdated(const QString &userId, const QVariantMap &userStatusInformation);
     void fileUpdated(const QVariantMap &fileInformation);
     void newChatDiscovered(const QVariantMap &chatInformation);
+    void chatAddedToList(qlonglong chatId);
+    void chatRemovedFromList(qlonglong chatId);
     void unreadMessageCountUpdated(const QVariantMap &messageCountInformation);
     void unreadChatCountUpdated(const QVariantMap &chatCountInformation);
     void chatLastMessageUpdated(qlonglong chatId, const QVariant &order, const QVariantMap &lastMessage);
@@ -141,6 +146,8 @@ private:
     void processUpdateFile(const QVariantMap &receivedInformation);
     void processFile(const QVariantMap &receivedInformation);
     void processUpdateNewChat(const QVariantMap &receivedInformation);
+    void processUpdateChatAddedToList(const QVariantMap &receivedInformation);
+    void processUpdateChatRemovedFromList(const QVariantMap &receivedInformation);
     void processUpdateUnreadMessageCount(const QVariantMap &receivedInformation);
     void processUpdateUnreadChatCount(const QVariantMap &receivedInformation);
     void processUpdateChatLastMessage(const QVariantMap &receivedInformation);

@@ -24,11 +24,11 @@
 #include "tdlibwrapper.h"
 #include "appsettings.h"
 #include "utilities.h"
+#include "tdlibreceiver.h"
 
 class ChatListModel : public QAbstractListModel
 {
     Q_OBJECT
-    Q_PROPERTY(bool showAllChats READ showAllChats WRITE setShowAllChats NOTIFY showAllChatsChanged)
     Q_PROPERTY(int count READ rowCount NOTIFY countChanged)
 
 public:
@@ -73,11 +73,9 @@ public:
 
     Q_INVOKABLE void calculateUnreadState();
 
-    bool showAllChats() const;
-    void setShowAllChats(bool showAll);
-
 private slots:
-    void handleChatDiscovered(qlonglong chatId, const QVariantMap &chatInformation);
+    void handleChatAddedToList(const QVariantMap &chatInformation, qlonglong order);
+    void handleChatRemovedFromList(qlonglong chatId);
     void handleChatLastMessageUpdated(qlonglong chatId, const QVariant &order, const QVariantMap &lastMessage);
     void handleChatOrderUpdated(qlonglong chatId, qlonglong order);
     void handleChatReadInboxUpdated(const QString &chatId, const QString &lastReadInboxMessageId, int unreadCount);
@@ -106,9 +104,6 @@ signals:
 
 private:
     class ChatData;
-    void addVisibleChat(ChatData *chat);
-    void updateChatVisibility(const TDLibWrapper::Group *group);
-    void updateSecretChatVisibility(const QVariantMap secretChatDetails);
     int updateChatOrder(int chatIndex);
     void enableRefreshTimer();
 
@@ -119,8 +114,6 @@ private:
     QTimer *relativeTimeRefreshTimer;
     QList<ChatData*> chatList;
     QHash<qlonglong, int> chatIndexMap;
-    QHash<qlonglong, ChatData*> hiddenChats;
-    bool showHiddenChats;
 };
 
 #endif // CHATLISTMODEL_H

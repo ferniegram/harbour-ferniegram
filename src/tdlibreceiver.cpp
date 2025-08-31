@@ -79,6 +79,7 @@ namespace {
     const QString LEFT_REEL("left_reel");
     const QString CENTER_REEL("center_reel");
     const QString RIGHT_REEL("right_reel");
+    const QString CHAT_LIST("chat_list");
 
     const QString _TYPE("@type");
     const QString _EXTRA("@extra");
@@ -100,7 +101,7 @@ namespace {
     const QString TYPE_DICE_STICKERS_SLOT_MACHINE("diceStickersSlotMachine");
 }
 
-static QVariant getChatPositionOrder(const QVariantMap &position) {
+QVariant TDLibReceiver::getChatPositionOrder(const QVariantMap &position) {
     if (position.value(_TYPE).toString() == TYPE_CHAT_POSITION &&
         position.value(LIST).toMap().value(_TYPE) == TYPE_CHAT_LIST_MAIN) {
         return position.value(ORDER).toString();
@@ -108,13 +109,14 @@ static QVariant getChatPositionOrder(const QVariantMap &position) {
     return QVariant();
 }
 
-static QVariant findChatPositionOrder(const QVariantList &positions) {
+QVariant TDLibReceiver::findChatPositionOrder(const QVariantList &positions) {
     for (QVariant position : positions) {
         const QVariant order = getChatPositionOrder(position.toMap());
         if (order.isValid()) return order;
     }
     return QVariant();
 }
+
 
 TDLibReceiver::TDLibReceiver(int tdLibClientId, QObject *parent) : QThread(parent) {
     this->tdLibClientId = tdLibClientId;
@@ -128,6 +130,8 @@ TDLibReceiver::TDLibReceiver(int tdLibClientId, QObject *parent) : QThread(paren
     handlers.insert("updateFile", &TDLibReceiver::processUpdateFile);
     handlers.insert("file", &TDLibReceiver::processFile);
     handlers.insert("updateNewChat", &TDLibReceiver::processUpdateNewChat);
+    handlers.insert("updateChatAddedToList", &TDLibReceiver::processUpdateChatAddedToList);
+    handlers.insert("updateChatRemovedFromList", &TDLibReceiver::processUpdateChatRemovedFromList);
     handlers.insert("updateUnreadMessageCount", &TDLibReceiver::processUpdateUnreadMessageCount);
     handlers.insert("updateUnreadChatCount", &TDLibReceiver::processUpdateUnreadChatCount);
     handlers.insert("updateChatLastMessage", &TDLibReceiver::processUpdateChatLastMessage);
@@ -296,11 +300,28 @@ void TDLibReceiver::processFile(const QVariantMap &receivedInformation)
     emit fileUpdated(receivedInformation);
 }
 
-void TDLibReceiver::processUpdateNewChat(const QVariantMap &receivedInformation)
-{
+void TDLibReceiver::processUpdateNewChat(const QVariantMap &receivedInformation) {
     const QVariantMap chatInformation = receivedInformation.value("chat").toMap();
     LOG("New chat discovered: " << chatInformation.value(ID).toLongLong() << chatInformation.value(TITLE).toString());
     emit newChatDiscovered(chatInformation);
+}
+
+void TDLibReceiver::processUpdateChatAddedToList(const QVariantMap &receivedInformation) {
+    qlonglong chatId = receivedInformation.value(CHAT_ID).toLongLong();
+    const QString chatListType = receivedInformation.value(CHAT_LIST).toMap().value(_TYPE).toString();
+    if (chatListType == TYPE_CHAT_LIST_MAIN) {
+        LOG("Chat added to list" << chatId);
+        emit chatAddedToList(chatId);
+    } else  LOG("Chat added to unused list" << chatId << chatListType);
+}
+
+void TDLibReceiver::processUpdateChatRemovedFromList(const QVariantMap &receivedInformation) {
+    qlonglong chatId = receivedInformation.value(CHAT_ID).toLongLong();
+    const QString chatListType = receivedInformation.value(CHAT_LIST).toMap().value(_TYPE).toString();
+    if (chatListType == TYPE_CHAT_LIST_MAIN) {
+        LOG("Chat removed from list" << chatId);
+        emit chatRemovedFromList(chatId);
+    } else  LOG("Chat removed from unused list" << chatId << chatListType);
 }
 
 void TDLibReceiver::processUpdateUnreadMessageCount(const QVariantMap &receivedInformation)
@@ -331,6 +352,9 @@ void TDLibReceiver::processUpdateChatLastMessage(const QVariantMap &receivedInfo
     QVariant order = findChatPositionOrder(receivedInformation.value(POSITIONS).toList());
     const QVariantMap lastMessage = receivedInformation.value(LAST_MESSAGE).toMap();
     LOG("Last message of chat" << chatId << "updated, order" << order << "type" << lastMessage.value(_TYPE).toString());
+    /*if (order.isValid() && order.toLongLong() == 0) // this seems to be already done by tdlib in updateChatRemovedFromList
+        emit chatRemovedFromList(chatId);
+    else*/
     emit chatLastMessageUpdated(chatId, order, cleanupMap(lastMessage));
 }
 

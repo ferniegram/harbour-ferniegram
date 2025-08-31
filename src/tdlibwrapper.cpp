@@ -82,6 +82,7 @@ namespace {
     const QString REMOVE_CONTACTS("removeContacts");
     const QString INPUT_MESSAGE_CONTENT("input_message_content");
     const QString LOCATION("location");
+    const QString POSITIONS("positions");
     const QStringList ALL_FILE_TYPES(QStringList()
                                      << "fileTypeAnimation"
                                      << "fileTypeAudio"
@@ -176,6 +177,8 @@ void TDLibWrapper::initializeTDLibReceiver() {
     connect(this->tdLibReceiver, &TDLibReceiver::userStatusUpdated, this, &TDLibWrapper::handleUserStatusUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::fileUpdated, this, &TDLibWrapper::handleFileUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::newChatDiscovered, this, &TDLibWrapper::handleNewChatDiscovered);
+    connect(this->tdLibReceiver, &TDLibReceiver::chatAddedToList, this, &TDLibWrapper::handleChatAddedToList);
+    connect(this->tdLibReceiver, &TDLibReceiver::chatRemovedFromList, this, &TDLibWrapper::chatRemovedFromList);
     connect(this->tdLibReceiver, &TDLibReceiver::unreadMessageCountUpdated, this, &TDLibWrapper::handleUnreadMessageCountUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::unreadChatCountUpdated, this, &TDLibWrapper::handleUnreadChatCountUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::chatLastMessageUpdated, this, &TDLibWrapper::chatLastMessageUpdated);
@@ -1576,6 +1579,16 @@ void TDLibWrapper::handleNewChatDiscovered(const QVariantMap &chatInformation) {
     qlonglong chatId = chatInformation.value(ID).toLongLong();
     this->chats.insert(chatId, chatInformation);
     emit newChatDiscovered(chatId, chatInformation);
+}
+
+void TDLibWrapper::handleChatAddedToList(qlonglong chatId) {
+    if (this->chats.contains(chatId)) {
+        const QVariantMap chatInformation = this->chats.value(chatId);
+        // ignore not found position:
+        qlonglong position = TDLibReceiver::findChatPositionOrder(chatInformation.value(POSITIONS).toList()).toLongLong();
+        LOG("Chat added to list" << chatInformation.value(CHAT_ID).toLongLong());
+        emit chatAddedToList(chatInformation, position);
+    }
 }
 
 void TDLibWrapper::handleChatReceived(const QVariantMap &chatInformation) {

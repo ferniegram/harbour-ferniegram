@@ -288,6 +288,8 @@ signals:
     void connectionStateChanged(const TDLibWrapper::ConnectionState &connectionState);
     void fileUpdated(int fileId, const QVariantMap &fileInformation);
     void newChatDiscovered(qlonglong chatId, const QVariantMap &chatInformation);
+    void chatAddedToList(const QVariantMap &chatInformation, qlonglong order);
+    void chatRemovedFromList(qlonglong chatId);
     void unreadMessageCountUpdated(const QVariantMap &messageCountInformation);
     void unreadChatCountUpdated(const QVariantMap &chatCountInformation);
     void chatLastMessageUpdated(qlonglong chatId, const QVariant &order, const QVariantMap &lastMessage);
@@ -381,6 +383,7 @@ public slots:
     void handleUserStatusUpdated(const QString &userId, const QVariantMap &userStatusInformation);
     void handleFileUpdated(const QVariantMap &fileInformation);
     void handleNewChatDiscovered(const QVariantMap &chatInformation);
+    void handleChatAddedToList(qlonglong id);
     void handleChatReceived(const QVariantMap &chatInformation);
     void handleUnreadMessageCountUpdated(const QVariantMap &messageCountInformation);
     void handleUnreadChatCountUpdated(const QVariantMap &chatCountInformation);
