@@ -112,7 +112,7 @@ namespace {
 }
 
 bool hasChatList(const QVariantList &chatLists) {
-    for (const QVariant chatList : chatLists) {
+    for (const QVariant &chatList : chatLists) {
         if (chatList.toMap().value(_TYPE) == TYPE_CHAT_LIST_MAIN)
             return true;
     }
