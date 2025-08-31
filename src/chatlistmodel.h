@@ -78,9 +78,9 @@ public:
     void setShowAllChats(bool showAll);
 
 private slots:
-    void handleChatDiscovered(const QString &chatId, const QVariantMap &chatInformation);
-    void handleChatLastMessageUpdated(const QString &chatId, const QString &order, const QVariantMap &lastMessage);
-    void handleChatOrderUpdated(const QString &chatId, const QString &order);
+    void handleChatDiscovered(qlonglong chatId, const QVariantMap &chatInformation);
+    void handleChatLastMessageUpdated(qlonglong chatId, const QVariant &order, const QVariantMap &lastMessage);
+    void handleChatOrderUpdated(qlonglong chatId, qlonglong order);
     void handleChatReadInboxUpdated(const QString &chatId, const QString &lastReadInboxMessageId, int unreadCount);
     void handleChatReadOutboxUpdated(const QString &chatId, const QString &lastReadOutboxMessageId);
     void handleChatPhotoUpdated(qlonglong chatId, const QVariantMap &photo);
@@ -89,10 +89,10 @@ private slots:
     void handleChatNotificationSettingsUpdated(const QString &chatId, const QVariantMap &chatNotificationSettings);
     void handleGroupUpdated(qlonglong groupId);
     void handleSecretChatUpdated(qlonglong secretChatId, const QVariantMap &secretChat);
-    void handleChatTitleUpdated(const QString &chatId, const QString &title);
+    void handleChatTitleUpdated(qlonglong chatId, const QString &title);
     void handleChatPinnedUpdated(qlonglong chatId, bool chatIsPinned);
     void handleChatIsMarkedAsUnreadUpdated(qlonglong chatId, bool chatIsMarkedAsUnread);
-    void handleChatDraftMessageUpdated(qlonglong chatId, const QVariantMap &draftMessage, const QString &order);
+    void handleChatDraftMessageUpdated(qlonglong chatId, const QVariantMap &draftMessage, const QVariant &order);
     void handleChatUnreadMentionCountUpdated(qlonglong chatId, int unreadMentionCount);
     void handleChatUnreadReactionCountUpdated(qlonglong chatId, int unreadReactionCount);
     void handleChatAvailableReactionsUpdated(qlonglong chatId, const QVariantMap availableReactions);
@@ -119,8 +119,8 @@ private:
     Utilities *utilities;
     QTimer *relativeTimeRefreshTimer;
     QList<ChatData*> chatList;
-    QHash<qlonglong,int> chatIndexMap;
-    QHash<qlonglong,ChatData*> hiddenChats;
+    QHash<qlonglong, int> chatIndexMap;
+    QHash<qlonglong, ChatData*> hiddenChats;
     bool showHiddenChats;
 };
 

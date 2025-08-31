@@ -1343,14 +1343,14 @@ QVariantMap TDLibWrapper::getSuperGroup(qlonglong groupId) const {
     }
 }
 
-QVariantMap TDLibWrapper::getChat(const QString &chatId) {
+QVariantMap TDLibWrapper::getChat(qlonglong chatId) {
     LOG("Returning chat information for ID" << chatId);
-    return this->chats.value(chatId).toMap();
+    return this->chats.value(chatId);
 }
 
-QStringList TDLibWrapper::getChatReactions(const QString &chatId) {
+QStringList TDLibWrapper::getChatReactions(qlonglong chatId) {
     LOG("Obtaining chat reactions for chat" << chatId);
-    const QVariant available_reactions(chats.value(chatId).toMap().value(CHAT_AVAILABLE_REACTIONS));
+    const QVariant available_reactions(this->chats.value(chatId).value(CHAT_AVAILABLE_REACTIONS));
     const QVariantMap map(available_reactions.toMap());
     const QString reactions_type(map.value(_TYPE).toString());
     if (reactions_type == CHAT_AVAILABLE_REACTIONS_ALL) {
@@ -1573,7 +1573,7 @@ void TDLibWrapper::handleFileUpdated(const QVariantMap &fileInformation) {
 }
 
 void TDLibWrapper::handleNewChatDiscovered(const QVariantMap &chatInformation) {
-    QString chatId = chatInformation.value(ID).toString();
+    qlonglong chatId = chatInformation.value(ID).toLongLong();
     this->chats.insert(chatId, chatInformation);
     emit newChatDiscovered(chatId, chatInformation);
 }
@@ -1615,10 +1615,9 @@ void TDLibWrapper::handleUnreadChatCountUpdated(const QVariantMap &chatCountInfo
 
 void TDLibWrapper::handleAvailableReactionsUpdated(qlonglong chatId, const QVariantMap &availableReactions) {
     LOG("Updating available reactions for chat" << chatId << availableReactions);
-    QString chatIdString = QString::number(chatId);
-    QVariantMap chatInformation = this->getChat(chatIdString);
+    QVariantMap chatInformation = this->getChat(chatId);
     chatInformation.insert(CHAT_AVAILABLE_REACTIONS, availableReactions);
-    this->chats.insert(chatIdString, chatInformation);
+    this->chats.insert(chatId, chatInformation);
     emit chatAvailableReactionsUpdated(chatId, availableReactions);
 }
 

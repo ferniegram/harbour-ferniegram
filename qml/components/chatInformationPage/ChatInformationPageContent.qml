@@ -116,13 +116,13 @@ SilicaFlickable {
             }
         }
         onChatPermissionsUpdated: {
-            if (chatInformationPage.chatInformation.id.toString() === chatId) {
+            if (chatInformationPage.chatInformation.id == chatId) {
                 chatInformationPage.chatInformation.permissions = permissions
                 chatInformationPage.chatInformationChanged()
             }
         }
         onChatTitleUpdated: {
-            if (chatInformationPage.chatInformation.id.toString() === chatId) {
+            if (chatInformationPage.chatInformation.id == chatId) {
                 // set whole object to trigger change
                 var newInformation = chatInformation;
                 newInformation.title = title
@@ -130,7 +130,7 @@ SilicaFlickable {
             }
         }
         onChatNotificationSettingsUpdated: {
-            if (chatInformationPage.chatInformation.id.toString() === chatId) {
+            if (chatInformationPage.chatInformation.id == chatId) {
                 // set whole object to trigger change
                 var newInformation = chatInformation;
                 newInformation.notification_settings = chatNotificationSettings;

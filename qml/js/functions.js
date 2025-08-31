@@ -144,7 +144,7 @@ function getChatActionsObject(chatActionsByChats, chatActionsByUsers) {
     for (var chatId in chatActionsByChats) {
         if (!(chatActionsByChats[chatId] in result))
             result[chatActionsByChats[chatId]] = []
-        result[chatActionsByChats[chatId]].push(tdLibWrapper.getChat(chatId)['title']);
+        result[chatActionsByChats[chatId]].push(tdLibWrapper.getChat(chatId).title);
     }
     for (var userId in chatActionsByUsers) {
         if (!(chatActionsByUsers[userId] in result))
