@@ -35,6 +35,7 @@ SilicaFlickable {
     property string headerText: qsTr("Ferniegram")
     property var model
     //property bool replacePage
+    property bool inArchive
 
     TextFilterModel {
         id: chatListProxyModel
@@ -154,6 +155,7 @@ SilicaFlickable {
         delegate: ChatListViewItem {
             ownUserId: overviewPage.ownUserId
             verificationStatus: verification_status
+            inArchive: overviewContainer.inArchive
             onClicked: {
                 pageStack.push(Qt.resolvedUrl("../pages/ChatPage.qml"), {
                     chatInformation : display,

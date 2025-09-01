@@ -10,5 +10,6 @@ Page {
     ChatsView {
         headerText: qsTr("Archive")
         model: archiveChatListModel
+        inArchive: true
     }
 }

@@ -14,6 +14,7 @@ PhotoTextsListItem {
     property int ownUserId
     property bool showDraft: !!draft_message_text && draft_message_date > last_message_date
     property string previewText: showDraft ? draft_message_text : last_message_text
+    property bool inArchive
 
     // chat title
     primaryText.text: title ? Emoji.emojify(utilities.fixReservedHtmlCharacters(title), Theme.fontSizeMedium) : qsTr("Unknown")
@@ -88,7 +89,7 @@ PhotoTextsListItem {
 
                 MenuItem {
                     onClicked: {
-                        tdLibWrapper.toggleChatIsPinned(chat_id, !is_pinned);
+                        tdLibWrapper.toggleChatIsPinned(chat_id, !is_pinned, inArchive);
                     }
                     text: is_pinned ? qsTr("Unpin chat") : qsTr("Pin chat")
                 }

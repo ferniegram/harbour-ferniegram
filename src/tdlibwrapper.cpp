@@ -990,11 +990,11 @@ void TDLibWrapper::toggleChatIsMarkedAsUnread(qlonglong chatId, bool isMarkedAsU
     });
 }
 
-void TDLibWrapper::toggleChatIsPinned(qlonglong chatId, bool isPinned) {
+void TDLibWrapper::toggleChatIsPinned(qlonglong chatId, bool isPinned, bool archive) {
     LOG("Toggle chat is pinned" << chatId << isPinned);
     this->sendRequest(QVariantMap{
         {_TYPE, "toggleChatIsPinned"},
-        {CHAT_LIST, QVariantMap{{_TYPE, TYPE_CHAT_LIST_MAIN}}},
+        {CHAT_LIST, QVariantMap{{_TYPE, archive ? TYPE_CHAT_LIST_ARCHIVE : TYPE_CHAT_LIST_MAIN}}},
         {CHAT_ID, chatId},
         {"is_pinned", isPinned},
         {"is_marked_as_unread", isPinned}
@@ -2248,5 +2248,5 @@ void TDLibWrapper::getChatListsToAddChat(qlonglong chatId) {
 
 void TDLibWrapper::addChatToList(qlonglong chatId, bool archive) {
     LOG("Adding chat to a list" << chatId << "archive" << archive);
-    sendRequest(QVariantMap{{_TYPE, "addChatToList"}, {CHAT_ID, chatId}, {CHAT_LIST, archive ? TYPE_CHAT_LIST_ARCHIVE : TYPE_CHAT_LIST_MAIN}});
+    sendRequest(QVariantMap{{_TYPE, "addChatToList"}, {CHAT_ID, chatId}, {CHAT_LIST, QVariantMap{{_TYPE, archive ? TYPE_CHAT_LIST_ARCHIVE : TYPE_CHAT_LIST_MAIN}}}});
 }
