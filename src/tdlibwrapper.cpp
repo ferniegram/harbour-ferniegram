@@ -185,7 +185,6 @@ TDLibWrapper::~TDLibWrapper() {
 
 void TDLibWrapper::initializeTDLibReceiver() {
     this->tdLibReceiver = new TDLibReceiver(this->tdLibClientId, this);
-    this->tdLibState = new TDLibState(this);
 
     connect(this->tdLibReceiver, &TDLibReceiver::versionDetected, this, &TDLibWrapper::handleVersionDetected);
     connect(this->tdLibReceiver, &TDLibReceiver::authorizationStateChanged, this, &TDLibWrapper::handleAuthorizationStateChanged);
@@ -261,7 +260,6 @@ void TDLibWrapper::initializeTDLibReceiver() {
     connect(this->tdLibReceiver, &TDLibReceiver::availableReactionsReceived, this, &TDLibWrapper::availableReactionsReceived);
     connect(this->tdLibReceiver, &TDLibReceiver::chatUnreadMentionCountUpdated, this, &TDLibWrapper::chatUnreadMentionCountUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::chatUnreadReactionCountUpdated, this, &TDLibWrapper::chatUnreadReactionCountUpdated);
-    connect(this->tdLibReceiver, &TDLibReceiver::activeEmojiReactionsUpdated, this, &TDLibWrapper::handleActiveEmojiReactionsUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::messagePropertiesReceived, this, &TDLibWrapper::messagePropertiesReceived);
     connect(this->tdLibReceiver, &TDLibReceiver::storageStatisticsFastReceived, this, &TDLibWrapper::storageStatisticsFastReceived);
     connect(this->tdLibReceiver, &TDLibReceiver::storageStatisticsReceived, this, &TDLibWrapper::storageStatisticsReceived);
@@ -271,9 +269,10 @@ void TDLibWrapper::initializeTDLibReceiver() {
     connect(this->tdLibReceiver, &TDLibReceiver::suggestedActionsUpdated, this, &TDLibWrapper::suggestedActionsUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::chatListsReceived, this, &TDLibWrapper::chatListsReceived);
 
-    // TDLibState manages updates like users, chats, dices, etc.
-    // For now, we connect everything from here
-    connect(this->tdLibReceiver, &TDLibReceiver::diceEmojisUpdated, this->tdLibState, &TDLibState::handleDiceEmojisUpdated);
+    // TDLibState manages updates like users, chats, global reactions, dices, etc.
+    this->tdLibState = new TDLibState(this->tdLibReceiver, this);
+
+    connect(this->tdLibState, &TDLibState::reactionsUpdated, this, &TDLibWrapper::reactionsUpdated);
 
     this->tdLibReceiver->start();
 }
@@ -1382,8 +1381,8 @@ QStringList TDLibWrapper::getChatReactions(qlonglong chatId) {
     const QVariantMap map(available_reactions.toMap());
     const QString reactions_type(map.value(_TYPE).toString());
     if (reactions_type == CHAT_AVAILABLE_REACTIONS_ALL) {
-        LOG("Chat uses all available reactions, currently available number" << activeEmojiReactions.size());
-        return activeEmojiReactions;
+        LOG("Chat uses all available reactions, currently available number" << tdLibState->activeEmojiReactions.size());
+        return tdLibState->activeEmojiReactions;
     } else if (reactions_type == CHAT_AVAILABLE_REACTIONS_SOME) {
         LOG("Chat uses reduced set of reactions");
         const QVariantList reactions(map.value(REACTIONS).toList());
@@ -1863,14 +1862,6 @@ void TDLibWrapper::handleSponsoredMessage(qlonglong chatId, const QVariantMap &m
     case AppSettings::SponsoredMessIgnore:
         LOG("Ignoring sponsored message");
         break;
-    }
-}
-
-void TDLibWrapper::handleActiveEmojiReactionsUpdated(const QStringList& emojis) {
-    if (activeEmojiReactions != emojis) {
-        activeEmojiReactions = emojis;
-        LOG(emojis.count() << "reaction(s) available");
-        emit reactionsUpdated();
     }
 }
 

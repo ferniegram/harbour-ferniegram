@@ -2,18 +2,24 @@
 #define TDLIBSTATE_H
 
 #include <QObject>
+#include "tdlibreceiver.h"
 
 class TDLibState : public QObject {
     Q_OBJECT
 public:
-    explicit TDLibState(QObject *parent = nullptr);
+    explicit TDLibState(TDLibReceiver *tdLibReceiver, QObject *parent = nullptr);
 
     bool isDiceEmoji(const QString &text);
 
+signals:
+    void reactionsUpdated();
+
 public slots:
+    void handleActiveEmojiReactionsUpdated(const QStringList& emojis);
     void handleDiceEmojisUpdated(const QStringList &emojis);
 
-private:
+public:
+    QStringList activeEmojiReactions;
     QStringList diceEmojis;
 };
 

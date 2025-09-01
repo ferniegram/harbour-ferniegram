@@ -3,8 +3,17 @@
 #define DEBUG_MODULE TDLibState
 #include "debuglog.h"
 
-TDLibState::TDLibState(QObject *parent) : QObject(parent) {
+TDLibState::TDLibState(TDLibReceiver *tdLibReceiver, QObject *parent) : QObject(parent) {
+    connect(tdLibReceiver, &TDLibReceiver::activeEmojiReactionsUpdated, this, &TDLibState::handleActiveEmojiReactionsUpdated);
+    connect(tdLibReceiver, &TDLibReceiver::diceEmojisUpdated, this, &TDLibState::handleDiceEmojisUpdated);
+}
 
+void TDLibState::handleActiveEmojiReactionsUpdated(const QStringList& emojis) {
+    if (activeEmojiReactions != emojis) {
+        activeEmojiReactions = emojis;
+        LOG(emojis.count() << "reaction(s) available");
+        emit reactionsUpdated();
+    }
 }
 
 void TDLibState::handleDiceEmojisUpdated(const QStringList &emojis) {

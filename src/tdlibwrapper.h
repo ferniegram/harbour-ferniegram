@@ -413,7 +413,6 @@ public slots:
     void handleUpdatedUserPrivacySettingRules(const QVariantMap &updatedRules);
     void handleSponsoredMessage(qlonglong chatId, const QVariantMap &message);
     void handleNetworkConfigurationChanged(const QNetworkConfiguration &config);
-    void handleActiveEmojiReactionsUpdated(const QStringList& emojis);
     void handleGetPageSourceFinished();
 
 private:
@@ -454,7 +453,6 @@ private:
     QHash<qlonglong,Group*> basicGroups;
     QHash<qlonglong,Group*> superGroups;
     QVariantMap superGroupsByName;
-    QStringList activeEmojiReactions;
 
     int versionNumber;
     QString activeChatSearchName;
