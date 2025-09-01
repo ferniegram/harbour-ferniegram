@@ -30,6 +30,7 @@ SOURCES += src/harbour-fernschreiber2.cpp \
     src/dbusadaptor.cpp \
     src/dbusinterface.cpp \
     src/suggestedactionsmodel.cpp \
+    src/tdlibstate.cpp \
     src/utilities.cpp \
     src/knownusersmodel.cpp \
     src/mceinterface.cpp \
@@ -243,6 +244,7 @@ HEADERS += \
     src/debuglog.h \
     src/debuglogjs.h \
     src/suggestedactionsmodel.h \
+    src/tdlibstate.h \
     src/utilities.h \
     src/knownusersmodel.h \
     src/mceinterface.h \

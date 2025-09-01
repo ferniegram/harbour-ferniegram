@@ -27,6 +27,7 @@
 #include <QNetworkConfigurationManager>
 #include <td/telegram/td_json_client.h>
 #include "tdlibreceiver.h"
+#include "tdlibstate.h"
 #include "dbusadaptor.h"
 #include "dbusinterface.h"
 #include "appsettings.h"
@@ -414,7 +415,6 @@ public slots:
     void handleNetworkConfigurationChanged(const QNetworkConfiguration &config);
     void handleActiveEmojiReactionsUpdated(const QStringList& emojis);
     void handleGetPageSourceFinished();
-    void handleDiceEmojisUpdated(const QStringList &emojis);
 
 private:
     void setOption(const QString &name, const QString &type, const QVariant &value);
@@ -436,6 +436,7 @@ private:
     AppSettings *appSettings;
     MceInterface *mceInterface;
     TDLibReceiver *tdLibReceiver;
+    TDLibState *tdLibState;
     DBusInterface *dbusInterface;
     QString versionString;
     TDLibWrapper::AuthorizationState authorizationState;
@@ -454,7 +455,6 @@ private:
     QHash<qlonglong,Group*> superGroups;
     QVariantMap superGroupsByName;
     QStringList activeEmojiReactions;
-    QStringList diceEmojis;
 
     int versionNumber;
     QString activeChatSearchName;

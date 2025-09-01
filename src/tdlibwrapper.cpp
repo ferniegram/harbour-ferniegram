@@ -135,7 +135,6 @@ TDLibWrapper::TDLibWrapper(AppSettings *settings, MceInterface *mce, QObject *pa
     , appSettings(settings)
     , mceInterface(mce)
     , authorizationState(AuthorizationState::Closed)
-    , diceEmojis()
     , versionNumber(0)
     , joinChatRequested(false)
     , isLoggingOut(false)
@@ -186,6 +185,8 @@ TDLibWrapper::~TDLibWrapper() {
 
 void TDLibWrapper::initializeTDLibReceiver() {
     this->tdLibReceiver = new TDLibReceiver(this->tdLibClientId, this);
+    this->tdLibState = new TDLibState(this);
+
     connect(this->tdLibReceiver, &TDLibReceiver::versionDetected, this, &TDLibWrapper::handleVersionDetected);
     connect(this->tdLibReceiver, &TDLibReceiver::authorizationStateChanged, this, &TDLibWrapper::handleAuthorizationStateChanged);
     connect(this->tdLibReceiver, &TDLibReceiver::optionUpdated, this, &TDLibWrapper::handleOptionUpdated);
@@ -267,9 +268,12 @@ void TDLibWrapper::initializeTDLibReceiver() {
     connect(this->tdLibReceiver, &TDLibReceiver::translationResultReceived, this, &TDLibWrapper::translationResultReceived);
     connect(this->tdLibReceiver, &TDLibReceiver::chatActionUpdated, this, &TDLibWrapper::chatActionUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::emojiKeywordsReceived, this, &TDLibWrapper::emojiKeywordsReceived);
-    connect(this->tdLibReceiver, &TDLibReceiver::diceEmojisUpdated, this, &TDLibWrapper::handleDiceEmojisUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::suggestedActionsUpdated, this, &TDLibWrapper::suggestedActionsUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::chatListsReceived, this, &TDLibWrapper::chatListsReceived);
+
+    // TDLibState manages updates like users, chats, dices, etc.
+    // For now, we connect everything from here
+    connect(this->tdLibReceiver, &TDLibReceiver::diceEmojisUpdated, this->tdLibState, &TDLibState::handleDiceEmojisUpdated);
 
     this->tdLibReceiver->start();
 }
@@ -2229,16 +2233,8 @@ void TDLibWrapper::toggleSupergroupIsForum(bool isForum) {
     sendRequest(QVariantMap{{_TYPE, "toggleSupergroupIsForum"}, {"is_forum", isForum}});
 }
 
-void TDLibWrapper::handleDiceEmojisUpdated(const QStringList &emojis) {
-    if (diceEmojis != emojis) {
-        LOG("Dice emojis updated" << emojis);
-        diceEmojis = emojis;
-    }
-}
-
 bool TDLibWrapper::isDiceEmoji(const QString &text) {
-    LOG("Checking if text is a dice emoji" << text);
-    return diceEmojis.contains(QString(text).trimmed());
+    return tdLibState->isDiceEmoji(text);
 }
 
 void TDLibWrapper::getChatListsToAddChat(qlonglong chatId) {
