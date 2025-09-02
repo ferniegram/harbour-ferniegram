@@ -229,6 +229,7 @@ Page {
         onChatReceived: {
             var openAndSendStartToBot = chat["@extra"].toString().indexOf("openAndSendStartToBot:") === 0
             if(chat["@extra"] === "openDirectly" || openAndSendStartToBot && chat.type["@type"] === "chatTypePrivate") {
+                pageStack.completeAnimation()
                 pageStack.pop(overviewPage, PageStackAction.Immediate)
                 // if we get a new chat (no messages?), we can not use the provided data
                 var chatinfo = tdLibWrapper.getChat(chat.id)
