@@ -343,18 +343,17 @@ void TDLibReceiver::processUpdateChatPosition(const QVariantMap &receivedInforma
     emit chatPositionUpdated(chatId, position);
 }
 
-void TDLibReceiver::processUpdateChatReadInbox(const QVariantMap &receivedInformation)
-{
-    const QString chatId(receivedInformation.value(CHAT_ID).toString());
+void TDLibReceiver::processUpdateChatReadInbox(const QVariantMap &receivedInformation) {
+    const qlonglong chatId(receivedInformation.value(CHAT_ID).toLongLong());
     const QString unreadCount(receivedInformation.value(UNREAD_COUNT).toString());
     LOG("Chat read information updated for" << chatId << "unread count:" << unreadCount);
-    emit chatReadInboxUpdated(chatId, receivedInformation.value(LAST_READ_INBOX_MESSAGE_ID).toString(), unreadCount.toInt());
+    emit chatReadInboxUpdated(chatId, receivedInformation.value(LAST_READ_INBOX_MESSAGE_ID).toLongLong(), unreadCount.toInt());
 }
 
 void TDLibReceiver::processUpdateChatReadOutbox(const QVariantMap &receivedInformation)
 {
-    const QString chatId(receivedInformation.value(CHAT_ID).toString());
-    const QString lastReadOutboxMessageId(receivedInformation.value(LAST_READ_OUTBOX_MESSAGE_ID).toString());
+    const qlonglong chatId(receivedInformation.value(CHAT_ID).toLongLong());
+    const qlonglong lastReadOutboxMessageId(receivedInformation.value(LAST_READ_OUTBOX_MESSAGE_ID).toLongLong());
     LOG("Sent messages read information updated for" << chatId << "last read message ID:" << lastReadOutboxMessageId);
     emit chatReadOutboxUpdated(chatId, lastReadOutboxMessageId);
 }
@@ -385,7 +384,7 @@ void TDLibReceiver::processUpdateSuperGroup(const QVariantMap &receivedInformati
 
 void TDLibReceiver::processChatOnlineMemberCountUpdated(const QVariantMap &receivedInformation)
 {
-    const QString chatId = receivedInformation.value(CHAT_ID).toString();
+    const qlonglong chatId = receivedInformation.value(CHAT_ID).toLongLong();
     LOG("Online member count updated for chat " << chatId);
     emit chatOnlineMemberCountUpdated(chatId, receivedInformation.value("online_member_count").toInt());
 }
@@ -473,7 +472,7 @@ void TDLibReceiver::processUpdateNotification(const QVariantMap &receivedInforma
 
 void TDLibReceiver::processUpdateChatNotificationSettings(const QVariantMap &receivedInformation)
 {
-    const QString chatId = receivedInformation.value(CHAT_ID).toString();
+    const qlonglong chatId = receivedInformation.value(CHAT_ID).toLongLong();
     LOG("Received new notification settings for chat " << chatId);
     emit chatNotificationSettingsUpdated(chatId, receivedInformation.value("notification_settings").toMap());
 }
@@ -544,10 +543,9 @@ void TDLibReceiver::processStickerSet(const QVariantMap &receivedInformation)
     LOG("Received a sticker set...");
     emit stickerSet(cleanupMap(receivedInformation));
 }
-void TDLibReceiver::processChatMembers(const QVariantMap &receivedInformation)
-{
-    LOG("Received super group members");
-    const QString extra = receivedInformation.value(_EXTRA).toString();
+void TDLibReceiver::processChatMembers(const QVariantMap &receivedInformation) {
+    const qlonglong extra = receivedInformation.value(_EXTRA).toLongLong();
+    LOG("Received super group members" << extra);
     emit chatMembers(extra, receivedInformation.value("members").toList(), receivedInformation.value(TOTAL_COUNT).toInt());
 }
 
@@ -566,33 +564,33 @@ void TDLibReceiver::processUpdateUserFullInfo(const QVariantMap &receivedInforma
 void TDLibReceiver::processBasicGroupFullInfo(const QVariantMap &receivedInformation)
 {
     LOG("Received BasicGroupFullInfo");
-    const QString groupId = receivedInformation.value(_EXTRA).toString();
+    const qlonglong groupId = receivedInformation.value(_EXTRA).toLongLong();
     emit basicGroupFullInfo(groupId, receivedInformation);
 }
 void TDLibReceiver::processUpdateBasicGroupFullInfo(const QVariantMap &receivedInformation)
 {
     LOG("Received BasicGroupFullInfoUpdate");
-    const QString groupId = receivedInformation.value("basic_group_id").toString();
+    const qlonglong groupId = receivedInformation.value("basic_group_id").toLongLong();
     emit basicGroupFullInfoUpdated(groupId, receivedInformation.value("basic_group_full_info").toMap());
 }
 
 void TDLibReceiver::processSupergroupFullInfo(const QVariantMap &receivedInformation)
 {
     LOG("Received SuperGroupFullInfoUpdate");
-    const QString groupId = receivedInformation.value(_EXTRA).toString();
+    const qlonglong groupId = receivedInformation.value(_EXTRA).toLongLong();
     emit supergroupFullInfo(groupId, receivedInformation);
 }
 
 void TDLibReceiver::processUpdateSupergroupFullInfo(const QVariantMap &receivedInformation)
 {
     LOG("Received SuperGroupFullInfoUpdate");
-    const QString groupId = receivedInformation.value("supergroup_id").toString();
+    const qlonglong groupId = receivedInformation.value("supergroup_id").toLongLong();
     emit supergroupFullInfoUpdated(groupId, receivedInformation.value("supergroup_full_info").toMap());
 }
 
 void TDLibReceiver::processUserProfilePhotos(const QVariantMap &receivedInformation)
 {
-    const QString extra = receivedInformation.value(_EXTRA).toString();
+    const qlonglong extra = receivedInformation.value(_EXTRA).toLongLong();
     emit userProfilePhotos(extra, receivedInformation.value("photos").toList(), receivedInformation.value(TOTAL_COUNT).toInt());
 }
 
@@ -704,7 +702,7 @@ void TDLibReceiver::processUpdateChatDraftMessage(const QVariantMap &receivedInf
 void TDLibReceiver::processInlineQueryResults(const QVariantMap &receivedInformation)
 {
     LOG("Inline Query results");
-    emit inlineQueryResults(receivedInformation.value("inline_query_id").toString(), receivedInformation.value("next_offset").toString(), receivedInformation.value("results").toList(), receivedInformation.value("switch_pm_text").toString(), receivedInformation.value("switch_pm_parameter").toString(), receivedInformation.value(_EXTRA).toString());
+    emit inlineQueryResults(receivedInformation.value("inline_query_id").toLongLong(), receivedInformation.value("next_offset").toString(), receivedInformation.value("results").toList(), receivedInformation.value("switch_pm_text").toString(), receivedInformation.value("switch_pm_parameter").toString(), receivedInformation.value(_EXTRA).toString());
 }
 
 void TDLibReceiver::processCallbackQueryAnswer(const QVariantMap &receivedInformation)

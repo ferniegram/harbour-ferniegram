@@ -14,6 +14,9 @@ TDLibState::TDLibState(TDLibReceiver *tdLibReceiver, QObject *parent) :
 }
 
 void TDLibState::handleAuthorizationStateChanged(const QString &authorizationState, const QVariantMap authorizationStateData) {
+    // See this for information about encryption https://github.com/tdlib/td/issues/188#issuecomment-379536139
+    // Currently encryption key is set by an initial parameter
+
     if (authorizationState == "authorizationStateReady")
         this->authorizationState = AuthorizationState::AuthorizationReady;
     else if (authorizationState == "authorizationStateWaitTdlibParameters") {

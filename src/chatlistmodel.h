@@ -78,12 +78,12 @@ private slots:
     void handleChatRemovedFromList(qlonglong chatId);
     void handleChatLastMessageUpdated(qlonglong chatId, const QVariantMap &lastMessage);
     void handleChatPositionUpdated(qlonglong chatId, qlonglong order, bool isPinned);
-    void handleChatReadInboxUpdated(const QString &chatId, const QString &lastReadInboxMessageId, int unreadCount);
-    void handleChatReadOutboxUpdated(const QString &chatId, const QString &lastReadOutboxMessageId);
+    void handleChatReadInboxUpdated(qlonglong chatId, qlonglong lastReadInboxMessageId, int unreadCount);
+    void handleChatReadOutboxUpdated(qlonglong chatId, qlonglong lastReadOutboxMessageId);
     void handleChatPhotoUpdated(qlonglong chatId, const QVariantMap &photo);
     void handleChatPinnedMessageUpdated(qlonglong chatId, qlonglong pinnedMessageId);
     void handleMessageSendSucceeded(qlonglong messageId, qlonglong oldMessageId, const QVariantMap &message);
-    void handleChatNotificationSettingsUpdated(const QString &chatId, const QVariantMap &chatNotificationSettings);
+    void handleChatNotificationSettingsUpdated(qlonglong chatId, const QVariantMap &chatNotificationSettings);
     void handleGroupUpdated(qlonglong groupId);
     void handleSecretChatUpdated(qlonglong secretChatId, const QVariantMap &secretChat);
     void handleChatTitleUpdated(qlonglong chatId, const QString &title);

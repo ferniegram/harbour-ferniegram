@@ -349,23 +349,23 @@ void TDLibWrapper::downloadFile(int fileId) {
     });
 }
 
-void TDLibWrapper::openChat(const QString &chatId) {
+void TDLibWrapper::openChat(qlonglong chatId) {
     LOG("Opening chat " << chatId);
     this->sendRequest(QVariantMap{{_TYPE, "openChat"}, {CHAT_ID, chatId}});
 }
 
-void TDLibWrapper::closeChat(const QString &chatId) {
+void TDLibWrapper::closeChat(qlonglong chatId) {
     LOG("Closing chat " << chatId);
     this->sendRequest(QVariantMap{{_TYPE, "closeChat"}, {CHAT_ID, chatId}});
 }
 
-void TDLibWrapper::joinChat(const QString &chatId) {
+void TDLibWrapper::joinChat(qlonglong chatId) {
     LOG("Joining chat " << chatId);
     this->joinChatRequested = true;
     this->sendRequest(QVariantMap{{_TYPE, "joinChat"}, {CHAT_ID, chatId}});
 }
 
-void TDLibWrapper::leaveChat(const QString &chatId) {
+void TDLibWrapper::leaveChat(qlonglong chatId) {
     LOG("Leaving chat " << chatId);
     this->sendRequest(QVariantMap{{_TYPE, "leaveChat"}, {CHAT_ID, chatId}});
 }
@@ -397,7 +397,7 @@ void TDLibWrapper::viewMessage(qlonglong chatId, qlonglong messageId, bool force
     });
 }
 
-void TDLibWrapper::pinMessage(const QString &chatId, const QString &messageId, bool disableNotification) {
+void TDLibWrapper::pinMessage(qlonglong chatId, const QString &messageId, bool disableNotification) {
     LOG("Pin message to chat" << chatId << messageId << disableNotification);
     this->sendRequest(QVariantMap{
         {_TYPE, "pinChatMessage"},
@@ -407,13 +407,13 @@ void TDLibWrapper::pinMessage(const QString &chatId, const QString &messageId, b
     });
 }
 
-void TDLibWrapper::unpinMessage(const QString &chatId, const QString &messageId) {
+void TDLibWrapper::unpinMessage(qlonglong chatId, const QString &messageId) {
     LOG("Unpin message from chat" << chatId);
     this->sendRequest(QVariantMap{
         {_TYPE, "unpinChatMessage"},
         {CHAT_ID, chatId},
         {MESSAGE_ID, messageId},
-        {_EXTRA, "unpinChatMessage:" + chatId}
+        {_EXTRA, "unpinChatMessage:" + QString::number(chatId)}
     });
 }
 
@@ -532,7 +532,7 @@ void TDLibWrapper::sendDiceMessage(qlonglong chatId, const QString &emoji, qlong
     this->sendRequest(requestObject);
 }
 
-void TDLibWrapper::forwardMessages(const QString &chatId, const QString &fromChatId, const QVariantList &messageIds, bool sendCopy, bool removeCaption) {
+void TDLibWrapper::forwardMessages(qlonglong chatId, const QString &fromChatId, const QVariantList &messageIds, bool sendCopy, bool removeCaption) {
     LOG("Forwarding messages" << chatId << fromChatId << messageIds);
     this->sendRequest(QVariantMap{
         {_TYPE, "forwardMessages"},
@@ -572,7 +572,7 @@ void TDLibWrapper::getExternalLinkInfo(const QString &url, const QString &extra)
     });
 }
 
-void TDLibWrapper::getCallbackQueryAnswer(const QString &chatId, const QString &messageId, const QVariantMap &payload) {
+void TDLibWrapper::getCallbackQueryAnswer(qlonglong chatId, const QString &messageId, const QVariantMap &payload) {
     LOG("Getting Callback Query Answer" << chatId << messageId);
     this->sendRequest(QVariantMap{
         {_TYPE, "getCallbackQueryAnswer"},
@@ -618,7 +618,7 @@ void TDLibWrapper::setOption(const QString &name, const QString &type, const QVa
     });
 }
 
-void TDLibWrapper::setChatNotificationSettings(const QString &chatId, const QVariantMap &notificationSettings) {
+void TDLibWrapper::setChatNotificationSettings(qlonglong chatId, const QVariantMap &notificationSettings) {
     LOG("Notification settings for chat " << chatId << notificationSettings);
     this->sendRequest(QVariantMap{
         {_TYPE, "setChatNotificationSettings"},
@@ -627,7 +627,7 @@ void TDLibWrapper::setChatNotificationSettings(const QString &chatId, const QVar
     });
 }
 
-void TDLibWrapper::editMessageText(const QString &chatId, const QString &messageId, const QString &message) {
+void TDLibWrapper::editMessageText(qlonglong chatId, const QString &messageId, const QString &message) {
     LOG("Editing message text" << chatId << messageId);
     this->sendRequest(QVariantMap{
         {_TYPE, "editMessageText"},
@@ -640,7 +640,7 @@ void TDLibWrapper::editMessageText(const QString &chatId, const QString &message
     });
 }
 
-void TDLibWrapper::editMessageCaption(const QString &chatId, const QString &messageId, const QString &caption) {
+void TDLibWrapper::editMessageCaption(qlonglong chatId, const QString &messageId, const QString &caption) {
     LOG("Editing message caption" << chatId << messageId);
     this->sendRequest(QVariantMap{
         {_TYPE, "editMessageCaption"},
@@ -650,7 +650,7 @@ void TDLibWrapper::editMessageCaption(const QString &chatId, const QString &mess
     });
 }
 
-void TDLibWrapper::deleteMessages(const QString &chatId, const QVariantList messageIds) {
+void TDLibWrapper::deleteMessages(qlonglong chatId, const QVariantList messageIds) {
     LOG("Deleting some messages" << chatId << messageIds);
     this->sendRequest(QVariantMap{
         {_TYPE, "deleteMessages"},
@@ -660,7 +660,7 @@ void TDLibWrapper::deleteMessages(const QString &chatId, const QVariantList mess
     });
 }
 
-void TDLibWrapper::getMapThumbnailFile(const QString &chatId, double latitude, double longitude, int width, int height, const QString &extra) {
+void TDLibWrapper::getMapThumbnailFile(qlonglong chatId, double latitude, double longitude, int width, int height, const QString &extra) {
     LOG("Getting Map Thumbnail File" << chatId);
     this->sendRequest(QVariantMap{
         {_TYPE, "getMapThumbnailFile"},
@@ -695,7 +695,7 @@ void TDLibWrapper::getStickerSet(const QString &setId) {
     this->sendRequest(QVariantMap{{_TYPE, "getStickerSet"}, {"set_id", setId}});
 }
 
-void TDLibWrapper::getSupergroupMembers(const QString &groupId, int limit, int offset) {
+void TDLibWrapper::getSupergroupMembers(qlonglong groupId, int limit, int offset) {
     LOG("Retrieving SupergroupMembers");
     this->sendRequest(QVariantMap{
         {_TYPE, "getSupergroupMembers"},
@@ -706,7 +706,7 @@ void TDLibWrapper::getSupergroupMembers(const QString &groupId, int limit, int o
     });
 }
 
-void TDLibWrapper::getGroupFullInfo(const QString &groupId, bool isSuperGroup) {
+void TDLibWrapper::getGroupFullInfo(qlonglong groupId, bool isSuperGroup) {
     LOG("Retrieving GroupFullInfo" << groupId << "for supergroup:" << isSuperGroup);
     QVariantMap requestObject{{_EXTRA, groupId}};
     if(isSuperGroup) {
@@ -786,7 +786,7 @@ void TDLibWrapper::getUserProfilePhotos(qlonglong userId, int limit, int offset)
     });
 }
 
-void TDLibWrapper::setChatPermissions(const QString &chatId, const QVariantMap &chatPermissions) {
+void TDLibWrapper::setChatPermissions(qlonglong chatId, const QVariantMap &chatPermissions) {
     LOG("Setting Chat Permissions" << chatId);
     this->sendRequest(QVariantMap{
         {_TYPE, "setChatPermissions"},
@@ -796,7 +796,7 @@ void TDLibWrapper::setChatPermissions(const QString &chatId, const QVariantMap &
     });
 }
 
-void TDLibWrapper::setChatSlowModeDelay(const QString &chatId, int delay) {
+void TDLibWrapper::setChatSlowModeDelay(qlonglong chatId, int delay) {
     LOG("Setting Chat Slow Mode Delay" << chatId);
     this->sendRequest(QVariantMap{
         {_TYPE, "setChatSlowModeDelay"},
@@ -805,7 +805,7 @@ void TDLibWrapper::setChatSlowModeDelay(const QString &chatId, int delay) {
     });
 }
 
-void TDLibWrapper::setChatDescription(const QString &chatId, const QString &description) {
+void TDLibWrapper::setChatDescription(qlonglong chatId, const QString &description) {
     LOG("Setting Chat Description" << chatId);
     this->sendRequest(QVariantMap{
         {_TYPE, "setChatDescription"},
@@ -814,7 +814,7 @@ void TDLibWrapper::setChatDescription(const QString &chatId, const QString &desc
     });
 }
 
-void TDLibWrapper::setChatTitle(const QString &chatId, const QString &title) {
+void TDLibWrapper::setChatTitle(qlonglong chatId, const QString &title) {
     LOG("Setting Chat Title" << chatId);
     this->sendRequest(QVariantMap{
         {_TYPE, "setChatTitle"},
@@ -831,7 +831,7 @@ void TDLibWrapper::setBio(const QString &bio) {
     });
 }
 
-void TDLibWrapper::toggleSupergroupIsAllHistoryAvailable(const QString &groupId, bool isAllHistoryAvailable) {
+void TDLibWrapper::toggleSupergroupIsAllHistoryAvailable(qlonglong groupId, bool isAllHistoryAvailable) {
     LOG("Toggling SupergroupIsAllHistoryAvailable" << groupId);
     this->sendRequest(QVariantMap{
         {_TYPE, "toggleSupergroupIsAllHistoryAvailable"},
@@ -840,7 +840,7 @@ void TDLibWrapper::toggleSupergroupIsAllHistoryAvailable(const QString &groupId,
     });
 }
 
-void TDLibWrapper::setPollAnswer(const QString &chatId, qlonglong messageId, QVariantList optionIds) {
+void TDLibWrapper::setPollAnswer(qlonglong chatId, qlonglong messageId, QVariantList optionIds) {
     LOG("Setting Poll Answer" << chatId << messageId);
     this->sendRequest(QVariantMap{
         {_TYPE, "setPollAnswer"},
@@ -850,7 +850,7 @@ void TDLibWrapper::setPollAnswer(const QString &chatId, qlonglong messageId, QVa
     });
 }
 
-void TDLibWrapper::stopPoll(const QString &chatId, qlonglong messageId) {
+void TDLibWrapper::stopPoll(qlonglong chatId, qlonglong messageId) {
     LOG("Stopping Poll" << chatId << messageId);
     this->sendRequest(QVariantMap{
         {_TYPE, "stopPoll"},
@@ -859,7 +859,7 @@ void TDLibWrapper::stopPoll(const QString &chatId, qlonglong messageId) {
     });
 }
 
-void TDLibWrapper::getPollVoters(const QString &chatId, qlonglong messageId, int optionId, int limit, int offset, const QString &extra) {
+void TDLibWrapper::getPollVoters(qlonglong chatId, qlonglong messageId, int optionId, int limit, int offset, const QString &extra) {
     LOG("Retrieving Poll Voters" << chatId << messageId);
     this->sendRequest(QVariantMap{
         {_TYPE, "getPollVoters"},

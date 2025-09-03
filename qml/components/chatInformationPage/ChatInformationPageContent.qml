@@ -169,7 +169,7 @@ SilicaFlickable {
             break;
         case "chatTypeBasicGroup":
             chatInformationPage.isBasicGroup = true;
-            chatInformationPage.chatPartnerGroupId = chatInformation.type.basic_group_id.toString();
+            chatInformationPage.chatPartnerGroupId = chatInformation.type.basic_group_id;
             if(!chatInformationPage.groupInformation.id) {
                 chatInformationPage.groupInformation = tdLibWrapper.getBasicGroup(chatInformationPage.chatPartnerGroupId);
             }

@@ -49,7 +49,7 @@ AccordionItem {
                     userNameEditArea.text = userInformation.username;
                 }
                 onUserProfilePhotosReceived: {
-                    if (extra === userInformation.id.toString()) {
+                    if (extra === userInformation.id) {
                         imageContainer.thumbnailModel = photos;
                     }
                 }

@@ -492,8 +492,8 @@ Page {
             }
         }
         onChatOnlineMemberCountUpdated: {
-            Debug.log(isSuperGroup, "/", isBasicGroup, "/", chatInformation.id.toString(), "/", chatId);
-            if ((isSuperGroup || isBasicGroup) && chatInformation.id.toString() === chatId) {
+            Debug.log(isSuperGroup, "/", isBasicGroup, "/", chatInformation.id, "/", chatId);
+            if ((isSuperGroup || isBasicGroup) && chatInformation.id === chatId) {
                 chatOnlineMemberCount = onlineMemberCount
             }
         }
@@ -530,7 +530,7 @@ Page {
             }
         }
         onSecretChatUpdated: {
-            if (secretChatId.toString() === chatInformation.type.secret_chat_id.toString()) {
+            if (secretChatId === chatInformation.type.secret_chat_id) {
                 Debug.log("[ChatPage] Detailed information about this secret chat was updated")
                 chatPage.secretChatDetails = secretChat
                 chatPage.isSecretChatReady = chatPage.secretChatDetails.state["@type"] === "secretChatStateReady"
@@ -545,7 +545,7 @@ Page {
             }
         }
         onUserFullInfoReceived: {
-            if ((isPrivateChat || isSecretChat) && userFullInfo["@extra"] === chatPartnerInformation.id.toString())
+            if ((isPrivateChat || isSecretChat) && userFullInfo["@extra"] === chatPartnerInformation.id)
                 chatPage.botInformation = userFullInfo.bot_info
         }
         onUserFullInfoUpdated: {
@@ -638,7 +638,7 @@ Page {
         }
         onPinnedMessageChanged: {
             chatInformation = chatModel.getChatInformation()
-            if (chatInformation.pinned_message_id.toString() !== "0") {
+            if (chatInformation.pinned_message_id !== "0") {
                 Debug.log("[ChatPage] Loading pinned message ", chatInformation.pinned_message_id)
                 tdLibWrapper.getMessage(chatInformation.id, chatInformation.pinned_message_id)
             } else pinnedMessageItem.pinnedMessage = undefined
@@ -1524,7 +1524,7 @@ Page {
                 InReplyToRow {
                     onInReplyToMessageChanged:
                         if (inReplyToMessage) {
-                            newMessageColumn.replyToMessageId = newMessageInReplyToRow.inReplyToMessage.id.toString()
+                            newMessageColumn.replyToMessageId = newMessageInReplyToRow.inReplyToMessage.id
                             newMessageInReplyToRow.visible = true
                         } else {
                             newMessageInReplyToRow.visible = false

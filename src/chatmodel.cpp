@@ -667,9 +667,9 @@ void ChatModel::handleMessageReceived(qlonglong chatId, qlonglong messageId, con
     }
 }
 
-void ChatModel::handleChatReadInboxUpdated(const QString &id, const QString &lastReadInboxMessageId, int unreadCount)
+void ChatModel::handleChatReadInboxUpdated(qlonglong id, qlonglong lastReadInboxMessageId, int unreadCount)
 {
-    if (id.toLongLong() == chatId) {
+    if (id == chatId) {
         LOG("Updating chat unread count, unread messages" << unreadCount << ", last read message ID:" << lastReadInboxMessageId);
         this->chatInformation.insert("unread_count", unreadCount);
         this->chatInformation.insert(LAST_READ_INBOX_MESSAGE_ID, lastReadInboxMessageId);
@@ -677,9 +677,9 @@ void ChatModel::handleChatReadInboxUpdated(const QString &id, const QString &las
     }
 }
 
-void ChatModel::handleChatReadOutboxUpdated(const QString &id, const QString &lastReadOutboxMessageId)
+void ChatModel::handleChatReadOutboxUpdated(qlonglong id, qlonglong lastReadOutboxMessageId)
 {
-    if (id.toLongLong() == chatId) {
+    if (id == chatId) {
         this->chatInformation.insert(LAST_READ_OUTBOX_MESSAGE_ID, lastReadOutboxMessageId);
         int sentIndex = calculateLastReadSentMessageId();
         LOG("Updating sent message ID, new index" << sentIndex);
@@ -710,9 +710,8 @@ void ChatModel::handleMessageSendSucceeded(qlonglong messageId, qlonglong oldMes
     }
 }
 
-void ChatModel::handleChatNotificationSettingsUpdated(const QString &id, const QVariantMap &chatNotificationSettings)
-{
-    if (id.toLongLong() == chatId) {
+void ChatModel::handleChatNotificationSettingsUpdated(qlonglong id, const QVariantMap &chatNotificationSettings) {
+    if (id == chatId) {
         this->chatInformation.insert("notification_settings", chatNotificationSettings);
         LOG("Notification settings updated");
         emit notificationSettingsUpdated();

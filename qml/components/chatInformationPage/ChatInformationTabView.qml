@@ -124,7 +124,7 @@ Item {
         }
     }
     Component.onCompleted: {
-        if(!((isPrivateChat || isSecretChat) && chatPartnerGroupId === myUserId.toString())) {
+        if(!((isPrivateChat || isSecretChat) && chatPartnerGroupId === myUserId)) {
             tabModel.append({
                 tab:"ChatInformationTabItemMembersGroups",
                 title: ( chatInformationPage.isPrivateChat || chatInformationPage.isSecretChat ) ? qsTr("Groups", "Button: groups in common (short)") : qsTr("Members", "Button: Group Members"),

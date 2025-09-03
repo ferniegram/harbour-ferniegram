@@ -642,43 +642,33 @@ void ChatListModel::handleChatPositionUpdated(qlonglong chatId, qlonglong order,
     }
 }
 
-void ChatListModel::handleChatReadInboxUpdated(const QString &id, const QString &lastReadInboxMessageId, int unreadCount) {
-    bool ok;
-    const qlonglong chatId = id.toLongLong(&ok);
-    if (ok) {
-        const qlonglong messageId = lastReadInboxMessageId.toLongLong();
-        if (chatIndexMap.contains(chatId)) {
-            LOG("Updating chat unread count for" << chatId << "unread messages" << unreadCount << ", last read message ID: " << lastReadInboxMessageId);
-            const int chatIndex = chatIndexMap.value(chatId);
-            ChatData *chat = chatList.at(chatIndex);
-            QVector<int> changedRoles;
-            changedRoles.append(ChatListModel::RoleDisplay);
-            if (chat->updateUnreadCount(unreadCount)) {
-                changedRoles.append(ChatListModel::RoleUnreadCount);
-            }
-            if (chat->updateLastReadInboxMessageId(messageId)) {
-                changedRoles.append(ChatListModel::RoleLastReadInboxMessageId);
-            }
-            const QModelIndex modelIndex(index(chatIndex));
-            emit dataChanged(modelIndex, modelIndex, changedRoles);
-            this->calculateUnreadState();
+void ChatListModel::handleChatReadInboxUpdated(qlonglong chatId, qlonglong lastReadInboxMessageId, int unreadCount) {
+    if (chatIndexMap.contains(chatId)) {
+        LOG("Updating chat unread count for" << chatId << "unread messages" << unreadCount << ", last read message ID: " << lastReadInboxMessageId);
+        const int chatIndex = chatIndexMap.value(chatId);
+        ChatData *chat = chatList.at(chatIndex);
+        QVector<int> changedRoles;
+        changedRoles.append(ChatListModel::RoleDisplay);
+        if (chat->updateUnreadCount(unreadCount)) {
+            changedRoles.append(ChatListModel::RoleUnreadCount);
         }
+        if (chat->updateLastReadInboxMessageId(lastReadInboxMessageId)) {
+            changedRoles.append(ChatListModel::RoleLastReadInboxMessageId);
+        }
+        const QModelIndex modelIndex(index(chatIndex));
+        emit dataChanged(modelIndex, modelIndex, changedRoles);
+        this->calculateUnreadState();
     }
 }
 
-void ChatListModel::handleChatReadOutboxUpdated(const QString &id, const QString &lastReadOutboxMessageId)
-{
-    bool ok;
-    const qlonglong chatId = id.toLongLong(&ok);
-    if (ok) {
-        if (chatIndexMap.contains(chatId)) {
-            LOG("Updating last read message for" << chatId << "last ID" << lastReadOutboxMessageId);
-            const int chatIndex = chatIndexMap.value(chatId);
-            ChatData *chat = chatList.at(chatIndex);
-            chat->chatData.insert(LAST_READ_OUTBOX_MESSAGE_ID, lastReadOutboxMessageId);
-            const QModelIndex modelIndex(index(chatIndex));
-            emit dataChanged(modelIndex, modelIndex);
-        }
+void ChatListModel::handleChatReadOutboxUpdated(qlonglong chatId, qlonglong lastReadOutboxMessageId) {
+    if (chatIndexMap.contains(chatId)) {
+        LOG("Updating last read message for" << chatId << "last ID" << lastReadOutboxMessageId);
+        const int chatIndex = chatIndexMap.value(chatId);
+        ChatData *chat = chatList.at(chatIndex);
+        chat->chatData.insert(LAST_READ_OUTBOX_MESSAGE_ID, lastReadOutboxMessageId);
+        const QModelIndex modelIndex(index(chatIndex));
+        emit dataChanged(modelIndex, modelIndex);
     }
 }
 
@@ -720,19 +710,14 @@ void ChatListModel::handleMessageSendSucceeded(qlonglong messageId, qlonglong ol
     }
 }
 
-void ChatListModel::handleChatNotificationSettingsUpdated(const QString &id, const QVariantMap &chatNotificationSettings)
-{
-    bool ok;
-    const qlonglong chatId = id.toLongLong(&ok);
-    if (ok) {
-        if (chatIndexMap.contains(chatId)) {
-            const int chatIndex = chatIndexMap.value(chatId);
-            LOG("Updating notification settings for chat" << chatId << "at index" << chatIndex);
-            ChatData *chat = chatList.at(chatIndex);
-            chat->chatData.insert(NOTIFICATION_SETTINGS, chatNotificationSettings);
-            const QModelIndex modelIndex(index(chatIndex));
-            emit dataChanged(modelIndex, modelIndex);
-        }
+void ChatListModel::handleChatNotificationSettingsUpdated(qlonglong chatId, const QVariantMap &chatNotificationSettings) {
+    if (chatIndexMap.contains(chatId)) {
+        const int chatIndex = chatIndexMap.value(chatId);
+        LOG("Updating notification settings for chat" << chatId << "at index" << chatIndex);
+        ChatData *chat = chatList.at(chatIndex);
+        chat->chatData.insert(NOTIFICATION_SETTINGS, chatNotificationSettings);
+        const QModelIndex modelIndex(index(chatIndex));
+        emit dataChanged(modelIndex, modelIndex);
     }
 }
 

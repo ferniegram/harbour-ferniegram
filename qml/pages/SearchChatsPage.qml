@@ -177,31 +177,31 @@ Page {
                             Connections {
                                 target: tdLibWrapper
                                 onUserFullInfoUpdated: {
-                                    if (foundChatListDelegate.isPrivateChat && userId.toString() === foundChatListDelegate.foundChatInformation.type.user_id.toString()) {
+                                    if (foundChatListDelegate.isPrivateChat && userId === foundChatListDelegate.foundChatInformation.type.user_id) {
                                         foundChatListItem.tertiaryText.text = Emoji.emojify(Functions.enhanceMessageText(userFullInfo.bio), foundChatListItem.tertiaryText.font.pixelSize, "../js/emoji/");
                                     }
                                 }
                                 onUserFullInfoReceived: {
-                                    if (foundChatListDelegate.isPrivateChat && userFullInfo["@extra"].toString() === foundChatListDelegate.foundChatInformation.type.user_id.toString()) {
+                                    if (foundChatListDelegate.isPrivateChat && userFullInfo["@extra"] === foundChatListDelegate.foundChatInformation.type.user_id) {
                                         foundChatListItem.tertiaryText.text = Emoji.emojify(Functions.enhanceMessageText(userFullInfo.bio), foundChatListItem.tertiaryText.font.pixelSize, "../js/emoji/");
                                     }
                                 }
 
                                 onBasicGroupFullInfoUpdated: {
-                                    if (foundChatListDelegate.isBasicGroup && groupId.toString() === foundChatListDelegate.foundChatInformation.type.basic_group_id.toString()) {
+                                    if (foundChatListDelegate.isBasicGroup && groupId === foundChatListDelegate.foundChatInformation.type.basic_group_id) {
                                         foundChatListItem.secondaryText.text = qsTr("%1 members", "", groupFullInfo.members.length).arg(Number(groupFullInfo.members.length).toLocaleString(Qt.locale(), "f", 0));
                                         foundChatListItem.tertiaryText.text = Emoji.emojify(groupFullInfo.description, foundChatListItem.tertiaryText.font.pixelSize, "../js/emoji/");
                                     }
                                 }
                                 onBasicGroupFullInfoReceived: {
-                                    if (foundChatListDelegate.isBasicGroup && groupId.toString() === foundChatListDelegate.foundChatInformation.type.basic_group_id.toString()) {
+                                    if (foundChatListDelegate.isBasicGroup && groupId === foundChatListDelegate.foundChatInformation.type.basic_group_id) {
                                         foundChatListItem.secondaryText.text = qsTr("%1 members", "", groupFullInfo.members.length).arg(Number(groupFullInfo.members.length).toLocaleString(Qt.locale(), "f", 0));
                                         foundChatListItem.tertiaryText.text = Emoji.emojify(groupFullInfo.description, foundChatListItem.tertiaryText.font.pixelSize, "../js/emoji/");
                                     }
                                 }
 
                                 onSupergroupFullInfoUpdated: {
-                                    if (foundChatListDelegate.isSupergroup && groupId.toString() === foundChatListDelegate.foundChatInformation.type.supergroup_id.toString()) {
+                                    if (foundChatListDelegate.isSupergroup && groupId === foundChatListDelegate.foundChatInformation.type.supergroup_id) {
                                         if (foundChatListDelegate.relatedInformation.is_channel) {
                                             foundChatListItem.secondaryText.text = qsTr("%1 subscribers", "", groupFullInfo.member_count).arg(Number(groupFullInfo.member_count).toLocaleString(Qt.locale(), "f", 0));
                                         } else {
@@ -211,7 +211,7 @@ Page {
                                     }
                                 }
                                 onSupergroupFullInfoReceived: {
-                                    if (foundChatListDelegate.isSupergroup && groupId.toString() === foundChatListDelegate.foundChatInformation.type.supergroup_id.toString()) {
+                                    if (foundChatListDelegate.isSupergroup && groupId === foundChatListDelegate.foundChatInformation.type.supergroup_id) {
                                         if (foundChatListDelegate.relatedInformation.is_channel) {
                                             foundChatListItem.secondaryText.text = qsTr("%1 subscribers", "", groupFullInfo.member_count).arg(Number(groupFullInfo.member_count).toLocaleString(Qt.locale(), "f", 0));
                                         } else {
