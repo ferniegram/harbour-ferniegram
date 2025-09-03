@@ -37,7 +37,7 @@ class TDLibWrapper : public QObject {
     Q_OBJECT
     Q_PROPERTY(TDLibState::AuthorizationState authorizationState READ getAuthorizationState NOTIFY authorizationStateChanged)
     Q_PROPERTY(QVariantMap authorizationStateData READ getAuthorizationStateData NOTIFY authorizationStateChanged)
-    Q_PROPERTY(QString version MEMBER versionString)
+    Q_PROPERTY(QString version READ getVersionString)
     Q_PROPERTY(ConnectionState connectionState MEMBER connectionState NOTIFY connectionStateChanged)
     Q_PROPERTY(QVariantMap userInformation READ getUserInformation NOTIFY ownUserUpdated)
     Q_PROPERTY(QVariantMap options MEMBER options NOTIFY optionsUpdated)
@@ -121,6 +121,7 @@ public:
 
     Q_INVOKABLE inline TDLibState::AuthorizationState getAuthorizationState() const { return tdLibState->authorizationState; }
     Q_INVOKABLE inline QVariantMap getAuthorizationStateData() const { return tdLibState->authorizationStateData; }
+    Q_INVOKABLE inline QString getVersionString() const { return getOptionString("version"); }
 
     Q_INVOKABLE QVariantMap getUserInformation();
     Q_INVOKABLE QVariantMap getUserInformation(qlonglong userId);
@@ -130,14 +131,14 @@ public:
     Q_INVOKABLE bool hasSuperGroupNameInformation(const QString &name);
     Q_INVOKABLE QVariantMap getSupergroupInformationByName(const QString &name);
     Q_INVOKABLE UserPrivacySettingRule getUserPrivacySettingRule(UserPrivacySetting userPrivacySetting);
-    Q_INVOKABLE QVariantMap getUnreadMessageInformation();
-    Q_INVOKABLE QVariantMap getUnreadChatInformation();
+    Q_INVOKABLE QVariantMap getUnreadMessageInformation() const;
+    Q_INVOKABLE QVariantMap getUnreadChatInformation() const;
     Q_INVOKABLE QVariantMap getBasicGroup(qlonglong groupId) const;
     Q_INVOKABLE QVariantMap getSuperGroup(qlonglong groupId) const;
-    Q_INVOKABLE QVariantMap getChat(qlonglong chatId);
-    Q_INVOKABLE QVariantMap getSecretChatFromCache(qlonglong secretChatId);
-    Q_INVOKABLE QStringList getChatReactions(qlonglong chatId);
-    Q_INVOKABLE QString getOptionString(const QString &optionName);
+    Q_INVOKABLE QVariantMap getChat(qlonglong chatId) const;
+    Q_INVOKABLE QVariantMap getSecretChatFromCache(qlonglong secretChatId) const;
+    Q_INVOKABLE QStringList getChatReactions(qlonglong chatId) const;
+    Q_INVOKABLE QString getOptionString(const QString &optionName) const;
     Q_INVOKABLE void copyFileToDownloads(const QString &filePath, bool openAfterCopy = false);
     Q_INVOKABLE void openFileOnDevice(const QString &filePath);
     Q_INVOKABLE bool getJoinChatRequested();
@@ -271,7 +272,6 @@ public:
     static SecretChatState secretChatStateFromString(const QString &state);
 
 signals:
-    void versionDetected(const QString &version);
     void ownUserIdFound(qlonglong ownUserId);
     void authorizationStateChanged();
     void optionsUpdated();
@@ -373,7 +373,6 @@ public slots:
     // TDLibState
     void setInitialParameters();
 
-    void handleVersionDetected(const QString &version);
     void handleOptionUpdated(const QString &optionName, const QVariant &optionValue);
     void handleConnectionStateChanged(const QString &connectionState);
     void handleUserUpdated(const QVariantMap &updatedUserInformation);
@@ -423,7 +422,6 @@ private:
     TDLibReceiver *tdLibReceiver;
     TDLibState *tdLibState;
     DBusInterface *dbusInterface;
-    QString versionString;
     TDLibWrapper::ConnectionState connectionState;
     QVariantMap options;
     QVariantMap userInformation;

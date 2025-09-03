@@ -26,8 +26,7 @@
 #include <QJsonObject>
 #include <td/telegram/td_json_client.h>
 
-class TDLibReceiver : public QThread
-{
+class TDLibReceiver : public QThread {
     Q_OBJECT
     void run() Q_DECL_OVERRIDE {
         receiverLoop();
@@ -37,7 +36,6 @@ public:
     void setActive(bool active);
 
 signals:
-    void versionDetected(const QString &version);
     void authorizationStateChanged(const QString &authorizationState, const QVariantMap &authorizationStateData);
     void optionUpdated(const QString &optionName, const QVariant &optionValue);
     void connectionStateChanged(const QString &connectionState);

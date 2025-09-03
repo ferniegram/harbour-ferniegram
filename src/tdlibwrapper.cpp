@@ -185,7 +185,6 @@ TDLibWrapper::~TDLibWrapper() {
 void TDLibWrapper::initializeTDLibReceiver() {
     this->tdLibReceiver = new TDLibReceiver(this->tdLibClientId, this);
 
-    connect(this->tdLibReceiver, &TDLibReceiver::versionDetected, this, &TDLibWrapper::handleVersionDetected);
     connect(this->tdLibReceiver, &TDLibReceiver::optionUpdated, this, &TDLibWrapper::handleOptionUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::connectionStateChanged, this, &TDLibWrapper::handleConnectionStateChanged);
     connect(this->tdLibReceiver, &TDLibReceiver::userUpdated, this, &TDLibWrapper::handleUserUpdated);
@@ -1340,11 +1339,11 @@ TDLibWrapper::UserPrivacySettingRule TDLibWrapper::getUserPrivacySettingRule(TDL
     return this->userPrivacySettingRules.value(userPrivacySetting, UserPrivacySettingRule::RuleAllowAll);
 }
 
-QVariantMap TDLibWrapper::getUnreadMessageInformation() {
+QVariantMap TDLibWrapper::getUnreadMessageInformation() const {
     return this->unreadMessageInformation;
 }
 
-QVariantMap TDLibWrapper::getUnreadChatInformation()  {
+QVariantMap TDLibWrapper::getUnreadChatInformation() const {
     return this->unreadChatInformation;
 }
 
@@ -1370,12 +1369,12 @@ QVariantMap TDLibWrapper::getSuperGroup(qlonglong groupId) const {
     }
 }
 
-QVariantMap TDLibWrapper::getChat(qlonglong chatId) {
+QVariantMap TDLibWrapper::getChat(qlonglong chatId) const {
     LOG("Returning chat information for ID" << chatId);
     return this->chats.value(chatId);
 }
 
-QStringList TDLibWrapper::getChatReactions(qlonglong chatId) {
+QStringList TDLibWrapper::getChatReactions(qlonglong chatId) const {
     LOG("Obtaining chat reactions for chat" << chatId);
     const QVariant available_reactions(this->chats.value(chatId).value(CHAT_AVAILABLE_REACTIONS));
     const QVariantMap map(available_reactions.toMap());
@@ -1417,11 +1416,11 @@ QStringList TDLibWrapper::getChatReactions(qlonglong chatId) {
     }
 }
 
-QVariantMap TDLibWrapper::getSecretChatFromCache(qlonglong secretChatId) {
+QVariantMap TDLibWrapper::getSecretChatFromCache(qlonglong secretChatId) const {
     return this->secretChats.value(secretChatId);
 }
 
-QString TDLibWrapper::getOptionString(const QString &optionName) {
+QString TDLibWrapper::getOptionString(const QString &optionName) const {
     return this->options.value(optionName).toString();
 }
 
@@ -1469,24 +1468,22 @@ DBusAdaptor *TDLibWrapper::getDBusAdaptor() {
     return this->dbusInterface->getDBusAdaptor();
 }
 
-void TDLibWrapper::handleVersionDetected(const QString &version) {
-    this->versionString = version;
-    const QStringList parts(version.split('.'));
-    uint major, minor, release;
-    bool ok;
-    if (parts.count() >= 3 &&
-       (major = parts.at(0).toInt(&ok), ok) &&
-       (minor = parts.at(1).toInt(&ok), ok) &&
-       (release = parts.at(2).toInt(&ok), ok)) {
-        versionNumber = VERSION_NUMBER(major, minor, release);
-    }
-    emit versionDetected(version);
-}
-
 void TDLibWrapper::handleOptionUpdated(const QString &optionName, const QVariant &optionValue) {
     this->options.insert(optionName, optionValue);
     emit optionsUpdated();
-    if (optionName == "my_id") {
+    if (optionName == "version") {
+        const QString version = optionValue.toString();
+        LOG("Version detected" << version);
+        const QStringList parts = version.split('.');
+        uint major, minor, release;
+        bool ok;
+        if (parts.count() >= 3 &&
+           (major = parts.at(0).toInt(&ok), ok) &&
+           (minor = parts.at(1).toInt(&ok), ok) &&
+           (release = parts.at(2).toInt(&ok), ok)) {
+            versionNumber = VERSION_NUMBER(major, minor, release);
+        }
+    } else if (optionName == "my_id") {
         qlonglong ownUserId = optionValue.toLongLong();
         this->userInformation = this->getUserInformation(ownUserId);
         emit ownUserIdFound(ownUserId);
