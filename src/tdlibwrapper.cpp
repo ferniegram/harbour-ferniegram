@@ -90,6 +90,17 @@ namespace {
     const QString LIST("list");
     const QString ORDER("order");
     const QString IS_PINNED("is_pinned");
+    const QString LAST_MESSAGE("last_message");
+    const QString DRAFT_MESSAGE("draft_message");
+    const QString LAST_READ_INBOX_MESSAGE_ID("last_read_inbox_message_id");
+    const QString LAST_READ_OUTBOX_MESSAGE_ID("last_read_outbox_message_id");
+    const QString UNREAD_COUNT("unread_count");
+    const QString TITLE("title");
+    const QString NOTIFICATION_SETTINGS("notification_settings");
+    const QString UNREAD_MENTION_COUNT("unread_mention_count");
+    const QString UNREAD_REACTION_COUNT("unread_reaction_count");
+    const QString AVAILABLE_REACTIONS("available_reactions");
+    const QString IS_MARKED_AS_UNREAD("is_marked_as_unread");
     const QStringList ALL_FILE_TYPES(QStringList()
                                      << "fileTypeAnimation"
                                      << "fileTypeAudio"
@@ -193,17 +204,25 @@ void TDLibWrapper::initializeTDLibReceiver() {
     connect(this->tdLibReceiver, &TDLibReceiver::userUpdated, this, &TDLibWrapper::handleUserUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::userStatusUpdated, this, &TDLibWrapper::handleUserStatusUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::fileUpdated, this, &TDLibWrapper::handleFileUpdated);
+
     connect(this->tdLibReceiver, &TDLibReceiver::newChatDiscovered, this, &TDLibWrapper::handleNewChatDiscovered);
     connect(this->tdLibReceiver, &TDLibReceiver::chatAddedToList, this, &TDLibWrapper::handleChatAddedToList);
     connect(this->tdLibReceiver, &TDLibReceiver::chatRemovedFromList, this, &TDLibWrapper::handleChatRemovedFromList);
     connect(this->tdLibReceiver, &TDLibReceiver::chatPositionUpdated, this, &TDLibWrapper::handleChatPositionUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::chatLastMessageUpdated, this, &TDLibWrapper::handleChatLastMessageUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::chatDraftMessageUpdated, this, &TDLibWrapper::handleChatDraftMessageUpdated);
+    connect(this->tdLibReceiver, &TDLibReceiver::chatReadInboxUpdated, this, &TDLibWrapper::handleChatReadInboxUpdated);
+    connect(this->tdLibReceiver, &TDLibReceiver::chatReadOutboxUpdated, this, &TDLibWrapper::handleChatReadOutboxUpdated);
+    connect(this->tdLibReceiver, &TDLibReceiver::chatTitleUpdated, this, &TDLibWrapper::handleChatTitleUpdated);
+    connect(this->tdLibReceiver, &TDLibReceiver::chatPhotoUpdated, this, &TDLibWrapper::handleChatPhotoUpdated);
+    connect(this->tdLibReceiver, &TDLibReceiver::chatNotificationSettingsUpdated, this, &TDLibWrapper::handleChatNotificationSettingsUpdated);
+    connect(this->tdLibReceiver, &TDLibReceiver::chatIsMarkedAsUnreadUpdated, this, &TDLibWrapper::handleChatIsMarkedAsUnreadUpdated);
+    connect(this->tdLibReceiver, &TDLibReceiver::chatUnreadMentionCountUpdated, this, &TDLibWrapper::handleChatUnreadMentionCountUpdated);
+    connect(this->tdLibReceiver, &TDLibReceiver::chatUnreadReactionCountUpdated, this, &TDLibWrapper::handleChatUnreadReactionCountUpdated);
+    connect(this->tdLibReceiver, &TDLibReceiver::chatAvailableReactionsUpdated, this, &TDLibWrapper::handleChatAvailableReactionsUpdated);
+
     connect(this->tdLibReceiver, &TDLibReceiver::unreadMessageCountUpdated, this, &TDLibWrapper::handleUnreadMessageCountUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::unreadChatCountUpdated, this, &TDLibWrapper::handleUnreadChatCountUpdated);
-    connect(this->tdLibReceiver, &TDLibReceiver::chatReadInboxUpdated, this, &TDLibWrapper::chatReadInboxUpdated);
-    connect(this->tdLibReceiver, &TDLibReceiver::chatReadOutboxUpdated, this, &TDLibWrapper::chatReadOutboxUpdated);
-    connect(this->tdLibReceiver, &TDLibReceiver::chatAvailableReactionsUpdated, this, &TDLibWrapper::handleAvailableReactionsUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::basicGroupUpdated, this, &TDLibWrapper::handleBasicGroupUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::superGroupUpdated, this, &TDLibWrapper::handleSuperGroupUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::chatOnlineMemberCountUpdated, this, &TDLibWrapper::chatOnlineMemberCountUpdated);
@@ -216,7 +235,6 @@ void TDLibWrapper::initializeTDLibReceiver() {
     connect(this->tdLibReceiver, &TDLibReceiver::activeNotificationsUpdated, this, &TDLibWrapper::activeNotificationsUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::notificationGroupUpdated, this, &TDLibWrapper::notificationGroupUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::notificationUpdated, this, &TDLibWrapper::notificationUpdated);
-    connect(this->tdLibReceiver, &TDLibReceiver::chatNotificationSettingsUpdated, this, &TDLibWrapper::chatNotificationSettingsUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::messageContentUpdated, this, &TDLibWrapper::messageContentUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::messagesDeleted, this, &TDLibWrapper::messagesDeleted);
     connect(this->tdLibReceiver, &TDLibReceiver::chats, this, &TDLibWrapper::chatsReceived);
@@ -238,8 +256,6 @@ void TDLibWrapper::initializeTDLibReceiver() {
     connect(this->tdLibReceiver, &TDLibReceiver::supergroupFullInfoUpdated, this, &TDLibWrapper::supergroupFullInfoUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::userProfilePhotos, this, &TDLibWrapper::userProfilePhotosReceived);
     connect(this->tdLibReceiver, &TDLibReceiver::chatPermissionsUpdated, this, &TDLibWrapper::chatPermissionsUpdated);
-    connect(this->tdLibReceiver, &TDLibReceiver::chatPhotoUpdated, this, &TDLibWrapper::chatPhotoUpdated);
-    connect(this->tdLibReceiver, &TDLibReceiver::chatTitleUpdated, this, &TDLibWrapper::chatTitleUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::messageIsPinnedUpdated, this, &TDLibWrapper::handleMessageIsPinnedUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::usersReceived, this, &TDLibWrapper::usersReceived);
     connect(this->tdLibReceiver, &TDLibReceiver::messageSendersReceived, this, &TDLibWrapper::messageSendersReceived);
@@ -247,7 +263,6 @@ void TDLibWrapper::initializeTDLibReceiver() {
     connect(this->tdLibReceiver, &TDLibReceiver::serviceNotificationReceived, this, &TDLibWrapper::serviceNotificationReceived);
     connect(this->tdLibReceiver, &TDLibReceiver::contactsImported, this, &TDLibWrapper::contactsImported);
     connect(this->tdLibReceiver, &TDLibReceiver::messageEditedUpdated, this, &TDLibWrapper::messageEditedUpdated);
-    connect(this->tdLibReceiver, &TDLibReceiver::chatIsMarkedAsUnreadUpdated, this, &TDLibWrapper::chatIsMarkedAsUnreadUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::inlineQueryResults, this, &TDLibWrapper::inlineQueryResults);
     connect(this->tdLibReceiver, &TDLibReceiver::callbackQueryAnswer, this, &TDLibWrapper::callbackQueryAnswer);
     connect(this->tdLibReceiver, &TDLibReceiver::userPrivacySettingRules, this, &TDLibWrapper::handleUserPrivacySettingRules);
@@ -257,8 +272,6 @@ void TDLibWrapper::initializeTDLibReceiver() {
     connect(this->tdLibReceiver, &TDLibReceiver::okMapReceived, this, &TDLibWrapper::okMapReceived);
     connect(this->tdLibReceiver, &TDLibReceiver::sessionsReceived, this, &TDLibWrapper::sessionsReceived);
     connect(this->tdLibReceiver, &TDLibReceiver::availableReactionsReceived, this, &TDLibWrapper::availableReactionsReceived);
-    connect(this->tdLibReceiver, &TDLibReceiver::chatUnreadMentionCountUpdated, this, &TDLibWrapper::chatUnreadMentionCountUpdated);
-    connect(this->tdLibReceiver, &TDLibReceiver::chatUnreadReactionCountUpdated, this, &TDLibWrapper::chatUnreadReactionCountUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::activeEmojiReactionsUpdated, this, &TDLibWrapper::handleActiveEmojiReactionsUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::messagePropertiesReceived, this, &TDLibWrapper::messagePropertiesReceived);
     connect(this->tdLibReceiver, &TDLibReceiver::storageStatisticsFastReceived, this, &TDLibWrapper::storageStatisticsFastReceived);
@@ -1667,13 +1680,92 @@ void TDLibWrapper::updateChatPositions(qlonglong chatId, const QVariantList &pos
 }
 
 void TDLibWrapper::handleChatLastMessageUpdated(qlonglong chatId, const QVariantMap &lastMessage, const QVariantList &positions) {
+    LOG("Chat last message updated" << chatId);
+    QVariantMap chat = this->getChat(chatId);
+    chat.insert(LAST_MESSAGE, lastMessage);
+    this->chats.insert(chatId, chat);
+
     emit chatLastMessageUpdated(chatId, lastMessage);
     updateChatPositions(chatId, positions); // FIXME: this might affect performance
 }
 
 void TDLibWrapper::handleChatDraftMessageUpdated(qlonglong chatId, const QVariantMap &draftMessage, const QVariantList &positions) {
+    LOG("Chat draft message updated" << chatId);
+    QVariantMap chat = this->getChat(chatId);
+    chat.insert(DRAFT_MESSAGE, draftMessage);
+    this->chats.insert(chatId, chat);
+
     emit chatDraftMessageUpdated(chatId, draftMessage);
     updateChatPositions(chatId, positions); // FIXME: this might affect performance
+}
+
+void TDLibWrapper::handleChatReadInboxUpdated(const QString &chatId, const QString &lastReadInboxMessageId, int unreadCount) {
+    bool ok;
+    qlonglong id = chatId.toLongLong(&ok);
+    if (ok) {
+        QVariantMap chat = this->getChat(id);
+        chat.insert(LAST_READ_INBOX_MESSAGE_ID, lastReadInboxMessageId.toLongLong());
+        chat.insert(UNREAD_COUNT, unreadCount);
+        this->chats.insert(id, chat);
+    }
+    emit chatReadInboxUpdated(chatId, lastReadInboxMessageId, unreadCount);
+}
+
+void TDLibWrapper::handleChatReadOutboxUpdated(const QString &chatId, const QString &lastReadOutboxMessageId) {
+    bool ok;
+    qlonglong id = chatId.toLongLong(&ok);
+    if (ok) {
+        QVariantMap chat = this->getChat(id);
+        chat.insert(LAST_READ_OUTBOX_MESSAGE_ID, lastReadOutboxMessageId.toLongLong());
+        this->chats.insert(id, chat);
+    }
+    emit chatReadOutboxUpdated(chatId, lastReadOutboxMessageId);
+}
+
+void TDLibWrapper::handleChatTitleUpdated(qlonglong chatId, const QString &title) {
+    QVariantMap chat = this->getChat(chatId);
+    chat.insert(TITLE, title);
+    this->chats.insert(chatId, chat);
+    emit chatTitleUpdated(chatId, title);
+}
+
+void TDLibWrapper::handleChatPhotoUpdated(qlonglong chatId, const QVariantMap &photo) {
+    QVariantMap chat = this->getChat(chatId);
+    chat.insert(PHOTO, photo);
+    this->chats.insert(chatId, chat);
+    emit chatPhotoUpdated(chatId, photo);
+}
+
+void TDLibWrapper::handleChatNotificationSettingsUpdated(const QString &chatId, const QVariantMap chatNotificationSettings) {
+    bool ok;
+    qlonglong id = chatId.toLongLong(&ok);
+    if (ok) {
+        QVariantMap chat = this->getChat(id);
+        chat.insert(NOTIFICATION_SETTINGS, chatNotificationSettings);
+        this->chats.insert(id, chat);
+    }
+    emit chatNotificationSettingsUpdated(chatId, chatNotificationSettings);
+}
+
+void TDLibWrapper::handleChatIsMarkedAsUnreadUpdated(qlonglong chatId, bool chatIsMarkedAsUnread) {
+    QVariantMap chat = this->getChat(chatId);
+    chat.insert(IS_MARKED_AS_UNREAD, chatIsMarkedAsUnread);
+    this->chats.insert(chatId, chat);
+    emit chatIsMarkedAsUnreadUpdated(chatId, chatIsMarkedAsUnread);
+}
+
+void TDLibWrapper::handleChatUnreadMentionCountUpdated(qlonglong chatId, int unreadMentionCount) {
+    QVariantMap chat = this->getChat(chatId);
+    chat.insert(UNREAD_MENTION_COUNT, unreadMentionCount);
+    this->chats.insert(chatId, chat);
+    emit chatUnreadMentionCountUpdated(chatId, unreadMentionCount);
+}
+
+void TDLibWrapper::handleChatUnreadReactionCountUpdated(qlonglong chatId, int unreadReactionCount) {
+    QVariantMap chat = this->getChat(chatId);
+    chat.insert(UNREAD_REACTION_COUNT, unreadReactionCount);
+    this->chats.insert(chatId, chat);
+    emit chatUnreadReactionCountUpdated(chatId, unreadReactionCount);
 }
 
 void TDLibWrapper::handleChatReceived(const QVariantMap &chatInformation) {
@@ -1711,7 +1803,7 @@ void TDLibWrapper::handleUnreadChatCountUpdated(const QVariantMap &chatCountInfo
     }
 }
 
-void TDLibWrapper::handleAvailableReactionsUpdated(qlonglong chatId, const QVariantMap &availableReactions) {
+void TDLibWrapper::handleChatAvailableReactionsUpdated(qlonglong chatId, const QVariantMap &availableReactions) {
     LOG("Updating available reactions for chat" << chatId << availableReactions);
     QVariantMap chatInformation = this->getChat(chatId);
     chatInformation.insert(CHAT_AVAILABLE_REACTIONS, availableReactions);

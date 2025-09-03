@@ -390,16 +390,26 @@ public slots:
     void handleUserUpdated(const QVariantMap &updatedUserInformation);
     void handleUserStatusUpdated(const QString &userId, const QVariantMap &userStatusInformation);
     void handleFileUpdated(const QVariantMap &fileInformation);
+
     void handleNewChatDiscovered(const QVariantMap &chatInformation);
     void handleChatAddedToList(const QVariantMap &chatList, qlonglong id);
     void handleChatRemovedFromList(const QVariantMap &chatList, qlonglong id);
     void handleChatPositionUpdated(qlonglong chatId, const QVariantMap &position);
     void handleChatLastMessageUpdated(qlonglong chatId, const QVariantMap &lastMessage, const QVariantList &positions);
     void handleChatDraftMessageUpdated(qlonglong chatId, const QVariantMap &draftMessage, const QVariantList &positions);
+    
+    void handleChatReadInboxUpdated(const QString &chatId, const QString &lastReadInboxMessageId, int unreadCount);
+    void handleChatReadOutboxUpdated(const QString &chatId, const QString &lastReadOutboxMessageId);
+    void handleChatTitleUpdated(qlonglong chatId, const QString &title);
+    void handleChatPhotoUpdated(qlonglong chatId, const QVariantMap &photo);
+    void handleChatNotificationSettingsUpdated(const QString &chatId, const QVariantMap chatNotificationSettings);
+    void handleChatIsMarkedAsUnreadUpdated(qlonglong chatId, bool chatIsMarkedAsUnread);
+    void handleChatUnreadMentionCountUpdated(qlonglong chatId, int unreadMentionCount);
+    void handleChatUnreadReactionCountUpdated(qlonglong chatId, int unreadReactionCount);
+    void handleChatAvailableReactionsUpdated(qlonglong chatId, const QVariantMap &availableReactions);
     void handleChatReceived(const QVariantMap &chatInformation);
     void handleUnreadMessageCountUpdated(const QVariantMap &messageCountInformation);
     void handleUnreadChatCountUpdated(const QVariantMap &chatCountInformation);
-    void handleAvailableReactionsUpdated(qlonglong chatId, const QVariantMap &availableReactions);
     void handleBasicGroupUpdated(qlonglong groupId, const QVariantMap &groupInformation);
     void handleSuperGroupUpdated(qlonglong groupId, const QVariantMap &groupInformation);
     void handleStickerSets(const QVariantList &stickerSets);
