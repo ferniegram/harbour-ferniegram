@@ -34,6 +34,8 @@ namespace {
     const QString PHONE_NUMBER("phone_number");
     const QString _TYPE("@type");
     const QString _EXTRA("@extra");
+    const QString TYPE_REMOVE_CONTACTS("removeContacts");
+    const QString USER_IDS("user_ids");
     const QHash<int,QByteArray> ROLE_NAMES{
         {ContactsListModel::ContactRole::RoleDisplay, "display"},
         {ContactsListModel::ContactRole::RoleTitle, "title"},
@@ -54,7 +56,7 @@ ContactsListModel::ContactsListModel(TDLibWrapper *tdLibWrapper, QObject *parent
     connect(this->tdLibWrapper, &TDLibWrapper::usersReceived, this, &ContactsListModel::handleUsersReceived);
     connect(this->tdLibWrapper, &TDLibWrapper::userUpdated, this, &ContactsListModel::handleUserUpdated);
     connect(this->tdLibWrapper, &TDLibWrapper::contactsImported, this, &ContactsListModel::handleContactsImported);
-    connect(this->tdLibWrapper, &TDLibWrapper::okMapReceived, this, &ContactsListModel::handleOkMapReceived);
+    connect(this->tdLibWrapper, &TDLibWrapper::okReceived, this, &ContactsListModel::handleOkReceived);
 }
 
 QHash<int, QByteArray> ContactsListModel::roleNames() const {
@@ -139,16 +141,19 @@ void ContactsListModel::handleContactsImported(const QVariantList &/*importerCou
     } else emit contactsImported();
 }
 
-void ContactsListModel::handleOkMapReceived(const QString &type, const QVariantMap &extra) {
-    if (type == "removeContacts") {
-        LOG("Removing contacts");
-        for (QVariant userId : extra.value("user_ids").toList()) {
-            int i = contactIds.indexOf(userId.toLongLong());
-            if (i < 0) continue; // why did i put return here originally?
-            beginRemoveRows(QModelIndex(), i, i);
-            contactIds.removeAt(i);
-            endRemoveRows();
-            // here no need to sort
+void ContactsListModel::handleOkReceived(const QVariant &extra) {
+    if (extra.userType() == QMetaType::QVariantMap) {
+        const QVariantMap &extraMap = extra.toMap();
+        if (extraMap.value(_TYPE).toString() == TYPE_REMOVE_CONTACTS) {
+            LOG("Removing contacts");
+            for (QVariant userId : extraMap.value(USER_IDS).toList()) {
+                int i = contactIds.indexOf(userId.toLongLong());
+                if (i < 0) continue; // why did i put return here originally?
+                beginRemoveRows(QModelIndex(), i, i);
+                contactIds.removeAt(i);
+                endRemoveRows();
+                // here no need to sort
+            }
         }
     }
 }
