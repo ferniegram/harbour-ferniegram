@@ -365,7 +365,7 @@ ChatListModel::ChatListModel(TDLibWrapper *tdLibWrapper, AppSettings *appSetting
     connect(tdLibWrapper, &TDLibWrapper::chatReadOutboxUpdated, this, &ChatListModel::handleChatReadOutboxUpdated);
     connect(tdLibWrapper, &TDLibWrapper::chatPhotoUpdated, this, &ChatListModel::handleChatPhotoUpdated);
     connect(tdLibWrapper, &TDLibWrapper::chatPinnedMessageUpdated, this, &ChatListModel::handleChatPinnedMessageUpdated);
-    connect(tdLibWrapper, &TDLibWrapper::messageSendSucceeded, this, &ChatListModel::handleMessageSendSucceeded);
+    //connect(tdLibWrapper, &TDLibWrapper::messageSendSucceeded, this, &ChatListModel::handleMessageSendSucceeded); // disabled for now, let's see if it will fix (or break) anything
     connect(tdLibWrapper, &TDLibWrapper::chatNotificationSettingsUpdated, this, &ChatListModel::handleChatNotificationSettingsUpdated);
     connect(tdLibWrapper, &TDLibWrapper::superGroupUpdated, this, &ChatListModel::handleGroupUpdated);
     connect(tdLibWrapper, &TDLibWrapper::basicGroupUpdated, this, &ChatListModel::handleGroupUpdated);
@@ -708,6 +708,7 @@ void ChatListModel::handleChatPinnedMessageUpdated(qlonglong chatId, qlonglong p
 
 void ChatListModel::handleMessageSendSucceeded(qlonglong messageId, qlonglong oldMessageId, const QVariantMap &message)
 {
+    // is this really needed? and doesn't it break some stuff
     bool ok;
     const qlonglong chatId(message.value(CHAT_ID).toLongLong(&ok));
     if (ok) {
