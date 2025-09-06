@@ -65,8 +65,11 @@ Dialog {
                     Repeater {
                         model: [
                             {icon: 'image://theme/icon-m-history', title: qsTr("Archived Chats"), description: qsTr("Move any chat into your Archive and back using the context menu.")},
-                            {icon: 'image://theme/icon-m-camera', title: qsTr("Stories"), description: qsTr("Archive Stories from your contacts separately from chats with them.")}
                         ]
+                        Component.onCompleted: {
+                            // unused for now, but reserved for translations
+                            [{icon: 'image://theme/icon-m-camera', title: qsTr("Stories"), description: qsTr("Archive Stories from your contacts separately from chats with them.")}]
+                        }
 
                         Row {
                             width: parent.width
