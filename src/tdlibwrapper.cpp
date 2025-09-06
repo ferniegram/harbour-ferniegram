@@ -281,12 +281,12 @@ void TDLibWrapper::initializeTDLibReceiver() {
     connect(this->tdLibReceiver, &TDLibReceiver::diceEmojisUpdated, this, &TDLibWrapper::handleDiceEmojisUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::suggestedActionsUpdated, this, &TDLibWrapper::suggestedActionsUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::chatListsReceived, this, &TDLibWrapper::chatListsReceived);
+    connect(this->tdLibReceiver, &TDLibReceiver::archiveChatListSettingsReceived, this, &TDLibWrapper::archiveChatListSettingsReceived);
 
     this->tdLibReceiver->start();
 }
 
-void TDLibWrapper::sendRequest(const QVariantMap &requestObject)
-{
+void TDLibWrapper::sendRequest(const QVariantMap &requestObject) {
     if (this->isLoggingOut) {
         LOG("Sending request to TD Lib skipped as logging out is in progress, object type name:" << requestObject.value(_TYPE).toString());
         return;
@@ -1425,6 +1425,10 @@ QString TDLibWrapper::getOptionString(const QString &optionName) {
     return this->options.value(optionName).toString();
 }
 
+bool TDLibWrapper::getOptionBoolean(const QString &optionName) {
+    return this->options.value(optionName).toBool();
+}
+
 void TDLibWrapper::copyFileToDownloads(const QString &filePath, bool openAfterCopy) {
     LOG("Copy file to downloads" << filePath << openAfterCopy);
     QFileInfo fileInfo(filePath);
@@ -2340,4 +2344,22 @@ void TDLibWrapper::getChatListsToAddChat(qlonglong chatId) {
 void TDLibWrapper::addChatToList(qlonglong chatId, bool archive) {
     LOG("Adding chat to a list" << chatId << "archive" << archive);
     sendRequest(QVariantMap{{_TYPE, "addChatToList"}, {CHAT_ID, chatId}, {CHAT_LIST, QVariantMap{{_TYPE, archive ? TYPE_CHAT_LIST_ARCHIVE : TYPE_CHAT_LIST_MAIN}}}});
+}
+
+void TDLibWrapper::getArchiveChatListSettings() {
+    LOG("Retrieving archive chat list settings");
+    sendRequest(QVariantMap{{_TYPE, "getArchiveChatListSettings"}});
+}
+
+void TDLibWrapper::setArchiveChatListSettings(bool archiveAndMuteNewChatsFromUnknownUsers, bool keepUnmutedChatsArchived, bool keepChatsFromFoldersArchived) {
+    // If this value is true while we can't set it, AUTOARCHIVE_NOT_AVAILABLE error will show up, so we double-check
+    if (!this->options.value("can_archive_and_mute_new_chats_from_unknown_users").toBool())
+        archiveAndMuteNewChatsFromUnknownUsers = false;
+
+    LOG("Setting archive chat list settings");
+    sendRequest(QVariantMap{{_TYPE, "setArchiveChatListSettings"}, {"settings", QVariantMap{
+                                                                        {"archive_and_mute_new_chats_from_unknown_users", archiveAndMuteNewChatsFromUnknownUsers},
+                                                                        {"keep_unmuted_chats_archived", keepUnmutedChatsArchived},
+                                                                        {"keep_chats_from_folders_archived", keepChatsFromFoldersArchived}
+                                                                    }}});
 }

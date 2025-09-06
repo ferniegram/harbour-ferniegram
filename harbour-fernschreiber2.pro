@@ -135,12 +135,14 @@ DISTFILES += qml/harbour-fernschreiber2.qml \
     qml/components/settingsPage/AccordionItem.qml \
     qml/components/settingsPage/ResponsiveGrid.qml \
     qml/components/settingsPage/SettingsAppearance.qml \
+    qml/components/settingsPage/SettingsArchiveChatList.qml \
     qml/components/settingsPage/SettingsBehavior.qml \
     qml/components/settingsPage/SettingsPrivacy.qml \
     qml/components/settingsPage/SettingsSession.qml \
     qml/components/settingsPage/SettingsStorage.qml \
     qml/components/settingsPage/SettingsUserProfile.qml \
     qml/dialogs/AddContactDialog.qml \
+    qml/dialogs/ArchiveChatListTutorialDialog.qml \
     qml/js/debug.js \
     qml/js/functions.js \
     qml/pages/ArchivedChatsPage.qml \

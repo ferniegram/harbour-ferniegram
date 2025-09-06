@@ -29,6 +29,8 @@ Page {
     id: settingsPage
     allowedOrientations: Orientation.All
 
+    property string initialArea: 'profile'
+
     SilicaFlickable {
         id: settingsContainer
         contentHeight: column.height
@@ -45,10 +47,16 @@ Page {
 
             Accordion {
                 flickable: settingsContainer
-                SettingsUserProfile { expanded: true; asynchronous: false }
+                Component.onCompleted: if (initialArea)
+                                           setActiveArea(initialArea)
+
+                SettingsUserProfile {
+                    asynchronous: false
+                }
                 SettingsSession {}
                 SettingsPrivacy {}
                 SettingsBehavior {}
+                SettingsArchiveChatList {}
                 SettingsAppearance {}
                 SettingsStorage {}
             }

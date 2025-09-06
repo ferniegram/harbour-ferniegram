@@ -11,5 +11,28 @@ Page {
         headerText: qsTr("Archive")
         model: archiveChatListModel
         inArchive: true
+
+        PullDownMenu {
+            MenuItem {
+                text: qsTr("How does it work?")
+                onClicked: pageStack.push(Qt.resolvedUrl("../dialogs/ArchiveChatListTutorialDialog.qml"))
+            }
+            MenuItem {
+                text: qsTr("Archive settings")
+                onClicked: pageStack.push(Qt.resolvedUrl("SettingsPage.qml"), {initialArea: 'archive'})
+            }
+        }
     }
+
+    Timer {
+        id: openTutorialTimer
+        interval: 0
+        onTriggered: {
+            pageStack.completeAnimation()
+            pageStack.push(Qt.resolvedUrl("../dialogs/ArchiveChatListTutorialDialog.qml"))
+        }
+    }
+
+    Component.onCompleted: if (!appSettings.archiveChatListHintCompleted)
+                               openTutorialTimer.start()
 }

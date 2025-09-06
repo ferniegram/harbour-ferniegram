@@ -52,6 +52,7 @@ class AppSettings : public QObject {
     Q_PROPERTY(bool videoStickers READ videoStickers WRITE setVideoStickers NOTIFY videoStickersChanged)
     Q_PROPERTY(bool sendMarkdown READ sendMarkdown WRITE setSendMarkdown NOTIFY sendMarkdownChanged)
     Q_PROPERTY(bool unreadCountIncludeMuted READ unreadCountIncludeMuted WRITE setUnreadCountIncludeMuted NOTIFY unreadCountIncludeMutedChanged)
+    Q_PROPERTY(bool archiveChatListHintCompleted READ archiveChatListHintCompleted WRITE setArchiveChatListHintCompleted NOTIFY archiveChatListHintCompletedChanged)
 public:
     enum SponsoredMess {
         SponsoredMessHandle,
@@ -154,6 +155,9 @@ public:
     bool unreadCountIncludeMuted() const;
     void setUnreadCountIncludeMuted(bool value);
 
+    bool archiveChatListHintCompleted() const;
+    void setArchiveChatListHintCompleted(bool value);
+
 signals:
     void sendByEnterChanged();
     void focusTextAreaAfterSendChanged();
@@ -183,6 +187,7 @@ signals:
     void formattedTranslateChanged();
     void sendMarkdownChanged();
     void unreadCountIncludeMutedChanged();
+    void archiveChatListHintCompletedChanged();
 
 private:
     QSettings settings;

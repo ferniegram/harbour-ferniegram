@@ -49,6 +49,7 @@ namespace {
     const QString FORMATTED_TRANSLATE("formattedTranslate");
     const QString SEND_MARKDOWN("sendMarkdown");
     const QString UNREAD_COUNT_INCLUDE_MUTED("unreadCountIncludeMuted");
+    const QString ARCHIVE_CHAT_LIST_HINT_COMPLETED("archiveChatListHintCompleted");
 }
 
 AppSettings::AppSettings(QObject *parent) :
@@ -427,5 +428,16 @@ void AppSettings::setUnreadCountIncludeMuted(bool value) {
         LOG(UNREAD_COUNT_INCLUDE_MUTED << value);
         settings.setValue(UNREAD_COUNT_INCLUDE_MUTED, value);
         emit unreadCountIncludeMutedChanged();
+    }
+}
+
+bool AppSettings::archiveChatListHintCompleted() const {
+    return settings.value(ARCHIVE_CHAT_LIST_HINT_COMPLETED).toBool();
+}
+void AppSettings::setArchiveChatListHintCompleted(bool value) {
+    if (archiveChatListHintCompleted() != value) {
+        LOG(ARCHIVE_CHAT_LIST_HINT_COMPLETED << value);
+        settings.setValue(ARCHIVE_CHAT_LIST_HINT_COMPLETED, value);
+        emit archiveChatListHintCompletedChanged();
     }
 }

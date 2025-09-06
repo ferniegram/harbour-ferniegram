@@ -21,7 +21,8 @@ import QtQuick 2.6
 import Sailfish.Silica 1.0
 
 AccordionItem {
-    text: qsTr("Appearance")
+    name: "appearance"
+    title: qsTr("Appearance")
     clip: heightBehavior.enabled || heightAnimation.running
 
     // One-shot behavior

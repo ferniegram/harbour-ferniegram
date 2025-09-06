@@ -187,6 +187,7 @@ TDLibReceiver::TDLibReceiver(int tdLibClientId, QObject *parent) : QThread(paren
     handlers.insert("updateDiceEmojis", &TDLibReceiver::processUpdateDiceEmojis);
     handlers.insert("updateSuggestedActions", &TDLibReceiver::processUpdateSuggestedActions);
     handlers.insert("chatLists", &TDLibReceiver::processChatLists);
+    handlers.insert("archiveChatListSettings", &TDLibReceiver::processArchiveChatListSettings);
 }
 
 void TDLibReceiver::setActive(bool active)
@@ -1058,4 +1059,13 @@ void TDLibReceiver::processUpdateSuggestedActions(const QVariantMap &receivedInf
 void TDLibReceiver::processChatLists(const QVariantMap &receivedInformation) {
     LOG("Received chatLists");
     emit chatListsReceived(receivedInformation.value(_EXTRA).toLongLong(), receivedInformation.value(CHAT_LISTS).toList());
+}
+
+void TDLibReceiver::processArchiveChatListSettings(const QVariantMap &receivedInformation) {
+    LOG("Received archiveChatListSettings");
+    emit archiveChatListSettingsReceived(
+                receivedInformation.value("archive_and_mute_new_chats_from_unknown_users").toBool(),
+                receivedInformation.value("keep_unmuted_chats_archived").toBool(),
+                receivedInformation.value("keep_chats_from_folders_archived").toBool()
+                );
 }

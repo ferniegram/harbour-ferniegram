@@ -148,6 +148,7 @@ public:
     Q_INVOKABLE QVariantMap getSecretChatFromCache(qlonglong secretChatId);
     Q_INVOKABLE QStringList getChatReactions(qlonglong chatId);
     Q_INVOKABLE QString getOptionString(const QString &optionName);
+    Q_INVOKABLE bool getOptionBoolean(const QString &optionName);
     Q_INVOKABLE void copyFileToDownloads(const QString &filePath, bool openAfterCopy = false);
     Q_INVOKABLE void openFileOnDevice(const QString &filePath);
     Q_INVOKABLE bool getJoinChatRequested();
@@ -155,6 +156,8 @@ public:
     Q_INVOKABLE bool isDiceEmoji(const QString &text);
     Q_INVOKABLE void getChatListsToAddChat(qlonglong chatId);
     Q_INVOKABLE void addChatToList(qlonglong chatId, bool archive);
+    Q_INVOKABLE void getArchiveChatListSettings();
+    Q_INVOKABLE void setArchiveChatListSettings(bool archiveAndMuteNewChatsFromUnknownUsers, bool keepUnmutedChatsArchived, bool keepChatsFromFoldersArchived);
 
     DBusAdaptor *getDBusAdaptor();
 
@@ -377,6 +380,7 @@ signals:
     void emojiKeywordsReceived(const QString &text, const QVariantList &emojis);
     void suggestedActionsUpdated(const QVariantList added, const QVariantList removed);
     void chatListsReceived(qlonglong chatId, const QVariantList &chatLists);
+    void archiveChatListSettingsReceived(bool archiveAndMuteNewChatsFromUnknownUsers, bool keepUnmutedChatsArchived, bool keepChatsFromFoldersArchived);
 
     // Signals not directly used by TDLibWrapper
     void chatListsReset();
