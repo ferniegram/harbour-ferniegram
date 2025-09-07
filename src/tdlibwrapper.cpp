@@ -63,6 +63,8 @@ namespace {
     const QString TYPE_CHAT_POSITION("chatPosition");
     const QString TYPE_CHAT_LIST_MAIN("chatListMain");
     const QString TYPE_CHAT_LIST_ARCHIVE("chatListArchive");
+    const QString TYPE_CHAT_LIST_FOLDER("chatListFolder");
+    const QString CHAT_FOLDER_ID("chat_folder_id");
     const QString CHAT_AVAILABLE_REACTIONS("available_reactions");
     const QString CHAT_AVAILABLE_REACTIONS_ALL("chatAvailableReactionsAll");
     const QString CHAT_AVAILABLE_REACTIONS_SOME("chatAvailableReactionsSome");
@@ -131,8 +133,20 @@ QVariantMap findChatPosition(const QVariantList &positions, bool archive = false
     for (const QVariant &positionVariant : positions) {
         const QVariantMap position = positionVariant.toMap();
         if (position.value(_TYPE).toString() == TYPE_CHAT_POSITION &&
-                position.value(LIST).toMap().value(_TYPE) == (archive ? TYPE_CHAT_LIST_ARCHIVE : TYPE_CHAT_LIST_MAIN))
+                position.value(LIST).toMap().value(_TYPE).toString() == (archive ? TYPE_CHAT_LIST_ARCHIVE : TYPE_CHAT_LIST_MAIN))
             return position;
+    }
+    return QVariantMap();
+}
+
+QVariantMap findChatPositionForFolder(const QVariantList &positions, int folderId) {
+    for (const QVariant &positionVariant : positions) {
+        const QVariantMap position = positionVariant.toMap();
+        if (position.value(_TYPE).toString() == TYPE_CHAT_POSITION) {
+            const QVariantMap chatList = position.value(LIST).toMap();
+            if (chatList.value(_TYPE).toString() == TYPE_CHAT_LIST_FOLDER && chatList.value(CHAT_FOLDER_ID).toInt() == folderId)
+                return position;
+        }
     }
     return QVariantMap();
 }
@@ -336,11 +350,20 @@ void TDLibWrapper::logout() {
 }
 
 void TDLibWrapper::loadChats(bool archive) {
-    LOG("Loading chats");
+    LOG("Loading chats archive:" << archive);
     this->sendRequest(QVariantMap{
                           {_TYPE, "loadChats"},
                           {"limit", 5},
                           {CHAT_LIST, QVariantMap{{_TYPE, (archive ? TYPE_CHAT_LIST_ARCHIVE : TYPE_CHAT_LIST_MAIN)}}}
+                      });
+}
+
+void TDLibWrapper::loadChatsForFolder(int folderId) {
+    LOG("Loading chats for folder" << folderId);
+    this->sendRequest(QVariantMap{
+                          {_TYPE, "loadChats"},
+                          {"limit", 5},
+                          {CHAT_LIST, QVariantMap{{_TYPE, TYPE_CHAT_LIST_FOLDER}, {CHAT_FOLDER_ID, folderId}}}
                       });
 }
 
@@ -1002,10 +1025,21 @@ void TDLibWrapper::toggleChatIsMarkedAsUnread(qlonglong chatId, bool isMarkedAsU
 }
 
 void TDLibWrapper::toggleChatIsPinned(qlonglong chatId, bool isPinned, bool archive) {
-    LOG("Toggle chat is pinned" << chatId << isPinned);
+    LOG("Toggle chat is pinned archive:" << archive << chatId << isPinned);
     this->sendRequest(QVariantMap{
         {_TYPE, "toggleChatIsPinned"},
         {CHAT_LIST, QVariantMap{{_TYPE, archive ? TYPE_CHAT_LIST_ARCHIVE : TYPE_CHAT_LIST_MAIN}}},
+        {CHAT_ID, chatId},
+        {"is_pinned", isPinned},
+        {"is_marked_as_unread", isPinned}
+    });
+}
+
+void TDLibWrapper::toggleChatIsPinnedForFolder(qlonglong chatId, bool isPinned, int folderId) {
+    LOG("Toggle chat is pinned in folder" << folderId << chatId << isPinned);
+    this->sendRequest(QVariantMap{
+        {_TYPE, "toggleChatIsPinned"},
+        {CHAT_LIST, QVariantMap{{_TYPE, TYPE_CHAT_LIST_FOLDER}, {CHAT_FOLDER_ID, folderId}}},
         {CHAT_ID, chatId},
         {"is_pinned", isPinned},
         {"is_marked_as_unread", isPinned}
@@ -1619,7 +1653,12 @@ void TDLibWrapper::handleNewChatDiscovered(const QVariantMap &chatInformation) {
             LOG("Newly discovered chat added to archive list" << chatId);
             const QVariantMap position = findChatPosition(positions, true);
             emit chatAddedToArchiveList(chatInformation, position.value(ORDER).toLongLong(), position.value(IS_PINNED).toBool());
-        } else LOG("Newly discovered chat is in an unused chat list" << chatId);
+        } else if (chatListType == TYPE_CHAT_LIST_FOLDER) {
+            const int folderId = chatList.toMap().value(CHAT_FOLDER_ID).toInt();
+            LOG("Newly discovered chat added to a folder list" << folderId);
+            const QVariantMap position = findChatPositionForFolder(positions, folderId);
+            emit chatAddedToFolderList(folderId, chatInformation, position.value(ORDER).toLongLong(), position.value(IS_PINNED).toBool());
+        }
     }
 }
 
@@ -1638,7 +1677,12 @@ void TDLibWrapper::handleChatAddedToList(const QVariantMap &chatList, qlonglong 
             LOG("Chat added to archive list" << chatId);
             const QVariantMap position = findChatPosition(positions, true);
             emit chatAddedToArchiveList(chatInformation, position.value(ORDER).toLongLong(), position.value(IS_PINNED).toBool());
-        } else LOG("Chat added to an unused list" << chatId);
+        } else if (chatListType == TYPE_CHAT_LIST_FOLDER) {
+            const int folderId = chatList.value(CHAT_FOLDER_ID).toInt();
+            LOG("Chat added to a folder list" << folderId);
+            const QVariantMap position = findChatPositionForFolder(positions, folderId);
+            emit chatAddedToFolderList(folderId, chatInformation, position.value(ORDER).toLongLong(), position.value(IS_PINNED).toBool());
+        }
     }
 }
 
@@ -1650,11 +1694,16 @@ void TDLibWrapper::handleChatRemovedFromList(const QVariantMap &chatList, qlongl
     } else if (chatListType == TYPE_CHAT_LIST_ARCHIVE) {
         LOG("Chat removed from archive list" << chatId);
         emit chatRemovedFromArchiveList(chatId);
-    } else LOG("Chat removed from an unused list" << chatId);
+    } else if (chatListType == TYPE_CHAT_LIST_FOLDER) {
+        const int folderId = chatList.value(CHAT_FOLDER_ID).toInt();
+        LOG("Chat removed from a folder list" << folderId);
+        emit chatRemovedFromFolderList(folderId, chatId);
+    }
 }
 
 void TDLibWrapper::handleChatPositionUpdated(qlonglong chatId, const QVariantMap &position) {
-    const QString chatListType = position.value(LIST).toMap().value(_TYPE).toString();
+    const QVariantMap chatList = position.value(LIST).toMap();
+    const QString chatListType = chatList.value(_TYPE).toString();
     const qlonglong order = position.value(ORDER).toLongLong();
     const bool isPinned = position.value(IS_PINNED).toBool();
 
@@ -1664,8 +1713,11 @@ void TDLibWrapper::handleChatPositionUpdated(qlonglong chatId, const QVariantMap
     } else if (chatListType == TYPE_CHAT_LIST_ARCHIVE) {
         LOG("Chat position updated in archive list for ID" << chatId << "new order" << order << "is pinned" << isPinned);
         emit archiveChatListChatPositionUpdated(chatId, order, isPinned);
-    } else
-        LOG("Received chat position update for an unused list" << chatListType << "ID" << chatId << "new order" << order << "is pinned" << isPinned);
+    } else if (chatListType == TYPE_CHAT_LIST_FOLDER) {
+        const int folderId = chatList.value(CHAT_FOLDER_ID).toInt();
+        LOG("Chat position updated in a folder list" << folderId << "for ID" << chatId << "new order" << order << "is pinned" << isPinned);
+        emit folderChatListChatPositionUpdated(folderId, chatId, order, isPinned);
+    }
 
     emit someChatPositionUpdated();
 }
@@ -1786,25 +1838,35 @@ void TDLibWrapper::handleChatReceived(const QVariantMap &chatInformation) {
 }
 
 void TDLibWrapper::handleUnreadMessageCountUpdated(const QVariantMap &messageCountInformation) {
-    const QString chatListType = messageCountInformation.value(CHAT_LIST).toMap().value(_TYPE).toString();
+    const QVariantMap chatList = messageCountInformation.value(CHAT_LIST).toMap();
+    const QString chatListType = chatList.value(_TYPE).toString();
     if (chatListType == TYPE_CHAT_LIST_MAIN) {
         LOG("Received unread message count update for main chat list");
         emit mainChatListUnreadMessageCountUpdated(messageCountInformation);
     } else if (chatListType == TYPE_CHAT_LIST_ARCHIVE) {
         LOG("Received unread message count update for archive chat list");
         emit archiveChatListUnreadMessageCountUpdated(messageCountInformation);
-    } else LOG("Received unread message count update for an unused chat list");
+    } else if (chatListType == TYPE_CHAT_LIST_FOLDER) {
+        const int folderId = chatList.value(CHAT_FOLDER_ID).toInt();
+        LOG("Received unread message count update for a folder chat list" << folderId);
+        emit folderChatListUnreadMessageCountUpdated(folderId, messageCountInformation);
+    }
 }
 
 void TDLibWrapper::handleUnreadChatCountUpdated(const QVariantMap &chatCountInformation) {
-    const QString chatListType = chatCountInformation.value(CHAT_LIST).toMap().value(_TYPE).toString();
+    const QVariantMap chatList = chatCountInformation.value(CHAT_LIST).toMap();
+    const QString chatListType = chatList.value(_TYPE).toString();
     if (chatListType == TYPE_CHAT_LIST_MAIN) {
         LOG("Received unread chat count update for main chat list");
         emit mainChatListUnreadChatCountUpdated(chatCountInformation);
     } else if (chatListType == TYPE_CHAT_LIST_ARCHIVE) {
         LOG("Received unread chat count update for archive chat list");
         emit archiveChatListUnreadChatCountUpdated(chatCountInformation);
-    } else LOG("Received unread chat count update for an unused chat list");
+    } else if (chatListType == TYPE_CHAT_LIST_FOLDER) {
+        const int folderId = chatList.value(CHAT_FOLDER_ID).toInt();
+        LOG("Received unread chat count update for a folder chat list" << folderId);
+        emit folderChatListUnreadChatCountUpdated(folderId, chatCountInformation);
+    }
 }
 
 void TDLibWrapper::handleChatAvailableReactionsUpdated(qlonglong chatId, const QVariantMap &availableReactions) {
