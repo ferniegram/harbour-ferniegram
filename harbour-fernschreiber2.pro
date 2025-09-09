@@ -24,12 +24,14 @@ SOURCES += src/harbour-fernschreiber2.cpp \
     src/appsettings.cpp \
     src/boolfiltermodel.cpp \
     src/chatdata.cpp \
+    src/chatfoldersmodel.cpp \
     src/chatpermissionfiltermodel.cpp \
     src/chatlistmodel.cpp \
     src/chatmodel.cpp \
     src/contactsmodel.cpp \
     src/dbusadaptor.cpp \
     src/dbusinterface.cpp \
+    src/folderchatlistmodel.cpp \
     src/suggestedactionsmodel.cpp \
     src/utilities.cpp \
     src/knownusersmodel.cpp \
@@ -238,6 +240,7 @@ HEADERS += \
     src/appsettings.h \
     src/boolfiltermodel.h \
     src/chatdata.h \
+    src/chatfoldersmodel.h \
     src/chatpermissionfiltermodel.h \
     src/chatlistmodel.h \
     src/chatmodel.h \
@@ -246,6 +249,7 @@ HEADERS += \
     src/dbusinterface.h \
     src/debuglog.h \
     src/debuglogjs.h \
+    src/folderchatlistmodel.h \
     src/suggestedactionsmodel.h \
     src/utilities.h \
     src/knownusersmodel.h \

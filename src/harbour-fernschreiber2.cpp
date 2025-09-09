@@ -55,6 +55,7 @@
 #include "utilities.h"
 #include "knownusersmodel.h"
 #include "contactsmodel.h"
+#include "chatfoldersmodel.h"
 
 // The default filter can be overridden by QT_LOGGING_RULES envinronment variable, e.g.
 // QT_LOGGING_RULES="fernschreiber2.*=true" harbour-fernschreiber2
@@ -177,6 +178,10 @@ int main(int argc, char *argv[])
     
     ContactsModel contactsModel(tdLibWrapper, view.data());
     context->setContextProperty("contactsModel", &contactsModel);
+
+    ChatFoldersModel chatFoldersModel(tdLibWrapper, appSettings, utilities, view.data());
+    context->setContextProperty("chatFoldersModel", &chatFoldersModel);
+    qmlRegisterUncreatableType<ChatFoldersModel>(uri, 1, 0, "ChatFoldersModel", QString());
 
     view->setSource(SailfishApp::pathTo("qml/harbour-fernschreiber2.qml"));
     view->show();

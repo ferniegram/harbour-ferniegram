@@ -34,7 +34,7 @@ class ChatListModel : public QAbstractListModel
     Q_PROPERTY(int unreadChatCount READ getUnreadChatCount NOTIFY unreadChatCountChanged)
     Q_PROPERTY(int unreadMessageCount READ getUnreadMessageCount NOTIFY unreadMessageCountChanged)
 public:
-    ChatListModel(TDLibWrapper *tdLibWrapper, AppSettings *appSettings, Utilities *utilities, bool archive = false);
+    ChatListModel(TDLibWrapper *tdLibWrapper, AppSettings *appSettings, Utilities *utilities, bool archive = false, bool doNotConnectChatListSignals = false);
     ~ChatListModel() override;
 
     QHash<int,QByteArray> roleNames() const Q_DECL_OVERRIDE;
@@ -44,26 +44,28 @@ public:
     Q_INVOKABLE void redrawModel();
     Q_INVOKABLE QVariantMap get(int row);
 
-    int getUnreadChatCount() const;
-    int getUnreadMessageCount() const;
+    virtual int getUnreadChatCount() const;
+    virtual int getUnreadMessageCount() const;
 
 public slots:
     Q_INVOKABLE void reset();
 
     Q_INVOKABLE void calculateUnreadState();
 
+    void handleChatAddedToList(ChatData *chatData, qlonglong order, bool isPinned);
+
 signals:
     void unreadChatCountChanged();
     void unreadMessageCountChanged();
 
-private slots:
+protected slots:
     void handleUnreadChatCountUpdated(const QVariantMap &chatCountInformation);
     void handleUnreadMessageCountUpdated(const QVariantMap &messageCountInformation);
 
-    void handleChatAddedToList(ChatData *chatData, qlonglong order, bool isPinned);
     void handleChatRemovedFromList(qlonglong chatId);
     void handleChatPositionUpdated(qlonglong chatId, qlonglong order, bool isPinned);
 
+private slots:
     void handleChatRolesChanged(qlonglong chatId, const QVector<int> changedRoles);
     void handleChatPinnedMessageUpdated(qlonglong chatId, qlonglong pinnedMessageId);
     void handleMessageSendSucceeded(qlonglong messageId, qlonglong oldMessageId, const QVariantMap &message);
@@ -92,12 +94,15 @@ private:
 
 private:
     TDLibWrapper *tdLibWrapper;
-    AppSettings *appSettings;
     Utilities *utilities;
     QTimer *relativeTimeRefreshTimer;
     QList<ListChatData*> chatList; // should we use a list of pointers to ListChatData or of plain ListChatData?
     QHash<qlonglong, int> chatIndexMap;
     bool archive;
+
+protected:
+    AppSettings *appSettings;
+
     int unreadChatCount;
     int unreadUnmutedChatCount;
     int unreadMessageCount;

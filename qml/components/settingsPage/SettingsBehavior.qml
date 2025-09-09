@@ -232,6 +232,13 @@ AccordionItem {
                 onClicked: appSettings.unreadCountIncludeMuted = !checked
             }
 
+            TextSwitch {
+                checked: appSettings.foldersUnreadCountIncludeMuted
+                text: qsTr("Include muted chats in folders unread count")
+                automaticCheck: false
+                onClicked: appSettings.foldersUnreadCountIncludeMuted = !checked
+            }
+
             /*Slider {
                 width: parent.width
                 label: qsTr("Voice note volume")

@@ -121,6 +121,7 @@ signals:
     void suggestedActionsUpdated(const QVariantList added, const QVariantList removed);
     void chatListsReceived(qlonglong chatId, const QVariantList &chatLists);
     void archiveChatListSettingsReceived(bool archiveAndMuteNewChatsFromUnknownUsers, bool keepUnmutedChatsArchived, bool keepChatsFromFoldersArchived);
+    void chatFoldersUpdated(const QVariantList &chatFolders, int mainChatListPosition, bool tagsEnabled);
 
 private:
     typedef void (TDLibReceiver::*Handler)(const QVariantMap &);
@@ -219,6 +220,7 @@ private:
     void processUpdateSuggestedActions(const QVariantMap &receivedInformation);
     void processChatLists(const QVariantMap &receivedInformation);
     void processArchiveChatListSettings(const QVariantMap &receivedInformation);
+    void processUpdateChatFolders(const QVariantMap &receivedInformation);
 };
 
 #endif // TDLIBRECEIVER_H

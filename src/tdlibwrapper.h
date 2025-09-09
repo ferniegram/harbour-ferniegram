@@ -394,6 +394,7 @@ signals:
     void suggestedActionsUpdated(const QVariantList added, const QVariantList removed);
     void chatListsReceived(qlonglong chatId, const QVariantList &chatLists);
     void archiveChatListSettingsReceived(bool archiveAndMuteNewChatsFromUnknownUsers, bool keepUnmutedChatsArchived, bool keepChatsFromFoldersArchived);
+    void chatFoldersUpdated(const QVariantList &chatFolders, int mainChatListPosition, bool tagsEnabled);
 
     // Signals not directly used by TDLibWrapper
     void chatListsReset();

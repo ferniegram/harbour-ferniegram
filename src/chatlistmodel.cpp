@@ -78,29 +78,31 @@ int ChatListModel::ListChatData::compareTo(const ListChatData *other) const {
         return (order < other->order) ? 1 : -1;
 }
 
-ChatListModel::ChatListModel(TDLibWrapper *tdLibWrapper, AppSettings *appSettings, Utilities *utilities, bool archive) :
+ChatListModel::ChatListModel(TDLibWrapper *tdLibWrapper, AppSettings *appSettings, Utilities *utilities, bool archive, bool doNotConnectChatListSignals) :
+    tdLibWrapper(tdLibWrapper),
+    utilities(utilities),
     archive(archive),
+    appSettings(appSettings),
     unreadChatCount(0),
     unreadUnmutedChatCount(0),
     unreadMessageCount(0),
     unreadUnmutedMessageCount(0)
 {
-    this->tdLibWrapper = tdLibWrapper;
-    this->appSettings = appSettings;
-    this->utilities = utilities;
 
-    if (!archive) {
-        connect(tdLibWrapper, &TDLibWrapper::chatAddedToMainList, this, &ChatListModel::handleChatAddedToList);
-        connect(tdLibWrapper, &TDLibWrapper::chatRemovedFromMainList, this, &ChatListModel::handleChatRemovedFromList);
-        connect(tdLibWrapper, &TDLibWrapper::mainChatListChatPositionUpdated, this, &ChatListModel::handleChatPositionUpdated);
-        connect(tdLibWrapper, &TDLibWrapper::mainChatListUnreadChatCountUpdated, this, &ChatListModel::handleUnreadChatCountUpdated);
-        connect(tdLibWrapper, &TDLibWrapper::mainChatListUnreadMessageCountUpdated, this, &ChatListModel::handleUnreadMessageCountUpdated);
-    } else {
-        connect(tdLibWrapper, &TDLibWrapper::chatAddedToArchiveList, this, &ChatListModel::handleChatAddedToList);
-        connect(tdLibWrapper, &TDLibWrapper::chatRemovedFromArchiveList, this, &ChatListModel::handleChatRemovedFromList);
-        connect(tdLibWrapper, &TDLibWrapper::archiveChatListChatPositionUpdated, this, &ChatListModel::handleChatPositionUpdated);
-        connect(tdLibWrapper, &TDLibWrapper::archiveChatListUnreadChatCountUpdated, this, &ChatListModel::handleUnreadChatCountUpdated);
-        connect(tdLibWrapper, &TDLibWrapper::archiveChatListUnreadMessageCountUpdated, this, &ChatListModel::handleUnreadMessageCountUpdated);
+    if (!doNotConnectChatListSignals) {
+        if (!archive) {
+            connect(tdLibWrapper, &TDLibWrapper::chatAddedToMainList, this, &ChatListModel::handleChatAddedToList);
+            connect(tdLibWrapper, &TDLibWrapper::chatRemovedFromMainList, this, &ChatListModel::handleChatRemovedFromList);
+            connect(tdLibWrapper, &TDLibWrapper::mainChatListChatPositionUpdated, this, &ChatListModel::handleChatPositionUpdated);
+            connect(tdLibWrapper, &TDLibWrapper::mainChatListUnreadChatCountUpdated, this, &ChatListModel::handleUnreadChatCountUpdated);
+            connect(tdLibWrapper, &TDLibWrapper::mainChatListUnreadMessageCountUpdated, this, &ChatListModel::handleUnreadMessageCountUpdated);
+        } else {
+            connect(tdLibWrapper, &TDLibWrapper::chatAddedToArchiveList, this, &ChatListModel::handleChatAddedToList);
+            connect(tdLibWrapper, &TDLibWrapper::chatRemovedFromArchiveList, this, &ChatListModel::handleChatRemovedFromList);
+            connect(tdLibWrapper, &TDLibWrapper::archiveChatListChatPositionUpdated, this, &ChatListModel::handleChatPositionUpdated);
+            connect(tdLibWrapper, &TDLibWrapper::archiveChatListUnreadChatCountUpdated, this, &ChatListModel::handleUnreadChatCountUpdated);
+            connect(tdLibWrapper, &TDLibWrapper::archiveChatListUnreadMessageCountUpdated, this, &ChatListModel::handleUnreadMessageCountUpdated);
+        }
     }
 
     connect(tdLibWrapper, &TDLibWrapper::chatRolesUpdated, this, &ChatListModel::handleChatRolesChanged);

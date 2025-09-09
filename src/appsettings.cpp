@@ -49,6 +49,7 @@ namespace {
     const QString FORMATTED_TRANSLATE("formattedTranslate");
     const QString SEND_MARKDOWN("sendMarkdown");
     const QString UNREAD_COUNT_INCLUDE_MUTED("unreadCountIncludeMuted");
+    const QString FOLDERS_UNREAD_COUNT_INCLUDE_MUTED("foldersUnreadCountIncludeMuted");
     const QString ARCHIVE_CHAT_LIST_HINT_COMPLETED("archiveChatListHintCompleted");
 }
 
@@ -428,6 +429,17 @@ void AppSettings::setUnreadCountIncludeMuted(bool value) {
         LOG(UNREAD_COUNT_INCLUDE_MUTED << value);
         settings.setValue(UNREAD_COUNT_INCLUDE_MUTED, value);
         emit unreadCountIncludeMutedChanged();
+    }
+}
+
+bool AppSettings::foldersUnreadCountIncludeMuted() const {
+    return settings.value(FOLDERS_UNREAD_COUNT_INCLUDE_MUTED).toBool();
+}
+void AppSettings::setFoldersUnreadCountIncludeMuted(bool value) {
+    if (foldersUnreadCountIncludeMuted() != value) {
+        LOG(FOLDERS_UNREAD_COUNT_INCLUDE_MUTED << value);
+        settings.setValue(FOLDERS_UNREAD_COUNT_INCLUDE_MUTED, value);
+        emit foldersUnreadCountIncludeMutedChanged();
     }
 }
 
