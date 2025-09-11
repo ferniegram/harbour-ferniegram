@@ -150,10 +150,14 @@ int main(int argc, char *argv[])
     DBusAdaptor *dBusAdaptor = tdLibWrapper->getDBusAdaptor();
     context->setContextProperty("dBusAdaptor", dBusAdaptor);
 
-    ChatListModel chatListModel(tdLibWrapper, appSettings, utilities);
-    context->setContextProperty("chatListModel", &chatListModel);
-    ChatListModel archiveChatListModel(tdLibWrapper, appSettings, utilities, true);
-    context->setContextProperty("archiveChatListModel", &archiveChatListModel);
+    ChatFoldersModel chatFoldersModel(tdLibWrapper, appSettings, utilities, view.data());
+    context->setContextProperty("chatFoldersModel", &chatFoldersModel);
+    qmlRegisterUncreatableType<ChatFoldersModel>(uri, 1, 0, "ChatFoldersModel", QString());
+
+    ChatListModel* chatListModel = chatFoldersModel.getMainChatListModel();
+    context->setContextProperty("chatListModel", chatListModel);
+    ChatListModel* archiveChatListModel = chatFoldersModel.getArchiveChatListModel();
+    context->setContextProperty("archiveChatListModel", archiveChatListModel);
 
     ChatModel chatModel(tdLibWrapper);
     context->setContextProperty("chatModel", &chatModel);
@@ -178,10 +182,6 @@ int main(int argc, char *argv[])
     
     ContactsModel contactsModel(tdLibWrapper, view.data());
     context->setContextProperty("contactsModel", &contactsModel);
-
-    ChatFoldersModel chatFoldersModel(tdLibWrapper, appSettings, utilities, view.data());
-    context->setContextProperty("chatFoldersModel", &chatFoldersModel);
-    qmlRegisterUncreatableType<ChatFoldersModel>(uri, 1, 0, "ChatFoldersModel", QString());
 
     view->setSource(SailfishApp::pathTo("qml/harbour-fernschreiber2.qml"));
     view->show();
