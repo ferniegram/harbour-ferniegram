@@ -1411,7 +1411,9 @@ QVariantMap TDLibWrapper::getSuperGroup(qlonglong groupId) const {
 
 QVariantMap TDLibWrapper::getChat(qlonglong chatId) {
     LOG("Returning chat information for ID" << chatId);
-    return this->chats.value(chatId)->chatData;
+    if (this->chats.contains(chatId))
+        return this->chats.value(chatId)->chatData;
+    return QVariantMap();
 }
 
 ChatData* TDLibWrapper::getChatData(qlonglong chatId) {
