@@ -4,15 +4,14 @@
 #include "chatlistmodel.h"
 #include <QObject>
 
+class ChatFoldersModel;
+
 class FolderChatListModel : public ChatListModel {
     Q_OBJECT
 public:
-    FolderChatListModel(TDLibWrapper *tdLibWrapper, AppSettings *appSettings, Utilities *utilities, int folderId);
+    FolderChatListModel(TDLibWrapper *tdLibWrapper, AppSettings *appSettings, Utilities *utilities, ChatFoldersModel* chatFoldersModel, int folderId);
 
     int getFolderId();
-
-    virtual int getUnreadChatCount() const override;
-    virtual int getUnreadMessageCount() const override;
 
 private slots:
     void handleFolderUnreadChatCountUpdated(int folderId, const QVariantMap &chatCountInformation);
@@ -23,6 +22,7 @@ private slots:
     void handleFolderChatPositionUpdated(int folderId, qlonglong chatId, qlonglong order, bool isPinned);
 
 private:
+    ChatFoldersModel* chatFoldersModel;
     int folderId;
 };
 

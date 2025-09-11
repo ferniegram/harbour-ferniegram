@@ -433,7 +433,7 @@ void AppSettings::setUnreadCountIncludeMuted(bool value) {
 }
 
 bool AppSettings::foldersUnreadCountIncludeMuted() const {
-    return settings.value(FOLDERS_UNREAD_COUNT_INCLUDE_MUTED).toBool();
+    return settings.value(FOLDERS_UNREAD_COUNT_INCLUDE_MUTED, true).toBool();
 }
 void AppSettings::setFoldersUnreadCountIncludeMuted(bool value) {
     if (foldersUnreadCountIncludeMuted() != value) {

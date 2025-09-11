@@ -62,6 +62,10 @@ ChatFoldersModel::ChatFolderData::ChatFolderData(FolderType type) :
     data()
 {}
 
+int ChatFoldersModel::ChatFolderData::id() const {
+    return data.value(ID).toInt();
+}
+
 QString ChatFoldersModel::ChatFolderData::name() const {
     switch (type) {
     case FolderMain:
@@ -71,6 +75,7 @@ QString ChatFoldersModel::ChatFolderData::name() const {
     case FolderArchive:
         return tr("Archive", "archived chats tab");
     }
+    return QString();
 }
 
 ChatFoldersModel::ChatFoldersModel(TDLibWrapper *tdLibWrapper, AppSettings *appSettings, Utilities *utilities, QObject *parent) :
@@ -83,6 +88,10 @@ ChatFoldersModel::ChatFoldersModel(TDLibWrapper *tdLibWrapper, AppSettings *appS
 {
     connect(tdLibWrapper, &TDLibWrapper::chatAddedToFolderList, this, &ChatFoldersModel::handleChatAddedToFolderList);
     connect(tdLibWrapper, &TDLibWrapper::chatFoldersUpdated, this, &ChatFoldersModel::handleChatFoldersUpdated);
+
+    connect(mainChatListModel, &ChatListModel::unreadChatCountChanged, this, &ChatFoldersModel::handleMainChatListUnreadChatCountUpdated);
+
+    connect(appSettings, &AppSettings::foldersUnreadCountIncludeMutedChanged, this, &ChatFoldersModel::handleFoldersUnreadCountIncludeMutedChanged);
 }
 
 ChatFoldersModel::~ChatFoldersModel() {
@@ -104,6 +113,7 @@ QHash<int,QByteArray> ChatFoldersModel::roleNames() const {
     return QHash<int, QByteArray>{
         // Opal.Tabs-specific:
         {RoleName, "title"},
+        {RoleUnreadChatCount, "count"},
 
         {RoleDisplay, "display"},
         {RoleId, "id"},
@@ -111,7 +121,10 @@ QHash<int,QByteArray> ChatFoldersModel::roleNames() const {
         {RoleColorId, "color_id"},
         {RoleIsShareable, "is_shareable"},
         {RoleHasMyInviteLinks, "has_my_invite_links"},
-        {RoleModel, "chat_list_model"}
+
+        // not directly from folderInfo object
+        {RoleModel, "chat_list_model"},
+        {RoleType, "type"}
     };
 }
 
@@ -136,7 +149,7 @@ QVariant ChatFoldersModel::data(const QModelIndex &index, int role) const {
             case FolderMain:
                 return QVariant::fromValue(this->mainChatListModel);
             case FolderFolder: {
-                const int id = data->data.value(ID).toInt();
+                const int id = data->id();
                 if (chatModels.contains(id))
                     return QVariant::fromValue(chatModels.value(id));
                 break;
@@ -144,6 +157,22 @@ QVariant ChatFoldersModel::data(const QModelIndex &index, int role) const {
             case FolderArchive:
                 return QVariant::fromValue(this->archiveChatListModel);
             }
+            break;
+        case RoleUnreadChatCount:
+            switch (data->type) {
+            case FolderMain:
+                return this->mainChatListModel->getUnreadChatCount(true);
+            case FolderFolder: {
+                const int id = data->data.value(ID).toInt();
+                if (chatModels.contains(id))
+                    return chatModels.value(id)->getUnreadChatCount(true);
+                break;
+            }
+            case FolderArchive:
+                return this->archiveChatListModel->getUnreadChatCount(true);
+            }
+        case RoleType:
+            return data->type;
         }
     }
     return QVariant();
@@ -151,7 +180,7 @@ QVariant ChatFoldersModel::data(const QModelIndex &index, int role) const {
 
 void ChatFoldersModel::handleChatAddedToFolderList(int folderId, ChatData *chatData, qlonglong order, bool isPinned) {
     if (!this->chatModels.contains(folderId)) {
-        FolderChatListModel* chatModel = new FolderChatListModel(tdLibWrapper, appSettings, utilities, folderId);
+        FolderChatListModel* chatModel = new FolderChatListModel(tdLibWrapper, appSettings, utilities, this, folderId);
         this->chatModels.insert(folderId, chatModel);
         chatModel->handleChatAddedToList(chatData, order, isPinned);
     }
@@ -163,21 +192,31 @@ void ChatFoldersModel::handleChatFoldersUpdated(const QVariantList &newChatFolde
     beginResetModel();
     qDeleteAll(chatFolders);
     chatFolders.clear();
+    chatFoldersIndexMap.clear();
+    this->mainChatListIndex = -1;
 
     //QSet<int> newFolderIds;
 
     for (const QVariant &folderVariant : newChatFolders) {
         const QVariantMap folder = folderVariant.toMap();
-        this->chatFolders.append(new ChatFolderData(folder));
-
         const int folderId = folder.value(ID).toInt();
+
+        this->chatFolders.append(new ChatFolderData(folder));
+        this->chatFoldersIndexMap.insert(folderId, chatFolders.size()-1);
+
         if (!this->chatModels.contains(folderId))
-            this->chatModels.insert(folderId, new FolderChatListModel(tdLibWrapper, appSettings, utilities, folderId));
+            this->chatModels.insert(folderId, new FolderChatListModel(tdLibWrapper, appSettings, utilities, this, folderId));
 
         //newFolderIds.insert(folder.value(ID).toInt());
     }
 
     this->chatFolders.insert(mainChatListPosition, new ChatFolderData());
+    this->mainChatListIndex = mainChatListPosition;
+
+    // Update damaged part of the map
+    for (int i = mainChatListIndex + 1; i < chatFolders.size(); i++)
+        // should we check if type is FolderFolder here?
+        chatFoldersIndexMap.insert(chatFolders.at(i)->id(), i);
 
     /*QSet<int> folderIdsToRemove = chatModels.keys().toSet();
     folderIdsToRemove -= newFolderIds;
@@ -192,4 +231,26 @@ void ChatFoldersModel::handleChatFoldersUpdated(const QVariantList &newChatFolde
     }*/
 
     endResetModel();
+}
+
+void ChatFoldersModel::handleMainChatListUnreadChatCountUpdated() {
+    if (mainChatListIndex > 0 && mainChatListIndex < chatFolders.size()) {
+        LOG("Main chat list unread chat count updated");
+        const QModelIndex modelIndex = index(mainChatListIndex);
+        emit dataChanged(modelIndex, modelIndex, QVector<int>{RoleUnreadChatCount});
+    }
+}
+
+void ChatFoldersModel::handleFolderChatListUnreadChatCountUpdated(int folderId) {
+    // This comes from the FolderChatListModel itself
+    if (this->chatFoldersIndexMap.contains(folderId)) {
+        const QModelIndex modelIndex = index(this->chatFoldersIndexMap.value(folderId));
+        LOG("Folder chat list unread chat count updated" << folderId << data(modelIndex, RoleUnreadChatCount));
+        emit dataChanged(modelIndex, modelIndex, QVector<int>{RoleUnreadChatCount});
+    }
+}
+
+void ChatFoldersModel::handleFoldersUnreadCountIncludeMutedChanged() {
+    LOG("Folder unread count include muted setting changed");
+    emit dataChanged(index(0), index(chatFolders.size()-1), QVector<int>{RoleUnreadChatCount});
 }

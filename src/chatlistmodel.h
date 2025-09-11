@@ -44,8 +44,8 @@ public:
     Q_INVOKABLE void redrawModel();
     Q_INVOKABLE QVariantMap get(int row);
 
-    virtual int getUnreadChatCount() const;
-    virtual int getUnreadMessageCount() const;
+    virtual int getUnreadChatCount(bool asFolder = false) const;
+    virtual int getUnreadMessageCount(bool asFolder = false) const;
 
 public slots:
     Q_INVOKABLE void reset();

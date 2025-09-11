@@ -1,7 +1,10 @@
 #include "folderchatlistmodel.h"
 
-FolderChatListModel::FolderChatListModel(TDLibWrapper *tdLibWrapper, AppSettings *appSettings, Utilities *utilities, int folderId) :
+#include "chatfoldersmodel.h"
+
+FolderChatListModel::FolderChatListModel(TDLibWrapper *tdLibWrapper, AppSettings *appSettings, Utilities *utilities, ChatFoldersModel* chatFoldersModel, int folderId) :
     ChatListModel(tdLibWrapper, appSettings, utilities, false, true),
+    chatFoldersModel(chatFoldersModel),
     folderId(folderId)
 {
     connect(tdLibWrapper, &TDLibWrapper::folderChatListUnreadChatCountUpdated, this, &FolderChatListModel::handleFolderUnreadChatCountUpdated);
@@ -10,6 +13,8 @@ FolderChatListModel::FolderChatListModel(TDLibWrapper *tdLibWrapper, AppSettings
     connect(tdLibWrapper, &TDLibWrapper::chatAddedToFolderList, this, &FolderChatListModel::handleChatAddedToFolderList);
     connect(tdLibWrapper, &TDLibWrapper::chatRemovedFromFolderList, this, &FolderChatListModel::handleChatRemovedFromFolderList);
     connect(tdLibWrapper, &TDLibWrapper::folderChatListChatPositionUpdated, this, &FolderChatListModel::handleFolderChatPositionUpdated);
+
+    tdLibWrapper->loadChatsForFolder(folderId);
 }
 
 inline int FolderChatListModel::getFolderId() {
@@ -18,7 +23,10 @@ inline int FolderChatListModel::getFolderId() {
 
 
 inline void FolderChatListModel::handleFolderUnreadChatCountUpdated(int folderId, const QVariantMap &chatCountInformation) {
-    if (this->folderId == folderId) handleUnreadChatCountUpdated(chatCountInformation);
+    if (this->folderId == folderId) {
+        handleUnreadChatCountUpdated(chatCountInformation);
+        this->chatFoldersModel->handleFolderChatListUnreadChatCountUpdated(folderId); // this might not be ideal...
+    }
 }
 inline void FolderChatListModel::handleFolderUnreadMessageCountUpdated(int folderId, const QVariantMap &messageCountInformation) {
     if (this->folderId == folderId) handleUnreadMessageCountUpdated(messageCountInformation);
@@ -33,14 +41,4 @@ inline void FolderChatListModel::handleChatRemovedFromFolderList(int folderId, q
 }
 inline void FolderChatListModel::handleFolderChatPositionUpdated(int folderId, qlonglong chatId, qlonglong order, bool isPinned) {
     if (this->folderId == folderId) handleChatPositionUpdated(chatId, order, isPinned);
-}
-
-
-
-int FolderChatListModel::getUnreadChatCount() const {
-    return appSettings->foldersUnreadCountIncludeMuted() ? unreadChatCount : unreadUnmutedChatCount;
-}
-
-int FolderChatListModel::getUnreadMessageCount() const {
-    return appSettings->foldersUnreadCountIncludeMuted() ? unreadMessageCount : unreadUnmutedMessageCount;
 }

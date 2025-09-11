@@ -53,6 +53,8 @@ public:
         RoleIsShareable,
         RoleHasMyInviteLinks,
         RoleModel,
+        RoleUnreadChatCount,
+        RoleType,
     };
 
     enum FolderType {
@@ -71,15 +73,22 @@ public:
     int rowCount(const QModelIndex &index = QModelIndex()) const Q_DECL_OVERRIDE;
     QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
 
+public slots:
+    void handleFolderChatListUnreadChatCountUpdated(int folderId);
+
 private slots:
     void handleChatAddedToFolderList(int folderId, ChatData *chatData, qlonglong order, bool isPinned);
     void handleChatFoldersUpdated(const QVariantList &newChatFolders, int mainChatListPosition, bool tagsEnabled);
 
+    void handleMainChatListUnreadChatCountUpdated();
+
+    void handleFoldersUnreadCountIncludeMutedChanged();
 private:
     struct ChatFolderData {
         ChatFolderData(const QVariantMap &data);
         ChatFolderData(FolderType type = FolderMain);
 
+        int id() const;
         QString name() const;
 
         FolderType type;
@@ -95,6 +104,8 @@ private:
     ChatListModel *archiveChatListModel;
 
     QList<ChatFolderData*> chatFolders;
+    QHash<int, int> chatFoldersIndexMap;
+    int mainChatListIndex;
     QHash<int, FolderChatListModel*> chatModels;
 };
 

@@ -413,10 +413,12 @@ void ChatListModel::handleUnreadMessageCountUpdated(const QVariantMap &messageCo
     unreadMessageCountChanged();
 }
 
-int ChatListModel::getUnreadChatCount() const {
-    return archive || appSettings->unreadCountIncludeMuted() ? unreadChatCount : unreadUnmutedChatCount;
+int ChatListModel::getUnreadChatCount(bool asFolder) const {
+    return archive || (asFolder ? appSettings->foldersUnreadCountIncludeMuted() : appSettings->unreadCountIncludeMuted())
+            ? unreadChatCount : unreadUnmutedChatCount;
 }
 
-int ChatListModel::getUnreadMessageCount() const {
-    return archive || appSettings->unreadCountIncludeMuted() ? unreadMessageCount : unreadUnmutedMessageCount;
+int ChatListModel::getUnreadMessageCount(bool asFolder) const {
+    return archive || (asFolder ? appSettings->foldersUnreadCountIncludeMuted() : appSettings->unreadCountIncludeMuted())
+            ? unreadMessageCount : unreadUnmutedMessageCount;
 }
