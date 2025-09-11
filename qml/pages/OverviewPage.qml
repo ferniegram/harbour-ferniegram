@@ -24,6 +24,7 @@ import "../components"
 import "../js/twemoji.js" as Emoji
 import "../js/functions.js" as Functions
 import "../js/debug.js" as Debug
+import "../modules/Opal/Tabs"
 
 Page {
     id: overviewPage
@@ -250,55 +251,129 @@ Page {
     Component.onCompleted:
         overviewPage.handleAuthorizationState(true)
 
-    ChatsView {
-        model: chatListModel
-        PullDownMenu {
-            MenuItem {
-                text: "Debug"
-                visible: DebugLog.enabled
-                onClicked: pageStack.push(Qt.resolvedUrl("../pages/DebugPage.qml"))
-            }
-            MenuItem {
-                text: qsTr("About Ferniegram")
-                onClicked: pageStack.push(Qt.resolvedUrl("../pages/AboutPage.qml"))
-            }
-            MenuItem {
-                text: qsTr("Settings")
-                onClicked: pageStack.push(Qt.resolvedUrl("../pages/SettingsPage.qml"))
-            }
-            MenuItem {
-                text: qsTr("Search Chats")
-                onClicked: pageStack.push(Qt.resolvedUrl("../pages/SearchChatsPage.qml"))
-            }
-            MenuItem {
-                text: qsTr("New Chat")
-                onClicked: pageStack.push(Qt.resolvedUrl("../pages/NewChatPage.qml"))
-            }
-            MenuItem {
-                text: qsTr("Archive")
-                visible: archiveChatListModel.count > 0
+    TabView {
+        id: tabView
+        anchors.fill: parent
+        model: chatFoldersModel
 
-                rightPadding: archiveChatListModel.unreadChatCount > 0 ? archiveUnreadCount.width + Theme.paddingLarge : 0
-                Rectangle {
-                    id: archiveUnreadCount
-                    visible: archiveChatListModel.unreadChatCount > 0
-                    color: Theme.rgba(Theme.highlightBackgroundColor, Theme.highlightBackgroundOpacity)
-                    anchors.verticalCenter: parent.verticalCenter
-                    x: (parent.width + parent.contentWidth - width)/2
-                    width: Theme.fontSizeExtraLarge
-                    height: Theme.fontSizeExtraLarge
-                    radius: width/2
-                    Text {
-                        anchors.centerIn: parent
-                        font.pixelSize: Theme.fontSizeSmall
-                        font.bold: true
-                        color: Theme.primaryColor
-                        text: Functions.formatUnreadCount(archiveChatListModel.unreadChatCount)
+        delegate: Loader { // BIG HACK
+            id: tabLoader
+            asynchronous: true
+
+            readonly property real _yOffset: item && item._yOffset || 0
+
+            // Loader's status is Loader.Loading when the component is partially loaded. We don't want the busy indicator in this state since the view is already usable in it, so for now we disable loading indicator completely.
+            //readonly property bool loading: Qt.application.active && PagedView.isCurrentItem && status === Loader.Loading
+
+            width: item ? item.implicitWidth : PagedView.contentWidth
+            height: item ? item.implicitHeight : PagedView.contentHeight
+
+            sourceComponent: Component {
+                TabItem {
+                    // this might break with Opal.Tabs updates:
+                    _page: tabView._page
+                    _tabContainer: tabLoader
+                    topMargin: tabView._tabBarIsTop ? tabView.tabBarHeight : 0
+                    bottomMargin: tabView._tabBarIsTop ? 0 : tabView.tabBarHeight
+
+                    allowDeletion: index != 0 // always keep first tab in cache
+
+                    //opacity: 1
+                    flickable: chatsView
+                    ChatsView {
+                        id: chatsView
+                        headerText: title
+                        model: chat_list_model
+
+                        Loader {
+                            active: index == 0
+                            asynchronous: true
+                            sourceComponent: Component {
+                                PullDownMenu {
+                                    MenuItem {
+                                        text: "Debug"
+                                        visible: DebugLog.enabled
+                                        onClicked: pageStack.push(Qt.resolvedUrl("../pages/DebugPage.qml"))
+                                    }
+                                    MenuItem {
+                                        text: qsTr("About Ferniegram")
+                                        onClicked: pageStack.push(Qt.resolvedUrl("../pages/AboutPage.qml"))
+                                    }
+                                    MenuItem {
+                                        text: qsTr("Settings")
+                                        onClicked: pageStack.push(Qt.resolvedUrl("../pages/SettingsPage.qml"))
+                                    }
+                                    MenuItem {
+                                        text: qsTr("Search Chats")
+                                        onClicked: pageStack.push(Qt.resolvedUrl("../pages/SearchChatsPage.qml"))
+                                    }
+                                    MenuItem {
+                                        text: qsTr("New Chat")
+                                        onClicked: pageStack.push(Qt.resolvedUrl("../pages/NewChatPage.qml"))
+                                    }
+                                    MenuItem {
+                                        text: qsTr("Archive")
+                                        visible: archiveChatListModel.count > 0
+
+                                        rightPadding: archiveChatListModel.unreadChatCount > 0 ? archiveUnreadCount.width + Theme.paddingLarge : 0
+                                        Rectangle {
+                                            id: archiveUnreadCount
+                                            visible: archiveChatListModel.unreadChatCount > 0
+                                            color: Theme.rgba(Theme.highlightBackgroundColor, Theme.highlightBackgroundOpacity)
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            x: (parent.width + parent.contentWidth - width)/2
+                                            width: Theme.fontSizeExtraLarge
+                                            height: Theme.fontSizeExtraLarge
+                                            radius: width/2
+                                            Text {
+                                                anchors.centerIn: parent
+                                                font.pixelSize: Theme.fontSizeSmall
+                                                font.bold: true
+                                                color: Theme.primaryColor
+                                                text: Functions.formatUnreadCount(archiveChatListModel.unreadChatCount)
+                                            }
+                                        }
+
+                                        onClicked: pageStack.push(Qt.resolvedUrl("../pages/ArchivedChatsPage.qml"), {overviewPage: overviewPage})
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-
-                onClicked: pageStack.push(Qt.resolvedUrl("../pages/ArchivedChatsPage.qml"), {overviewPage: overviewPage})
             }
+
+            onItemChanged: {
+                if (!item) return
+                //itemLoaded = true
+                tabFadeAnimation.target = null
+                item.focus = true
+                item.opacity = 0
+                tabFadeAnimation.target = item
+                tabFadeAnimation.from = 0
+                tabFadeAnimation.to = 1
+                tabFadeAnimation.restart()
+            }
+
+            FadeAnimation {
+                id: tabFadeAnimation
+            }
+
+            /*BusyIndicator {
+                running: !delayBusy.running && loading
+
+                // Avoid flicker when tab container gets repositioned
+                parent: tabLoader.parent
+                x: (tabLoader.width - width) / 2 + tabLoader.x
+                y: root.height/3 - height/2 - tabView.tabBarLoader.height
+                size: BusyIndicatorSize.Large
+
+                Timer {
+                    id: delayBusy
+                    interval: 800
+                    running: tabLoader.loading
+                }
+            }*/
         }
     }
 
