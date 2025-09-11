@@ -18,6 +18,7 @@ model:items
 property Component header
 property Component footer
 property bool hasFooter:footer
+property alias tabBarLoader:tabBarLoader
 property alias tabBarItem:tabBarLoader.item
 property real tabBarHeight:tabBarItem&&tabBarVisible?tabBarItem.height:0
 property real yOffset:currentItem&&currentItem._yOffset||0
