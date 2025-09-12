@@ -262,12 +262,17 @@ Page {
             when: !!tabView.tabBarItem
             value: appSettings.showFolderUnreadCount ? 'count' : ''
         }
-
         Binding {
             target: tabView.tabBarItem
             property: 'iconRole'
             when: !!tabView.tabBarItem
             value: appSettings.showFolderUnreadCount ? 'icon' : ''
+        }
+
+        Binding {
+            target: tabView.tabBarItem
+            property: 'iconSize'
+            value: Qt.size(Theme.iconSizeMedium, Theme.iconSizeMedium)
         }
 
         tabBarVisible: count > 1
