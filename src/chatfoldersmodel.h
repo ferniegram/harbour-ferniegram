@@ -56,6 +56,7 @@ public:
         RoleModel,
         RoleUnreadChatCount,
         RoleType,
+        RoleIconPath,
     };
     Q_ENUM(Role);
 
@@ -75,6 +76,9 @@ public:
     QHash<int,QByteArray> roleNames() const Q_DECL_OVERRIDE;
     int rowCount(const QModelIndex &index = QModelIndex()) const Q_DECL_OVERRIDE;
     QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
+
+    Q_INVOKABLE static Icon iconForName(const QString &name);
+    Q_INVOKABLE static QUrl iconPath(Icon icon);
 
 public slots:
     void handleFolderChatListUnreadChatCountUpdated(int folderId);

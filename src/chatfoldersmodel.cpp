@@ -1,5 +1,7 @@
 #include "chatfoldersmodel.h"
 
+#include "sailfishapp.h"
+
 #define DEBUG_MODULE ChatFoldersModel
 #include "debuglog.h"
 
@@ -11,41 +13,124 @@ namespace {
     const QString IS_SHAREABLE("is_shareable");
     const QString HAS_MY_INVITE_LINKS("has_my_invite_links");
     const QString TEXT("text");
+
+    const QString FOLDER_ICON_PATH_PREFIX("images/folders/icon-m-folder-");
+    const QString SVG_EXTENSION_SUFFIX(".svg");
+    const QString THEME_ICON_PREFIX("image://theme/icon-m-");
 }
 
-ChatFoldersModel::Icon iconForName(const QString &name) {
-    if (name == "All") return ChatFoldersModel::IconAll;
-    if (name == "Unread") return ChatFoldersModel::IconUnread;
-    if (name == "Unmuted") return ChatFoldersModel::IconUnmuted;
-    if (name == "Bots") return ChatFoldersModel::IconBots;
-    if (name == "Channels") return ChatFoldersModel::IconChannels;
-    if (name == "Groups") return ChatFoldersModel::IconGroups;
-    if (name == "Private") return ChatFoldersModel::IconPrivate;
-    if (name == "Custom") return ChatFoldersModel::IconCustom;
-    if (name == "Setup") return ChatFoldersModel::IconSetup;
-    if (name == "Cat") return ChatFoldersModel::IconCat;
-    if (name == "Crown") return ChatFoldersModel::IconCrown;
-    if (name == "Favorite") return ChatFoldersModel::IconFavorite;
-    if (name == "Flower") return ChatFoldersModel::IconFlower;
-    if (name == "Game") return ChatFoldersModel::IconGame;
-    if (name == "Home") return ChatFoldersModel::IconHome;
-    if (name == "Love") return ChatFoldersModel::IconLove;
-    if (name == "Mask") return ChatFoldersModel::IconMask;
-    if (name == "Party") return ChatFoldersModel::IconParty;
-    if (name == "Sport") return ChatFoldersModel::IconSport;
-    if (name == "Study") return ChatFoldersModel::IconStudy;
-    if (name == "Trade") return ChatFoldersModel::IconTrade;
-    if (name == "Travel") return ChatFoldersModel::IconTravel;
-    if (name == "Work") return ChatFoldersModel::IconWork;
-    if (name == "Airplane") return ChatFoldersModel::IconAirplane;
-    if (name == "Book") return ChatFoldersModel::IconBook;
-    if (name == "Light") return ChatFoldersModel::IconLight;
-    if (name == "Like") return ChatFoldersModel::IconLike;
-    if (name == "Money") return ChatFoldersModel::IconMoney;
-    if (name == "Note") return ChatFoldersModel::IconNote;
-    if (name == "Palette") return ChatFoldersModel::IconPalette;
+ChatFoldersModel::Icon ChatFoldersModel::iconForName(const QString &name) {
+    if (name == "All") return IconAll;
+    if (name == "Unread") return IconUnread;
+    if (name == "Unmuted") return IconUnmuted;
+    if (name == "Bots") return IconBots;
+    if (name == "Channels") return IconChannels;
+    if (name == "Groups") return IconGroups;
+    if (name == "Private") return IconPrivate;
+    if (name == "Custom") return IconCustom;
+    if (name == "Setup") return IconSetup;
+    if (name == "Cat") return IconCat;
+    if (name == "Crown") return IconCrown;
+    if (name == "Favorite") return IconFavorite;
+    if (name == "Flower") return IconFlower;
+    if (name == "Game") return IconGame;
+    if (name == "Home") return IconHome;
+    if (name == "Love") return IconLove;
+    if (name == "Mask") return IconMask;
+    if (name == "Party") return IconParty;
+    if (name == "Sport") return IconSport;
+    if (name == "Study") return IconStudy;
+    if (name == "Trade") return IconTrade;
+    if (name == "Travel") return IconTravel;
+    if (name == "Work") return IconWork;
+    if (name == "Airplane") return IconAirplane;
+    if (name == "Book") return IconBook;
+    if (name == "Light") return IconLight;
+    if (name == "Like") return IconLike;
+    if (name == "Money") return IconMoney;
+    if (name == "Note") return IconNote;
+    if (name == "Palette") return IconPalette;
 
-    return ChatFoldersModel::IconAll;
+    return IconAll;
+}
+
+inline QUrl pathToIcon(const QString &name) {
+    return SailfishApp::pathTo(FOLDER_ICON_PATH_PREFIX + name + SVG_EXTENSION_SUFFIX);
+}
+
+QUrl ChatFoldersModel::iconPath(Icon icon) {
+    switch (icon) {
+    case IconAll:
+        return THEME_ICON_PREFIX + "chat"; // FIXME: should this be outline-chat?
+    case IconHome:
+        return THEME_ICON_PREFIX + "home";
+    case IconFavorite:
+        return THEME_ICON_PREFIX + "favorite";
+    case IconCustom:
+        return THEME_ICON_PREFIX + "folder";
+    case IconGame:
+        return THEME_ICON_PREFIX + "game-controller";
+    case IconLike:
+        return THEME_ICON_PREFIX + "like"; // FIXME: should this be outline-like?
+    case IconNote:
+        return THEME_ICON_PREFIX + "media-songs";
+    case IconWork:
+        return THEME_ICON_PREFIX + "company";
+
+
+    // possibly FIXME for these:
+    case IconLight:
+        return THEME_ICON_PREFIX + "flashlight";
+    case IconGroups:
+        return THEME_ICON_PREFIX + "people";
+    case IconMask:
+        return THEME_ICON_PREFIX + "incognito";
+
+    //case IconAirplane: // LOOOOOOL
+    //    return THEME_ICON_PREFIX + "airplane-mode";
+
+
+    case IconBook:
+        return pathToIcon("book");
+    case IconLove:
+        return pathToIcon("love");
+    case IconBots:
+        return pathToIcon("bots");
+    case IconCat:
+        return pathToIcon("cat");
+    case IconChannels:
+        return pathToIcon("channels");
+    case IconCrown:
+        return pathToIcon("crown");
+    case IconFlower:
+        return pathToIcon("flower");
+    case IconAirplane:
+        return pathToIcon("airplane");
+    case IconMoney:
+        return pathToIcon("money");
+    case IconPalette:
+        return pathToIcon("palette");
+    case IconParty:
+        return pathToIcon("party");
+    case IconPrivate:
+        return pathToIcon("private");
+    case IconSetup:
+        return pathToIcon("setup");
+    case IconSport:
+        return pathToIcon("sport");
+    case IconStudy:
+        return pathToIcon("study");
+    case IconTrade:
+        return pathToIcon("trade");
+    case IconTravel:
+        return pathToIcon("travel");
+    case IconUnmuted:
+        return pathToIcon("unmuted");
+    case IconUnread:
+        return pathToIcon("unread");
+    }
+
+    return QString();
 }
 
 ChatFoldersModel::ChatFolderData::ChatFolderData(const QVariantMap &data) :
@@ -53,7 +138,7 @@ ChatFoldersModel::ChatFolderData::ChatFolderData(const QVariantMap &data) :
     data(data)
 {
     const QString iconName = this->data.take(ICON).toMap().value(NAME).toString();
-    icon = iconForName(iconName);
+    icon = ChatFoldersModel::iconForName(iconName);
 }
 
 ChatFoldersModel::ChatFolderData::ChatFolderData(FolderType type) :
@@ -114,6 +199,7 @@ QHash<int,QByteArray> ChatFoldersModel::roleNames() const {
         // Opal.Tabs-specific:
         {RoleName, "title"},
         {RoleUnreadChatCount, "count"},
+        {RoleIconPath, "icon"},
 
         {RoleDisplay, "display"},
         {RoleId, "id"},
@@ -141,6 +227,7 @@ QVariant ChatFoldersModel::data(const QModelIndex &index, int role) const {
         case RoleId: return data->data.value(ID).toInt();
         case RoleName: return data->name(); // ignore entities because only animated emojis are supported and we don't support them yet
         case RoleIcon: return data->icon;
+        case RoleIconPath: return iconPath(data->icon);
         case RoleColorId: return data->data.value(COLOR_ID).toInt();
         case RoleIsShareable: return data->data.value(IS_SHAREABLE).toBool();
         case RoleHasMyInviteLinks: return data->data.value(HAS_MY_INVITE_LINKS).toBool();
@@ -190,9 +277,9 @@ void ChatFoldersModel::handleChatFoldersUpdated(const QVariantList &newChatFolde
     LOG("Chat folders list updated" << newChatFolders.count());
 
     beginResetModel();
+    chatFoldersIndexMap.clear();
     qDeleteAll(chatFolders);
     chatFolders.clear();
-    chatFoldersIndexMap.clear();
     this->mainChatListIndex = -1;
 
     //QSet<int> newFolderIds;

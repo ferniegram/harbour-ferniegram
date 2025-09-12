@@ -52,7 +52,8 @@ namespace {
     const QString SHOW_FOLDER_UNREAD_COUNT("showFolderUnreadCount");
     const QString FOLDERS_UNREAD_COUNT_INCLUDE_MUTED("foldersUnreadCountIncludeMuted");
     const QString ARCHIVE_CHAT_LIST_HINT_COMPLETED("archiveChatListHintCompleted");
-    const QString CHAT_FOLDERS_TABS_ON_BOTTOM("chatFoldersTabsOnBottom");
+    const QString CHAT_FOLDERS_TAB_BAR_ON_BOTTOM("chatFoldersTabBarOnBottom");
+    const QString CHAT_FOLDERS_TAB_BAR_SHOW_ICONS("chatFoldersTabBarShowIcons");
 }
 
 AppSettings::AppSettings(QObject *parent) :
@@ -467,13 +468,24 @@ void AppSettings::setArchiveChatListHintCompleted(bool value) {
     }
 }
 
-bool AppSettings::chatFoldersTabsOnBottom() const {
-    return settings.value(CHAT_FOLDERS_TABS_ON_BOTTOM).toBool();
+bool AppSettings::chatFoldersTabBarOnBottom() const {
+    return settings.value(CHAT_FOLDERS_TAB_BAR_ON_BOTTOM).toBool();
 }
-void AppSettings::setChatFoldersTabsOnBottom(bool value) {
-    if (chatFoldersTabsOnBottom() != value) {
-        LOG(CHAT_FOLDERS_TABS_ON_BOTTOM << value);
-        settings.setValue(CHAT_FOLDERS_TABS_ON_BOTTOM, value);
-        emit chatFoldersTabsOnBottomChanged();
+void AppSettings::setChatFoldersTabBarOnBottom(bool value) {
+    if (chatFoldersTabBarOnBottom() != value) {
+        LOG(CHAT_FOLDERS_TAB_BAR_ON_BOTTOM << value);
+        settings.setValue(CHAT_FOLDERS_TAB_BAR_ON_BOTTOM, value);
+        emit chatFoldersTabBarOnBottomChanged();
+    }
+}
+
+bool AppSettings::chatFoldersTabBarShowIcons() const {
+    return settings.value(CHAT_FOLDERS_TAB_BAR_SHOW_ICONS, true).toBool();
+}
+void AppSettings::setChatFoldersTabBarShowIcons(bool value) {
+    if (chatFoldersTabBarShowIcons() != value) {
+        LOG(CHAT_FOLDERS_TAB_BAR_SHOW_ICONS << value);
+        settings.setValue(CHAT_FOLDERS_TAB_BAR_SHOW_ICONS, value);
+        emit chatFoldersTabBarShowIconsChanged();
     }
 }

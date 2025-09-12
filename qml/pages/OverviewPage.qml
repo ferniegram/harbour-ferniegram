@@ -263,8 +263,15 @@ Page {
             value: appSettings.showFolderUnreadCount ? 'count' : ''
         }
 
+        Binding {
+            target: tabView.tabBarItem
+            property: 'iconRole'
+            when: !!tabView.tabBarItem
+            value: appSettings.showFolderUnreadCount ? 'icon' : ''
+        }
+
         tabBarVisible: count > 1
-        tabBarPosition: appSettings.chatFoldersTabsOnBottom ? Qt.AlignBottom : Qt.AlignTop
+        tabBarPosition: appSettings.chatFoldersTabBarOnBottom ? Qt.AlignBottom : Qt.AlignTop
 
         delegate: Loader { // BIG HACK
             id: tabLoader

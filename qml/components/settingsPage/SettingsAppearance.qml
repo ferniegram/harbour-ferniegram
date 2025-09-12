@@ -42,10 +42,18 @@ AccordionItem {
 
             TextSwitch {
                 width: parent.columnWidth
-                checked: appSettings.chatFoldersTabsOnBottom
+                checked: appSettings.chatFoldersTabBarOnBottom
                 text: qsTr("Move chat folders panel to bottom")
                 automaticCheck: false
-                onClicked: appSettings.chatFoldersTabsOnBottom = !checked
+                onClicked: appSettings.chatFoldersTabBarOnBottom = !checked
+            }
+
+            TextSwitch {
+                width: parent.columnWidth
+                checked: appSettings.chatFoldersTabBarShowIcons
+                text: qsTr("Show chat folders icons")
+                automaticCheck: false
+                onClicked: appSettings.chatFoldersTabBarShowIcons = !checked
             }
 
             TextSwitch {

@@ -55,7 +55,8 @@ class AppSettings : public QObject {
     Q_PROPERTY(bool showFolderUnreadCount READ showFolderUnreadCount WRITE setShowFolderUnreadCount NOTIFY showFolderUnreadCountChanged)
     Q_PROPERTY(bool foldersUnreadCountIncludeMuted READ foldersUnreadCountIncludeMuted WRITE setFoldersUnreadCountIncludeMuted NOTIFY foldersUnreadCountIncludeMutedChanged)
     Q_PROPERTY(bool archiveChatListHintCompleted READ archiveChatListHintCompleted WRITE setArchiveChatListHintCompleted NOTIFY archiveChatListHintCompletedChanged)
-    Q_PROPERTY(bool chatFoldersTabsOnBottom READ chatFoldersTabsOnBottom WRITE setChatFoldersTabsOnBottom NOTIFY chatFoldersTabsOnBottomChanged)
+    Q_PROPERTY(bool chatFoldersTabBarOnBottom READ chatFoldersTabBarOnBottom WRITE setChatFoldersTabBarOnBottom NOTIFY chatFoldersTabBarOnBottomChanged)
+    Q_PROPERTY(bool chatFoldersTabBarShowIcons READ chatFoldersTabBarShowIcons WRITE setChatFoldersTabBarShowIcons NOTIFY chatFoldersTabBarShowIconsChanged)
 public:
     enum SponsoredMess {
         SponsoredMessHandle,
@@ -167,8 +168,11 @@ public:
     bool archiveChatListHintCompleted() const;
     void setArchiveChatListHintCompleted(bool value);
 
-    bool chatFoldersTabsOnBottom() const;
-    void setChatFoldersTabsOnBottom(bool value);
+    bool chatFoldersTabBarOnBottom() const;
+    void setChatFoldersTabBarOnBottom(bool value);
+
+    bool chatFoldersTabBarShowIcons() const;
+    void setChatFoldersTabBarShowIcons(bool value);
 
 signals:
     void sendByEnterChanged();
@@ -202,7 +206,8 @@ signals:
     void showFolderUnreadCountChanged();
     void foldersUnreadCountIncludeMutedChanged();
     void archiveChatListHintCompletedChanged();
-    void chatFoldersTabsOnBottomChanged();
+    void chatFoldersTabBarOnBottomChanged();
+    void chatFoldersTabBarShowIconsChanged();
 
 private:
     QSettings settings;
