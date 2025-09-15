@@ -24,7 +24,7 @@ Item {
 
     Label {
         id: label
-        width: parent.width - (item.length > 0 ? (buttonsContainer.width - Theme.paddingMedium) : 0)
+        width: parent.width - (items.length > 0 ? (buttonsContainer.width - Theme.paddingMedium) : 0)
         anchors.right: parent.right
         height: parent.height
         verticalAlignment: Text.AlignVCenter
