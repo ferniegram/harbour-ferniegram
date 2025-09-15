@@ -51,25 +51,25 @@ PhotoTextsListItem {
         target: tdLibWrapper
         onUserFullInfoUpdated: {
             if ((isPrivateChat || isSecret) && userId.toString() === chatInformation.type.user_id.toString()) {
-                tertiaryText.text = Emoji.emojify(Functions.enhanceMessageText(userFullInfo.bio), tertiaryText.font.pixelSize, "../js/emoji/");
+                tertiaryText.text = Emoji.emojify(Functions.enhanceMessageText(userFullInfo.bio), tertiaryText.font.pixelSize);
             }
         }
         onUserFullInfoReceived: {
             if ((isPrivateChat || isSecret) && userFullInfo["@extra"].toString() === chatInformation.type.user_id.toString()) {
-                tertiaryText.text = Emoji.emojify(Functions.enhanceMessageText(userFullInfo.bio), tertiaryText.font.pixelSize, "../js/emoji/");
+                tertiaryText.text = Emoji.emojify(Functions.enhanceMessageText(userFullInfo.bio), tertiaryText.font.pixelSize);
             }
         }
 
         onBasicGroupFullInfoUpdated: {
             if (isBasicGroup && groupId.toString() === chatInformation.type.basic_group_id.toString()) {
                 secondaryText.text = qsTr("%1 members", "", groupFullInfo.members.length).arg(Number(groupFullInfo.members.length).toLocaleString(Qt.locale(), "f", 0));
-                tertiaryText.text = Emoji.emojify(groupFullInfo.description, tertiaryText.font.pixelSize, "../js/emoji/");
+                tertiaryText.text = Emoji.emojify(groupFullInfo.description, tertiaryText.font.pixelSize);
             }
         }
         onBasicGroupFullInfoReceived: {
             if (isBasicGroup && groupId.toString() === chatInformation.type.basic_group_id.toString()) {
                 secondaryText.text = qsTr("%1 members", "", groupFullInfo.members.length).arg(Number(groupFullInfo.members.length).toLocaleString(Qt.locale(), "f", 0));
-                tertiaryText.text = Emoji.emojify(groupFullInfo.description, tertiaryText.font.pixelSize, "../js/emoji/");
+                tertiaryText.text = Emoji.emojify(groupFullInfo.description, tertiaryText.font.pixelSize);
             }
         }
 
@@ -80,7 +80,7 @@ PhotoTextsListItem {
                 } else {
                     secondaryText.text = qsTr("%1 members", "", groupFullInfo.member_count).arg(Number(groupFullInfo.member_count).toLocaleString(Qt.locale(), "f", 0));
                 }
-                tertiaryText.text = Emoji.emojify(groupFullInfo.description, tertiaryText.font.pixelSize, "../js/emoji/");
+                tertiaryText.text = Emoji.emojify(groupFullInfo.description, tertiaryText.font.pixelSize);
             }
         }
         onSupergroupFullInfoReceived: {
@@ -90,14 +90,14 @@ PhotoTextsListItem {
                 } else {
                     secondaryText.text = qsTr("%1 members", "", groupFullInfo.member_count).arg(Number(groupFullInfo.member_count).toLocaleString(Qt.locale(), "f", 0));
                 }
-                tertiaryText.text = Emoji.emojify(groupFullInfo.description, tertiaryText.font.pixelSize, "../js/emoji/");
+                tertiaryText.text = Emoji.emojify(groupFullInfo.description, tertiaryText.font.pixelSize);
             }
         }
     }
 
     pictureThumbnail.photoData: typeof chatInformation.photo.small !== "undefined" ? chatInformation.photo.small : {}
 
-    primaryText.text: Emoji.emojify(chatInformation.title, primaryText.font.pixelSize, "../js/emoji/")
+    primaryText.text: Emoji.emojify(chatInformation.title, primaryText.font.pixelSize)
     tertiaryText.maximumLineCount: 1
 
     onClicked: {
