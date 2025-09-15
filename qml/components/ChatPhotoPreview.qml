@@ -85,9 +85,9 @@ ShaderEffectSource {
             font.bold: true
             color: Theme.primaryColor
             anchors.centerIn: chatUnreadMessagesCountBackground
-            visible: chatListViewItem.unreadCount > 0
+            visible: pictureItem.unreadCount > 0
             opacity: muted ? Theme.opacityHigh : 1.0
-            text: Functions.formatUnreadCount(chatListViewItem.unreadCount)
+            text: Functions.formatUnreadCount(pictureItem.unreadCount)
         }
 
         Rectangle {
@@ -97,15 +97,15 @@ ShaderEffectSource {
             anchors.right: parent.right
             anchors.top: parent.top
             radius: parent.width / 2
-            visible: chatListViewItem.unreadReactionCount > 0 || chatListViewItem.unreadMentionCount > 0
+            visible: pictureItem.unreadReactionCount > 0 || pictureItem.unreadMentionCount > 0
 
             Icon {
                 source: "image://theme/icon-s-favorite"
                 height: Theme.iconSizeExtraSmall
                 width: Theme.iconSizeExtraSmall
-                highlighted: chatListViewItem.highlighted
+                highlighted: pictureItem.highlighted
                 anchors.centerIn: parent
-                visible: chatListViewItem.unreadReactionCount > 0 && !chatListViewItem.unreadMentionCount
+                visible: pictureItem.unreadReactionCount > 0 && !pictureItem.unreadMentionCount
             }
 
             Text {
@@ -115,7 +115,7 @@ ShaderEffectSource {
                 }
                 color: Theme.primaryColor
                 anchors.centerIn: parent
-                visible: chatListViewItem.unreadMentionCount > 0
+                visible: pictureItem.unreadMentionCount > 0
                 opacity: muted ? Theme.opacityHigh : 1.0
                 text: "@"
             }

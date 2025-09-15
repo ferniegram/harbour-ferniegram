@@ -45,7 +45,7 @@ PhotoTextsListItem {
     }
 
     Component.onCompleted: detectChatType()
-    onFoundChatInformationChanged: detectChatType()
+    onChatInformationChanged: detectChatType()
 
     Connections {
         target: tdLibWrapper
