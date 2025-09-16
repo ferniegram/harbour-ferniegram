@@ -256,7 +256,8 @@ Page {
         anchors.fill: parent
         model: chatFoldersModel
 
-        yOffset: (currentItem && currentItem._yOffset || 0) - header.height
+        property real originalYOffset: currentItem && currentItem._yOffset || 0
+        yOffset: originalYOffset - header.height
         //onYOffsetChanged: console.log(yOffset)
 
         Component.onCompleted: {
@@ -421,7 +422,7 @@ Page {
 
     OverviewPageHeader {
         id: header
-        y: tabView.tabBarLoader.y - height
+        y: Math.max(0, -tabView.originalYOffset)
 
         MouseArea {
             anchors.fill: parent
