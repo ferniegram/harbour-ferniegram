@@ -7,11 +7,8 @@ Page {
 
     property var overviewPage
 
-    ChatsView {
-        headerText: qsTr("Archive")
-        model: archiveChatListModel
-        inArchive: true
-
+    SilicaFlickable {
+        anchors.fill: parent
         PullDownMenu {
             MenuItem {
                 text: qsTr("How does it work?")
@@ -26,6 +23,23 @@ Page {
                 visible: archiveChatListModel.unreadChatCount > 0
                 onClicked: tdLibWrapper.readChatList(true)
             }
+        }
+
+
+        OverviewPageHeader {
+            id: header
+            defaultTitle: qsTr("Archive")
+        }
+
+        ChatsView {
+            anchors {
+                top: header.bottom
+                bottom: parent.bottom
+                left: parent.left
+                right: parent.right
+            }
+            model: archiveChatListModel
+            inArchive: true
         }
     }
 

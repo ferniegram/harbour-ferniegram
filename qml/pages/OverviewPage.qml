@@ -256,6 +256,8 @@ Page {
         anchors.fill: parent
         model: chatFoldersModel
 
+        yOffset: (currentItem && currentItem._yOffset || 0) - header.height
+        //onYOffsetChanged: console.log(yOffset)
 
         Component.onCompleted: {
             tabView.tabBarItem.countRole = Qt.binding(function() { return appSettings.showFolderUnreadCount ? 'count' : '' })
@@ -285,23 +287,28 @@ Page {
                     // this might break with Opal.Tabs updates:
                     _page: tabView._page
                     _tabContainer: tabLoader
-                    topMargin: tabView._tabBarIsTop ? tabView.tabBarHeight : 0
+                    topMargin: (tabView._tabBarIsTop ? tabView.tabBarHeight : 0) + header.height
                     bottomMargin: tabView._tabBarIsTop ? 0 : tabView.tabBarHeight
 
                     allowDeletion: index != 0 // always keep first tab in cache
 
                     //opacity: 1
-                    flickable: chatsView
-                    ChatsView {
-                        id: chatsView
-                        headerText: title
-                        model: chat_list_model
+                    flickable: chatsFlickable
+                    SilicaFlickable {
+                        id: chatsFlickable
+                        anchors.fill: parent
 
-                        function readChatList() {
-                            if (type == ChatFoldersModel.FolderFolder)
-                                tdLibWrapper.readFolderChatList(id)
-                            else
-                                tdLibWrapper.readChatList(type == ChatFoldersModel.FolderArchive)
+                        ChatsView {
+                            id: chatsView
+                            anchors.fill: parent
+                            model: chat_list_model
+
+                            function readChatList() {
+                                if (type == ChatFoldersModel.FolderFolder)
+                                    tdLibWrapper.readFolderChatList(id)
+                                else
+                                    tdLibWrapper.readChatList(type == ChatFoldersModel.FolderArchive)
+                            }
                         }
 
                         Loader {
@@ -321,7 +328,7 @@ Page {
                                         onClicked: pageStack.push(Qt.resolvedUrl("../pages/SettingsPage.qml"))
                                     }
                                     MenuItem {
-                                        text: qsTr("Search Chats")
+                                        text: qsTr("Search", "pulley menu option for opening search page")
                                         onClicked: pageStack.push(Qt.resolvedUrl("../pages/SearchChatsPage.qml"))
                                     }
                                     MenuItem {
@@ -374,6 +381,7 @@ Page {
                             }
                         }
                     }
+
                 }
             }
 
@@ -409,6 +417,26 @@ Page {
                 }
             }*/
         }
+    }
+
+    OverviewPageHeader {
+        id: header
+        y: tabView.tabBarLoader.y - height
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: pageStack.push(Qt.resolvedUrl("SearchChatsPage.qml"), undefined, PageStackAction.Immediate)
+        }
+    }
+
+    InteractionHintLabel {
+        id: titleInteractionHint
+        text: qsTr("Tap on the title bar to quickly open search")
+        visible: opacity > 0
+        invert: true
+        anchors.fill: parent
+        Behavior on opacity { FadeAnimation {} }
+        opacity: overviewPage.titleInteractionHintActive ? 1 : 0
     }
 
     Timer {
