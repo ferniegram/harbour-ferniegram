@@ -269,10 +269,9 @@ Page {
             value: appSettings.showFolderUnreadCount ? 'icon' : ''
         }
 
-        Binding {
-            target: tabView.tabBarItem
-            property: 'iconSize'
-            value: Qt.size(Theme.iconSizeMedium, Theme.iconSizeMedium)
+        Component.onCompleted: {
+            tabView.tabBarItem.iconSize = Qt.size(Theme.iconSizeMedium, Theme.iconSizeMedium)
+            tabView.tabBarItem.iconColor = Qt.binding(function() { return Theme.primaryColor })
         }
 
         tabBarVisible: count > 1
