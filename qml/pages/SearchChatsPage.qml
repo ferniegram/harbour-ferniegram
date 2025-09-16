@@ -163,11 +163,40 @@ Page {
                                 sourceComponent: Component {
                                     Column {
                                         width: parent.width
+                                        readonly property bool canExpand: topChatUsersView.count > topChatUsersView.columnsCount
+                                        property bool expanded: false
 
                                         SectionHeader {
                                             text: qsTr("Frequent contacts")
                                             visible: topChatUsersView.count > 0
                                             enabled: visible
+                                            rightPadding: expandButton.visible ? (expandButton.width + Theme.paddingLarge) : 0
+
+                                            highlighted: topChatUsersMouseArea.containsPress
+                                            color: highlighted ? Theme.secondaryHighlightColor : Theme.highlightColor
+
+                                            HighlightImage {
+                                                id: expandButton
+                                                anchors {
+                                                    right: parent.right
+                                                    bottom: parent.bottom
+                                                }
+                                                width: Theme.iconSizeMedium
+                                                visible: canExpand
+                                                highlighted: parent.highlighted
+                                                color: Theme.highlightColor
+                                                highlightColor: Theme.secondaryHighlightColor
+                                                source: "image://theme/icon-m-left"
+                                                rotation: expanded ? 90 : -90
+                                                Behavior on rotation { NumberAnimation { duration: 150 } }
+                                            }
+
+                                            MouseArea {
+                                                id: topChatUsersMouseArea
+                                                anchors.fill: parent
+                                                enabled: canExpand
+                                                onClicked: expanded = !expanded
+                                            }
                                         }
 
                                         NestedGridView {
@@ -177,6 +206,16 @@ Page {
                                             readonly property int columnsCount: Math.floor(width / Theme.itemSizeExtraLarge)
                                             cellWidth: width / columnsCount
                                             cellHeight: Theme.itemSizeHuge
+
+                                            clip: true//height < cellHeight//!expanded // always true could affect performance, but without it it doesn't look good since it doesn't apply instantly
+                                            property real contentHeight: expanded ? _listView.contentHeight : cellHeight
+                                            height: contentHeight + _listView._menuHeight
+                                            Behavior on contentHeight {
+                                                NumberAnimation {
+                                                    id: expandAnimation
+                                                    duration: 150
+                                                }
+                                            }
 
                                             function update() {
                                                 tdLibWrapper.getTopChats(tdLibWrapper.TopChatCategoryUsers, columnsCount*2)
@@ -234,8 +273,7 @@ Page {
                                             delegate: PhotoTextsGridItem {
                                                 Component.onCompleted: _gridView = gridViewProxy
 
-                                                width: topChatUsersView.cellWidth
-                                                contentHeight: topChatUsersView.cellHeight
+                                                enabled: (expanded && !expandAnimation.running) || index < topChatUsersView.columnsCount
 
                                                 property var chatInformation: tdLibWrapper.getChat(modelData)
                                                 primaryText.text: Emoji.emojify(chatInformation.title, primaryText.font.pixelSize)
