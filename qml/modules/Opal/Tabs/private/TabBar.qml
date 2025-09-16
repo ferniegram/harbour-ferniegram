@@ -27,6 +27,7 @@ property string descriptionRole:"description"
 property string countRole:"count"
 property string iconRole:"icon"
 property size iconSize
+property color iconColor
 height:flickable.height
 Flickable{id:flickable
 width:parent.width
@@ -69,6 +70,7 @@ title:model[root.titleRole]||""
 description:model[root.descriptionRole]||""
 icon.source:model[root.iconRole]||""
 icon.sourceSize:iconSize
+icon.color: iconColor
 count:model[root.countRole]||""
 }}}Rectangle{id:tabFooter
 x:{if(!root._currentTabButton){return 0
