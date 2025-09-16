@@ -21,6 +21,7 @@ import Sailfish.Silica 1.0
 import WerkWolf.Fernschreiber 1.0
 import "../components"
 import "../js/debug.js" as Debug
+import "../js/twemoji.js" as Emoji
 
 Page {
     id: searchChatsPage
@@ -103,7 +104,7 @@ Page {
 
             PageHeader {
                 id: searchChatsPageHeader
-                title: qsTr("Search Chats")
+                title: qsTr("Search", "page header for search page")
             }
 
             Item {
@@ -119,7 +120,7 @@ Page {
                     SearchField {
                         id: searchField
                         width: parent.width
-                        placeholderText: qsTr("Search a chat...")
+                        placeholderText: qsTr("Search", "Placeholder text for chats search field")
                         focus: true
 
                         onTextChanged: {
@@ -156,6 +157,106 @@ Page {
                             property alias localSearchListView: localSearchListView
                             property alias recentlyFoundSearchListView: recentlyFoundSearchListView
 
+                            Loader {
+                                active: searchField.text == ''
+                                width: parent.width
+                                sourceComponent: Component {
+                                    Column {
+                                        width: parent.width
+
+                                        SectionHeader {
+                                            text: qsTr("Frequent contacts")
+                                            visible: topChatUsersView.count > 0
+                                            enabled: visible
+                                        }
+
+                                        NestedGridView {
+                                            id: topChatUsersView
+                                            width: parent.width
+                                            flickable: publicSearchListView
+                                            readonly property int columnsCount: Math.floor(width / Theme.itemSizeExtraLarge)
+                                            cellWidth: width / columnsCount
+                                            cellHeight: Theme.itemSizeHuge
+
+                                            function update() {
+                                                tdLibWrapper.getTopChats(tdLibWrapper.TopChatCategoryUsers, columnsCount*2)
+                                            }
+                                            Component.onCompleted: update()
+                                            Connections {
+                                                target: tdLibWrapper
+                                                onChatsReceived:
+                                                    if (extra == 'topChatCategoryUsers')
+                                                        topChatUsersView.model = chatIds
+                                                onOkReceived:
+                                                    if (request == 'topChatCategoryUsers')
+                                                        update()
+                                            }
+
+                                            Item {
+                                                id: gridViewProxy
+                                                // HACK: GridItems inside NestedGridMenu don't properly move (down) when a menu is opened, this is the fix
+                                                // this also fixes cellWidth and cellHeight not being picked up by GridItem
+                                                // might've fixed remorse below too
+
+                                                property real cellWidth: topChatUsersView.cellWidth
+                                                property real cellHeight: topChatUsersView.cellHeight
+
+                                                property Item __silica_contextmenu_instance: topChatUsersView._listView.__silica_contextmenu_instance
+                                                property Item __silica_remorse_item: null
+                                                property real __silica_menu_height: Math.max(__silica_contextmenu_instance
+                                                                                             ? __silica_contextmenu_instance.height : 0,
+                                                                                             __silica_remorse_height)
+                                                property real __silica_remorse_height
+
+                                                NumberAnimation {
+                                                    id: remorseHeightAnimation
+
+                                                    target: gridViewProxy
+                                                    property: "__silica_remorse_height"
+                                                    duration: 200
+                                                    to: 0.0
+                                                    easing.type: Easing.InOutQuad
+                                                }
+                                                on__Silica_remorse_itemChanged:
+                                                    if (!__silica_remorse_item)
+                                                        remorseHeightAnimation.restart()
+
+                                                property int _menuOpenOffsetItemsIndex: { -1 }
+
+                                                width: topChatUsersView._listView.width
+                                            }
+                                            Binding {
+                                                target: topChatUsersView._listView
+                                                property: "_menuHeight"
+                                                value: gridViewProxy.__silica_menu_height
+                                            }
+
+                                            delegate: PhotoTextsGridItem {
+                                                Component.onCompleted: _gridView = gridViewProxy
+
+                                                width: topChatUsersView.cellWidth
+                                                contentHeight: topChatUsersView.cellHeight
+
+                                                property var chatInformation: tdLibWrapper.getChat(modelData)
+                                                primaryText.text: Emoji.emojify(chatInformation.title, primaryText.font.pixelSize)
+                                                pictureThumbnail.photoData: typeof chatInformation.photo.small !== "undefined" ? chatInformation.photo.small : {}
+
+                                                menu: Component {
+                                                    ContextMenu {
+                                                        MenuItem {
+                                                            text: qsTr("Remove from Recents")
+                                                            onClicked: remorseDelete(function() { tdLibWrapper.removeTopChat(tdLibWrapper.TopChatCategoryUsers, modelData) })
+                                                        }
+                                                    }
+                                                }
+
+                                                onClicked: pageStack.replace(Qt.resolvedUrl("ChatPage.qml"), {chatInformation: chatInformation})
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
                             ColumnView {
                                 id: localSearchListView
                                 width: parent.width
@@ -172,7 +273,7 @@ Page {
                                 text: qsTr("Recent", "Recently found chats")
 
                                 IconButton {
-                                    icon.source: "image://theme/icon-m-clear"
+                                    icon.source: "image://theme/icon-m-cancel"
                                     onClicked: Remorse.popupAction(searchChatsPage, qsTr("Cleared recents", "Remorse popup indicating that recently found chats are cleared"), function() {
                                         tdLibWrapper.clearRecentlyFoundChats()
                                         recentlyFoundChatsFound = []

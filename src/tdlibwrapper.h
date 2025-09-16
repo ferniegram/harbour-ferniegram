@@ -135,6 +135,7 @@ public:
         TopChatCategoryInlineBots,
         TopChatCategoryWebAppBots
     };
+    Q_ENUM(TopChatCategory);
 
     class Group {
     public:
@@ -282,6 +283,7 @@ public:
     Q_INVOKABLE void searchEmojis(const QString &text);
     Q_INVOKABLE void toggleSupergroupIsForum(bool isForum);
     Q_INVOKABLE void getTopChats(TopChatCategory category, int limit=50);
+    Q_INVOKABLE void removeTopChat(TopChatCategory category, qlonglong chatId);
     Q_INVOKABLE void searchRecentlyFoundChats(const QString &query = QString());
     Q_INVOKABLE void clearRecentlyFoundChats();
     Q_INVOKABLE void addRecentlyFoundChat(qlonglong chatId);
@@ -429,6 +431,7 @@ private:
     void sendFileMessage(const QString &messageType, const QString &fileType, qlonglong chatId, const QString &filePath, const QString &message, qlonglong replyToMessageId);
     void initializeTDLibReceiver();
     void updateUserInformation(const QString &userId, const QVariantMap &userInformation);
+    QString getTopChatCategoryType(TopChatCategory category);
 
 private:
     int tdLibClientId;

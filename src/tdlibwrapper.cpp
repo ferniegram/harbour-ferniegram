@@ -2156,40 +2156,49 @@ bool TDLibWrapper::isDiceEmoji(const QString &text) {
     return diceEmojis.contains(QString(text).trimmed());
 }
 
-void TDLibWrapper::getTopChats(TopChatCategory category, int limit) {
-    QString categoryType;
+QString TDLibWrapper::getTopChatCategoryType(TopChatCategory category) {
     switch (category) {
     case TopChatCategoryUsers:
-        categoryType = "topChatCategoryUsers";
-        break;
+        return "topChatCategoryUsers";
     case TopChatCategoryBots:
-        categoryType = "topChatCategoryBots";
-        break;
+        return "topChatCategoryBots";
     case TopChatCategoryCalls:
-        categoryType = "topChatCategoryCalls";
-        break;
+        return "topChatCategoryCalls";
     case TopChatCategoryChannels:
-        categoryType = "topChatCategoryChannels";
-        break;
+        return "topChatCategoryChannels";
     case TopChatCategoryForwardChats:
-        categoryType = "topChatCategoryForwardChats";
-        break;
+        return "topChatCategoryForwardChats";
     case TopChatCategoryGroups:
-        categoryType = "topChatCategoryGroups";
-        break;
+        return "topChatCategoryGroups";
     case TopChatCategoryInlineBots:
-        categoryType = "topChatCategoryInlineBots";
-        break;
+        return "topChatCategoryInlineBots";
     case TopChatCategoryWebAppBots:
-        categoryType = "topChatCategoryWebAppBots";
-        break;
+        return "topChatCategoryWebAppBots";
     }
 
+    return QString();
+}
+
+void TDLibWrapper::getTopChats(TopChatCategory category, int limit) {
+    const QString categoryType = getTopChatCategoryType(category);
     LOG("Getting top chats for category" << categoryType);
+
     this->sendRequest(QVariantMap{
                           {_TYPE, "getTopChats"},
                           {"category", QVariantMap{{_TYPE, categoryType}}},
                           {LIMIT, limit},
+                          {_EXTRA, categoryType}
+                      });
+}
+
+void TDLibWrapper::removeTopChat(TopChatCategory category, qlonglong chatId) {
+    const QString categoryType = getTopChatCategoryType(category);
+    LOG("Removing top chat" << chatId << "from category" << categoryType);
+
+    this->sendRequest(QVariantMap{
+                          {_TYPE, "removeTopChat"},
+                          {"category", QVariantMap{{_TYPE, categoryType}}},
+                          {CHAT_ID, chatId},
                           {_EXTRA, categoryType}
                       });
 }
