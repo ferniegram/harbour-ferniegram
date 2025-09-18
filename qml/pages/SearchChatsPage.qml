@@ -168,6 +168,7 @@ Page {
                             Loader {
                                 active: searchField.text == ''
                                 width: parent.width
+                                height: active ? implicitHeight : 0
                                 sourceComponent: Component {
                                     Column {
                                         width: parent.width
