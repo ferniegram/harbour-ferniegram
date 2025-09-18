@@ -113,7 +113,7 @@ Page {
         if(chatListCreated && chatId) {
             Debug.log("[OverviewPage] Opening Chat: ", chatId)
             pageStack.pop(overviewPage, PageStackAction.Immediate)
-            pageStack.push(Qt.resolvedUrl("../pages/ChatPage.qml"), { "chatInformation" : chatListModel.getById(chatId) }, PageStackAction.Immediate)
+            pageStack.push(Qt.resolvedUrl("../pages/ChatPage.qml"), { "chatInformation" : tdLibWrapper.getChat(chatId) }, PageStackAction.Immediate)
             chatToOpen = null
         }
     }
@@ -236,7 +236,7 @@ Page {
             }
         }
         onChatsReceived: {
-            if(chats && chats.chat_ids && chats.chat_ids.length === 0) {
+            if(chatIds && chatIds.length === 0) {
                 chatListCreatedTimer.restart();
             }
         }

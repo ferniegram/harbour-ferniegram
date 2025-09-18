@@ -37,7 +37,6 @@ class TDLibWrapper : public QObject
     Q_OBJECT
     Q_PROPERTY(AuthorizationState authorizationState MEMBER authorizationState NOTIFY authorizationStateChanged)
     Q_PROPERTY(QVariantMap authorizationStateData MEMBER authorizationStateData NOTIFY authorizationStateChanged)
-    Q_PROPERTY(QString version MEMBER versionString)
     Q_PROPERTY(ConnectionState connectionState MEMBER connectionState NOTIFY connectionStateChanged)
     Q_PROPERTY(QVariantMap userInformation READ getUserInformation NOTIFY ownUserUpdated)
     Q_PROPERTY(QVariantMap options MEMBER options NOTIFY optionUpdated)
@@ -125,6 +124,18 @@ public:
     };
     Q_ENUM(NetworkType)
 
+    enum TopChatCategory {
+        TopChatCategoryUsers,
+        TopChatCategoryBots,
+        TopChatCategoryCalls,
+        TopChatCategoryChannels,
+        TopChatCategoryForwardChats,
+        TopChatCategoryGroups,
+        TopChatCategoryInlineBots,
+        TopChatCategoryWebAppBots
+    };
+    Q_ENUM(TopChatCategory);
+
     class Group {
     public:
         Group(qlonglong id) : groupId(id) { }
@@ -146,9 +157,9 @@ public:
     Q_INVOKABLE QVariantMap getUnreadChatInformation();
     Q_INVOKABLE QVariantMap getBasicGroup(qlonglong groupId) const;
     Q_INVOKABLE QVariantMap getSuperGroup(qlonglong groupId) const;
-    Q_INVOKABLE QVariantMap getChat(const QString &chatId);
+    Q_INVOKABLE QVariantMap getChat(qlonglong chatId);
     Q_INVOKABLE QVariantMap getSecretChatFromCache(qlonglong secretChatId);
-    Q_INVOKABLE QStringList getChatReactions(const QString &chatId);
+    Q_INVOKABLE QStringList getChatReactions(qlonglong chatId);
     Q_INVOKABLE QString getOptionString(const QString &optionName);
     Q_INVOKABLE void copyFileToDownloads(const QString &filePath, bool openAfterCopy = false);
     Q_INVOKABLE void openFileOnDevice(const QString &filePath);
@@ -232,6 +243,7 @@ public:
     Q_INVOKABLE void removeContacts(QStringList userIds);
     Q_INVOKABLE void removeContact(QString userId);
     Q_INVOKABLE void searchChatMessages(qlonglong chatId, const QString &query, qlonglong fromMessageId = 0);
+    Q_INVOKABLE void searchChats(const QString &query);
     Q_INVOKABLE void searchPublicChats(const QString &query);
     Q_INVOKABLE void getSearchSponsoredChats(const QString &query);
     Q_INVOKABLE void readAllChatMentions(qlonglong chatId);
@@ -269,6 +281,12 @@ public:
     Q_INVOKABLE void sendChatAction(qlonglong chatId, const QString &chatActionType);
     Q_INVOKABLE void searchEmojis(const QString &text);
     Q_INVOKABLE void toggleSupergroupIsForum(bool isForum);
+    Q_INVOKABLE void getTopChats(TopChatCategory category, int limit=50);
+    Q_INVOKABLE void removeTopChat(TopChatCategory category, qlonglong chatId);
+    Q_INVOKABLE void searchRecentlyFoundChats(const QString &query = QString());
+    Q_INVOKABLE void clearRecentlyFoundChats();
+    Q_INVOKABLE void addRecentlyFoundChat(qlonglong chatId);
+    Q_INVOKABLE void removeRecentlyFoundChat(qlonglong chatId);
 
     // Others (candidates for extraction ;))
     Q_INVOKABLE void initializeOpenWith();
@@ -281,17 +299,16 @@ public:
     static SecretChatState secretChatStateFromString(const QString &state);
 
 signals:
-    void versionDetected(const QString &version);
     void ownUserIdFound(const QString &ownUserId);
     void authorizationStateChanged(const TDLibWrapper::AuthorizationState &authorizationState, const QVariantMap &authorizationStateData);
     void optionUpdated(const QString &optionName, const QVariant &optionValue);
     void connectionStateChanged(const TDLibWrapper::ConnectionState &connectionState);
     void fileUpdated(int fileId, const QVariantMap &fileInformation);
-    void newChatDiscovered(const QString &chatId, const QVariantMap &chatInformation);
+    void newChatDiscovered(qlonglong chatId, const QVariantMap &chatInformation);
     void unreadMessageCountUpdated(const QVariantMap &messageCountInformation);
     void unreadChatCountUpdated(const QVariantMap &chatCountInformation);
-    void chatLastMessageUpdated(const QString &chatId, const QString &order, const QVariantMap &lastMessage);
-    void chatOrderUpdated(const QString &chatId, const QString &order);
+    void chatLastMessageUpdated(qlonglong chatId, const QVariant &order, const QVariantMap &lastMessage);
+    void chatOrderUpdated(qlonglong chatId, qlonglong order);
     void chatPinnedUpdated(qlonglong chatId, bool isPinned);
     void chatReadInboxUpdated(const QString &chatId, const QString &lastReadInboxMessageId, int unreadCount);
     void chatReadOutboxUpdated(const QString &chatId, const QString &lastReadOutboxMessageId);
@@ -316,7 +333,7 @@ signals:
     void messageContentUpdated(qlonglong chatId, qlonglong messageId, const QVariantMap &newContent);
     void messageEditedUpdated(qlonglong chatId, qlonglong messageId, const QVariantMap &replyMarkup);
     void messagesDeleted(qlonglong chatId, const QList<qlonglong> &messageIds);
-    void chatsReceived(const QVariantMap &chats);
+    void chatsReceived(const QString &extra, const QVariantList &chatIds, const int totalCount);
     void sponsoredChatsReceived(const QVariantList &chats);
     void chatReceived(const QVariantMap &chat);
     void secretChatReceived(qlonglong secretChatId, const QVariantMap &secretChat);
@@ -334,9 +351,9 @@ signals:
     void basicGroupFullInfoUpdated(const QString &groupId, const QVariantMap &groupFullInfo);
     void supergroupFullInfoUpdated(const QString &groupId, const QVariantMap &groupFullInfo);
     void userProfilePhotosReceived(const QString &extra, const QVariantList &photos, int totalPhotos);
-    void chatPermissionsUpdated(const QString &chatId, const QVariantMap &permissions);
+    void chatPermissionsUpdated(qlonglong chatId, const QVariantMap &permissions);
     void chatPhotoUpdated(qlonglong chatId, const QVariantMap &photo);
-    void chatTitleUpdated(const QString &chatId, const QString &title);
+    void chatTitleUpdated(qlonglong chatId, const QString &title);
     void chatPinnedMessageUpdated(qlonglong chatId, qlonglong pinnedMessageId);
     void usersReceived(const QString &extra, const QVariantList &userIds, int totalUsers);
     void messageSendersReceived(const QString &extra, const QVariantList &senders, int totalUsers);
@@ -345,7 +362,7 @@ signals:
     void contactsImported(const QVariantList &importerCount, const QVariantList &userIds, bool single);
     void messageNotFound(qlonglong chatId, qlonglong messageId);
     void chatIsMarkedAsUnreadUpdated(qlonglong chatId, bool chatIsMarkedAsUnread);
-    void chatDraftMessageUpdated(qlonglong chatId, const QVariantMap &draftMessage, const QString &order);
+    void chatDraftMessageUpdated(qlonglong chatId, const QVariantMap &draftMessage, const QVariant &order);
     void inlineQueryResults(const QString &inlineQueryId, const QString &nextOffset, const QVariantList &results, const QString &switchPmText, const QString &switchPmParameter, const QString &extra);
     void callbackQueryAnswer(const QString &text, bool alert, const QString &url);
     void userPrivacySettingUpdated(UserPrivacySetting setting, UserPrivacySettingRule rule);
@@ -373,7 +390,6 @@ public slots:
     void handleStorageOptimizerChanged();
     void handleSendMarkdownChanged();
 
-    void handleVersionDetected(const QString &version);
     void handleAuthorizationStateChanged(const QString &authorizationState, const QVariantMap authorizationStateData);
     void handleOptionUpdated(const QString &optionName, const QVariant &optionValue);
     void handleConnectionStateChanged(const QString &connectionState);
@@ -412,6 +428,7 @@ private:
     void sendFileMessage(const QString &messageType, const QString &fileType, qlonglong chatId, const QString &filePath, const QString &message, qlonglong replyToMessageId);
     void initializeTDLibReceiver();
     void updateUserInformation(const QString &userId, const QVariantMap &userInformation);
+    QString getTopChatCategoryType(TopChatCategory category);
 
 private:
     int tdLibClientId;
@@ -421,7 +438,6 @@ private:
     MceInterface *mceInterface;
     TDLibReceiver *tdLibReceiver;
     DBusInterface *dbusInterface;
-    QString versionString;
     TDLibWrapper::AuthorizationState authorizationState;
     QVariantMap authorizationStateData;
     TDLibWrapper::ConnectionState connectionState;
@@ -430,7 +446,7 @@ private:
     QMap<UserPrivacySetting, UserPrivacySettingRule> userPrivacySettingRules;
     QVariantMap usersById;
     QVariantMap usersByName;
-    QVariantMap chats;
+    QHash<qlonglong, QVariantMap> chats;
     QMap<qlonglong, QVariantMap> secretChats;
     QVariantMap unreadMessageInformation;
     QVariantMap unreadChatInformation;

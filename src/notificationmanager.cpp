@@ -134,11 +134,11 @@ NotificationManager::NotificationManager(TDLibWrapper *tdLibWrapper, AppSettings
 {
     LOG("Initializing...");
 
-    connect(this->tdLibWrapper, SIGNAL(activeNotificationsUpdated(QVariantList)), this, SLOT(handleUpdateActiveNotifications(QVariantList)));
-    connect(this->tdLibWrapper, SIGNAL(notificationGroupUpdated(QVariantMap)), this, SLOT(handleUpdateNotificationGroup(QVariantMap)));
-    connect(this->tdLibWrapper, SIGNAL(notificationUpdated(QVariantMap)), this, SLOT(handleUpdateNotification(QVariantMap)));
-    connect(this->tdLibWrapper, SIGNAL(newChatDiscovered(QString, QVariantMap)), this, SLOT(handleChatDiscovered(QString, QVariantMap)));
-    connect(this->tdLibWrapper, SIGNAL(chatTitleUpdated(QString, QString)), this, SLOT(handleChatTitleUpdated(QString, QString)));
+    connect(this->tdLibWrapper, &TDLibWrapper::activeNotificationsUpdated, this, &NotificationManager::handleUpdateActiveNotifications);
+    connect(this->tdLibWrapper, &TDLibWrapper::notificationGroupUpdated, this, &NotificationManager::handleUpdateNotificationGroup);
+    connect(this->tdLibWrapper, &TDLibWrapper::notificationUpdated, this, &NotificationManager::handleUpdateNotification);
+    connect(this->tdLibWrapper, &TDLibWrapper::newChatDiscovered, this, &NotificationManager::handleChatDiscovered);
+    connect(this->tdLibWrapper, &TDLibWrapper::chatTitleUpdated, this, &NotificationManager::handleChatTitleUpdated);
 
     this->controlLedNotification(false);
 
@@ -282,9 +282,7 @@ void NotificationManager::handleUpdateNotification(const QVariantMap &updatedNot
     LOG("Received notification update, group ID:" << updatedNotification.value(NOTIFICATION_GROUP_ID).toInt());
 }
 
-void NotificationManager::handleChatDiscovered(const QString &chatId, const QVariantMap &chatInformation)
-{
-    const qlonglong id = chatId.toLongLong();
+void NotificationManager::handleChatDiscovered(qlonglong id, const QVariantMap &chatInformation) {
     ChatInfo *chat = chatMap.value(id);
     if (chat) {
         chat->setChatInfo(chatInformation);
@@ -296,19 +294,17 @@ void NotificationManager::handleChatDiscovered(const QString &chatId, const QVar
     }
 }
 
-void NotificationManager::handleChatTitleUpdated(const QString &chatId, const QString &title)
-{
-    const qlonglong id = chatId.toLongLong();
-    ChatInfo *chat = chatMap.value(id);
+void NotificationManager::handleChatTitleUpdated(qlonglong chatId, const QString &title) {
+    ChatInfo *chat = chatMap.value(chatId);
     if (chat) {
-        LOG("Chat" << id << "title changed to" << title);
+        LOG("Chat" << chatId << "title changed to" << title);
         chat->title = title;
 
         // Silently update notification summary
         QListIterator<NotificationGroup*> groupsIterator(notificationGroups.values());
         while (groupsIterator.hasNext()) {
             const NotificationGroup *group = groupsIterator.next();
-            if (group->chatId == id) {
+            if (group->chatId == chatId) {
                 LOG("Updating summary for group ID" << group->notificationGroupId);
                 publishNotification(group, false);
                 break;
@@ -359,7 +355,7 @@ void NotificationManager::publishNotification(const NotificationGroup *notificat
             // Add author
             QString fullName;
             if (senderInformation.value(_TYPE).toString() == "messageSenderChat") {
-                fullName = tdLibWrapper->getChat(senderInformation.value(CHAT_ID).toString()).value(TITLE).toString();
+                fullName = tdLibWrapper->getChat(senderInformation.value(CHAT_ID).toLongLong()).value(TITLE).toString();
             } else {
                 fullName = Utilities::getUserName(tdLibWrapper->getUserInformation(senderInformation.value(USER_ID).toString()));
             }

@@ -61,7 +61,7 @@ namespace {
     const QString REPLY_TO("reply_to");
     const QString _TYPE("@type");
     const QString _EXTRA("@extra");
-    const QString CHAT_LIST_MAIN("chatListMain");
+    const QString TYPE_CHAT_LIST_MAIN("chatListMain");
     const QString CHAT_AVAILABLE_REACTIONS("available_reactions");
     const QString CHAT_AVAILABLE_REACTIONS_ALL("chatAvailableReactionsAll");
     const QString CHAT_AVAILABLE_REACTIONS_SOME("chatAvailableReactionsSome");
@@ -82,6 +82,10 @@ namespace {
     const QString REMOVE_CONTACTS("removeContacts");
     const QString INPUT_MESSAGE_CONTENT("input_message_content");
     const QString LOCATION("location");
+    const QString LIMIT("limit");
+    const QString OFFSET("offset");
+    const QString QUERY("query");
+    const QString EXTRA_RECENTLY_FOUND("recentlyFound");
     const QStringList ALL_FILE_TYPES(QStringList()
                                      << "fileTypeAnimation"
                                      << "fileTypeAudio"
@@ -133,7 +137,7 @@ TDLibWrapper::TDLibWrapper(AppSettings *settings, MceInterface *mce, QObject *pa
     }
 
     this->dbusInterface = new DBusInterface(this);
-    if (appSettings->getUseOpenWith()) {
+    if (appSettings->useOpenWith()) {
         initializeOpenWith();
     } else {
         removeOpenWith();
@@ -168,7 +172,6 @@ TDLibWrapper::~TDLibWrapper() {
 
 void TDLibWrapper::initializeTDLibReceiver() {
     this->tdLibReceiver = new TDLibReceiver(this->tdLibClientId, this);
-    connect(this->tdLibReceiver, &TDLibReceiver::versionDetected, this, &TDLibWrapper::handleVersionDetected);
     connect(this->tdLibReceiver, &TDLibReceiver::authorizationStateChanged, this, &TDLibWrapper::handleAuthorizationStateChanged);
     connect(this->tdLibReceiver, &TDLibReceiver::optionUpdated, this, &TDLibWrapper::handleOptionUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::connectionStateChanged, this, &TDLibWrapper::handleConnectionStateChanged);
@@ -306,7 +309,7 @@ void TDLibWrapper::logout() {
 
 void TDLibWrapper::getChats() {
     LOG("Getting chats");
-    this->sendRequest(QVariantMap{{_TYPE, "loadChats"}, {"limit", 5}});
+    this->sendRequest(QVariantMap{{_TYPE, "loadChats"}, {LIMIT, 5}});
 }
 
 void TDLibWrapper::downloadFile(int fileId) {
@@ -315,8 +318,8 @@ void TDLibWrapper::downloadFile(int fileId) {
         {_TYPE, "downloadFile"},
         {"file_id", fileId},
         {"synchronous", false},
-        {"offset", 0},
-        {"limit", 0},
+        {OFFSET, 0},
+        {LIMIT, 0},
         {"priority", 1}
     });
 }
@@ -353,8 +356,8 @@ void TDLibWrapper::getChatHistory(qlonglong chatId, qlonglong fromMessageId, int
         {_TYPE, "getChatHistory"},
         {CHAT_ID, chatId},
         {"from_message_id", fromMessageId},
-        {"offset", offset},
-        {"limit", limit},
+        {OFFSET, offset},
+        {LIMIT, limit},
         {"only_local", onlyLocal}
     });
 }
@@ -673,8 +676,8 @@ void TDLibWrapper::getSupergroupMembers(const QString &groupId, int limit, int o
         {_TYPE, "getSupergroupMembers"},
         {_EXTRA, groupId},
         {"supergroup_id", groupId},
-        {"offset", offset},
-        {"limit", limit}
+        {OFFSET, offset},
+        {LIMIT, limit}
     });
 }
 
@@ -742,8 +745,8 @@ void TDLibWrapper::getGroupsInCommon(const QString &userId, int limit, int offse
         {_TYPE, "getGroupsInCommon"},
         {_EXTRA, userId},
         {USER_ID, userId},
-        {"offset", offset},
-        {"limit", limit}
+        {OFFSET, offset},
+        {LIMIT, limit}
     });
 }
 
@@ -753,8 +756,8 @@ void TDLibWrapper::getUserProfilePhotos(const QString &userId, int limit, int of
         {_TYPE, "getUserProfilePhotos"},
         {_EXTRA, userId},
         {USER_ID, userId},
-        {"offset", offset},
-        {"limit", limit}
+        {OFFSET, offset},
+        {LIMIT, limit}
     });
 }
 
@@ -839,8 +842,8 @@ void TDLibWrapper::getPollVoters(const QString &chatId, qlonglong messageId, int
         {CHAT_ID, chatId},
         {MESSAGE_ID, messageId},
         {"option_id", optionId},
-        {"offset", offset},
-        {"limit", limit} //max 50
+        {OFFSET, offset},
+        {LIMIT, limit} //max 50
     });
 }
 
@@ -922,11 +925,21 @@ void TDLibWrapper::searchChatMessages(qlonglong chatId, const QString &query, ql
     this->sendRequest(QVariantMap{
         {_TYPE, "searchChatMessages"},
         {CHAT_ID, chatId},
-        {"query", query},
+        {QUERY, query},
         {"from_message_id", fromMessageId},
-        {"offset", 0},
-        {"limit", 50},
+        {OFFSET, 0},
+        {LIMIT, 50},
         {_EXTRA, "searchChatMessages"}
+    });
+}
+
+void TDLibWrapper::searchChats(const QString &query) {
+    LOG("Searching local chats" << query);
+    this->sendRequest(QVariantMap{
+        {_TYPE, "searchChats"},
+        {QUERY, query},
+        {LIMIT, 50},
+        {_EXTRA, "searchChats"}
     });
 }
 
@@ -934,7 +947,7 @@ void TDLibWrapper::searchPublicChats(const QString &query) {
     LOG("Searching public chats" << query);
     this->sendRequest(QVariantMap{
         {_TYPE, "searchPublicChats"},
-        {"query", query},
+        {QUERY, query},
         {_EXTRA, "searchPublicChats"}
     });
 }
@@ -943,7 +956,7 @@ void TDLibWrapper::getSearchSponsoredChats(const QString &query) {
     LOG("Getting sponsored public chats for search" << query);
     this->sendRequest(QVariantMap{
         {_TYPE, "getSearchSponsoredChats"},
-        {"query", query}
+        {QUERY, query}
     });
 }
 
@@ -970,7 +983,7 @@ void TDLibWrapper::toggleChatIsPinned(qlonglong chatId, bool isPinned) {
     LOG("Toggle chat is pinned" << chatId << isPinned);
     this->sendRequest(QVariantMap{
         {_TYPE, "toggleChatIsPinned"},
-        {"chat_list", QVariantMap{{_TYPE, CHAT_LIST_MAIN}}},
+        {"chat_list", QVariantMap{{_TYPE, TYPE_CHAT_LIST_MAIN}}},
         {CHAT_ID, chatId},
         {"is_pinned", isPinned},
         {"is_marked_as_unread", isPinned}
@@ -1009,8 +1022,8 @@ void TDLibWrapper::getInlineQueryResults(qlonglong botUserId, qlonglong chatId, 
         {_TYPE, "getInlineQueryResults"},
         {CHAT_ID, chatId},
         {"bot_user_id", botUserId},
-        {"query", query},
-        {"offset", offset},
+        {QUERY, query},
+        {OFFSET, offset},
         {_EXTRA, extra}
     };
     if(!userLocation.isEmpty())
@@ -1343,14 +1356,14 @@ QVariantMap TDLibWrapper::getSuperGroup(qlonglong groupId) const {
     }
 }
 
-QVariantMap TDLibWrapper::getChat(const QString &chatId) {
+QVariantMap TDLibWrapper::getChat(qlonglong chatId) {
     LOG("Returning chat information for ID" << chatId);
-    return this->chats.value(chatId).toMap();
+    return this->chats.value(chatId);
 }
 
-QStringList TDLibWrapper::getChatReactions(const QString &chatId) {
+QStringList TDLibWrapper::getChatReactions(qlonglong chatId) {
     LOG("Obtaining chat reactions for chat" << chatId);
-    const QVariant available_reactions(chats.value(chatId).toMap().value(CHAT_AVAILABLE_REACTIONS));
+    const QVariant available_reactions(this->chats.value(chatId).value(CHAT_AVAILABLE_REACTIONS));
     const QVariantMap map(available_reactions.toMap());
     const QString reactions_type(map.value(_TYPE).toString());
     if (reactions_type == CHAT_AVAILABLE_REACTIONS_ALL) {
@@ -1442,20 +1455,6 @@ DBusAdaptor *TDLibWrapper::getDBusAdaptor() {
     return this->dbusInterface->getDBusAdaptor();
 }
 
-void TDLibWrapper::handleVersionDetected(const QString &version) {
-    this->versionString = version;
-    const QStringList parts(version.split('.'));
-    uint major, minor, release;
-    bool ok;
-    if (parts.count() >= 3 &&
-       (major = parts.at(0).toInt(&ok), ok) &&
-       (minor = parts.at(1).toInt(&ok), ok) &&
-       (release = parts.at(2).toInt(&ok), ok)) {
-        versionNumber = VERSION_NUMBER(major, minor, release);
-    }
-    emit versionDetected(version);
-}
-
 void TDLibWrapper::handleAuthorizationStateChanged(const QString &authorizationState, const QVariantMap authorizationStateData) {
     if (authorizationState == "authorizationStateClosed") {
         this->authorizationState = AuthorizationState::Closed;
@@ -1509,7 +1508,18 @@ void TDLibWrapper::handleAuthorizationStateChanged(const QString &authorizationS
 void TDLibWrapper::handleOptionUpdated(const QString &optionName, const QVariant &optionValue) {
     this->options.insert(optionName, optionValue);
     emit optionUpdated(optionName, optionValue);
-    if (optionName == "my_id") {
+    if (optionName == "version") {
+        const QString version = optionValue.toString();
+        const QStringList parts(version.split('.'));
+        uint major, minor, release;
+        bool ok;
+        if (parts.count() >= 3 &&
+           (major = parts.at(0).toInt(&ok), ok) &&
+           (minor = parts.at(1).toInt(&ok), ok) &&
+           (release = parts.at(2).toInt(&ok), ok)) {
+            versionNumber = VERSION_NUMBER(major, minor, release);
+        }
+    } else if (optionName == "my_id") {
         QString ownUserId = optionValue.toString();
         this->userInformation = this->getUserInformation(ownUserId);
         emit ownUserIdFound(ownUserId);
@@ -1573,7 +1583,7 @@ void TDLibWrapper::handleFileUpdated(const QVariantMap &fileInformation) {
 }
 
 void TDLibWrapper::handleNewChatDiscovered(const QVariantMap &chatInformation) {
-    QString chatId = chatInformation.value(ID).toString();
+    qlonglong chatId = chatInformation.value(ID).toLongLong();
     this->chats.insert(chatId, chatInformation);
     emit newChatDiscovered(chatId, chatInformation);
 }
@@ -1600,14 +1610,14 @@ void TDLibWrapper::handleChatReceived(const QVariantMap &chatInformation) {
 }
 
 void TDLibWrapper::handleUnreadMessageCountUpdated(const QVariantMap &messageCountInformation) {
-    if (messageCountInformation.value(CHAT_LIST_TYPE).toString() == CHAT_LIST_MAIN) {
+    if (messageCountInformation.value(CHAT_LIST_TYPE).toString() == TYPE_CHAT_LIST_MAIN) {
         this->unreadMessageInformation = messageCountInformation;
         emit unreadMessageCountUpdated(messageCountInformation);
     }
 }
 
 void TDLibWrapper::handleUnreadChatCountUpdated(const QVariantMap &chatCountInformation) {
-    if (chatCountInformation.value(CHAT_LIST_TYPE).toString() == CHAT_LIST_MAIN) {
+    if (chatCountInformation.value(CHAT_LIST_TYPE).toString() == TYPE_CHAT_LIST_MAIN) {
         this->unreadChatInformation = chatCountInformation;
         emit unreadChatCountUpdated(chatCountInformation);
     }
@@ -1615,10 +1625,9 @@ void TDLibWrapper::handleUnreadChatCountUpdated(const QVariantMap &chatCountInfo
 
 void TDLibWrapper::handleAvailableReactionsUpdated(qlonglong chatId, const QVariantMap &availableReactions) {
     LOG("Updating available reactions for chat" << chatId << availableReactions);
-    QString chatIdString = QString::number(chatId);
-    QVariantMap chatInformation = this->getChat(chatIdString);
+    QVariantMap chatInformation = this->getChat(chatId);
     chatInformation.insert(CHAT_AVAILABLE_REACTIONS, availableReactions);
-    this->chats.insert(chatIdString, chatInformation);
+    this->chats.insert(chatId, chatInformation);
     emit chatAvailableReactionsUpdated(chatId, availableReactions);
 }
 
@@ -1651,7 +1660,7 @@ void TDLibWrapper::handleStickerSets(const QVariantList &stickerSets) {
 }
 
 void TDLibWrapper::handleOpenWithChanged() {
-    if (this->appSettings->getUseOpenWith()) {
+    if (this->appSettings->useOpenWith()) {
         this->initializeOpenWith();
     } else {
         this->removeOpenWith();
@@ -1750,7 +1759,7 @@ void TDLibWrapper::handleUpdatedUserPrivacySettingRules(const QVariantMap &updat
 }
 
 void TDLibWrapper::handleSponsoredMessage(qlonglong chatId, const QVariantMap &message) {
-    switch (appSettings->getSponsoredMess()) {
+    switch (appSettings->sponsoredMess()) {
     case AppSettings::SponsoredMessHandle:
         emit sponsoredMessageReceived(chatId, message);
         break;
@@ -1862,6 +1871,7 @@ QVariantMap& TDLibWrapper::fillTdlibParameters(QVariantMap& parameters) {
     parameters.insert("api_id", TDLIB_API_ID);
     parameters.insert("api_hash", TDLIB_API_HASH);
     parameters.insert("database_directory", QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/tdlib");
+    parameters.insert("files_directory", QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/tdlib");
     bool onlineOnlyMode = this->appSettings->onlineOnlyMode();
     parameters.insert("use_file_database", !onlineOnlyMode);
     parameters.insert("use_chat_info_database", !onlineOnlyMode);
@@ -2141,4 +2151,71 @@ void TDLibWrapper::handleDiceEmojisUpdated(const QStringList &emojis) {
 bool TDLibWrapper::isDiceEmoji(const QString &text) {
     LOG("Checking if text is a dice emoji" << text);
     return diceEmojis.contains(QString(text).trimmed());
+}
+
+QString TDLibWrapper::getTopChatCategoryType(TopChatCategory category) {
+    switch (category) {
+    case TopChatCategoryUsers:
+        return "topChatCategoryUsers";
+    case TopChatCategoryBots:
+        return "topChatCategoryBots";
+    case TopChatCategoryCalls:
+        return "topChatCategoryCalls";
+    case TopChatCategoryChannels:
+        return "topChatCategoryChannels";
+    case TopChatCategoryForwardChats:
+        return "topChatCategoryForwardChats";
+    case TopChatCategoryGroups:
+        return "topChatCategoryGroups";
+    case TopChatCategoryInlineBots:
+        return "topChatCategoryInlineBots";
+    case TopChatCategoryWebAppBots:
+        return "topChatCategoryWebAppBots";
+    }
+
+    return QString();
+}
+
+void TDLibWrapper::getTopChats(TopChatCategory category, int limit) {
+    const QString categoryType = getTopChatCategoryType(category);
+    LOG("Getting top chats for category" << categoryType);
+
+    this->sendRequest(QVariantMap{
+                          {_TYPE, "getTopChats"},
+                          {"category", QVariantMap{{_TYPE, categoryType}}},
+                          {LIMIT, limit},
+                          {_EXTRA, categoryType}
+                      });
+}
+
+void TDLibWrapper::removeTopChat(TopChatCategory category, qlonglong chatId) {
+    const QString categoryType = getTopChatCategoryType(category);
+    LOG("Removing top chat" << chatId << "from category" << categoryType);
+
+    this->sendRequest(QVariantMap{
+                          {_TYPE, "removeTopChat"},
+                          {"category", QVariantMap{{_TYPE, categoryType}}},
+                          {CHAT_ID, chatId},
+                          {_EXTRA, categoryType}
+                      });
+}
+
+void TDLibWrapper::searchRecentlyFoundChats(const QString &query) {
+    LOG("Searching for recently found chats" << query);
+    this->sendRequest(QVariantMap{{_TYPE, "searchRecentlyFoundChats"}, {QUERY, query}, {LIMIT, 50}, {_EXTRA, "searchRecentlyFoundChats"}});
+}
+
+void TDLibWrapper::clearRecentlyFoundChats() {
+    LOG("Clearing recently found chats");
+    this->sendRequest(QVariantMap{{_TYPE, "clearRecentlyFoundChats"}});
+}
+
+void TDLibWrapper::addRecentlyFoundChat(qlonglong chatId) {
+    LOG("Adding chat to recently found chats list" << chatId);
+    this->sendRequest(QVariantMap{{_TYPE, "addRecentlyFoundChat"}, {CHAT_ID, chatId}, {_EXTRA, EXTRA_RECENTLY_FOUND}});
+}
+
+void TDLibWrapper::removeRecentlyFoundChat(qlonglong chatId) {
+    LOG("Removing chat from recently found chats list" << chatId);
+    this->sendRequest(QVariantMap{{_TYPE, "removeRecentlyFoundChat"}, {CHAT_ID, chatId}, {_EXTRA, EXTRA_RECENTLY_FOUND}});
 }
