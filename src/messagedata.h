@@ -12,6 +12,7 @@ struct MessageData {
         RoleMessageContentType,
         RoleMessageViewCount,
         RoleMessageReactions,
+        // When not needed these can be left unused:
         RoleMessageAlbumEntryFilter,
         RoleMessageAlbumMessageIds,
     };

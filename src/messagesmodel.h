@@ -24,11 +24,12 @@
 #include "tdlibwrapper.h"
 #include "messagedata.h"
 
+// MessagesModel's main job is to take care of the messages updates (content, interaction info, etc.)
+// It also contains utility unctions used by subclasses and handles messages deletion and some other stuff
+
 class MessagesModel : public QAbstractListModel {
     Q_OBJECT
     Q_PROPERTY(qlonglong chatId READ getChatId NOTIFY chatIdChanged)
-    Q_PROPERTY(int lastReadMessageIndexInBounds READ calculateLastReadMessageIndexInBounds NOTIFY lastReadMessageIndexChanged)
-    Q_PROPERTY(int lastReadIncomingMessageIndex READ getLastReadMessageIndex NOTIFY lastReadMessageIndexChanged)
 
 public:
     MessagesModel(TDLibWrapper *tdLibWrapper);
@@ -38,13 +39,8 @@ public:
     virtual int rowCount(const QModelIndex&) const override;
     virtual QVariant data(const QModelIndex &index, int role) const override;
 
-    Q_INVOKABLE virtual void clear();
+    Q_INVOKABLE virtual bool clear();
     Q_INVOKABLE virtual void reset();
-    Q_INVOKABLE void triggerLoadMoreHistory();
-    Q_INVOKABLE void triggerLoadMoreFuture();
-    Q_INVOKABLE void triggerLoadHistoryForMessage(qlonglong messageId);
-    Q_INVOKABLE void loadEnd(bool markAllAsRead = false);
-    Q_INVOKABLE QVariantMap getChatInformation();
     Q_INVOKABLE QVariantMap getMessage(int index);
     Q_INVOKABLE QVariantList getMessageIdsForAlbum(qlonglong albumId);
     Q_INVOKABLE QVariantList getMessagesForAlbum(qlonglong albumId, int startAt);
@@ -54,21 +50,11 @@ public:
 
 signals:
     void chatIdChanged();
-    void messagesReceived(int scrollPosition, int totalCount, bool fromIncrementalUpdate);
-    void newMessageReceived(const QVariantMap &message);
-    void unreadCountUpdated(int unreadCount, const QString &lastReadInboxMessageId);
-    void lastReadMessageIndexChanged();
     void messageUpdated(int modelIndex);
 
 private slots:
-    void handleMessagesReceived(const QVariantList &messages, int totalCount);
-    void handleSponsoredMessageReceived(qlonglong chatId, const QVariantMap &sponsoredMessage);
-    void handleNewMessageReceived(qlonglong chatId, const QVariantMap &message);
     void handleMessageReceived(qlonglong chatId, qlonglong messageId, const QVariantMap &message);
-    void handleChatReadInboxUpdated(const QString &chatId, const QString &lastReadInboxMessageId, int unreadCount);
-    void handleChatReadOutboxUpdated(const QString &chatId, const QString &lastReadOutboxMessageId);
     void handleMessageSendSucceeded(qlonglong messageId, qlonglong oldMessageId, const QVariantMap &message);
-    void handleChatLastMessageUpdated(const QString &id, const QString &/*order*/, const QVariantMap &lastMessage);
     void handleMessageContentUpdated(qlonglong chatId, qlonglong messageId, const QVariantMap &newContent);
     void handleMessageEditedUpdated(qlonglong chatId, qlonglong messageId, const QVariantMap &replyMarkup);
     void handleMessageInteractionInfoUpdated(qlonglong chatId, qlonglong messageId, const QVariantMap &updatedInfo);
@@ -76,26 +62,25 @@ private slots:
 
 private:
     void removeRange(int firstDeleted, int lastDeleted);
+    void updateAlbumMessages(qlonglong albumId, bool checkDeleted);
+    void updateAlbumMessages(QList<qlonglong> albumIds, bool checkDeleted);
+    void setMessagesAlbum(MessageData *message);
+
+protected:
     void insertMessages(const QList<MessageData*> newMessages);
     void appendMessages(const QList<MessageData*> newMessages);
     void prependMessages(const QList<MessageData*> newMessages);
-    void updateAlbumMessages(qlonglong albumId, bool checkDeleted);
-    void updateAlbumMessages(QList<qlonglong> albumIds, bool checkDeleted);
     void setMessagesAlbum(const QList<MessageData*> newMessages);
-    void setMessagesAlbum(MessageData *message);
-    int calculateLastReadMessageIndexInBounds();
-    int findLastSentMessageIndex();
-
-protected:
     virtual void loadMessages(qlonglong fromMessageId, int offset = -1) = 0;
     virtual inline bool canLoadMoreMessages() const { return true; }
+    int findLastSentMessageIndex();
+
+signals:
+    void messageSendSucceeded();
 
 protected:
     TDLibWrapper *tdLibWrapper;
     qlonglong chatId;
-    QVariantMap chatInformation;
-
-private:
     QList<MessageData*> messages;
     QHash<qlonglong,int> messageIndexMap;
     QHash<qlonglong, QVariantList> albumMessageMap;

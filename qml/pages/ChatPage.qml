@@ -619,11 +619,11 @@ Page {
             chatPage.unreadCount = chatInformation.unread_count
         }
         onNotificationSettingsUpdated: {
-            chatInformation = chatModel.getChatInformation()
+            chatInformation = chatModel.chatInformation
             muteChatMenuItem.text = chatInformation.notification_settings.mute_for > 0 ? qsTr("Unmute Chat") : qsTr("Mute Chat")
         }
         onPinnedMessageChanged: {
-            chatInformation = chatModel.getChatInformation()
+            chatInformation = chatModel.chatInformation
             if (chatInformation.pinned_message_id.toString() !== "0") {
                 Debug.log("[ChatPage] Loading pinned message ", chatInformation.pinned_message_id)
                 tdLibWrapper.getMessage(chatInformation.id, chatInformation.pinned_message_id)

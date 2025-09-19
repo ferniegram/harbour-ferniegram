@@ -3,9 +3,39 @@
 #define DEBUG_MODULE ReadableMessagesModel
 #include "debuglog.h"
 
-ReadableMessagesModel::ReadableMessagesModel(TDLibWrapper *tdLibWrapper) : MessagesModel(tdLibWrapper) {
-
+namespace {
+    const QString ID("id");
+    const QString CHAT_ID("chat_id");
+    const QString LAST_READ_INBOX_MESSAGE_ID("last_read_inbox_message_id");
+    const QString LAST_READ_OUTBOX_MESSAGE_ID("last_read_outbox_message_id");
+    const QString MESSAGE_ID("message_id");
 }
+
+ReadableMessagesModel::ReadableMessagesModel(TDLibWrapper *tdLibWrapper) : MessagesModel(tdLibWrapper) {
+    connect(this->tdLibWrapper, &TDLibWrapper::messagesReceived, this, &ReadableMessagesModel::handleMessagesReceived);
+    connect(this->tdLibWrapper, &TDLibWrapper::sponsoredMessageReceived, this, &ReadableMessagesModel::handleSponsoredMessageReceived);
+    connect(this->tdLibWrapper, &TDLibWrapper::newMessageReceived, this, &ReadableMessagesModel::handleNewMessageReceived);
+
+    connect(this, &ReadableMessagesModel::messageSendSucceeded, this, &ReadableMessagesModel::lastReadSentMessageUpdated);
+
+    // FIXME: can this be implemented better?
+    connect(this, &ReadableMessagesModel::messagesReceived, this, &ReadableMessagesModel::lastReadMessageIndexChanged);
+    connect(this, &ReadableMessagesModel::newMessageReceived, this, &ReadableMessagesModel::lastReadMessageIndexChanged);
+    connect(this, &ReadableMessagesModel::unreadCountUpdated, this, &ReadableMessagesModel::lastReadMessageIndexChanged);
+
+    // FIXME: can this be implemented better?
+    connect(this, &ReadableMessagesModel::messagesReceived, this, &ReadableMessagesModel::historyEndLoadedChanged);
+}
+
+bool ReadableMessagesModel::clear() {
+    if (MessagesModel::clear()) {
+        emit historyEndLoadedChanged();
+        emit lastReadSentMessageUpdated();
+        return true;
+    }
+    return false;
+}
+
 int ReadableMessagesModel::getLastReadMessageIndex() {
     int listInboxPosition = messageIndexMap.value(lastReadInboxMessageId(), -1);
     if (listInboxPosition > messages.size() - 1) listInboxPosition = -1;
@@ -59,4 +89,152 @@ bool ReadableMessagesModel::isMostRecentMessageLoaded() {
     const bool result = this->messageIndexMap.contains(messageId);
     LOG("Checking if most recent message is loaded" << messageId << result << messageIndexMap);
     return result;
+}
+
+int ReadableMessagesModel::calculateLastReadMessageIndexInBounds() {
+    LOG("calculateLastReadMessageIndexInBounds");
+    const qlonglong lastReadMessageId = lastReadInboxMessageId(); // last read incoming message id
+
+    LOG("lastReadMessageId" << lastReadMessageId);
+    LOG("size messageIndexMap" << messageIndexMap.size()
+        << "; contains last read ID?" << messageIndexMap.contains(lastReadMessageId)
+        );
+
+    int listInboxPosition = messageIndexMap.value(lastReadMessageId, messages.size() - 1);
+    int listOwnPosition = findLastSentMessageIndex();
+
+    if (listInboxPosition > messages.size() - 1)
+        listInboxPosition = messages.size() - 1;
+    if (listOwnPosition > messages.size() - 1)
+        listOwnPosition = -1;
+
+    LOG("Last known message is at position" << listInboxPosition << "; last own message is at position" << listOwnPosition);
+
+    return qMax(listInboxPosition, listOwnPosition);
+}
+
+
+void ReadableMessagesModel::triggerLoadHistoryForMessage(qlonglong messageId) {
+    if (!this->inIncrementalUpdate && !messages.isEmpty()) {
+        LOG("Trigger loading message with id..." << messageId);
+        this->clear();
+        this->highlightedMessageId = messageId;
+        this->loadMessages(messageId);
+    }
+}
+
+void ReadableMessagesModel::triggerLoadMoreHistory() {
+    if (!this->inIncrementalUpdate && !messages.isEmpty()) {
+        this->inIncrementalUpdate = true;
+        LOG("Loading older messages...");
+        this->loadMessages(messages.first()->messageId);
+    }
+}
+
+void ReadableMessagesModel::triggerLoadMoreFuture() {
+    if (canLoadMoreMessages() && !this->inIncrementalUpdate && !messages.isEmpty()) {
+        LOG("Loading newer messages...");
+        this->inIncrementalUpdate = true;
+        this->loadMessages(messages.last()->messageId, -49);
+    }
+}
+
+void ReadableMessagesModel::handleMessagesReceived(const QVariantList &messages, int totalCount) {
+    LOG("Receiving new messages :)" << messages.size());
+
+    if (messages.size() == 0) {
+        LOG("No additional messages loaded, notifying chat UI...");
+        this->inReload = false;
+        const int scrollPosition = this->calculateScrollPosition();
+        emit lastReadSentMessageUpdated();
+
+        bool fromIncrementalUpdate = this->inIncrementalUpdate;
+        this->inIncrementalUpdate = false;
+        emit messagesReceived(scrollPosition, totalCount, fromIncrementalUpdate);
+    } else {
+        if (this->inIncrementalUpdate || this->inReload || this->messages.size() == 0 || this->isMostRecentMessageLoaded()) {
+            QList<MessageData*> messagesToBeAdded;
+            QListIterator<QVariant> messagesIterator(messages);
+
+            while (messagesIterator.hasNext()) {
+                const QVariantMap messageData = messagesIterator.next().toMap();
+                const qlonglong messageId = messageData.value(ID).toLongLong();
+                if (messageId && messageData.value(CHAT_ID).toLongLong() == chatId && !messageIndexMap.contains(messageId)) {
+                    LOG("New message will be added:" << messageId);
+                    MessageData* message = new MessageData(messageData, messageId);
+                    messagesToBeAdded.append(message);
+                }
+            }
+
+            std::sort(messagesToBeAdded.begin(), messagesToBeAdded.end(), MessageData::lessThan);
+
+            if (!messagesToBeAdded.isEmpty()) {
+                insertMessages(messagesToBeAdded);
+                setMessagesAlbum(messagesToBeAdded);
+            }
+
+            // First call only returns a few messages, we need to get a little more than that...
+            if (!messagesToBeAdded.isEmpty() && (messagesToBeAdded.size() + messages.size()) < 10 && !inReload) {
+                LOG("Only a few messages received in first call, loading more...");
+                this->inReload = true;
+                this->loadMessages(messagesToBeAdded.first()->messageId, 0); // (possibly) fixme
+            } else {
+                LOG("Messages loaded, notifying chat UI...");
+                this->inReload = false;
+                const int scrollPosition = this->calculateScrollPosition();
+                emit lastReadSentMessageUpdated();
+
+                bool fromIncrementalUpdate = this->inIncrementalUpdate;
+                this->inIncrementalUpdate = false;
+                emit messagesReceived(scrollPosition, totalCount, fromIncrementalUpdate);
+            }
+        } else {
+            // Cleanup... Is that really needed? Well, let's see...
+            this->inReload = false;
+            this->inIncrementalUpdate = false;
+            LOG("New messages in this chat, but not relevant as less recent messages need to be loaded first!");
+        }
+    }
+
+}
+
+void ReadableMessagesModel::handleSponsoredMessageReceived(qlonglong chatId, const QVariantMap &sponsoredMessage) {
+    LOG("Handling sponsored message" << chatId);
+    QList<MessageData*> messagesToBeAdded;
+    const qlonglong messageId = sponsoredMessage.value(MESSAGE_ID).toLongLong();
+    if (messageId && !messageIndexMap.contains(messageId)) {
+        LOG("New sponsored message will be added:" << messageId);
+        messagesToBeAdded.append(new MessageData(sponsoredMessage, messageId));
+    }
+    appendMessages(messagesToBeAdded);
+}
+
+void ReadableMessagesModel::handleNewMessageReceived(qlonglong chatId, const QVariantMap &message) {
+    const qlonglong messageId = message.value(ID).toLongLong();
+    if (chatId == this->chatId && !messageIndexMap.contains(messageId)) {
+        if (canLoadMoreMessages() && this->isMostRecentMessageLoaded()) {
+            LOG("New message received for this chat");
+            QList<MessageData*> messagesToBeAdded;
+            messagesToBeAdded.append(new MessageData(message, messageId));
+            insertMessages(messagesToBeAdded);
+            setMessagesAlbum(messagesToBeAdded);
+            emit newMessageReceived(message);
+        } else {
+            LOG("New message in this chat, but not relevant as less recent messages need to be loaded first!");
+        }
+    }
+}
+
+
+void ReadableMessagesModel::loadEnd(bool markAllAsRead) {
+    if (!this->inIncrementalUpdate && !messages.isEmpty() && !inReload) {
+        LOG("Loading end of the chat... markAllAsRead:" << markAllAsRead << (markAllAsRead ? 0 : lastReadInboxMessageId()) << chatId);
+
+        //if (markAllAsRead) // FIXME: is this really needed?
+        //    this->tdLibWrapper->toggleChatIsMarkedAsUnread(this->chatId, false);
+        this->loadingFullEnd = markAllAsRead; // doesn't seem to always work (also a similar issue with search)
+
+        this->clear();
+        this->loadMessages(markAllAsRead ? 0 : lastReadOutboxMessageId());
+    }
 }

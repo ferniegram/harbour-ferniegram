@@ -12,6 +12,8 @@ namespace {
     const QString PHOTO("photo");
     const QString PINNED_MESSAGE_ID("pinned_message_id");
     const QString LAST_READ_INBOX_MESSAGE_ID("last_read_inbox_message_id");
+    const QString LAST_READ_OUTBOX_MESSAGE_ID("last_read_outbox_message_id");
+    const QString LAST_MESSAGE("last_message");
 }
 
 ChatModel::ChatModel(TDLibWrapper *tdLibWrapper) : ReadableMessagesModel(tdLibWrapper), searchQuery() {
@@ -19,6 +21,9 @@ ChatModel::ChatModel(TDLibWrapper *tdLibWrapper) : ReadableMessagesModel(tdLibWr
     connect(this->tdLibWrapper, &TDLibWrapper::chatPinnedMessageUpdated, this, &ChatModel::handleChatPinnedMessageUpdated);
     connect(this->tdLibWrapper, &TDLibWrapper::chatActionUpdated, this, &ChatModel::handleChatActionUpdated);
     connect(this->tdLibWrapper, &TDLibWrapper::chatNotificationSettingsUpdated, this, &ChatModel::handleChatNotificationSettingsUpdated);
+    connect(this->tdLibWrapper, &TDLibWrapper::chatReadInboxUpdated, this, &ChatModel::handleChatReadInboxUpdated);
+    connect(this->tdLibWrapper, &TDLibWrapper::chatReadOutboxUpdated, this, &ChatModel::handleChatReadOutboxUpdated);
+    connect(this->tdLibWrapper, &TDLibWrapper::chatLastMessageUpdated, this, &ChatModel::handleChatLastMessageUpdated);
 }
 
 QVariantMap ChatModel::smallPhoto() const {
@@ -71,9 +76,9 @@ void ChatModel::handleChatNotificationSettingsUpdated(const QString &id, const Q
 
 
 
-void ChatModel::clear() {
+bool ChatModel::clear() {
     this->searchQuery.clear();
-    ReadableMessagesModel::clear();
+    return ReadableMessagesModel::clear();
 }
 
 void ChatModel::reset() {
@@ -124,4 +129,39 @@ void ChatModel::loadMessages(qlonglong fromMessageId, int offset) {
     else
         // ignore offset for now
         this->tdLibWrapper->searchChatMessages(chatId, searchQuery, fromMessageId);
+}
+
+
+void ChatModel::handleChatLastMessageUpdated(qlonglong id, const QVariant &/*order*/, const QVariantMap &lastMessage) {
+    if (id == chatId) {
+        this->chatInformation.insert(LAST_MESSAGE, lastMessage);
+        LOG("Last message updated");
+    }
+}
+
+void ChatModel::handleChatReadInboxUpdated(const QString &id, const QString &lastReadInboxMessageId, int unreadCount) {
+    if (id.toLongLong() == chatId) {
+        LOG("Updating chat unread count, unread messages" << unreadCount << ", last read message ID:" << lastReadInboxMessageId);
+        this->chatInformation.insert("unread_count", unreadCount);
+        this->chatInformation.insert(LAST_READ_INBOX_MESSAGE_ID, lastReadInboxMessageId);
+        emit unreadCountUpdated(unreadCount, lastReadInboxMessageId);
+    }
+}
+
+void ChatModel::handleChatReadOutboxUpdated(const QString &id, const QString &lastReadOutboxMessageId) {
+    if (id.toLongLong() == chatId) {
+        this->chatInformation.insert(LAST_READ_OUTBOX_MESSAGE_ID, lastReadOutboxMessageId);
+        LOG("Updating sent message ID");
+        emit lastReadSentMessageUpdated();
+    }
+}
+
+qlonglong ChatModel::lastReadInboxMessageId() const {
+    return this->chatInformation.value(LAST_READ_INBOX_MESSAGE_ID).toLongLong();
+}
+qlonglong ChatModel::lastReadOutboxMessageId() const {
+    return this->chatInformation.value(LAST_READ_OUTBOX_MESSAGE_ID).toLongLong();
+}
+qlonglong ChatModel::lastMessageId() const { // FIXME: this is wrong and shouldn't be used ideally
+    return this->chatInformation.value(LAST_MESSAGE).toMap().value(ID).toLongLong();
 }
