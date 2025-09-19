@@ -32,7 +32,7 @@ class MessagesModel : public QAbstractListModel {
     Q_PROPERTY(qlonglong chatId READ getChatId NOTIFY chatIdChanged)
 
 public:
-    MessagesModel(TDLibWrapper *tdLibWrapper);
+    MessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent = nullptr);
     ~MessagesModel() override;
 
     virtual QHash<int,QByteArray> roleNames() const override;
@@ -84,10 +84,6 @@ protected:
     QList<MessageData*> messages;
     QHash<qlonglong,int> messageIndexMap;
     QHash<qlonglong, QVariantList> albumMessageMap;
-    qlonglong highlightedMessageId;
-    bool inReload;
-    bool inIncrementalUpdate; // if we are waiting for messages after sending a request to load more of them
-    bool loadingFullEnd;
 };
 
 #endif // MESSAGESMODEL_H

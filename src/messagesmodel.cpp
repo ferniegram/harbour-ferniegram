@@ -34,13 +34,7 @@ namespace {
     const QString TYPE_SPONSORED_MESSAGE("sponsoredMessage");
 }
 
-MessagesModel::MessagesModel(TDLibWrapper *tdLibWrapper) :
-    chatId(0),
-    highlightedMessageId(0),
-    inReload(false),
-    inIncrementalUpdate(false),
-    loadingFullEnd(false)
-{
+MessagesModel::MessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent) : QAbstractListModel(parent), chatId(0) {
     this->tdLibWrapper = tdLibWrapper;
     connect(this->tdLibWrapper, &TDLibWrapper::receivedMessage, this, &MessagesModel::handleMessageReceived);
     connect(this->tdLibWrapper, &TDLibWrapper::messageSendSucceeded, this, &MessagesModel::handleMessageSendSucceeded);
@@ -93,10 +87,6 @@ QVariant MessagesModel::data(const QModelIndex &index, int role) const
 
 bool MessagesModel::clear() {
     LOG("Clearing chat model");
-    inReload = false;
-    inIncrementalUpdate = false;
-    highlightedMessageId = 0;
-    loadingFullEnd = false;
     if (!messages.isEmpty()) {
         beginResetModel();
         qDeleteAll(messages);

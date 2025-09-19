@@ -11,7 +11,13 @@ namespace {
     const QString MESSAGE_ID("message_id");
 }
 
-ReadableMessagesModel::ReadableMessagesModel(TDLibWrapper *tdLibWrapper) : MessagesModel(tdLibWrapper) {
+ReadableMessagesModel::ReadableMessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent) :
+    MessagesModel(tdLibWrapper, parent),
+    highlightedMessageId(0),
+    inReload(false),
+    inIncrementalUpdate(false),
+    loadingFullEnd(false)
+{
     connect(this->tdLibWrapper, &TDLibWrapper::messagesReceived, this, &ReadableMessagesModel::handleMessagesReceived);
     connect(this->tdLibWrapper, &TDLibWrapper::sponsoredMessageReceived, this, &ReadableMessagesModel::handleSponsoredMessageReceived);
     connect(this->tdLibWrapper, &TDLibWrapper::newMessageReceived, this, &ReadableMessagesModel::handleNewMessageReceived);
@@ -28,6 +34,10 @@ ReadableMessagesModel::ReadableMessagesModel(TDLibWrapper *tdLibWrapper) : Messa
 }
 
 bool ReadableMessagesModel::clear() {
+    inReload = false;
+    inIncrementalUpdate = false;
+    highlightedMessageId = 0;
+    loadingFullEnd = false;
     if (MessagesModel::clear()) {
         emit historyEndLoadedChanged();
         emit lastReadSentMessageUpdated();

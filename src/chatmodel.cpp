@@ -16,7 +16,10 @@ namespace {
     const QString LAST_MESSAGE("last_message");
 }
 
-ChatModel::ChatModel(TDLibWrapper *tdLibWrapper) : ReadableMessagesModel(tdLibWrapper), searchQuery() {
+ChatModel::ChatModel(TDLibWrapper *tdLibWrapper, QObject *parent) :
+    ReadableMessagesModel(tdLibWrapper, parent),
+    searchQuery()
+{
     connect(this->tdLibWrapper, &TDLibWrapper::chatPhotoUpdated, this, &ChatModel::handleChatPhotoUpdated);
     connect(this->tdLibWrapper, &TDLibWrapper::chatPinnedMessageUpdated, this, &ChatModel::handleChatPinnedMessageUpdated);
     connect(this->tdLibWrapper, &TDLibWrapper::chatActionUpdated, this, &ChatModel::handleChatActionUpdated);

@@ -11,7 +11,7 @@ class ChatModel : public ReadableMessagesModel {
     Q_PROPERTY(QVariantMap chatActionsByChats MEMBER chatActionsByChats NOTIFY chatActionsChanged)
 
 public:
-    ChatModel(TDLibWrapper *tdLibWrapper);
+    ChatModel(TDLibWrapper *tdLibWrapper, QObject *parent = nullptr);
 
     Q_INVOKABLE virtual bool clear() override;
     Q_INVOKABLE virtual void reset() override;

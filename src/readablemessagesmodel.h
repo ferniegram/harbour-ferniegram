@@ -12,7 +12,7 @@ class ReadableMessagesModel : public MessagesModel {
     Q_PROPERTY(bool historyEndLoaded READ isMostRecentMessageLoaded NOTIFY historyEndLoadedChanged)
 
 public:
-    ReadableMessagesModel(TDLibWrapper *tdLibWrapper);
+    ReadableMessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent = nullptr);
 
     Q_INVOKABLE virtual bool clear() override;
     Q_INVOKABLE bool isMostRecentMessageLoaded();
@@ -44,9 +44,18 @@ protected:
     int calculateLastReadSentMessageIndex();
     int calculateScrollPosition();
 
+    virtual void loadMessages(qlonglong fromMessageId, int offset = -1) = 0;
+    virtual inline bool canLoadMoreMessages() const { return true; }
+
     virtual qlonglong lastReadInboxMessageId() const = 0;
     virtual qlonglong lastReadOutboxMessageId() const = 0;
     virtual qlonglong lastMessageId() const = 0; // FIXME: this is wrong and shouldn't be used ideally
+
+protected:
+    qlonglong highlightedMessageId;
+    bool inReload;
+    bool inIncrementalUpdate; // if we are waiting for messages after sending a request to load more of them
+    bool loadingFullEnd;
 };
 
 #endif // READABLEMESSAGESMODEL_H
