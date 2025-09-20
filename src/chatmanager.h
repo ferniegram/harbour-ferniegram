@@ -30,6 +30,7 @@ class ChatManager : public QObject {
     Q_OBJECT
     Q_PROPERTY(qlonglong chatId MEMBER chatId NOTIFY chatIdChanged)
     Q_PROPERTY(QVariantMap chatInformation MEMBER chatInformation NOTIFY chatInformationChanged)
+    Q_PROPERTY(bool isForum READ isForum NOTIFY isForumChanged)
     Q_PROPERTY(ChatMessagesModel* model MEMBER chatMessagesModel CONSTANT)
     Q_PROPERTY(MediaMessagesModel* mediaMessagesModel MEMBER mediaMessagesModel CONSTANT)
     Q_PROPERTY(QVariantMap smallPhoto READ smallPhoto NOTIFY smallPhotoChanged)
@@ -42,6 +43,7 @@ public:
     Q_INVOKABLE void reset();
     Q_INVOKABLE void initialize(const QVariantMap &chatInformation, qlonglong fromMessageId = 0);
     Q_INVOKABLE void initializeMediaMessagesModel();
+    Q_INVOKABLE bool isForum();
     inline qlonglong getChatId() { return chatId; }
 
     QVariantMap smallPhoto() const;

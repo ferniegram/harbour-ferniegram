@@ -208,6 +208,7 @@ TDLibReceiver::TDLibReceiver(int tdLibClientId, QObject *parent) : QThread(paren
     handlers.insert("updateDiceEmojis", &TDLibReceiver::processUpdateDiceEmojis);
     handlers.insert("updateSuggestedActions", &TDLibReceiver::processUpdateSuggestedActions);
     handlers.insert("count", &TDLibReceiver::processCount);
+    handlers.insert("forumTopics", &TDLibReceiver::processForumTopics);
 }
 
 void TDLibReceiver::setActive(bool active)
@@ -1119,4 +1120,19 @@ void TDLibReceiver::processCount(const QVariantMap &receivedInformation) {
     const int count = receivedInformation.value("count").toInt();
     LOG("Received count" << extra << count);
     emit countReceived(count, extra);
+}
+
+void TDLibReceiver::processForumTopics(const QVariantMap &receivedInformation) {
+    const qlonglong chatId = receivedInformation.value(CHAT_ID).toLongLong();
+    const int totalCount = receivedInformation.value(TOTAL_COUNT).toInt();
+    LOG("Received forumTopics" << chatId << totalCount);
+
+    emit forumTopicsReceived(
+                chatId,
+                totalCount,
+                receivedInformation.value("topics").toList(),
+                receivedInformation.value("next_offset_date").toInt(),
+                receivedInformation.value("next_offset_message_id").toLongLong(),
+                receivedInformation.value("next_offset_message_thread_id").toLongLong()
+                );
 }

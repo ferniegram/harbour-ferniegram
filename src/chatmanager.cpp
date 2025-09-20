@@ -151,6 +151,11 @@ void ChatManager::initializeMediaMessagesModel() {
     this->mediaMessagesModel->init(this->chatId);
 }
 
+bool ChatManager::isForum() {
+    // TODO
+    return false;
+}
+
 
 void ChatManager::handleChatLastMessageUpdated(qlonglong id, const QVariant &/*order*/, const QVariantMap &lastMessage) {
     if (id == chatId) {

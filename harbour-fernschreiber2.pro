@@ -29,6 +29,7 @@ SOURCES += src/harbour-fernschreiber2.cpp \
     src/contactsmodel.cpp \
     src/dbusadaptor.cpp \
     src/dbusinterface.cpp \
+    src/forumtopicsmodel.cpp \
     src/invertedmessagesmodel.cpp \
     src/mediamessagesmodel.cpp \
     src/messagedata.cpp \
@@ -253,6 +254,7 @@ HEADERS += \
     src/dbusinterface.h \
     src/debuglog.h \
     src/debuglogjs.h \
+    src/forumtopicsmodel.h \
     src/invertedmessagesmodel.h \
     src/mediamessagesmodel.h \
     src/messagedata.h \

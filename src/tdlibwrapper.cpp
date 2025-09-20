@@ -256,6 +256,7 @@ void TDLibWrapper::initializeTDLibReceiver() {
     connect(this->tdLibReceiver, &TDLibReceiver::diceEmojisUpdated, this, &TDLibWrapper::handleDiceEmojisUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::suggestedActionsUpdated, this, &TDLibWrapper::suggestedActionsUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::countReceived, this, &TDLibWrapper::countReceived);
+    connect(this->tdLibReceiver, &TDLibReceiver::forumTopicsReceived, this, &TDLibWrapper::forumTopicsReceived);
 
     this->tdLibReceiver->start();
 }
@@ -2280,4 +2281,17 @@ QString TDLibWrapper::getSearchMessagesFilterType(SearchMessagesFilter filter) {
     }
 
     return "searchMessagesFilterEmpty";
+}
+
+void TDLibWrapper::getForumTopics(qlonglong chatId, qint32 offsetDate, qlonglong offsetMessageId, qlonglong offsetMessageThreadId, const QString &query, int limit) {
+    LOG("Retreiving forum topics" << chatId);
+    this->sendRequest(QVariantMap{
+                          {CHAT_ID, chatId},
+                          {QUERY, query},
+                          {"offset_date", offsetDate},
+                          {"offset_message_id", offsetMessageId},
+                          {"offset_message_thread_id", offsetMessageThreadId},
+                          {LIMIT, limit},
+                          {_EXTRA, CHAT_ID}
+                      });
 }
