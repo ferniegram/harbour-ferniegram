@@ -22,7 +22,7 @@ bool MediaMessagesModel::clear() {
 }
 
 inline void MediaMessagesModel::loadMessages(qlonglong fromMessageId) {
-    this->tdLibWrapper->searchChatMessages(this->chatId, QString(), fromMessageId, TDLibWrapper::SearchMessagesFilterPhotoAndVideo);
+    this->tdLibWrapper->searchChatMessages(this->chatId, QString(), fromMessageId, TDLibWrapper::SearchMessagesFilterPhotoAndVideo, 100);
 }
 
 void MediaMessagesModel::init(qlonglong chatId) {
