@@ -118,6 +118,7 @@ signals:
     void emojiKeywordsReceived(const QString &text, const QVariantList &emojis);
     void diceEmojisUpdated(const QStringList &emojis);
     void suggestedActionsUpdated(const QVariantList added, const QVariantList removed);
+    void countReceived(int count, const QString &extra);
     void chatListsReceived(qlonglong chatId, const QVariantList &chatLists);
     void archiveChatListSettingsReceived(bool archiveAndMuteNewChatsFromUnknownUsers, bool keepUnmutedChatsArchived, bool keepChatsFromFoldersArchived);
     void chatFoldersUpdated(const QVariantList &chatFolders, int mainChatListPosition, bool tagsEnabled);
@@ -217,6 +218,7 @@ private:
     void processEmojiKeywords(const QVariantMap &receivedInformation);
     void processUpdateDiceEmojis(const QVariantMap &receivedInformation);
     void processUpdateSuggestedActions(const QVariantMap &receivedInformation);
+    void processCount(const QVariantMap &receivedInformation);
     void processChatLists(const QVariantMap &receivedInformation);
     void processArchiveChatListSettings(const QVariantMap &receivedInformation);
     void processUpdateChatFolders(const QVariantMap &receivedInformation);

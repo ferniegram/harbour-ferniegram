@@ -187,6 +187,7 @@ TDLibReceiver::TDLibReceiver(int tdLibClientId, QObject *parent) : QThread(paren
     handlers.insert("emojiKeywords", &TDLibReceiver::processEmojiKeywords);
     handlers.insert("updateDiceEmojis", &TDLibReceiver::processUpdateDiceEmojis);
     handlers.insert("updateSuggestedActions", &TDLibReceiver::processUpdateSuggestedActions);
+    handlers.insert("count", &TDLibReceiver::processCount);
     handlers.insert("chatLists", &TDLibReceiver::processChatLists);
     handlers.insert("archiveChatListSettings", &TDLibReceiver::processArchiveChatListSettings);
     handlers.insert("updateChatFolders", &TDLibReceiver::processUpdateChatFolders);
@@ -1054,6 +1055,12 @@ void TDLibReceiver::processUpdateSuggestedActions(const QVariantMap &receivedInf
     emit suggestedActionsUpdated(receivedInformation.value("added_actions").toList(), receivedInformation.value("removed_actions").toList());
 }
 
+void TDLibReceiver::processCount(const QVariantMap &receivedInformation) {
+    const QString extra = receivedInformation.value(_EXTRA).toString();
+    const int count = receivedInformation.value("count").toInt();
+    LOG("Received count" << extra << count);
+    emit countReceived(count, extra);
+}
 void TDLibReceiver::processChatLists(const QVariantMap &receivedInformation) {
     LOG("Received chatLists");
     emit chatListsReceived(receivedInformation.value(_EXTRA).toLongLong(), receivedInformation.value(CHAT_LISTS).toList());
