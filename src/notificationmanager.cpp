@@ -18,7 +18,7 @@
 */
 
 #include "notificationmanager.h"
-#include "chatmodel.h"
+#include "chatmanager.h"
 #include <sailfishapp.h>
 #include <QListIterator>
 #include <QUrl>
@@ -124,11 +124,11 @@ NotificationManager::NotificationGroup::~NotificationGroup()
     delete nemoNotification;
 }
 
-NotificationManager::NotificationManager(TDLibWrapper *tdLibWrapper, AppSettings *appSettings, MceInterface *mceInterface, ChatModel *chatModel, Utilities *utilities) :
+NotificationManager::NotificationManager(TDLibWrapper *tdLibWrapper, AppSettings *appSettings, MceInterface *mceInterface, ChatManager *chatManager, Utilities *utilities) :
     tdLibWrapper(tdLibWrapper),
     appSettings(appSettings),
     mceInterface(mceInterface),
-    chatModel(chatModel),
+    chatManager(chatManager),
     utilities(utilities),
     appIconFile(SailfishApp::pathTo("images/fernschreiber2-notification.png").toLocalFile())
 {
@@ -370,8 +370,8 @@ void NotificationManager::publishNotification(const NotificationGroup *notificat
     nemoNotification->setHintValue(HINT_VIBRA, needFeedback);
     nemoNotification->setHintValue(HINT_IMAGE_PATH, QString());
 
-    // Don't show popup for the currently open chat
-    if (!needFeedback || (chatModel->getChatId() == notificationGroup->chatId &&
+    // Don't show popup for chatManager currently open chat
+    if (!needFeedback || (chatManager->getChatId() == notificationGroup->chatId &&
             qGuiApp->applicationState() == Qt::ApplicationActive)) {
         nemoNotification->setHintValue(HINT_SUPPRESS_SOUND, true);
         nemoNotification->setHintValue(HINT_DISPLAY_ON, false);

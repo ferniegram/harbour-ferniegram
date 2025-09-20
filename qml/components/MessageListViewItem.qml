@@ -308,7 +308,7 @@ ListItem {
     property bool __otherTranslations: qsTr("Copy Message to Clipboard") + qsTr("Select Message") + qsTr("More Options...") + qsTr("Unpin Message") + qsTr("Pin Message")
 
     Connections {
-        target: chatModel
+        target: chatManager.model
         onLastReadSentMessageUpdated: {
             Debug.log("[ChatModel] Messages in this chat were read (last read changed), updating description for index ", index)
             messageDateText.text = getMessageStatusText(myMessage, messageIndex, messageDateText.useElapsed)
@@ -464,7 +464,7 @@ ListItem {
                 }
                 height: messageTextColumn.height + precalculatedValues.paddingMediumDouble
                 width: precalculatedValues.backgroundWidth
-                property bool isUnread: messageIndex > chatModel.lastReadMessageIndexInBounds && myMessage['@type'] !== "sponsoredMessage"
+                property bool isUnread: messageIndex > chatManager.model.lastReadMessageIndexInBounds && myMessage['@type'] !== "sponsoredMessage"
                 color: isUnread ? Theme.rgba(Theme.highlightBackgroundColor, Theme.highlightBackgroundOpacity) : Theme.rgba(Theme.primaryColor, Theme.opacityFaint)
                 radius: parent.width / 50
                 visible: appSettings.showStickersAsImages || (myMessage.content['@type'] !== "messageSticker" && myMessage.content['@type'] !== "messageAnimatedEmoji" && myMessage.content['@type'] !== "messageDice")

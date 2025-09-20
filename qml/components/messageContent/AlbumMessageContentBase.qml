@@ -33,7 +33,7 @@ MessageContentBase {
     function getMessages() {
         var msgs = [rawMessage]
         if (messageContent.albumId === '0' || messageContent.albumMessageIds.length <= 1) return msgs
-        chatModel.getMessagesForAlbum(messageContent.albumId, 1).forEach(function(m) { msgs.push(m) })
+        chatManager.model.getMessagesForAlbum(messageContent.albumId, 1).forEach(function(m) { msgs.push(m) })
         return msgs
     }
 }

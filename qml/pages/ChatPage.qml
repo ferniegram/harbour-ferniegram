@@ -35,7 +35,7 @@ Page {
     property bool loading: true
     property bool isInitialized: false
     readonly property int myUserId: tdLibWrapper.getUserInformation().id
-    property var chatInformation
+    property var chatInformation: chatManager.chatInformation
     property var secretChatDetails
     property alias chatPicture: chatPictureThumbnail.photoData
     property bool isPrivateChat: chatInformation.type['@type'] === "chatTypePrivate"
@@ -144,7 +144,7 @@ Page {
             toggleSingleMessageSelection(message)
         else {
             var albumMessages = [message]
-            chatModel.getMessagesForAlbum(message.media_album_id, 1).forEach(function(m) { albumMessages.push(m) })
+            chatManager.model.getMessagesForAlbum(message.media_album_id, 1).forEach(function(m) { albumMessages.push(m) })
             toggleMultipleMessagesSelection(albumMessages)
         }
     }
@@ -163,7 +163,7 @@ Page {
     }
 
     function getMessageStatusText(message, listItemIndex, useElapsed) {
-        var lastReadSentIndex = chatModel.lastReadSentMessageIndex
+        var lastReadSentIndex = chatManager.model.lastReadSentMessageIndex
         Debug.log("Last read sent index: " + lastReadSentIndex)
         var messageStatusSuffix = ""
 
@@ -362,7 +362,7 @@ Page {
             chatPage.messageIdToScrollTo = messageId
         }
         if (chatPage.messageIdToScrollTo) {
-            var index = chatModel.getMessageIndex(chatPage.messageIdToScrollTo)
+            var index = chatManager.model.getMessageIndex(chatPage.messageIdToScrollTo)
             var proxyIndex = chatProxyModel.mapRowFromSource(index, -1)
             if(proxyIndex !== -1) {
                 chatPage.messageIdToScrollTo = ""
@@ -370,7 +370,7 @@ Page {
                 navigatedTo(proxyIndex)
             } else if(initialRun)
                 // we only want to do this once.
-                chatModel.triggerLoadHistoryForMessage(chatPage.messageIdToScrollTo)
+                chatManager.model.triggerLoadHistoryForMessage(chatPage.messageIdToScrollTo)
         }
     }
 
@@ -400,7 +400,7 @@ Page {
         repeat: false
         onTriggered: {
             Debug.log("Searching for '" + searchInChatField.text + "'")
-            chatModel.setSearchQuery(searchInChatField.text)
+            chatManager.model.setSearchQuery(searchInChatField.text)
         }
     }
 
@@ -456,7 +456,7 @@ Page {
             break
         case PageStatus.Active:
             if (!chatPage.isInitialized) {
-                chatModel.initialize(chatInformation, messageIdToShow)
+                chatManager.initialize(chatInformation, messageIdToShow)
                 pageStack.pushAttached(Qt.resolvedUrl("ChatInformationPage.qml"), {
                                            chatInformation: chatInformation,
                                            privateChatUserInformation: chatPartnerInformation,
@@ -470,7 +470,7 @@ Page {
         case PageStatus.Inactive:
             if (pageStack.depth === 1)
                 // Only clear chat model if navigated back to overview page. In other cases we keep the information...
-                chatModel.reset()
+                chatManager.reset()
             else resetElements()
             break
         }
@@ -555,7 +555,7 @@ Page {
     }
 
     Connections {
-        target: chatModel
+        target: chatManager.model
         onMessagesReceived: {
             var proxyIndex = chatProxyModel.mapRowFromSource(scrollPosition, -1)
             Debug.log("[ChatPage] Messages received, from incremental update: ", fromIncrementalUpdate, ", view has ", chatView.count, " messages, possibly need to scroll to ", proxyIndex, "("+scrollPosition+")")
@@ -578,7 +578,7 @@ Page {
                 chatPage.loading = false
                 if (chatOverviewItem.visible && proxyIndex >= (chatView.count - 10)) {
                     chatView.inCooldown = true
-                    chatModel.triggerLoadMoreFuture()
+                    chatManager.model.triggerLoadMoreFuture()
                 }
             }
 
@@ -613,17 +613,10 @@ Page {
                 viewMessageTimer.queueViewMessage(chatView.count - 1)
             }
         }
-        onUnreadCountUpdated: {
-            Debug.log("[ChatPage] Unread count updated, new count: ", unreadCount)
-            chatInformation.unread_count = unreadCount
-            chatPage.unreadCount = chatInformation.unread_count
-        }
-        onNotificationSettingsUpdated: {
-            chatInformation = chatModel.chatInformation
-            muteChatMenuItem.text = chatInformation.notification_settings.mute_for > 0 ? qsTr("Unmute Chat") : qsTr("Mute Chat")
-        }
+    }
+    Connections {
+        target: chatManager
         onPinnedMessageChanged: {
-            chatInformation = chatModel.chatInformation
             if (chatInformation.pinned_message_id.toString() !== "0") {
                 Debug.log("[ChatPage] Loading pinned message ", chatInformation.pinned_message_id)
                 tdLibWrapper.getMessage(chatInformation.id, chatInformation.pinned_message_id)
@@ -677,7 +670,7 @@ Page {
             Debug.log("scroll position changed, message index: ", lastQueuedIndex)
             Debug.log("unread count: ", chatInformation.unread_count)
             var modelIndex = chatProxyModel.mapRowToSource(lastQueuedIndex)
-            var messageToRead = chatModel.getMessage(modelIndex)
+            var messageToRead = chatManager.model.getMessage(modelIndex)
             if (messageToRead['@type'] === "sponsoredMessage") {
                 Debug.log("sponsored message to read: ", messageToRead.id)
                 tdLibWrapper.viewMessage(chatInformation.id, messageToRead.message_id, false)
@@ -687,7 +680,7 @@ Page {
                     var messageId = messageToRead.id
                     var type = messageToRead.content["@type"]
                     if (messageToRead.media_album_id !== '0') {
-                        var albumIds = chatModel.getMessageIdsForAlbum(messageToRead.media_album_id)
+                        var albumIds = chatManager.model.getMessageIdsForAlbum(messageToRead.media_album_id)
                         if (albumIds.length > 0) {
                             messageId = albumIds[albumIds.length - 1]
                             Debug.log("message to read last album message id: ", messageId)
@@ -827,9 +820,9 @@ Page {
                         // was previously loaded with a picture and now it doesn't have one. Instead setting it
                         // when the ChatModel indicates a change. This also avoids flickering when the page is loaded...
                         Connections {
-                            target: chatModel
+                            target: chatManager
                             onSmallPhotoChanged:
-                                chatPictureThumbnail.photoData = chatModel.smallPhoto
+                                chatPictureThumbnail.photoData = chatManager.smallPhoto
                         }
                     }
 
@@ -904,7 +897,7 @@ Page {
                             // https://stackoverflow.com/questions/48325115/qml-programmatically-update-binding
                             if (_reload && !_reload) return ''
 
-                            var status = Functions.getChatActionsText(chatModel.chatActionsByChats, chatModel.chatActionsByUsers, isPrivateChat || isSecretChat)
+                            var status = Functions.getChatActionsText(chatManager.chatActionsByChats, chatManager.chatActionsByUsers, isPrivateChat || isSecretChat)
                             if (status) return status
 
                             if (isBasicGroup || isSuperGroup)
@@ -1098,11 +1091,11 @@ Page {
                             if (chatView.indexAt(chatView.contentX, chatView.contentY) < 10) {
                                 Debug.log("[ChatPage] Trying to get older history items...")
                                 chatView.inCooldown = true
-                                chatModel.triggerLoadMoreHistory()
+                                chatManager.model.triggerLoadMoreHistory()
                             } else if (chatOverviewItem.visible && chatView.indexAt(chatView.contentX, chatView.contentY) > ( count - 10)) {
                                 Debug.log("[ChatPage] Trying to get newer history items...")
                                 chatView.inCooldown = true
-                                chatModel.triggerLoadMoreFuture()
+                                chatManager.model.triggerLoadMoreFuture()
                             }
                         }
                     }
@@ -1122,7 +1115,7 @@ Page {
 
                     BoolFilterModel {
                         id: chatProxyModel
-                        sourceModel: chatModel
+                        sourceModel: chatManager.model
                         filterRoleName: "album_entry_filter"
                         filterValue: false
                     }
@@ -1270,7 +1263,7 @@ Page {
                             id: messageListViewItemComponent
                             MessageListViewItem {
                                 precalculatedValues: chatView.precalculatedValues
-                                chatId: chatModel.chatId
+                                chatId: chatManager.model.chatId
                                 myMessage: model.display
                                 messageId: model.message_id
                                 messageAlbumMessageIds: model.album_message_ids
@@ -1365,7 +1358,7 @@ Page {
                         bottom: parent.bottom
                         bottomMargin: Theme.paddingMedium
                     }
-                    visible: !chatPage.loading && chatOverviewItem.visible && (unreadCount > 0 || !chatModel.historyEndLoaded)
+                    visible: !chatPage.loading && chatOverviewItem.visible && (unreadCount > 0 || !chatManager.model.historyEndLoaded)
                     property bool highlighted: chatUnreadMessagesMouseArea.containsPress
 
                     // not ideal:
@@ -1392,16 +1385,16 @@ Page {
                         anchors.fill: parent
                         onClicked: {
                             // probably not ideal
-                            var lastReadIndex = chatProxyModel.mapRowFromSource(chatModel.lastReadIncomingMessageIndex, -1)
+                            var lastReadIndex = chatProxyModel.mapRowFromSource(chatManager.model.lastReadIncomingMessageIndex, -1)
                             Debug.log("Scrolling to the bottom lastReadIndex:", lastReadIndex)
                             if (lastReadIndex > -1) {
                                 if (chatView.indexAt(chatView.contentX, chatView.contentY) >= lastReadIndex - 2
                                         || chatView.indexAt(chatView.contentX + chatView.contentWidth, chatView.contentY + chatView.contentHeight) >= lastReadIndex - 2)
-                                    if (chatModel.historyEndLoaded) chatView.scrollToBottom()
-                                    else chatModel.loadEnd(true)
+                                    if (chatManager.model.historyEndLoaded) chatView.scrollToBottom()
+                                    else chatManager.model.loadEnd(true)
                                 else chatView.scrollToIndex(Math.min(lastReadIndex + 1, chatView.count))
                             } else
-                                chatModel.loadEnd()
+                                chatManager.model.loadEnd()
                         }
                     }
                 }
