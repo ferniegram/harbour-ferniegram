@@ -299,7 +299,6 @@ public:
     Q_INVOKABLE void clearRecentlyFoundChats();
     Q_INVOKABLE void addRecentlyFoundChat(qlonglong chatId);
     Q_INVOKABLE void removeRecentlyFoundChat(qlonglong chatId);
-    Q_INVOKABLE void getChatMessageCount(qlonglong chatId, SearchMessagesFilter filter);
 
     // Others (candidates for extraction ;))
     Q_INVOKABLE void initializeOpenWith();
