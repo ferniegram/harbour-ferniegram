@@ -2543,14 +2543,3 @@ void TDLibWrapper::removeRecentlyFoundChat(qlonglong chatId) {
     LOG("Removing chat from recently found chats list" << chatId);
     this->sendRequest(QVariantMap{{_TYPE, "removeRecentlyFoundChat"}, {CHAT_ID, chatId}, {_EXTRA, EXTRA_RECENTLY_FOUND}});
 }
-
-void TDLibWrapper::getChatMessageCount(qlonglong chatId, SearchMessagesFilter filter) {
-    const QString filterType = getSearchMessagesFilterType(filter);
-    LOG("Receiving chat message count" << chatId << filterType);
-    this->sendRequest(QVariantMap{
-                          {_TYPE, "getChatMessageCount"},
-                          {CHAT_ID, chatId},
-                          {FILTER, QVariantMap{{_TYPE, filterType}}},
-                          {_EXTRA, filterType+":"+QString::number(chatId)}
-                      });
-}
