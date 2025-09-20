@@ -2235,6 +2235,7 @@ void TDLibWrapper::getChatMessageCount(qlonglong chatId, SearchMessagesFilter fi
                           {FILTER, QVariantMap{{_TYPE, filterType}}},
                           {_EXTRA, filterType+":"+QString::number(chatId)}
                       });
+}
 
 void TDLibWrapper::handleFoundChatMessagesReceived(const int extra, const QVariantList &messages, int totalCount, qlonglong nextFromMessageId) {
     emit foundChatMessagesReceived((SearchMessagesFilter)extra, messages, totalCount, nextFromMessageId);
