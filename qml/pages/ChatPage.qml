@@ -622,7 +622,9 @@ Page {
                 tdLibWrapper.getMessage(chatInformation.id, chatInformation.pinned_message_id)
             } else pinnedMessageItem.pinnedMessage = undefined
         }
-        onChatInformationChanged: chatPage.chatInformation = chatManager.chatInformation // FIXME: this can be done better
+        onChatInformationChanged:
+            if (Object.keys(chatManager.chatInformation).length > 0) // this is needed for closeChat request (and possibly something else)
+                chatPage.chatInformation = chatManager.chatInformation // FIXME: this can be done better (e.g. via a binding)
     }
 
     Connections {
