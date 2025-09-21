@@ -512,15 +512,12 @@ SilicaFlickable {
                 id: personalChatLoader
                 width: parent.width
                 asynchronous: true
-                height: item ? item.height : 0
+                active: !!(chatInformationPage.chatPartnerFullInformation && chatInformationPage.chatPartnerFullInformation.personal_chat_id)
                 sourceComponent: TDLibChatListItem {
-                    chatId: tdLibWrapper.getChat(chatInformationPage.chatPartnerFullInformation.personal_chat_id)
+                    chatId: chatInformationPage.chatPartnerFullInformation.personal_chat_id
                     showSeparator: false
                     doReplace: true
                 }
-
-                // for some reason, when the loader is disabled by default, connections don't work; thus we only disable it later
-                Component.onCompleted: active = !!chatInformationPage.chatPartnerFullInformation && !!chatInformationPage.chatPartnerFullInformation.personal_chat_id
             }
 
             Item {
