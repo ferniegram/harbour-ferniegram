@@ -17,6 +17,7 @@ MediaMessagesModel::MediaMessagesModel(TDLibWrapper *tdLibWrapper, QObject *pare
 }
 
 bool MediaMessagesModel::clear() {
+    LOG("Clearing media messages model");
     this->nextFromMessageId = 0;
     return MessagesModel::clear();
 }

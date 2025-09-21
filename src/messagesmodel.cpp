@@ -24,7 +24,7 @@
 #include <QBitArray>
 #include "utilities.h"
 
-#define DEBUG_MODULE ChatModel
+#define DEBUG_MODULE MessagesModel
 #include "debuglog.h"
 
 namespace {
@@ -86,8 +86,10 @@ QVariant MessagesModel::data(const QModelIndex &index, int role) const
 }
 
 bool MessagesModel::clear() {
-    LOG("Clearing chat model");
+    LOG("Clearing messages model");
+    LOG(messages.size() << messageIndexMap.size());
     if (!messages.isEmpty()) {
+        LOG("Messages is not empty; clearing");
         beginResetModel();
         qDeleteAll(messages);
         messages.clear();
@@ -100,8 +102,8 @@ bool MessagesModel::clear() {
 }
 
 void MessagesModel::reset() {
-    LOG("Resetting chat model");
-    clear();
+    LOG("Resetting messages model");
+    this->clear();
     if (chatId) {
         chatId = 0;
         emit chatIdChanged();

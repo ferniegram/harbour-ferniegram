@@ -35,6 +35,7 @@ ReadableMessagesModel::ReadableMessagesModel(TDLibWrapper *tdLibWrapper, QObject
 }
 
 bool ReadableMessagesModel::clear() {
+    LOG("Clearing readable messages model");
     inReload = false;
     inIncrementalUpdate = false;
     highlightedMessageId = 0;

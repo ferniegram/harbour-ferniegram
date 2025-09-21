@@ -1,6 +1,6 @@
 #include "chatmanager.h"
 
-#define DEBUG_MODULE ChatModel
+#define DEBUG_MODULE ChatManagerAndModel
 #include "debuglog.h"
 
 namespace {
@@ -16,6 +16,42 @@ namespace {
     const QString LAST_MESSAGE("last_message");
     const char* PROPERTY_CHAT_INFORMATION = "chatInformation";
 }
+
+ChatMessagesModel::ChatMessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent) : ReadableMessagesModel(tdLibWrapper, parent), searchQuery() {}
+
+bool ChatMessagesModel::clear() {
+    LOG("Clearing chat model");
+    this->searchQuery.clear();
+    return ReadableMessagesModel::clear();
+}
+
+void ChatMessagesModel::loadMessages(qlonglong fromMessageId, int offset) {
+    if (searchQuery.isEmpty())
+        this->tdLibWrapper->getChatHistory(chatId, fromMessageId, offset);
+    else
+        // ignore offset for now
+        this->tdLibWrapper->searchChatMessages(chatId, searchQuery, fromMessageId);
+}
+
+void ChatMessagesModel::setSearchQuery(const QString newSearchQuery) {
+    if (this->searchQuery != newSearchQuery) {
+        this->clear();
+        this->searchQuery = newSearchQuery;
+        this->loadMessages(searchQuery.isEmpty() ? this->parent()->property(PROPERTY_CHAT_INFORMATION).toMap().value(LAST_READ_INBOX_MESSAGE_ID).toLongLong() : 0); // fixme
+    }
+}
+
+qlonglong ChatMessagesModel::lastReadInboxMessageId() const {
+    return this->parent()->property(PROPERTY_CHAT_INFORMATION).toMap().value(LAST_READ_INBOX_MESSAGE_ID).toLongLong();
+}
+qlonglong ChatMessagesModel::lastReadOutboxMessageId() const {
+    return this->parent()->property(PROPERTY_CHAT_INFORMATION).toMap().value(LAST_READ_OUTBOX_MESSAGE_ID).toLongLong();
+}
+qlonglong ChatMessagesModel::lastMessageId() const { // FIXME: this is wrong and shouldn't be used ideally
+    return this->parent()->property(PROPERTY_CHAT_INFORMATION).toMap().value(LAST_MESSAGE).toMap().value(ID).toLongLong();
+}
+
+
 
 ChatManager::ChatManager(TDLibWrapper *tdLibWrapper, QObject *parent) :
     QObject(parent),
@@ -85,15 +121,8 @@ void ChatManager::handleChatNotificationSettingsUpdated(const QString &id, const
 }
 
 
-
-ChatMessagesModel::ChatMessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent) : ReadableMessagesModel(tdLibWrapper, parent), searchQuery() {}
-
-bool ChatMessagesModel::clear() {
-    this->searchQuery.clear();
-    return ReadableMessagesModel::clear();
-}
-
 void ChatManager::reset() {
+    LOG("Resetting chat manager");
     this->mediaMessagesModel->reset();
 
     if (!chatInformation.isEmpty()) {
@@ -114,7 +143,7 @@ void ChatManager::reset() {
 
 void ChatManager::initialize(const QVariantMap &chatInformation, qlonglong fromMessageId) {
     const qlonglong chatId = chatInformation.value(ID).toLongLong();
-    LOG("Initializing chat model..." << chatId << "from message id" << fromMessageId);
+    LOG("Initializing chat manager..." << chatId << "from message id" << fromMessageId);
 
     reset();
     this->chatInformation = chatInformation;
@@ -129,23 +158,7 @@ void ChatManager::initialize(const QVariantMap &chatInformation, qlonglong fromM
     tdLibWrapper->getChatHistory(chatId, fromMessageId != 0 ? fromMessageId : this->chatInformation.value(LAST_READ_INBOX_MESSAGE_ID).toLongLong());
 }
 
-void ChatMessagesModel::setSearchQuery(const QString newSearchQuery) {
-    if (this->searchQuery != newSearchQuery) {
-        this->clear();
-        this->searchQuery = newSearchQuery;
-        this->loadMessages(searchQuery.isEmpty() ? this->parent()->property(PROPERTY_CHAT_INFORMATION).toMap().value(LAST_READ_INBOX_MESSAGE_ID).toLongLong() : 0); // fixme
-    }
-}
 
-
-
-void ChatMessagesModel::loadMessages(qlonglong fromMessageId, int offset) {
-    if (searchQuery.isEmpty())
-        this->tdLibWrapper->getChatHistory(chatId, fromMessageId, offset);
-    else
-        // ignore offset for now
-        this->tdLibWrapper->searchChatMessages(chatId, searchQuery, fromMessageId);
-}
 
 void ChatManager::initializeMediaMessagesModel() {
     this->mediaMessagesModel->init(this->chatId);
@@ -182,14 +195,4 @@ void ChatManager::handleChatReadOutboxUpdated(const QString &id, const QString &
         emit this->chatMessagesModel->lastReadSentMessageUpdated();
         emit chatInformationChanged();
     }
-}
-
-qlonglong ChatMessagesModel::lastReadInboxMessageId() const {
-    return this->parent()->property(PROPERTY_CHAT_INFORMATION).toMap().value(LAST_READ_INBOX_MESSAGE_ID).toLongLong();
-}
-qlonglong ChatMessagesModel::lastReadOutboxMessageId() const {
-    return this->parent()->property(PROPERTY_CHAT_INFORMATION).toMap().value(LAST_READ_OUTBOX_MESSAGE_ID).toLongLong();
-}
-qlonglong ChatMessagesModel::lastMessageId() const { // FIXME: this is wrong and shouldn't be used ideally
-    return this->parent()->property(PROPERTY_CHAT_INFORMATION).toMap().value(LAST_MESSAGE).toMap().value(ID).toLongLong();
 }
