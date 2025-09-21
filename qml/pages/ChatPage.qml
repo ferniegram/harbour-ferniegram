@@ -35,7 +35,7 @@ Page {
     property bool loading: true
     property bool isInitialized: false
     readonly property int myUserId: tdLibWrapper.getUserInformation().id
-    property var chatInformation: chatManager.chatInformation
+    property var chatInformation
     property var secretChatDetails
     property alias chatPicture: chatPictureThumbnail.photoData
     property bool isPrivateChat: chatInformation.type['@type'] === "chatTypePrivate"
@@ -622,6 +622,7 @@ Page {
                 tdLibWrapper.getMessage(chatInformation.id, chatInformation.pinned_message_id)
             } else pinnedMessageItem.pinnedMessage = undefined
         }
+        onChatInformationChanged: chatPage.chatInformation = chatManager.chatInformation // FIXME: this can be done better
     }
 
     Connections {
