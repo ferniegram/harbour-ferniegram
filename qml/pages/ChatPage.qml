@@ -623,7 +623,7 @@ Page {
             } else pinnedMessageItem.pinnedMessage = undefined
         }
         onChatInformationChanged:
-            if (Object.keys(chatManager.chatInformation).length > 0) // this is needed for closeChat request (and possibly something else)
+            if (!!chatManager.chatInformation.id) // this is needed for closeChat request and some other stuff
                 chatPage.chatInformation = chatManager.chatInformation // FIXME: this can be done better (e.g. via a binding)
     }
 
