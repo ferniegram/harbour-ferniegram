@@ -3,6 +3,7 @@
 
 #include "readablemessagesmodel.h"
 #include "mediamessagesmodel.h"
+#include "forumtopicsmodel.h"
 
 class ChatMessagesModel : public ReadableMessagesModel {
     Q_OBJECT
@@ -30,9 +31,10 @@ class ChatManager : public QObject {
     Q_OBJECT
     Q_PROPERTY(qlonglong chatId MEMBER chatId NOTIFY chatIdChanged)
     Q_PROPERTY(QVariantMap chatInformation MEMBER chatInformation NOTIFY chatInformationChanged)
-    //Q_PROPERTY(bool isForum READ isForum NOTIFY isForumChanged)
+    Q_PROPERTY(bool isForum READ isForum NOTIFY isForumChanged)
     Q_PROPERTY(ChatMessagesModel* model MEMBER chatMessagesModel CONSTANT)
     Q_PROPERTY(MediaMessagesModel* mediaMessagesModel MEMBER mediaMessagesModel CONSTANT)
+    Q_PROPERTY(ForumTopicsModel* forumTopicsModel MEMBER forumTopicsModel CONSTANT)
     Q_PROPERTY(QVariantMap smallPhoto READ smallPhoto NOTIFY smallPhotoChanged)
     Q_PROPERTY(QVariantMap chatActionsByUsers MEMBER chatActionsByUsers NOTIFY chatActionsChanged)
     Q_PROPERTY(QVariantMap chatActionsByChats MEMBER chatActionsByChats NOTIFY chatActionsChanged)
@@ -55,6 +57,7 @@ signals:
     void chatActionsChanged();
     void notificationSettingsUpdated();
     void chatInformationChanged();
+    void isForumChanged();
 
 private slots:
     void handleChatPhotoUpdated(qlonglong chatId, const QVariantMap &photo);
@@ -73,6 +76,7 @@ private:
 
     ChatMessagesModel *chatMessagesModel;
     MediaMessagesModel* mediaMessagesModel;
+    ForumTopicsModel *forumTopicsModel;
 
     QVariantMap chatActionsByUsers; // QMap<qlonglong, QString>
     QVariantMap chatActionsByChats; //QMap<qlonglong, QString>

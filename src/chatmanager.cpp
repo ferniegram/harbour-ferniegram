@@ -152,12 +152,17 @@ void ChatManager::initialize(const QVariantMap &chatInformation, qlonglong fromM
     emit chatIdChanged();
     emit smallPhotoChanged();
     emit chatInformationChanged();
+    emit isForumChanged();
 
-    chatMessagesModel->chatId = chatId;
-    chatMessagesModel->chatIdChanged();
-    emit chatMessagesModel->historyEndLoadedChanged();
+    if (isForum()) {
+        forumTopicsModel->init(chatId);
+    } else {
+        chatMessagesModel->chatId = chatId;
+        chatMessagesModel->chatIdChanged();
+        emit chatMessagesModel->historyEndLoadedChanged();
 
-    tdLibWrapper->getChatHistory(chatId, fromMessageId != 0 ? fromMessageId : this->chatInformation.value(LAST_READ_INBOX_MESSAGE_ID).toLongLong());
+        tdLibWrapper->getChatHistory(chatId, fromMessageId != 0 ? fromMessageId : this->chatInformation.value(LAST_READ_INBOX_MESSAGE_ID).toLongLong());
+    }
 }
 
 

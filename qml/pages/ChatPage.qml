@@ -44,6 +44,7 @@ Page {
     property bool isBasicGroup: chatInformation.type['@type'] === "chatTypeBasicGroup"
     property bool isSuperGroup: chatInformation.type['@type'] === "chatTypeSupergroup"
     property bool isChannel: !!(chatGroupInformation && chatGroupInformation.is_channel)
+    property bool isForum: !!(chatGroupInformation && chatGroupInformation.is_forum)
     property bool isDeletedUser: !!chatPartnerInformation && chatPartnerInformation.type['@type'] === "userTypeDeleted"
     property int unreadCount: chatInformation.unread_count
     property bool containsSponsoredMessages: false
@@ -767,7 +768,7 @@ Page {
 
             MenuItem {
                 id: searchInChatMenuItem
-                visible: !chatPage.isSecretChat && chatOverviewItem.visible
+                visible: !chatPage.isSecretChat && !chatPage.isForum && chatOverviewItem.visible
                 onClicked: {
                     // This automatically shows the search field as well
                     chatOverviewItem.visible = false
