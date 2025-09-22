@@ -15,13 +15,44 @@ namespace {
     const QString MESSAGE_THREAD_ID("message_thread_id");
 }
 
-ForumTopicsModel::ForumTopic::ForumTopic(const QVariantMap &forumTopic) : data(forumTopic) {
+ForumTopicsModel::ForumTopic::ForumTopic(const QVariantMap &forumTopic) :
+    data(forumTopic),
+    messageThreadId(data.value(INFO).toMap().value(MESSAGE_THREAD_ID).toLongLong())
+{}
 
+const QVector<int> ForumTopicsModel::ForumTopic::updateIsPinned(bool value) {
+    if (data.value(IS_PINNED).toBool() != value) {
+        data.insert(IS_PINNED, value);
+        return QVector<int>{RoleIsPinned};
+    }
+    return QVector<int>();
 }
 
-qlonglong ForumTopicsModel::ForumTopic::messageThreadId() {
-    return data.value(INFO).toMap().value(MESSAGE_THREAD_ID).toLongLong();
+const QVector<int> ForumTopicsModel::ForumTopic::updateLastReadInboxMessageId(qlonglong value) {
+    if (data.value(LAST_READ_INBOX_MESSAGE_ID).toLongLong() != value) {
+        data.insert(LAST_READ_INBOX_MESSAGE_ID, value);
+        return QVector<int>{}; // TODO...
+    }
+    return QVector<int>();
 }
+
+const QVector<int> ForumTopicsModel::ForumTopic::updateLastReadOutboxMessageId(qlonglong value) {
+    if (data.value(LAST_READ_OUTBOX_MESSAGE_ID).toLongLong() != value) {
+        data.insert(LAST_READ_OUTBOX_MESSAGE_ID, value);
+        return QVector<int>{}; // TODO...
+    }
+    return QVector<int>();
+}
+
+const QVector<int> ForumTopicsModel::ForumTopic::updateNotificationSettings(const QVariantMap &value) {
+    if (data.value(NOTIFICATION_SETTINGS).toMap() != value) {
+        data.insert(NOTIFICATION_SETTINGS, value);
+        return QVector<int>{RoleNotificationSettings};
+    }
+    return QVector<int>();
+}
+
+
 
 ForumTopicsModel::ForumTopicsModel(TDLibWrapper *tdLibWrapper, QObject *parent) :
     QAbstractListModel(parent),
@@ -62,7 +93,10 @@ int ForumTopicsModel::rowCount(const QModelIndex &) const {
 QVariant ForumTopicsModel::data(const QModelIndex &index, int role) const {
     const int row = index.row();
     if (row >= 0 && row < topics.size()) {
+        const ForumTopic *topic = topics.at(row);
         switch (role) {
+        case RoleInfo:
+            return topic->data.value(INFO).toMap();
         default:
             return QVariant();
         }
@@ -79,7 +113,7 @@ void ForumTopicsModel::reset() {
 }
 
 void ForumTopicsModel::loadMore() {
-    if (chatId != 0) {
+    if (chatId != 0 && nextOffsetDate != 0 && nextOffsetMessageId != 0 && nextOffsetMessageThreadId != 0) {
         this->tdLibWrapper->getForumTopics(chatId, nextOffsetDate, nextOffsetMessageId, nextOffsetMessageThreadId);
     }
 }
@@ -89,11 +123,40 @@ void ForumTopicsModel::handleForumTopicsReceived(qlonglong chatId, int totalCoun
         for (const QVariant &topicVariant : newTopics) {
             ForumTopic *topic = new ForumTopic(topicVariant.toMap());
             this->topics.append(topic);
-            this->topicIndexMap.insert(topic->messageThreadId(), this->topics.size() - 1);
+            this->topicIndexMap.insert(topic->messageThreadId, this->topics.size() - 1);
         }
 
         this->nextOffsetDate = nextOffsetDate;
         this->nextOffsetMessageId = nextOffsetMessageId;
         this->nextOffsetMessageThreadId = nextOffsetMessageThreadId;
+    }
+}
+
+void ForumTopicsModel::handleForumTopicUpdated(qlonglong chatId, qlonglong messageThreadId, bool isPinned, qlonglong lastReadInboxMessageId, qlonglong lastReadOutboxMessageId, const QVariantMap &notificationSettings) {
+    if (this->chatId == chatId && topicIndexMap.contains(messageThreadId)) {
+        const int topicIndex = topicIndexMap.value(messageThreadId);
+        ForumTopic *topic = this->topics.value(topicIndex);
+        QVector<int> changedRoles;
+
+        changedRoles
+                << topic->updateIsPinned(isPinned)
+                << topic->updateLastReadInboxMessageId(lastReadInboxMessageId)
+                << topic->updateLastReadOutboxMessageId(lastReadOutboxMessageId)
+                << topic->updateNotificationSettings(notificationSettings);
+
+        if (!changedRoles.isEmpty()) {
+            const QModelIndex modelIndex = index(topicIndex);
+            emit dataChanged(modelIndex, modelIndex, changedRoles);
+        }
+    }
+}
+
+void ForumTopicsModel::handleForumTopicInfoUpdated(qlonglong chatId, qlonglong messageThreadId, const QVariantMap &info) {
+    if (this->chatId == chatId && topicIndexMap.contains(messageThreadId)) {
+        const int topicIndex = topicIndexMap.value(messageThreadId);
+        ForumTopic *topic = this->topics.value(topicIndex);
+        topic->data.insert(INFO, info);
+        const QModelIndex modelIndex = index(topicIndex);
+        emit dataChanged(modelIndex, modelIndex, QVector<int>{RoleInfo});
     }
 }

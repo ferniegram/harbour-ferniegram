@@ -124,7 +124,9 @@ signals:
     void chatListsReceived(qlonglong chatId, const QVariantList &chatLists);
     void archiveChatListSettingsReceived(bool archiveAndMuteNewChatsFromUnknownUsers, bool keepUnmutedChatsArchived, bool keepChatsFromFoldersArchived);
     void chatFoldersUpdated(const QVariantList &chatFolders, int mainChatListPosition, bool tagsEnabled);
-    void forumTopicsReceived(qlonglong chatId, int totalCount, QVariantList topics, qint32 nextOffsetDate, qlonglong nextOffsetMessageId, qlonglong nextOffsetMessageThreadId);
+    void forumTopicsReceived(qlonglong chatId, int totalCount, QVariantList topics, int nextOffsetDate, qlonglong nextOffsetMessageId, qlonglong nextOffsetMessageThreadId);
+    void forumTopicUpdated(qlonglong chatId, qlonglong messageThreadId, bool isPinned, qlonglong lastReadInboxMessageId, qlonglong lastReadOutboxMessageId, const QVariantMap &notificationSettings);
+    void forumTopicInfoUpdated(qlonglong chatId, qlonglong messageThreadId, const QVariantMap &info);
 
 private:
     typedef void (TDLibReceiver::*Handler)(const QVariantMap &);
@@ -226,6 +228,8 @@ private:
     void processArchiveChatListSettings(const QVariantMap &receivedInformation);
     void processUpdateChatFolders(const QVariantMap &receivedInformation);
     void processForumTopics(const QVariantMap &receivedInformation);
+    void processUpdateForumTopic(const QVariantMap &receivedInformation);
+    void processUpdateForumTopicInfo(const QVariantMap &receivedInformation);
 };
 
 #endif // TDLIBRECEIVER_H

@@ -86,6 +86,8 @@ namespace {
     const QString WAVEFORM("waveform");
     const QString DECODED_WAVEFORM("decoded_waveform");
     const QString NEXT_FROM_MESSAGE_ID("next_from_message_id");
+    const QString NOTIFICATION_SETTINGS("notification_settings");
+    const QString INFO("info");
 
     const QString _TYPE("@type");
     const QString _EXTRA("@extra");
@@ -197,6 +199,8 @@ TDLibReceiver::TDLibReceiver(int tdLibClientId, QObject *parent) : QThread(paren
     handlers.insert("archiveChatListSettings", &TDLibReceiver::processArchiveChatListSettings);
     handlers.insert("updateChatFolders", &TDLibReceiver::processUpdateChatFolders);
     handlers.insert("forumTopics", &TDLibReceiver::processForumTopics);
+    handlers.insert("updateForumTopic", &TDLibReceiver::processUpdateForumTopic);
+    handlers.insert("updateForumTopicInfo", &TDLibReceiver::processUpdateForumTopicInfo);
 }
 
 void TDLibReceiver::setActive(bool active)
@@ -1124,4 +1128,28 @@ void TDLibReceiver::processForumTopics(const QVariantMap &receivedInformation) {
                 receivedInformation.value("next_offset_message_id").toLongLong(),
                 receivedInformation.value("next_offset_message_thread_id").toLongLong()
                 );
+}
+
+void TDLibReceiver::processUpdateForumTopic(const QVariantMap &receivedInformation) {
+    const qlonglong chatId = receivedInformation.value(CHAT_ID).toLongLong();
+    const qlonglong messageThreadId = receivedInformation.value(MESSAGE_THREAD_ID).toLongLong();
+    LOG("Received updateForumTopic" << chatId << messageThreadId);
+
+    emit forumTopicUpdated(
+                chatId,
+                messageThreadId,
+                receivedInformation.value(IS_PINNED).toBool(),
+                receivedInformation.value(LAST_READ_INBOX_MESSAGE_ID).toLongLong(),
+                receivedInformation.value(LAST_READ_OUTBOX_MESSAGE_ID).toLongLong(),
+                receivedInformation.value(NOTIFICATION_SETTINGS).toMap()
+                );
+}
+
+void TDLibReceiver::processUpdateForumTopicInfo(const QVariantMap &receivedInformation) {
+    const QVariantMap info = receivedInformation.value(INFO).toMap();
+    const qlonglong chatId = info.value(CHAT_ID).toLongLong();
+    const qlonglong messageThreadId = info.value(MESSAGE_THREAD_ID).toLongLong();
+    LOG("Received updateForumTopicInfo" << chatId << messageThreadId);
+
+    emit forumTopicInfoUpdated(chatId, messageThreadId, info);
 }

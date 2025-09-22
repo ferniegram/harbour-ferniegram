@@ -39,14 +39,15 @@ signals:
 
 private slots:
     void handleForumTopicsReceived(qlonglong chatId, int totalCount, QVariantList newTopics, qint32 nextOffsetDate, qlonglong nextOffsetMessageId, qlonglong nextOffsetMessageThreadId);
+    void handleForumTopicUpdated(qlonglong chatId, qlonglong messageThreadId, bool isPinned, qlonglong lastReadInboxMessageId, qlonglong lastReadOutboxMessageId, const QVariantMap &notificationSettings);
+    void handleForumTopicInfoUpdated(qlonglong chatId, qlonglong messageThreadId, const QVariantMap &info);
 
 private:
     struct ForumTopic {
         ForumTopic(const QVariantMap &forumTopic);
 
         QVariantMap data;
-
-        qlonglong messageThreadId();
+        qlonglong messageThreadId;
         /*QVariantMap info;
         QVariantMap lastMessage;
         qlonglong order;
@@ -58,6 +59,11 @@ private:
         int unreadReactionCount;
         QVariantMap notificationSettings;
         QVariantMap draftMessage;*/
+
+        const QVector<int> updateIsPinned(bool value);
+        const QVector<int> updateLastReadInboxMessageId(qlonglong value);
+        const QVector<int> updateLastReadOutboxMessageId(qlonglong value);
+        const QVector<int> updateNotificationSettings(const QVariantMap &value);
     };
 
     TDLibWrapper *tdLibWrapper;
