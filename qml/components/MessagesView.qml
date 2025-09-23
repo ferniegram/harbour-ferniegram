@@ -49,10 +49,6 @@ Column {
     signal elementSelected(int elementIndex)
     signal navigatedTo(int targetIndex)
 
-    signal resetElements()
-    signal elementSelected(int elementIndex)
-    signal navigatedTo(int targetIndex)
-
     function getMessageStatusText(message, listItemIndex, useElapsed) {
         var lastReadSentIndex = chatManager.model.lastReadSentMessageIndex
         Debug.log("Last read sent index: " + lastReadSentIndex)
