@@ -314,10 +314,9 @@ Column {
     Connections {
         target: chatManager
         onPinnedMessageChanged: {
-            chatInformation = chatManager.chatInformation
-            if (chatInformation.pinned_message_id.toString() !== "0") {
-                Debug.log("[ChatPage] Loading pinned message ", chatInformation.pinned_message_id)
-                tdLibWrapper.getMessage(chatInformation.id, chatInformation.pinned_message_id)
+            if (chatManager.pinnedMessageId !== 0) {
+                Debug.log("[ChatPage] Loading pinned message ", chatManager.pinnedMessageId)
+                tdLibWrapper.getMessage(chatInformation.id, chatManager.pinnedMessageId)
             } else pinnedMessageItem.pinnedMessage = undefined
         }
     }
