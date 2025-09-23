@@ -58,7 +58,8 @@ ChatManager::ChatManager(TDLibWrapper *tdLibWrapper, QObject *parent) :
     tdLibWrapper(tdLibWrapper),
     chatId(0),
     chatMessagesModel(new ChatMessagesModel(tdLibWrapper, this)),
-    mediaMessagesModel(new MediaMessagesModel(tdLibWrapper, this))
+    mediaMessagesModel(new MediaMessagesModel(tdLibWrapper, this)),
+    forumTopicsModel(new ForumTopicsModel(tdLibWrapper, this))
 {
     connect(this->tdLibWrapper, &TDLibWrapper::chatPhotoUpdated, this, &ChatManager::handleChatPhotoUpdated);
     connect(this->tdLibWrapper, &TDLibWrapper::chatPinnedMessageUpdated, this, &ChatManager::handleChatPinnedMessageUpdated);
