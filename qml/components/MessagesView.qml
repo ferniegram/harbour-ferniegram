@@ -31,6 +31,8 @@ Column {
     property var selectedMessages: []
     readonly property bool isSelecting: selectedMessages.length > 0
     property bool containsSponsoredMessages: false
+    property string messageIdToScrollTo
+    property bool iterativeInitialization: false
 
     property alias chatView: chatView
     property alias newMessageColumn: newMessageColumn
@@ -41,6 +43,10 @@ Column {
     property alias stickerPickerLoader: stickerPickerLoader
 
     property bool overlayActive: stickerPickerLoader.active || voiceNoteOverlayLoader.active || messageOverlayLoader.active || stickerSetOverlayLoader.active
+
+    signal resetElements()
+    signal elementSelected(int elementIndex)
+    signal navigatedTo(int targetIndex)
 
     function getMessageStatusText(message, listItemIndex, lastReadSentIndex, useElapsed) {
         Debug.log("Last read sent index: " + lastReadSentIndex)
@@ -118,19 +124,19 @@ Column {
 
     function showMessage(messageId, initialRun) {
         // Means we tapped a quoted message and had to load it.
-        if(initialRun) {
-            chatPage.messageIdToScrollTo = messageId
-        }
-        if (chatPage.messageIdToScrollTo) {
-            var index = chatModel.getMessageIndex(chatPage.messageIdToScrollTo)
+        if(initialRun)
+            messageIdToScrollTo = messageId
+
+        if (messageIdToScrollTo) {
+            var index = chatModel.getMessageIndex(messageIdToScrollTo)
             var proxyIndex = chatProxyModel.mapRowFromSource(index, -1)
             if(proxyIndex !== -1) {
-                chatPage.messageIdToScrollTo = ""
+                messageIdToScrollTo = ""
                 chatView.scrollToIndex(proxyIndex)
                 navigatedTo(proxyIndex)
             } else if(initialRun)
                 // we only want to do this once.
-                chatModel.triggerLoadHistoryForMessage(chatPage.messageIdToScrollTo)
+                chatModel.triggerLoadHistoryForMessage(messageIdToScrollTo)
         }
     }
 
@@ -144,6 +150,17 @@ Column {
         attachmentPreviewRow.locationData = null
         attachmentPreviewRow.attachmentDescription = ""
         utilities.stopGeoLocationUpdates()
+    }
+
+    function prepareView() {
+        if(chatInformation.draft_message) {
+            if(chatInformation.draft_message && chatInformation.draft_message.input_message_text) {
+                newMessageTextField.text = chatInformation.draft_message.input_message_text.text.text
+                if(chatInformation.draft_message.reply_to_message_id) {
+                    tdLibWrapper.getMessage(chatInformation.id, chatInformation.draft_message.reply_to_message_id)
+                }
+            }
+        }
     }
 
     states: [
@@ -237,14 +254,14 @@ Column {
             var proxyIndex = chatProxyModel.mapRowFromSource(modelIndex, -1)
             Debug.log("[ChatPage] Messages received, view has ", chatView.count, " messages, last known message index ", proxyIndex, "("+modelIndex+"), own messages were read before index ", lastReadSentIndex)
             if (totalCount === 0) {
-                if (chatPage.iterativeInitialization) {
-                    chatPage.iterativeInitialization = false
+                if (iterativeInitialization) {
+                    iterativeInitialization = false
                     Debug.log("[ChatPage] actually, skipping that: No Messages in Chat.")
                     chatView.positionViewAtEnd()
                     chatPage.loading = false
                     return
                 } else
-                    chatPage.iterativeInitialization = true
+                    iterativeInitialization = true
             }
 
             chatView.lastReadSentIndex = lastReadSentIndex
@@ -302,8 +319,8 @@ Column {
             if (chatView.height > chatView.contentHeight) {
                 Debug.log("[ChatPage] Chat content quite small...")
                 viewMessageTimer.queueViewMessage(chatView.count - 1)
-            } else if (chatPage.messageIdToScrollTo && chatPage.messageIdToScrollTo != "")
-                showMessage(chatPage.messageIdToScrollTo, false)
+            } else if (messagesView.messageIdToScrollTo && messagesView.messageIdToScrollTo != "")
+                showMessage(messagesView.messageIdToScrollTo, false)
             chatViewCooldownTimer.restart()
             chatViewStartupReadTimer.restart()
         }
@@ -351,6 +368,13 @@ Column {
                 newMessageInReplyToRow.inReplyToMessage ? newMessageInReplyToRow.inReplyToMessage.id : 0)
         chatActionTimer.stop()
         utilities.stopGeoLocationUpdates()
+    }
+
+    Connections {
+        target: pageStack
+        onCurrentPageChanged:
+            if (pageStack.currentPage && pageStack.currentPage.isChatInformationPage)
+                resetElements()
     }
 
     Timer {
