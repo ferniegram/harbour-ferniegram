@@ -13,6 +13,7 @@ namespace {
     const QString NOTIFICATION_SETTINGS("notification_settings");
     const QString DRAFT_MESSAGE("draft_message");
     const QString MESSAGE_THREAD_ID("message_thread_id");
+    const QString NAME("name");
 }
 
 ForumTopicsModel::ForumTopic::ForumTopic(const QVariantMap &forumTopic) :
@@ -74,6 +75,7 @@ void ForumTopicsModel::init(qlonglong chatId) {
 
 QHash<int,QByteArray> ForumTopicsModel::roleNames() const {
     return QHash<int,QByteArray>{
+        {RoleName, "name"},
         {RoleInfo, "info"},
         //{RoleLastMessage, "last_message"}, // TODO
         {RoleOrder, "order"},
@@ -95,6 +97,8 @@ QVariant ForumTopicsModel::data(const QModelIndex &index, int role) const {
     if (row >= 0 && row < topics.size()) {
         const ForumTopic *topic = topics.at(row);
         switch (role) {
+        case RoleName:
+            return topic->data.value(INFO).toMap().value(NAME);
         case RoleInfo:
             return topic->data.value(INFO).toMap();
         default:

@@ -27,7 +27,7 @@ import "../js/functions.js" as Functions
 Page {
     id: chatPage
     allowedOrientations: Orientation.All
-    backNavigation: !messagesView.stickerPickerLoader.active
+    backNavigation: !messagesView || !messagesView.stickerPickerLoader.active
 
     property bool loading: true
     property bool isInitialized: false
@@ -68,6 +68,9 @@ Page {
     signal elementSelected(int elementIndex)
     signal navigatedTo(int targetIndex)
     property bool timepointStatus
+
+    readonly property Item messagesView: isForum ? null : contentLoader.item
+    readonly property Item topicsListView: isForum ? contentLoader.item : null
 
     function setMessageText(text, doSend) {
         if (messagesView)
@@ -322,7 +325,7 @@ Page {
         contentWidth: width
 
         PullDownMenu {
-            visible: !messagesView.overlayActive
+            visible: !messagesView || !messagesView.overlayActive
 
             MenuItem {
                 id: deleteChatMenuItem
@@ -563,10 +566,25 @@ Page {
             }
 
 
-            MessagesView {
-                id: messagesView
+            Loader {
+                id: contentLoader
                 width: parent.width
                 height: chatColumn.height - headerRow.height
+                sourceComponent: isForum ? topicsListViewComponent : messagesViewComponent
+
+                Component {
+                    id: messagesViewComponent
+                    MessagesView {
+                        anchors.fill: parent
+                    }
+                }
+
+                Component {
+                    id: topicsListViewComponent
+                    TopicsListView {
+                        anchors.fill: parent
+                    }
+                }
             }
         }
     }

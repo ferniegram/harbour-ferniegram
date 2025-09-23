@@ -98,6 +98,7 @@ DISTFILES += qml/harbour-fernschreiber2.qml \
     qml/components/TDLibThumbnail.qml \
     qml/components/TDLibVideo.qml \
     qml/components/TextBadge.qml \
+    qml/components/TopicsListView.qml \
     qml/components/VoiceNoteOverlay.qml \
     qml/components/chatInformationPage/ChatInformationPageContent.qml \
     qml/components/chatInformationPage/ChatInformationProfilePicture.qml \

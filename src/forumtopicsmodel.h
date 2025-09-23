@@ -11,6 +11,7 @@ class ForumTopicsModel : public QAbstractListModel {
 
 public:
     enum Role {
+        RoleName,
         RoleInfo,
         //RoleLastMessage,
         RoleOrder,

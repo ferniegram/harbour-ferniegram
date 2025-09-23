@@ -155,8 +155,10 @@ void ChatManager::initialize(const QVariantMap &chatInformation, qlonglong fromM
     emit isForumChanged();
 
     if (isForum()) {
+        LOG("Initializing a forum chat");
         forumTopicsModel->init(chatId);
     } else {
+        LOG("Initializing a regular chat");
         chatMessagesModel->chatId = chatId;
         chatMessagesModel->chatIdChanged();
         emit chatMessagesModel->historyEndLoadedChanged();
