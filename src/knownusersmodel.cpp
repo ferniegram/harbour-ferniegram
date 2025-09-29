@@ -27,7 +27,7 @@ KnownUsersModel::KnownUsersModel(TDLibWrapper *tdLibWrapper, QObject *parent)
 {
     this->tdLibWrapper = tdLibWrapper;
 
-    connect(this->tdLibWrapper, SIGNAL(userUpdated(QString, QVariantMap)), this, SLOT(handleUserUpdated(QString, QVariantMap)));
+    connect(this->tdLibWrapper, &TDLibWrapper::userUpdated, this, &KnownUsersModel::handleUserUpdated);
 }
 
 QHash<int, QByteArray> KnownUsersModel::roleNames() const
@@ -43,15 +43,13 @@ QHash<int, QByteArray> KnownUsersModel::roleNames() const
     return roles;
 }
 
-int KnownUsersModel::rowCount(const QModelIndex &) const
-{
+int KnownUsersModel::rowCount(const QModelIndex &) const {
     return this->knownUsers.size();
 }
 
-QVariant KnownUsersModel::data(const QModelIndex &index, int role) const
-{
+QVariant KnownUsersModel::data(const QModelIndex &index, int role) const {
     if (index.isValid()) {
-        QVariantMap requestedUser = knownUsers.values().value(index.row()).toMap();
+        QVariantMap requestedUser = knownUsers.values().value(index.row());
         switch (static_cast<KnownUserRole>(role)) {
             case KnownUserRole::RoleDisplay: return requestedUser;
             case KnownUserRole::RoleUserId: return requestedUser.value("id");
@@ -65,7 +63,6 @@ QVariant KnownUsersModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-void KnownUsersModel::handleUserUpdated(const QString &userId, const QVariantMap &userInformation)
-{
+void KnownUsersModel::handleUserUpdated(qlonglong userId, const QVariantMap &userInformation) {
     this->knownUsers.insert(userId, userInformation);
 }

@@ -64,7 +64,7 @@ SilicaFlickable {
         target: tdLibWrapper
 
         onUserUpdated: {
-            if ((chatInformationPage.isPrivateChat || chatInformationPage.isSecretChat) && chatInformationPage.privateChatUserInformation.id.toString() === userId) {
+            if ((chatInformationPage.isPrivateChat || chatInformationPage.isSecretChat) && chatInformationPage.privateChatUserInformation.id === userId) {
                 chatInformationPage.privateChatUserInformation = userInformation
             }
         }

@@ -769,7 +769,7 @@ void TDLibWrapper::getUserFullInfo(const QString &userId) {
 }
 
 void TDLibWrapper::createPrivateChat(const QString &userId, const QString &extra) {
-    LOG("Creating Private Chat");
+    LOG("Creating Private Chat" << userId << extra);
     this->sendRequest(QVariantMap{
         {_TYPE, "createPrivateChat"},
         {USER_ID, userId},
@@ -778,7 +778,7 @@ void TDLibWrapper::createPrivateChat(const QString &userId, const QString &extra
 }
 
 void TDLibWrapper::createNewSecretChat(const QString &userId, const QString &extra) {
-    LOG("Creating new secret chat");
+    LOG("Creating new secret chat" << userId << extra);
     this->sendRequest(QVariantMap{
         {_TYPE, "createNewSecretChat"},
         {USER_ID, userId},
@@ -787,7 +787,7 @@ void TDLibWrapper::createNewSecretChat(const QString &userId, const QString &ext
 }
 
 void TDLibWrapper::createSupergroupChat(const QString &supergroupId, const QString &extra) {
-    LOG("Creating Supergroup Chat");
+    LOG("Creating Supergroup Chat" << supergroupId << extra);
     this->sendRequest(QVariantMap{
         {_TYPE, "createSupergroupChat"},
         {"supergroup_id", supergroupId},
@@ -1369,25 +1369,29 @@ void TDLibWrapper::setInactiveSessionTtl(int days) {
     this->sendRequest(QVariantMap{{_TYPE, "setInactiveSessionTtl"}, {"inactive_session_ttl_days", days}});
 }
 
-QVariantMap TDLibWrapper::getUserInformation() {
+qlonglong TDLibWrapper::ownUserId() const {
+    return this->options.value("my_id").toLongLong();
+}
+
+QVariantMap TDLibWrapper::getUserInformation() const {
     return this->userInformation;
 }
 
-QVariantMap TDLibWrapper::getUserInformation(const QString &userId) {
+QVariantMap TDLibWrapper::getUserInformation(qlonglong userId) const {
     // LOG("Returning user information for ID" << userId);
-    return this->usersById.value(userId).toMap();
+    return this->usersById.value(userId);
 }
 
-bool TDLibWrapper::hasUserInformation(const QString &userId) {
+bool TDLibWrapper::hasUserInformation(qlonglong userId) const {
     return this->usersById.contains(userId);
 }
 
-bool TDLibWrapper::hasUserNameInformation(const QString &userName) {
+bool TDLibWrapper::hasUserNameInformation(const QString &userName) const {
     return this->usersByName.contains(userName);
 }
 
-QVariantMap TDLibWrapper::getUserInformationByName(const QString &userName) {
-    return this->usersByName.value(userName.toLower()).toMap();
+QVariantMap TDLibWrapper::getUserInformationByName(const QString &userName) const {
+    return this->usersByName.value(userName.toLower());
 }
 
 bool TDLibWrapper::hasSuperGroupNameInformation(const QString &name) {
@@ -1609,9 +1613,9 @@ void TDLibWrapper::handleOptionUpdated(const QString &optionName, const QVariant
             versionNumber = VERSION_NUMBER(major, minor, release);
         }
     } else if (optionName == "my_id") {
-        QString ownUserId = optionValue.toString();
+        qlonglong ownUserId = optionValue.toLongLong();
         this->userInformation = this->getUserInformation(ownUserId);
-        emit ownUserIdFound(ownUserId);
+        emit ownUserIdFound();
     }
 }
 
@@ -1636,23 +1640,23 @@ void TDLibWrapper::handleConnectionStateChanged(const QString &connectionState) 
 }
 
 void TDLibWrapper::handleUserUpdated(const QVariantMap &updatedUserInformation) {
-    QString updatedUserId = updatedUserInformation.value(ID).toString();
-    if (updatedUserId == this->options.value("my_id").toString()) {
-        LOG("Own user information updated :)");
-        this->userInformation = updatedUserInformation;
-        emit ownUserUpdated(updatedUserInformation);
-    }
+    qlonglong updatedUserId = updatedUserInformation.value(ID).toLongLong();
     LOG("User information updated:" << updatedUserInformation.value(USERNAMES).toMap().value(EDITABLE_USERNAME).toString() << updatedUserInformation.value(FIRST_NAME).toString() << updatedUserInformation.value(LAST_NAME).toString());
     updateUserInformation(updatedUserId, updatedUserInformation);
     emit userUpdated(updatedUserId, updatedUserInformation);
+    if (updatedUserId == this->ownUserId()) {
+        LOG("Own user information updated :)");
+        this->userInformation = updatedUserInformation;
+        emit ownUserUpdated();
+    }
 }
 
-void TDLibWrapper::handleUserStatusUpdated(const QString &userId, const QVariantMap &userStatusInformation) {
-    if (userId == this->options.value("my_id").toString()) {
+void TDLibWrapper::handleUserStatusUpdated(qlonglong userId, const QVariantMap &userStatusInformation) {
+    if (userId == this->ownUserId()) {
         LOG("Own user status information updated :)");
         this->userInformation.insert(STATUS, userStatusInformation);
     }
-    QVariantMap updatedUserInformation = this->usersById.value(userId).toMap();
+    QVariantMap updatedUserInformation = this->usersById.value(userId);
     if(updatedUserInformation.value(STATUS) == userStatusInformation) {
         return;
     }
@@ -1662,7 +1666,7 @@ void TDLibWrapper::handleUserStatusUpdated(const QString &userId, const QVariant
     emit userUpdated(userId, updatedUserInformation);
 }
 
-void TDLibWrapper::updateUserInformation(const QString &userId, const QVariantMap &userInformation) {
+void TDLibWrapper::updateUserInformation(qlonglong userId, const QVariantMap &userInformation) {
     this->usersById.insert(userId, userInformation);
     this->usersByName.insert(userInformation.value(USERNAMES).toMap().value(EDITABLE_USERNAME).toString().toLower(), userInformation);
 }

@@ -43,6 +43,7 @@ class TDLibWrapper : public QObject
     Q_PROPERTY(ConnectionState connectionState MEMBER connectionState NOTIFY connectionStateChanged)
     Q_PROPERTY(QVariantMap userInformation READ getUserInformation NOTIFY ownUserUpdated)
     Q_PROPERTY(QVariantMap options MEMBER options NOTIFY optionUpdated)
+    Q_PROPERTY(qlonglong ownUserId READ ownUserId NOTIFY ownUserIdFound)
 
 public:
     explicit TDLibWrapper(AppSettings *appSettings, MceInterface *mceInterface, QObject *parent = nullptr);
@@ -148,11 +149,12 @@ public:
         QVariantMap groupInfo;
     };
 
-    Q_INVOKABLE QVariantMap getUserInformation();
-    Q_INVOKABLE QVariantMap getUserInformation(const QString &userId);
-    Q_INVOKABLE bool hasUserInformation(const QString &userId);
-    Q_INVOKABLE bool hasUserNameInformation(const QString &userName);
-    Q_INVOKABLE QVariantMap getUserInformationByName(const QString &userName);
+    Q_INVOKABLE qlonglong ownUserId() const;
+    Q_INVOKABLE QVariantMap getUserInformation() const;
+    Q_INVOKABLE QVariantMap getUserInformation(qlonglong userId) const;
+    Q_INVOKABLE bool hasUserInformation(qlonglong userId) const;
+    Q_INVOKABLE bool hasUserNameInformation(const QString &userName) const;
+    Q_INVOKABLE QVariantMap getUserInformationByName(const QString &userName) const;
     Q_INVOKABLE bool hasSuperGroupNameInformation(const QString &name);
     Q_INVOKABLE QVariantMap getSupergroupInformationByName(const QString &name);
     Q_INVOKABLE UserPrivacySettingRule getUserPrivacySettingRule(UserPrivacySetting userPrivacySetting);
@@ -312,7 +314,7 @@ public:
     static SecretChatState secretChatStateFromString(const QString &state);
 
 signals:
-    void ownUserIdFound(const QString &ownUserId);
+    void ownUserIdFound();
     void authorizationStateChanged(const TDLibWrapper::AuthorizationState &authorizationState, const QVariantMap &authorizationStateData);
     void optionUpdated(const QString &optionName, const QVariant &optionValue);
     void connectionStateChanged(const TDLibWrapper::ConnectionState &connectionState);
@@ -344,8 +346,8 @@ signals:
     void chatReadInboxUpdated(const QString &chatId, const QString &lastReadInboxMessageId, int unreadCount);
     void chatReadOutboxUpdated(const QString &chatId, const QString &lastReadOutboxMessageId);
     void chatAvailableReactionsUpdated(qlonglong chatId, const QVariantMap &availableReactions);
-    void userUpdated(const QString &userId, const QVariantMap &userInformation);
-    void ownUserUpdated(const QVariantMap &userInformation);
+    void userUpdated(qlonglong userId, const QVariantMap &userInformation);
+    void ownUserUpdated();
     void basicGroupUpdated(qlonglong groupId);
     void superGroupUpdated(qlonglong groupId);
     void chatOnlineMemberCountUpdated(const QString &chatId, int onlineMemberCount);
@@ -432,7 +434,7 @@ public slots:
     void handleOptionUpdated(const QString &optionName, const QVariant &optionValue);
     void handleConnectionStateChanged(const QString &connectionState);
     void handleUserUpdated(const QVariantMap &updatedUserInformation);
-    void handleUserStatusUpdated(const QString &userId, const QVariantMap &userStatusInformation);
+    void handleUserStatusUpdated(qlonglong userId, const QVariantMap &userStatusInformation);
     void handleFileUpdated(const QVariantMap &fileInformation);
 
     void handleNewChatDiscovered(const QVariantMap &chatInformation);
@@ -480,7 +482,7 @@ private:
     QVariantMap newSendMessageRequest(qlonglong chatId, qlonglong replyToMessageId);
     void sendFileMessage(const QString &messageType, const QString &fileType, qlonglong chatId, const QString &filePath, const QString &message, qlonglong replyToMessageId);
     void initializeTDLibReceiver();
-    void updateUserInformation(const QString &userId, const QVariantMap &userInformation);
+    void updateUserInformation(qlonglong userId, const QVariantMap &userInformation);
     void updateChatPositions(qlonglong chatId, const QVariantList &positions);
     QString getTopChatCategoryType(TopChatCategory category);
 
@@ -499,8 +501,8 @@ private:
     QVariantMap options;
     QVariantMap userInformation;
     QMap<UserPrivacySetting, UserPrivacySettingRule> userPrivacySettingRules;
-    QVariantMap usersById;
-    QVariantMap usersByName;
+    QMap<qlonglong, QVariantMap> usersById;
+    QMap<QString, QVariantMap> usersByName;
     QHash<qlonglong, ChatData*> chats;
     QMap<qlonglong, QVariantMap> secretChats;
     QVariantMap unreadMessageInformation;
