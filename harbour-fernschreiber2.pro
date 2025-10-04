@@ -337,3 +337,13 @@ SSE2 = $$system(g++ -dM -E -x c++ - < /dev/null | grep __SSE2__)
         message(Using default render functions)
     }
 }
+
+# https://github.com/TelegramMessenger/tgcalls
+
+INCLUDEPATH += tgcalls \
+    tgcalls/tgcalls \
+    tgcalls/tgcalls/v2
+
+SOURCES += tgcalls/tgcalls/Instance.cpp \
+    tgcalls/tgcalls/InstanceImpl.cpp \
+    tgcalls/tgcalls/v2/InstanceV2Impl.h
