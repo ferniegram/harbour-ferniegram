@@ -134,7 +134,7 @@ Page {
 
     // TODO: close when chat is deleted
     // left the chat, even if from another device; this follows the behaviour in Telegram Desktop
-    onUserIsMemberChanged: if (!userIsMember)
+    onUserIsMemberChanged: if (chatManager.infoInitialized && !userIsMember)
                                pageStack.pop(pageStack.find(function(page){ return(page._depth === 0)}))
 
     Timer {

@@ -30,6 +30,7 @@ private:
 class ChatManager : public QObject {
     Q_OBJECT
     Q_PROPERTY(qlonglong chatId MEMBER chatId NOTIFY chatIdChanged)
+    Q_PROPERTY(bool infoInitialized READ infoInitialized NOTIFY chatIdChanged)
     Q_PROPERTY(QVariantMap chatInformation READ chatInformation NOTIFY chatInformationChanged)
     Q_PROPERTY(bool viewAsTopics READ viewAsTopics NOTIFY viewAsTopicsChanged)
     Q_PROPERTY(QVariantMap smallPhoto READ smallPhoto NOTIFY smallPhotoChanged)
@@ -54,6 +55,7 @@ public:
     Q_INVOKABLE void initializeMediaMessagesModel();
     bool viewAsTopics();
     inline qlonglong getChatId() { return chatId; }
+    inline bool infoInitialized() { return chatId != 0; }
     inline QVariantMap chatInformation() const { return tdLibWrapper->getChat(chatId); }
 
     QVariantMap smallPhoto() const;
