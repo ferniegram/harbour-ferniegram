@@ -71,7 +71,7 @@ void GstAudioRecorder::run() {
             // We got no message, this means the timeout expired
             if (state == Recording) {
                 // TODO: sometimes, when recording again, position is messed up
-                qlonglong newDuration;
+                int64_t newDuration;
                 if (gst_element_query_position(pipeline, GST_FORMAT_TIME, &newDuration)) {
                     newDuration = GST_TIME_AS_MSECONDS(newDuration);
                     if (duration != newDuration) {

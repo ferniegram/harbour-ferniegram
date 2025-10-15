@@ -30,7 +30,7 @@ public:
 
     inline GstRecordingState getState() { return state; }
     inline QString getLocation() { return location; }
-    inline qlonglong getDuration() { return duration; }
+    inline int64_t getDuration() { return duration; }
     void setVolume(qreal newVolume);
 
 signals:
@@ -47,7 +47,7 @@ private:
 
     bool needTerminate;
     GstRecordingState state;
-    qlonglong duration; // duration means duration recorded so far
+    int64_t duration; // duration means duration recorded so far
     QString location;
 };
 
