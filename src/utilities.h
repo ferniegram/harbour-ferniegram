@@ -26,6 +26,7 @@
 #include <QGeoPositionInfoSource>
 #include <QNetworkAccessManager>
 #include "tdlibwrapper.h"
+#include "gstaudiorecorder.h"
 
 class Utilities : public QObject
 {
@@ -35,7 +36,7 @@ class Utilities : public QObject
     Q_PROPERTY(QString voiceNotePath READ getVoiceNotePath)
     Q_PROPERTY(qlonglong voiceNoteDuration READ getVoiceNoteDuration NOTIFY voiceNoteDurationChanged)
 public:
-    explicit Utilities(AppSettings *settings = nullptr, TDLibWrapper *tdLibWrapper = nullptr, QObject *parent = nullptr);
+    explicit Utilities(int argc, char *argv[], AppSettings *settings = nullptr, TDLibWrapper *tdLibWrapper = nullptr, QObject *parent = nullptr);
     ~Utilities();
 
     enum VoiceNoteRecordingState {
@@ -62,9 +63,9 @@ public:
     Q_INVOKABLE static QVariantMap enhanceInputText(const QString &text);
 
 
-    inline QString getVoiceNotePath() const { return audioRecorder.outputLocation().toLocalFile(); }
     VoiceNoteRecordingState getVoiceNoteRecordingState() const;
-    inline qlonglong getVoiceNoteDuration() const { return audioRecorder.duration(); }
+    QString getVoiceNotePath() const;
+    qlonglong getVoiceNoteDuration() const;
 
     Q_INVOKABLE void startRecordingVoiceNote();
     Q_INVOKABLE void stopRecordingVoiceNote();
@@ -85,12 +86,18 @@ signals:
 private slots:
     void handleGeoPositionUpdated(const QGeoPositionInfo &info);
     void handleReverseGeocodeFinished();
+    void handleVoiceNoteVolumeChanged();
+    void setupAudioRecorder();
 
 private:
     AppSettings *appSettings;
     TDLibWrapper *tdLibWrapper;
 
-    QAudioRecorder audioRecorder;
+    int argc;
+    char **argv;
+
+    GstAudioRecorder *gstAudioRecorder;
+    QAudioRecorder *qAudioRecorder;
 
     QGeoPositionInfoSource *geoPositionInfoSource;
     QNetworkAccessManager *manager;

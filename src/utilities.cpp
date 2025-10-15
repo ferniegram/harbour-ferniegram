@@ -93,31 +93,74 @@ namespace {
     const QString HTML_BR_TAG("<br>");
 
     const QRegularExpression AT_METION_ID_RE("\\@(?<type>\\d+)\\((?<text>[^\\)]+)\\)");
+
+    // vorbis cannot be played on Telegram for iOS
+    const QString AUDIO_CODEC_OPUS("audio/opus");
+    const QString AUDIO_CODEC_VORBIS("audio/vorbis");
 }
 
-Utilities::Utilities(AppSettings *settings, TDLibWrapper *tdLibWrapper, QObject *parent)
-    : QObject(parent)
-    , appSettings(settings)
-    , tdLibWrapper(tdLibWrapper)
-    , manager(new QNetworkAccessManager(this))
-{
+
+void Utilities::setupAudioRecorder() {
     LOG("Initializing audio recorder...");
 
+    this->gstAudioRecorder = nullptr;
+
+    this->qAudioRecorder = new QAudioRecorder(this);
+    const bool opusSupportedByQt = qAudioRecorder->supportedAudioCodecs().contains(AUDIO_CODEC_OPUS);
+    bool needSetupQt = true;
+
+    if (!opusSupportedByQt && !appSettings->forceQtAudioRecorder()) {
+        LOG("Opus codec not provided by QtMultimedia, trying to setup custom GStreamer backend");
+        bool error = false;
+        this->gstAudioRecorder = new GstAudioRecorder(argc, argv, &error, this);
+        if (!error) {
+            LOG("Custom GStreamer backend successfully initialized!");
+
+            needSetupQt = false;
+            delete this->qAudioRecorder;
+            this->qAudioRecorder = nullptr;
+
+            this->gstAudioRecorder->setVolume(appSettings->voiceNoteVolume());
+            connect(gstAudioRecorder, &GstAudioRecorder::stateChanged, this, &Utilities::voiceNoteRecordingStateChanged);
+            connect(gstAudioRecorder, &GstAudioRecorder::durationChanged, this, &Utilities::voiceNoteDurationChanged);
+        } else
+            LOG("Could not setup custom GStreamer backend, falling back to Vorbis codec from QtMultimedia");
+    }
+
+    if (needSetupQt) {
+        QAudioEncoderSettings encoderSettings;
+        encoderSettings.setCodec(opusSupportedByQt ? AUDIO_CODEC_OPUS : AUDIO_CODEC_VORBIS);
+        encoderSettings.setChannelCount(1);
+        encoderSettings.setQuality(QMultimedia::LowQuality);
+
+        this->qAudioRecorder->setEncodingSettings(encoderSettings);
+        this->qAudioRecorder->setContainerFormat("ogg");
+        this->qAudioRecorder->setVolume(appSettings->voiceNoteVolume());
+
+        connect(qAudioRecorder, &QAudioRecorder::statusChanged, this, &Utilities::voiceNoteRecordingStateChanged);
+        connect(qAudioRecorder, &QAudioRecorder::durationChanged, this, &Utilities::voiceNoteDurationChanged);
+    }
+
+    LOG("Audio recorder initialized");
+}
+
+Utilities::Utilities(int argc, char *argv[], AppSettings *settings, TDLibWrapper *tdLibWrapper, QObject *parent) :
+    QObject(parent),
+    appSettings(settings),
+    tdLibWrapper(tdLibWrapper),
+    argc(argc),
+    argv(argv),
+    manager(new QNetworkAccessManager(this))
+{
     QString temporaryDirectoryPath = this->getTemporaryDirectoryPath();
     QDir temporaryDirectory(temporaryDirectoryPath);
     if (!temporaryDirectory.exists()) {
         temporaryDirectory.mkpath(temporaryDirectoryPath);
     }
 
-    QAudioEncoderSettings encoderSettings;
-    encoderSettings.setCodec("audio/vorbis");
-    encoderSettings.setChannelCount(1);
-    encoderSettings.setQuality(QMultimedia::LowQuality);
-    this->audioRecorder.setEncodingSettings(encoderSettings);
-    this->audioRecorder.setContainerFormat("ogg");
-
-    connect(&audioRecorder, &QAudioRecorder::durationChanged, this, &Utilities::voiceNoteDurationChanged);
-    connect(&audioRecorder, &QAudioRecorder::statusChanged, this, &Utilities::voiceNoteRecordingStateChanged);
+    this->setupAudioRecorder();
+    connect(appSettings, &AppSettings::voiceNoteVolumeChanged, this, &Utilities::handleVoiceNoteVolumeChanged);
+    connect(appSettings, &AppSettings::forceQtAudioRecorderChanged, this, &Utilities::setupAudioRecorder);
 
     this->geoPositionInfoSource = QGeoPositionInfoSource::createDefaultSource(this);
     if (this->geoPositionInfoSource) {
@@ -561,14 +604,21 @@ QString Utilities::getUserName(const QVariantMap &userInformation) {
 
 void Utilities::startRecordingVoiceNote() {
     LOG("Start recording voice note...");
-    this->audioRecorder.setOutputLocation(QUrl::fromLocalFile(this->getTemporaryDirectoryPath() + "/voicenote-" + QDateTime::currentDateTime().toString("yyyy-MM-dd-HH-mm-ss") + ".ogg"));
-    this->audioRecorder.setVolume(appSettings->voiceNoteVolume());
-    this->audioRecorder.record();
+    const QString location = this->getTemporaryDirectoryPath() + "/voicenote-" + QDateTime::currentDateTime().toString("yyyy-MM-dd-HH-mm-ss") + ".ogg";
+    if (gstAudioRecorder)
+        gstAudioRecorder->record(location);
+    else if (qAudioRecorder) {
+        qAudioRecorder->setOutputLocation(location);
+        qAudioRecorder->record();
+    }
 }
 
 void Utilities::stopRecordingVoiceNote() {
     LOG("Stop recording voice note...");
-    this->audioRecorder.stop();
+    if (gstAudioRecorder)
+        gstAudioRecorder->stop();
+    else if (qAudioRecorder)
+        qAudioRecorder->stop();
 }
 
 void Utilities::startGeoLocationUpdates() {
@@ -579,6 +629,13 @@ void Utilities::startGeoLocationUpdates() {
 void Utilities::stopGeoLocationUpdates() {
     if (this->geoPositionInfoSource)
         this->geoPositionInfoSource->stopUpdates();
+}
+
+void Utilities::handleVoiceNoteVolumeChanged() {
+    if (gstAudioRecorder)
+        this->gstAudioRecorder->setVolume(appSettings->voiceNoteVolume());
+    else if (qAudioRecorder)
+        this->qAudioRecorder->setVolume(appSettings->voiceNoteVolume());
 }
 
 void Utilities::initiateReverseGeocode(double latitude, double longitude)
@@ -601,19 +658,50 @@ void Utilities::initiateReverseGeocode(double latitude, double longitude)
 }
 
 Utilities::VoiceNoteRecordingState Utilities::getVoiceNoteRecordingState() const {
-    switch (this->audioRecorder.status()) {
-    case QMediaRecorder::LoadedStatus:
-    case QMediaRecorder::PausedStatus:
-        return VoiceNoteRecordingState::Ready;
-    case QMediaRecorder::StartingStatus:
-        return VoiceNoteRecordingState::Starting;
-    case QMediaRecorder::FinalizingStatus:
-        return VoiceNoteRecordingState::Stopping;
-    case QMediaRecorder::RecordingStatus:
-        return VoiceNoteRecordingState::Recording;
-    default:
-        return VoiceNoteRecordingState::Unavailable;
+    if (gstAudioRecorder) {
+        switch(this->gstAudioRecorder->getState()) {
+        case GstAudioRecorder::Ready:
+        case GstAudioRecorder::Paused: // TODO: add paused state when pausing recording will be implemented
+            return VoiceNoteRecordingState::Ready;
+        case GstAudioRecorder::Recording:
+            return VoiceNoteRecordingState::Recording;
+        case GstAudioRecorder::Unavailable:
+            return VoiceNoteRecordingState::Unavailable;
+        case GstAudioRecorder::Starting:
+            return VoiceNoteRecordingState::Starting;
+        case GstAudioRecorder::Stopping:
+            return VoiceNoteRecordingState::Stopping;
+        }
     }
+    if (qAudioRecorder) {
+        switch (qAudioRecorder->status()) {
+        case QMediaRecorder::LoadedStatus:
+        case QMediaRecorder::PausedStatus:
+            return VoiceNoteRecordingState::Ready;
+        case QMediaRecorder::StartingStatus:
+            return VoiceNoteRecordingState::Starting;
+        case QMediaRecorder::FinalizingStatus:
+            return VoiceNoteRecordingState::Stopping;
+        case QMediaRecorder::RecordingStatus:
+            return VoiceNoteRecordingState::Recording;
+        default:
+            return VoiceNoteRecordingState::Unavailable;
+        }
+    }
+
+    return VoiceNoteRecordingState::Unavailable;
+}
+
+QString Utilities::getVoiceNotePath() const {
+    if (gstAudioRecorder) return gstAudioRecorder->getLocation();
+    if (qAudioRecorder) return qAudioRecorder->outputLocation().toString();
+    return QString();
+}
+
+qlonglong Utilities::getVoiceNoteDuration() const {
+    if (gstAudioRecorder) return gstAudioRecorder->getDuration();
+    if (qAudioRecorder) return qAudioRecorder->duration();
+    return 0;
 }
 
 void Utilities::handleGeoPositionUpdated(const QGeoPositionInfo &info)

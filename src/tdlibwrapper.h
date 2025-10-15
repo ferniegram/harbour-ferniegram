@@ -45,7 +45,7 @@ class TDLibWrapper : public QObject
     Q_PROPERTY(QVariantMap options MEMBER options NOTIFY optionUpdated)
 
 public:
-    explicit TDLibWrapper(AppSettings *appSettings, MceInterface *mceInterface, QObject *parent = nullptr);
+    explicit TDLibWrapper(int argc, char **argv, AppSettings *appSettings, MceInterface *mceInterface, QObject *parent = nullptr);
     ~TDLibWrapper();
 
     enum AuthorizationState {

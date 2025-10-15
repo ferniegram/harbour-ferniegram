@@ -76,6 +76,7 @@ public:
     BOOL_SETTING_DEFINE(archiveChatListHintCompleted)
     BOOL_SETTING_DEFINE(chatFoldersTabBarOnBottom)
     BOOL_SETTING_DEFINE(chatFoldersTabBarShowIcons)
+    BOOL_SETTING_DEFINE(forceQtAudioRecorder)
 
 // FIXME: macros should handle signals too
 signals:
@@ -112,6 +113,7 @@ signals:
     void archiveChatListHintCompletedChanged();
     void chatFoldersTabBarOnBottomChanged();
     void chatFoldersTabBarShowIconsChanged();
+    void forceQtAudioRecorderChanged();
 
 private:
     QSettings settings;
