@@ -35,17 +35,17 @@ Page {
     property var chatInformation
     property var secretChatDetails
     property alias chatPicture: chatPictureThumbnail.photoData
-    property bool isPrivateChat: chatInformation.type['@type'] === "chatTypePrivate"
-    property bool isSecretChat: chatInformation.type['@type'] === "chatTypeSecret"
+    property bool isPrivateChat: chatManager.chatType == TDLibAPI.ChatTypePrivate
+    property bool isSecretChat: chatManager.chatType == TDLibAPI.ChatTypeSecret
     property bool isSecretChatReady: false
-    property bool isBasicGroup: chatInformation.type['@type'] === "chatTypeBasicGroup"
-    property bool isSuperGroup: chatInformation.type['@type'] === "chatTypeSupergroup"
+    property bool isBasicGroup: chatManager.chatType == TDLibAPI.ChatTypeBasicGroup
+    property bool isSuperGroup: chatManager.chatType == TDLibAPI.ChatTypeSupergroup
     property bool isChannel: !!(chatGroupInformation && chatGroupInformation.is_channel)
-    property bool isForum: !!(chatGroupInformation && chatGroupInformation.is_forum)
+    property bool viewAsTopics: chatManager.viewAsTopics
     property bool isDeletedUser: !!chatPartnerInformation && chatPartnerInformation.type['@type'] === "userTypeDeleted"
-    property var chatPartnerInformation
+    property var chatPartnerInformation: chatManager.userInfo
     property var botInformation
-    property var chatGroupInformation
+    property var chatGroupInformation: chatManager.groupInfo
     property int chatOnlineMemberCount: 0
     property var messageToShow
     property string messageIdToShow
@@ -64,8 +64,8 @@ Page {
     property var availableReactions
     property bool timepointStatus
 
-    readonly property Item messagesView: isForum ? null : contentLoader.item
-    readonly property Item topicsListView: isForum ? contentLoader.item : null
+    readonly property Item messagesView: viewAsTopics ? null : contentLoader.item
+    readonly property Item topicsListView: viewAsTopics ? contentLoader.item : null
 
     function setMessageText(text, doSend) {
         if (messagesView)
@@ -166,16 +166,12 @@ Page {
         Debug.log("[ChatPage] Initializing chat page...")
         chatManager.initialize(chatInformation, messageIdToShow)
 
+        if (isSecretChat)
+            tdLibWrapper.getSecretChat(chatInformation.type.secret_chat_id)
         if (isPrivateChat || isSecretChat) {
-            chatPartnerInformation = tdLibWrapper.getUserInformation(chatInformation.type.user_id)
-            if (isSecretChat)
-                tdLibWrapper.getSecretChat(chatInformation.type.secret_chat_id)
             if(chatPartnerInformation.type["@type"] === "userTypeBot")
                 tdLibWrapper.getUserFullInfo(chatPartnerInformation.id)
-        } else if (isBasicGroup)
-            chatGroupInformation = tdLibWrapper.getBasicGroup(chatInformation.type.basic_group_id)
-        else if (isSuperGroup)
-            chatGroupInformation = tdLibWrapper.getSuperGroup(chatInformation.type.supergroup_id)
+        }
 
         if (stickerManager.needsReload()) {
             Debug.log("[ChatPage] Recent stickers will be reloaded!")
@@ -216,21 +212,6 @@ Page {
 
     Connections {
         target: tdLibWrapper
-        onUserUpdated: {
-            if ((isPrivateChat || isSecretChat) && chatPartnerInformation.id.toString() === userId) {
-                chatPartnerInformation = userInformation
-            }
-        }
-        onBasicGroupUpdated: {
-            if (isBasicGroup && chatGroupInformation.id === groupId) {
-                chatGroupInformation = tdLibWrapper.getBasicGroup(groupId)
-            }
-        }
-        onSuperGroupUpdated: {
-            if (isSuperGroup && chatGroupInformation.id === groupId) {
-                chatGroupInformation = tdLibWrapper.getSuperGroup(groupId)
-            }
-        }
         onChatOnlineMemberCountUpdated: {
             Debug.log(isSuperGroup, "/", isBasicGroup, "/", chatInformation.id.toString(), "/", chatId);
             if ((isSuperGroup || isBasicGroup) && chatInformation.id.toString() === chatId) {
@@ -358,7 +339,7 @@ Page {
 
             MenuItem {
                 id: searchInChatMenuItem
-                visible: !chatPage.isSecretChat && !chatPage.isForum && chatOverviewItem.visible
+                visible: !chatPage.isSecretChat && !chatPage.viewAsTopics && chatOverviewItem.visible
                 onClicked: {
                     // This automatically shows the search field as well
                     chatOverviewItem.visible = false
@@ -552,7 +533,7 @@ Page {
                 id: contentLoader
                 width: parent.width
                 height: chatColumn.height - headerRow.height
-                sourceComponent: isForum ? topicsListViewComponent : messagesViewComponent
+                sourceComponent: viewAsTopics ? topicsListViewComponent : messagesViewComponent
 
                 Component {
                     id: messagesViewComponent

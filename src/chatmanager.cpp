@@ -65,7 +65,7 @@ ChatManager::ChatManager(TDLibWrapper *tdLibWrapper, QObject *parent) :
     pinnedMessageId(0),
     chatMessagesModel(new ChatMessagesModel(tdLibWrapper, this)),
     mediaMessagesModel(new MediaMessagesModel(tdLibWrapper, this)),
-    forumTopicsModel(new ForumTopicsModel(tdLibWrapper, this))
+    topicsModel(new ForumTopicsModel(tdLibWrapper, this))
 {
     connect(this->tdLibWrapper, &TDLibWrapper::chatRolesUpdated, this, &ChatManager::handleChatRolesUpdated);
     connect(this->tdLibWrapper, &TDLibWrapper::chatPinnedMessageUpdated, this, &ChatManager::handleChatPinnedMessageUpdated);
@@ -176,7 +176,7 @@ void ChatManager::reset() {
     LOG("Resetting chat manager");
     this->chatMessagesModel->reset();
     this->mediaMessagesModel->reset();
-    this->forumTopicsModel->reset();
+    this->topicsModel->reset();
 
     chatId = 0;
     emit chatIdChanged();
@@ -202,11 +202,11 @@ void ChatManager::initialize(const QVariantMap &chatInformation, qlonglong fromM
     emit chatIdChanged();
     emit smallPhotoChanged();
     emit chatInformationChanged();
-    emit isForumChanged();
+    emit viewAsTopicsChanged();
 
-    if (isForum()) {
+    if (viewAsTopics()) {
         LOG("Initializing a forum chat");
-        forumTopicsModel->init(chatId);
+        topicsModel->init(chatId);
     } else {
         LOG("Initializing a regular chat");
         chatMessagesModel->chatId = chatId;
@@ -223,7 +223,7 @@ void ChatManager::initializeMediaMessagesModel() {
     this->mediaMessagesModel->init(this->chatId);
 }
 
-bool ChatManager::isForum() {
+bool ChatManager::viewAsTopics() {
     // TODO
     return false;
 }

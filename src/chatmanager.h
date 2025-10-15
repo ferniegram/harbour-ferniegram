@@ -31,7 +31,7 @@ class ChatManager : public QObject {
     Q_OBJECT
     Q_PROPERTY(qlonglong chatId MEMBER chatId NOTIFY chatIdChanged)
     Q_PROPERTY(QVariantMap chatInformation READ chatInformation NOTIFY chatInformationChanged)
-    //Q_PROPERTY(bool isForum READ isForum NOTIFY isForumChanged)
+    Q_PROPERTY(bool viewAsTopics READ viewAsTopics NOTIFY viewAsTopicsChanged)
     Q_PROPERTY(QVariantMap smallPhoto READ smallPhoto NOTIFY smallPhotoChanged)
     Q_PROPERTY(TDLibWrapper::ChatType chatType READ chatType NOTIFY chatIdChanged)
     Q_PROPERTY(bool isChannel READ isChannel NOTIFY chatIdChanged)
@@ -40,7 +40,7 @@ class ChatManager : public QObject {
 
     Q_PROPERTY(ChatMessagesModel* model MEMBER chatMessagesModel CONSTANT)
     Q_PROPERTY(MediaMessagesModel* mediaMessagesModel MEMBER mediaMessagesModel CONSTANT)
-    Q_PROPERTY(ForumTopicsModel* forumTopicsModel MEMBER forumTopicsModel CONSTANT)
+    Q_PROPERTY(ForumTopicsModel* topicsModel MEMBER topicsModel CONSTANT)
 
     Q_PROPERTY(qlonglong pinnedMessageId MEMBER pinnedMessageId NOTIFY pinnedMessageChanged)
     Q_PROPERTY(QVariantMap chatActionsByUsers MEMBER chatActionsByUsers NOTIFY chatActionsChanged)
@@ -52,7 +52,7 @@ public:
     Q_INVOKABLE void reset();
     Q_INVOKABLE void initialize(const QVariantMap &chatInformation, qlonglong fromMessageId = 0);
     Q_INVOKABLE void initializeMediaMessagesModel();
-    Q_INVOKABLE bool isForum();
+    bool viewAsTopics();
     inline qlonglong getChatId() { return chatId; }
     inline QVariantMap chatInformation() const { return tdLibWrapper->getChat(chatId); }
 
@@ -68,7 +68,7 @@ signals:
     void pinnedMessageChanged();
     void chatActionsChanged();
     void chatInformationChanged();
-    void isForumChanged();
+    void viewAsTopicsChanged();
     void userInfoChanged();
     void groupInfoChanged();
 
@@ -92,7 +92,7 @@ private:
 
     ChatMessagesModel *chatMessagesModel;
     MediaMessagesModel* mediaMessagesModel;
-    ForumTopicsModel *forumTopicsModel;
+    ForumTopicsModel *topicsModel;
 
     QVariantMap chatActionsByUsers; // QMap<qlonglong, QString>
     QVariantMap chatActionsByChats; //QMap<qlonglong, QString>
