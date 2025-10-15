@@ -292,6 +292,15 @@ AccordionItem {
                 automaticCheck: false
                 onClicked: appSettings.sendMarkdown = !checked
             }
+
+            TextSwitch {
+                width: parent.columnWidth
+                checked: appSettings.forceQtAudioRecorder
+                text: qsTr("Force QtMultimedia-based audio recorder")
+                automaticCheck: false
+                onClicked: appSettings.forceQtAudioRecorder = !checked
+                visible: NO_HARBOUR_COMPLIANCE
+            }
         }
     }
 }

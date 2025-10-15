@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<AppSettings>(uri, 1, 0, "AppSettings", QString());
 
     MceInterface *mceInterface = new MceInterface(view.data());
-    TDLibWrapper *tdLibWrapper = new TDLibWrapper(appSettings, mceInterface, view.data());
+    TDLibWrapper *tdLibWrapper = new TDLibWrapper(argc, argv, appSettings, mceInterface, view.data());
     context->setContextProperty("tdLibWrapper", tdLibWrapper);
     qmlRegisterUncreatableType<TDLibWrapper>(uri, 1, 0, "TDLibAPI", QString());
 
@@ -185,6 +185,12 @@ int main(int argc, char *argv[])
     
     ContactsModel contactsModel(tdLibWrapper, view.data());
     context->setContextProperty("contactsModel", &contactsModel);
+
+#ifdef NO_HARBOUR_COMPLIANCE
+    context->setContextProperty("NO_HARBOUR_COMPLIANCE", true);
+#else
+    context->setContextProperty("NO_HARBOUR_COMPLIANCE", false);
+#endif
 
     view->setSource(SailfishApp::pathTo("qml/harbour-fernschreiber2.qml"));
     view->show();

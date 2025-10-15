@@ -29,7 +29,7 @@ SilicaListView {
     id: chatListView
     visible: !overviewPage.loading
     clip: true
-    opacity: (overviewPage.chatListCreated && !overviewPage.logoutLoading) ? 1 : 0
+    opacity: (overviewPage.chatListCreated || overviewPage.logoutLoading) ? 1 : 0
     Behavior on opacity { FadeAnimation {} }
 
     //property bool replacePage
@@ -69,19 +69,11 @@ SilicaListView {
 
     VerticalScrollDecorator {}
 
-    Column {
-        width: parent.width
-        spacing: Theme.paddingMedium
-        anchors.verticalCenter: chatListView.verticalCenter
-
-        opacity: overviewPage.chatListCreated && !overviewPage.logoutLoading ? 0 : 1
-        Behavior on opacity { FadeAnimation {} }
-        visible: !overviewPage.chatListCreated || overviewPage.logoutLoading
-
-        BusyLabel {
-            id: loadingBusyIndicator
-            running: true
-            text: overviewPage.loadingText
-        }
+    BusyLabel {
+        id: loadingBusyIndicator
+        anchors.verticalCenter: parent.verticalCenter
+        y: null
+        text: overviewPage.loadingText
+        running: !overviewPage.chatListCreated || overviewPage.logoutLoading
     }
 }

@@ -203,6 +203,17 @@ TRANSLATIONS += translations/harbour-fernschreiber2-de.ts \
                 translations/harbour-fernschreiber2-en.ts \
                 translations/harbour-fernschreiber2-zh_CN.ts
 
+equals(HARBOUR_COMPLIANCE, on) {
+    message(Harbour compliance enabled)
+} else {
+    message(Harbour compliance disabled)
+    DEFINES += NO_HARBOUR_COMPLIANCE
+
+    PKGCONFIG += gstreamer-1.0 gstreamer-pbutils-1.0 glib-2.0
+    HEADERS += src/gstaudiorecorder.h
+    SOURCES += src/gstaudiorecorder.cpp
+}
+
 equals(QT_ARCH, arm) {
     message(Building ARM)
     TARGET_ARCHITECTURE = armv7hl

@@ -159,13 +159,14 @@ QVariantMap findChatPositionForFolder(const QVariantList &positions, int folderI
     return QVariantMap();
 }
 
-TDLibWrapper::TDLibWrapper(AppSettings *settings, MceInterface *mce, QObject *parent)
+TDLibWrapper::TDLibWrapper(int argc, char **argv, AppSettings *settings, MceInterface *mce, QObject *parent)
     : QObject(parent)
     , tdLibClientId(td_create_client_id())
     , manager(new QNetworkAccessManager(this))
     , networkConfigurationManager(new QNetworkConfigurationManager(this))
     , appSettings(settings)
     , mceInterface(mce)
+    , utilities(new Utilities(argc, argv, appSettings, this))
     , authorizationState(AuthorizationState::Closed)
     , diceEmojis()
     , versionNumber(0)
@@ -188,8 +189,6 @@ TDLibWrapper::TDLibWrapper(AppSettings *settings, MceInterface *mce, QObject *pa
     } else {
         removeOpenWith();
     }
-
-    this->utilities = new Utilities(appSettings, this);
 
     connect(appSettings, &AppSettings::useOpenWithChanged, this, &TDLibWrapper::handleOpenWithChanged);
     connect(appSettings, &AppSettings::storageOptimizerChanged, this, &TDLibWrapper::handleStorageOptimizerChanged);
