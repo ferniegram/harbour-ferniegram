@@ -164,7 +164,6 @@ Page {
 
     Component.onCompleted: {
         Debug.log("[ChatPage] Initializing chat page...")
-        chatManager.initialize(chatInformation, messageIdToShow)
 
         if (isSecretChat)
             tdLibWrapper.getSecretChat(chatInformation.type.secret_chat_id)
@@ -197,6 +196,7 @@ Page {
             break
         case PageStatus.Active:
             if (!chatPage.isInitialized) {
+                chatManager.initialize(chatInformation, messageIdToShow)
                 pageStack.pushAttached(Qt.resolvedUrl("ChatInformationPage.qml"), {
                                            chatInformation: chatInformation,
                                            privateChatUserInformation: chatPartnerInformation,
