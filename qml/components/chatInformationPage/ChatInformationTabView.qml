@@ -145,7 +145,7 @@ Item {
                                 image: "image://theme/icon-m-diagnostic"
                             });
 
-        tdLibWrapper.getChatMessageCount(chatInformation.id, TelegramAPI.SearchMessagesFilterPhotoAndVideo)
+        tdLibWrapper.getChatMessageCount(chatInformation.id, TDLibAPI.SearchMessagesFilterPhotoAndVideo)
     }
 
     Connections {
