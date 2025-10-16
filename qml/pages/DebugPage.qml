@@ -121,6 +121,18 @@ Page {
                                           })
             }
 
+            SectionHeader { text: "Execute custom request" }
+            TextArea {
+                id: customRequestArea
+                width: parent.width
+                label: "JSON-encoded request"
+            }
+            Button {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: "Execute"
+                onClicked: tdLibWrapper.sendRequest(JSON.parse(customRequestArea.text))
+            }
+
             SectionHeader { text: "Options" }
             Label {
                 x: Theme.horizontalPageMargin
