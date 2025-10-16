@@ -182,7 +182,7 @@ public:
     DBusAdaptor *getDBusAdaptor();
 
     // Direct TDLib functions
-    void sendRequest(const QVariantMap &requestObject);
+    Q_INVOKABLE void sendRequest(const QVariantMap &requestObject);
     void close();
     Q_INVOKABLE void setAuthenticationPhoneNumber(const QString &phoneNumber);
     Q_INVOKABLE void setAuthenticationCode(const QString &authenticationCode);
