@@ -73,7 +73,6 @@ private slots:
 
 signals:
     void countChanged();
-    void showAllChatsChanged();
     void chatJoined(const qlonglong &chatId, const QString &chatTitle);
     void unreadStateChanged(int unreadMessagesCount, int unreadChatsCount);
 

@@ -47,14 +47,6 @@ Page {
                 text: "Chats"
             }
 
-            TextSwitch {
-                checked: chatListModel.showAllChats
-                text: "Show all chats"
-                description: "Including the ones referenced by the chats you have joined."
-                automaticCheck: false
-                onClicked: chatListModel.showAllChats = !chatListModel.showAllChats
-            }
-
             Row {
                 TextField {
                     id: chatId
