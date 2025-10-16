@@ -1498,6 +1498,9 @@ QString TDLibWrapper::getOptionString(const QString &optionName) {
 bool TDLibWrapper::getOptionBoolean(const QString &optionName) {
     return this->options.value(optionName).toBool();
 }
+qlonglong TDLibWrapper::getOptionInteger(const QString &optionName) {
+    return this->options.value(optionName).toLongLong();
+}
 
 void TDLibWrapper::copyFileToDownloads(const QString &filePath, bool openAfterCopy) {
     LOG("Copy file to downloads" << filePath << openAfterCopy);
