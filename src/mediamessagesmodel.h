@@ -11,13 +11,14 @@ public:
     Q_INVOKABLE virtual bool clear() override;
     Q_INVOKABLE void init(qlonglong chatId);
     Q_INVOKABLE void triggerLoadMoreHistory();
+    Q_INVOKABLE void triggerLoadMoreFuture();
 
 private slots:
     void handleMessagesReceived(TDLibWrapper::SearchMessagesFilter filter, const QVariantList &messages, int /*totalCount*/, qlonglong nextFromMessageId);
     void handleNewMessageReceived(qlonglong chatId, const QVariantMap &message);
 
 private:
-    void loadMessages(qlonglong fromMessageId = 0);
+    void loadMessages(qlonglong fromMessageId = 0, int offset = 100);
 
 private:
     qlonglong nextFromMessageId;

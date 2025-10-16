@@ -22,8 +22,8 @@ bool MediaMessagesModel::clear() {
     return MessagesModel::clear();
 }
 
-inline void MediaMessagesModel::loadMessages(qlonglong fromMessageId) {
-    this->tdLibWrapper->searchChatMessages(this->chatId, QString(), fromMessageId, TDLibWrapper::SearchMessagesFilterPhotoAndVideo, 100);
+inline void MediaMessagesModel::loadMessages(qlonglong fromMessageId, int offset) {
+    this->tdLibWrapper->searchChatMessages(this->chatId, QString(), fromMessageId, TDLibWrapper::SearchMessagesFilterPhotoAndVideo, offset);
 }
 
 void MediaMessagesModel::init(qlonglong chatId) {
@@ -37,6 +37,15 @@ void MediaMessagesModel::triggerLoadMoreHistory() {
         LOG("Loading older messages...");
         loadMessages(nextFromMessageId);
         inIncrementalUpdate = false;
+    }
+}
+
+void MediaMessagesModel::triggerLoadMoreFuture() {
+    // TODO: when adding search (for example for files), don't accept this while searching
+    if (!this->inIncrementalUpdate && !messages.isEmpty()) {
+        LOG("Loading newer messages...");
+        this->inIncrementalUpdate = true;
+        this->loadMessages(messages.last()->messageId, -100);
     }
 }
 
