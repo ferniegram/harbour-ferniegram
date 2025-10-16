@@ -131,7 +131,7 @@ Column {
             messageIdToScrollTo = messageId
 
         if (messageIdToScrollTo) {
-            var index = chatModel.getMessageIndex(chatPage.messageIdToScrollTo)
+            var index = chatManager.model.getMessageIndex(chatPage.messageIdToScrollTo)
             var proxyIndex = chatProxyModel.mapRowFromSource(index, -1)
             if(proxyIndex !== -1) {
                 messageIdToScrollTo = ""
