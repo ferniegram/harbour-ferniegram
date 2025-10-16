@@ -131,7 +131,7 @@ Column {
             messageIdToScrollTo = messageId
 
         if (messageIdToScrollTo) {
-            var index = chatManager.model.getMessageIndex(chatPage.messageIdToScrollTo)
+            var index = chatManager.model.getMessageIndex(messagesView.messageIdToScrollTo)
             var proxyIndex = chatProxyModel.mapRowFromSource(index, -1)
             if(proxyIndex !== -1) {
                 messageIdToScrollTo = ""
@@ -283,8 +283,8 @@ Column {
             if (chatView.height > chatView.contentHeight) {
                 Debug.log("[ChatPage] Chat content quite small...")
                 viewMessageTimer.queueViewMessage(chatView.count - 1)
-            } else if (fromIncrementalUpdate && chatPage.messageIdToScrollTo && chatPage.messageIdToScrollTo != "")
-                showMessage(chatPage.messageIdToScrollTo, false)
+            } else if (fromIncrementalUpdate && messagesView.messageIdToScrollTo && messagesView.messageIdToScrollTo != "")
+                showMessage(messagesView.messageIdToScrollTo, false)
 
             chatViewCooldownTimer.restart()
             chatViewStartupReadTimer.restart()
