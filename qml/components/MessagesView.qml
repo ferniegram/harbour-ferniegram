@@ -802,7 +802,7 @@ Column {
                 bottom: parent.bottom
                 bottomMargin: Theme.paddingMedium
             }
-            visible: !chatPage.loading && chatOverviewItem.visible && (unreadCount > 0 || !chatManager.model.historyEndLoaded)
+            visible: !chatPage.loading && chatOverviewItem.visible && (unreadCount > 0 || (!chatManager.model.historyEndLoaded && chatView.count > 0))
             property bool highlighted: chatUnreadMessagesMouseArea.containsPress
 
             // not ideal:
