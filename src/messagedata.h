@@ -15,6 +15,9 @@ struct MessageData {
         // When not needed these can be left unused:
         RoleMessageAlbumEntryFilter,
         RoleMessageAlbumMessageIds,
+
+        RoleIsFirstInSequence,
+        RoleIsLastInSequence,
     };
 
     enum RoleFlag {
@@ -31,6 +34,7 @@ struct MessageData {
 
     static bool lessThan(const MessageData *message1, const MessageData *message2);
     static bool moreThan(const MessageData *message1, const MessageData *message2);
+    static bool areTogether(const MessageData *message1, const MessageData *message2);
     static QVector<int> flagsToRoles(uint flags);
 
     uint updateMessageData(const QVariantMap &data);

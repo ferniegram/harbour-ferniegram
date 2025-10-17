@@ -1,5 +1,7 @@
 #include "messagedata.h"
 
+#include "utilities.h"
+
 #define DEBUG_MODULE MessageData
 #include "debuglog.h"
 
@@ -9,6 +11,7 @@ namespace {
     const QString SENDER_ID("sender_id");
     const QString USER_ID("user_id");
     const QString REPLY_MARKUP("reply_markup");
+    const QString DATE("date");
     const QString _TYPE("@type");
 
     // "interaction_info": {
@@ -196,4 +199,20 @@ bool MessageData::lessThan(const MessageData *message1, const MessageData *messa
 
 bool MessageData::moreThan(const MessageData *message1, const MessageData *message2) {
     return !lessThan(message1, message2);
+}
+
+bool MessageData::areTogether(const MessageData *message1, const MessageData *message2) {
+    // FIXME: many stuff is not handled here for now, in general a reference for this can be found at https://github.com/UnigramDev/Unigram/blob/develop/Telegram/ViewModels/Dialogs/MessageCollection.cs (AreTogether function)
+
+    if (Utilities::messageContentIsService(message1->messageContentType) || Utilities::messageContentIsService(message2->messageContentType))
+        return false;
+
+    LOG("Past #1");
+    if (message1->senderIsChat() && message2->senderIsChat() && message1->senderChatId() != message2->senderChatId())
+        return false;
+    else if (!message1->senderIsChat() && !message2->senderIsChat() && message1->senderUserId() != message2->senderUserId())
+        return false;
+    LOG("Past #2" << (qAbs(message1->messageData.value(DATE).toInt() - message2->messageData.value(DATE).toInt()) <= 900));
+
+    return qAbs(message1->messageData.value(DATE).toInt() - message2->messageData.value(DATE).toInt()) <= 900;
 }

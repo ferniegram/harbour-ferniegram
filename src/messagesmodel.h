@@ -65,13 +65,15 @@ private:
     void setMessagesAlbum(MessageData *message);
 
 protected:
-    void removeRange(int firstDeleted, int lastDeleted);
+    virtual void removeRange(int firstDeleted, int lastDeleted, bool updateAlbums = true, bool updateIsFirstLastInSequence = true, bool invertIsFirstLastInSequence = false);
     virtual void insertMessages(const QList<MessageData*> newMessages);
-    void appendMessages(const QList<MessageData*> newMessages);
-    void prependMessages(const QList<MessageData*> newMessages);
+    virtual void appendMessages(const QList<MessageData*> newMessages, bool updateIsLastInSequence = true, bool invertIsLastInSequence = false);
+    virtual void prependMessages(const QList<MessageData*> newMessages, bool updateIsFirstInSequence = true, bool invertIsFirstInSequence = false);
     void setMessagesAlbum(const QList<MessageData*> newMessages);
     int findLastSentMessageIndex();
     virtual bool handleInsertMessages(const QVariantList &messages, QList<MessageData*> &newMessagesList, bool setAlbum = true, bool reverseOrder = false);
+    virtual bool messageIsFirstInSequence(const int index, const MessageData *message) const;
+    virtual bool messageIsLastInSequence(const int index, const MessageData *message) const;
 
 protected slots:
     virtual void handleMessagesDeleted(qlonglong chatId, const QList<qlonglong> &messageIds);

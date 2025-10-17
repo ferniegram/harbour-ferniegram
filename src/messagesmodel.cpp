@@ -51,24 +51,24 @@ MessagesModel::~MessagesModel() {
 
 QHash<int,QByteArray> MessagesModel::roleNames() const
 {
-    QHash<int,QByteArray> roles;
-    roles.insert(MessageData::RoleDisplay, "display");
-    roles.insert(MessageData::RoleMessageId, "message_id");
-    roles.insert(MessageData::RoleMessageContentType, "content_type");
-    roles.insert(MessageData::RoleMessageViewCount, "view_count");
-    roles.insert(MessageData::RoleMessageReactions, "reactions");
-    roles.insert(MessageData::RoleMessageAlbumEntryFilter, "album_entry_filter");
-    roles.insert(MessageData::RoleMessageAlbumMessageIds, "album_message_ids");
-    return roles;
+    return QHash<int,QByteArray>{
+        {MessageData::RoleDisplay, "display"},
+        {MessageData::RoleMessageId, "message_id"},
+        {MessageData::RoleMessageContentType, "content_type"},
+        {MessageData::RoleMessageViewCount, "view_count"},
+        {MessageData::RoleMessageReactions, "reactions"},
+        {MessageData::RoleMessageAlbumEntryFilter, "album_entry_filter"},
+        {MessageData::RoleMessageAlbumMessageIds, "album_message_ids"},
+        {MessageData::RoleIsFirstInSequence, "is_first_in_sequence"},
+        {MessageData::RoleIsLastInSequence, "is_last_in_sequence"},
+    };
 }
 
-int MessagesModel::rowCount(const QModelIndex &) const
-{
+int MessagesModel::rowCount(const QModelIndex &) const {
     return messages.size();
 }
 
-QVariant MessagesModel::data(const QModelIndex &index, int role) const
-{
+QVariant MessagesModel::data(const QModelIndex &index, int role) const {
     const int row = index.row();
     if (row >= 0 && row < messages.size()) {
         const MessageData *message = messages.at(row);
@@ -80,6 +80,8 @@ QVariant MessagesModel::data(const QModelIndex &index, int role) const
         case MessageData::RoleMessageReactions: return message->reactions;
         case MessageData::RoleMessageAlbumEntryFilter: return message->albumEntryFilter;
         case MessageData::RoleMessageAlbumMessageIds: return message->albumMessageIds;
+        case MessageData::RoleIsFirstInSequence: return messageIsFirstInSequence(row, message);
+        case MessageData::RoleIsLastInSequence: return messageIsLastInSequence(row, message);
         }
     }
     return QVariant();
@@ -109,16 +111,14 @@ void MessagesModel::reset() {
     }
 }
 
-QVariantMap MessagesModel::getMessage(int index)
-{
-    if (index >= 0 && index < messages.size()) {
+QVariantMap MessagesModel::getMessage(int index) {
+    if (index >= 0 && index < messages.size())
         return messages.at(index)->messageData;
-    }
+
     return QVariantMap();
 }
 
-int MessagesModel::getMessageIndex(qlonglong messageId)
-{
+int MessagesModel::getMessageIndex(qlonglong messageId) {
     if (messages.size() == 0) {
         return -1;
     }
@@ -128,8 +128,7 @@ int MessagesModel::getMessageIndex(qlonglong messageId)
     return -1;
 }
 
-QVariantList MessagesModel::getMessageIdsForAlbum(qlonglong albumId)
-{
+QVariantList MessagesModel::getMessageIdsForAlbum(qlonglong albumId) {
     QVariantList foundMessages;
     if(albumMessageMap.contains(albumId)) { // there should be only one in here
         QHash< qlonglong,  QVariantList >::iterator i = albumMessageMap.find(albumId);
@@ -138,8 +137,7 @@ QVariantList MessagesModel::getMessageIdsForAlbum(qlonglong albumId)
     return foundMessages;
 }
 
-QVariantList MessagesModel::getMessagesForAlbum(qlonglong albumId, int startAt)
-{
+QVariantList MessagesModel::getMessagesForAlbum(qlonglong albumId, int startAt) {
     LOG("getMessagesForAlbumId" << albumId);
     QVariantList messageIds = getMessageIdsForAlbum(albumId);
     int count = messageIds.size();
@@ -272,8 +270,7 @@ void MessagesModel::handleMessagesDeleted(qlonglong chatId, const QList<qlonglon
 }
 
 
-void MessagesModel::removeRange(int firstDeleted, int lastDeleted)
-{
+void MessagesModel::removeRange(int firstDeleted, int lastDeleted, bool updateAlbums, bool updateIsFirstLastInSequence, bool invertIsFirstLastInSequence) {
     if (firstDeleted >= 0 && firstDeleted <= lastDeleted) {
         LOG("Removing range" << firstDeleted << "..." << lastDeleted << "| current messages size" << messages.size());
         beginRemoveRows(QModelIndex(), firstDeleted, lastDeleted);
@@ -295,12 +292,24 @@ void MessagesModel::removeRange(int firstDeleted, int lastDeleted)
         }
         endRemoveRows();
 
-        updateAlbumMessages(rescanAlbumIds, true);
+        if (updateAlbums)
+            updateAlbumMessages(rescanAlbumIds, true);
+
+        if (updateIsFirstLastInSequence) {
+            QModelIndex modelIndex;
+            if (firstDeleted > 0) {
+                modelIndex = index(firstDeleted - 1);
+                emit dataChanged(modelIndex, modelIndex, QVector<int>{invertIsFirstLastInSequence ? MessageData::RoleIsFirstInSequence : MessageData::RoleIsLastInSequence});
+            }
+            if (messages.size() > 0) {
+                modelIndex = index(firstDeleted);
+                emit dataChanged(modelIndex, modelIndex, QVector<int>{invertIsFirstLastInSequence ? MessageData::RoleIsLastInSequence : MessageData::RoleIsFirstInSequence});
+            }
+        }
     }
 }
 
-void MessagesModel::insertMessages(const QList<MessageData*> newMessages)
-{
+void MessagesModel::insertMessages(const QList<MessageData*> newMessages) {
     // Caller ensures that newMessages is not empty
     if (messages.isEmpty()) {
         appendMessages(newMessages);
@@ -323,8 +332,7 @@ void MessagesModel::insertMessages(const QList<MessageData*> newMessages)
     }
 }
 
-void MessagesModel::appendMessages(const QList<MessageData*> newMessages)
-{
+void MessagesModel::appendMessages(const QList<MessageData*> newMessages, bool updateIsLastInSequence, bool invertIsLastInSequence) {
     const int oldSize = messages.size();
     const int count = newMessages.size();
     LOG("Appending" << count << "new messages...");
@@ -336,10 +344,15 @@ void MessagesModel::appendMessages(const QList<MessageData*> newMessages)
         messageIndexMap.insert(newMessages.at(i)->messageId, oldSize + i);
     }
     endInsertRows();
+
+
+    if (updateIsLastInSequence && oldSize > 0) {
+        QModelIndex modelIndex = index(oldSize - 1);
+        emit dataChanged(modelIndex, modelIndex, QVector<int>{invertIsLastInSequence ? MessageData::RoleIsFirstInSequence : MessageData::RoleIsLastInSequence});
+    }
 }
 
-void MessagesModel::prependMessages(const QList<MessageData*> newMessages)
-{
+void MessagesModel::prependMessages(const QList<MessageData*> newMessages, bool updateIsFirstInSequence, bool invertIsFirstInSequence) {
     const int insertCount = newMessages.size();
     const int totalCount = messages.size() + insertCount;
     LOG("Prepending" << insertCount << "messages...");
@@ -358,6 +371,12 @@ void MessagesModel::prependMessages(const QList<MessageData*> newMessages)
         messageIndexMap.insert(messages.at(i)->messageId, i);
     }
     endInsertRows();
+
+
+    if (updateIsFirstInSequence && totalCount > insertCount) {
+        QModelIndex modelIndex = index(insertCount);
+        emit dataChanged(modelIndex, modelIndex, QVector<int>{invertIsFirstInSequence ? MessageData::RoleIsLastInSequence : MessageData::RoleIsFirstInSequence});
+    }
 }
 
 void MessagesModel::updateAlbumMessages(qlonglong albumId, bool checkDeleted) {
@@ -408,16 +427,14 @@ void MessagesModel::updateAlbumMessages(qlonglong albumId, bool checkDeleted) {
     }
 }
 
-void MessagesModel::updateAlbumMessages(QList<qlonglong> albumIds, bool checkDeleted)
-{
+void MessagesModel::updateAlbumMessages(QList<qlonglong> albumIds, bool checkDeleted) {
     const int albumsCount = albumIds.size();
     for (int i = 0; i < albumsCount; i++) {
         updateAlbumMessages(albumIds.at(i), checkDeleted);
     }
 }
 
-void MessagesModel::setMessagesAlbum(const QList<MessageData *> newMessages)
-{
+void MessagesModel::setMessagesAlbum(const QList<MessageData *> newMessages) {
     const int count = newMessages.size();
     for (int i = 0; i < count; i++) {
         setMessagesAlbum(newMessages.at(i));
@@ -480,4 +497,14 @@ bool MessagesModel::handleInsertMessages(const QVariantList &messages, QList<Mes
     const bool reloadNeeded = !newMessagesList.isEmpty() && (newMessagesList.size() + messages.size()) < 10;
     if (reloadNeeded) LOG("Only a few messages received in first call, requesting to load more...");
     return reloadNeeded;
+}
+
+bool MessagesModel::messageIsFirstInSequence(const int index, const MessageData *message) const {
+    if (index == 0) return true;
+    return !MessageData::areTogether(message, this->messages.at(index - 1));
+}
+
+bool MessagesModel::messageIsLastInSequence(const int index, const MessageData *message) const {
+    if (index == messages.size() - 1) return true;
+    return !MessageData::areTogether(message, this->messages.at(index + 1));
 }

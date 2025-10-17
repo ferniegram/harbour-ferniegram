@@ -684,6 +684,8 @@ Column {
                         messageViewCount: model.view_count
                         reactions: model.reactions
                         chatReactions: availableReactions
+                        isFirstInSequence: model.is_first_in_sequence
+                        isLastInSequence: model.is_last_in_sequence
                         readonly property int originalIndex: model.index
                         messageIndex: chatProxyModel.mapRowToSource(originalIndex)
                         onOriginalIndexChanged: messageIndexTimer.start()

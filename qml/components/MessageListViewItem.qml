@@ -53,6 +53,8 @@ ListItem {
     property bool hasContentComponent
     property bool fullWidthWidescreenContent
     property bool contentAboveMedia
+    property bool isFirstInSequence: true
+    property bool isLastInSequence: true
     property bool wasNavigatedTo: false
 
     property var chatReactions
@@ -425,7 +427,7 @@ ListItem {
 
         Loader {
             id: profileThumbnailLoader
-            active: precalculatedValues.showUserInfo && !messageListItem.isOwnMessage
+            active: precalculatedValues.showUserInfo && !messageListItem.isOwnMessage && isLastInSequence
             asynchronous: true
             width: precalculatedValues.profileThumbnailDimensions
             height: width
@@ -438,7 +440,7 @@ ListItem {
                     replacementStringHint: userText.text
                     width: Theme.itemSizeSmall
                     height: Theme.itemSizeSmall
-                    visible: precalculatedValues.showUserInfo && !messageListItem.isOwnMessage
+                    visible: precalculatedValues.showUserInfo && !messageListItem.isOwnMessage && isLastInSequence
                     MouseArea {
                         anchors.fill: parent
                         enabled: !(messageListItem.precalculatedValues.pageIsSelecting || messageListItem.isAnonymous)
@@ -497,7 +499,7 @@ ListItem {
                     truncationMode: TruncationMode.Fade
                     textFormat: Text.StyledText
                     horizontalAlignment: messageListItem.textAlign
-                    visible: (precalculatedValues.showUserInfo && !messageListItem.isOwnMessage) || myMessage['@type'] === "sponsoredMessage"
+                    visible: (precalculatedValues.showUserInfo && !messageListItem.isOwnMessage && isFirstInSequence) || myMessage['@type'] === "sponsoredMessage"
                     MouseArea {
                         anchors.fill: parent
                         enabled: !(messageListItem.precalculatedValues.pageIsSelecting || messageListItem.isAnonymous)
