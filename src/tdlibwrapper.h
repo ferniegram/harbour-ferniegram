@@ -204,6 +204,7 @@ public:
 
     // Direct TDLib functions
     Q_INVOKABLE void sendRequest(const QVariantMap &requestObject);
+    Q_INVOKABLE qlonglong sendRequestWithId(const QVariantMap &requestObject);
     void close();
     Q_INVOKABLE void setAuthenticationPhoneNumber(const QString &phoneNumber);
     Q_INVOKABLE void setAuthenticationCode(const QString &authenticationCode);
@@ -364,6 +365,7 @@ signals:
 
     void chatRolesUpdated(qlonglong chatId, const QVector<int> changedRoles = QVector<int>());
 
+    void responseForRequestIdReceived(qlonglong requestId, const QVariantMap &response);
     void someChatListUpdated();
     void chatLastMessageUpdated(qlonglong chatId, const QVariantMap &lastMessage);
     void chatReadInboxUpdated(const QString &chatId, const QString &lastReadInboxMessageId, int unreadCount);
@@ -545,6 +547,7 @@ private:
     bool joinChatRequested;
     bool isLoggingOut;
     bool closing;
+    qlonglong nextRequestId;
 };
 
 #endif // TDLIBWRAPPER_H

@@ -171,6 +171,7 @@ TDLibWrapper::TDLibWrapper(int argc, char **argv, AppSettings *settings, MceInte
     , versionNumber(0)
     , joinChatRequested(false)
     , isLoggingOut(false)
+    , nextRequestId(1)
 {
     LOG("Initializing TD Lib...");
 
@@ -306,6 +307,7 @@ void TDLibWrapper::initializeTDLibReceiver() {
     connect(this->tdLibReceiver, &TDLibReceiver::chatListsReceived, this, &TDLibWrapper::chatListsReceived);
     connect(this->tdLibReceiver, &TDLibReceiver::archiveChatListSettingsReceived, this, &TDLibWrapper::archiveChatListSettingsReceived);
     connect(this->tdLibReceiver, &TDLibReceiver::chatFoldersUpdated, this, &TDLibWrapper::chatFoldersUpdated);
+    connect(this->tdLibReceiver, &TDLibReceiver::responseForRequestIdReceived, this, &TDLibWrapper::responseForRequestIdReceived);
     connect(this->tdLibReceiver, &TDLibReceiver::forumTopicsReceived, this, &TDLibWrapper::forumTopicsReceived);
 
     this->tdLibReceiver->start();
@@ -320,6 +322,15 @@ void TDLibWrapper::sendRequest(const QVariantMap &requestObject) {
     QJsonDocument requestDocument = QJsonDocument::fromVariant(requestObject);
     VERBOSE(requestDocument.toJson().constData());
     td_send(this->tdLibClientId, requestDocument.toJson().constData());
+}
+
+qlonglong TDLibWrapper::sendRequestWithId(const QVariantMap &requestObject) {
+    LOG("Sending request to TDLib with request ID" << nextRequestId);
+    QVariantMap newRequestObject = requestObject;
+    newRequestObject.insert(_EXTRA, "R"+QString::number(nextRequestId));
+    this->sendRequest(newRequestObject);
+    nextRequestId++;
+    return nextRequestId - 1;
 }
 
 void TDLibWrapper::setAuthenticationPhoneNumber(const QString &phoneNumber) {

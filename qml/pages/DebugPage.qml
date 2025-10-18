@@ -41,8 +41,7 @@ Page {
             spacing: Theme.paddingLarge
             PageHeader {
                 title: "Debug Page"
-                description: "here be dragons"
-
+                description: "description"
             }
 
             SectionHeader {
@@ -113,6 +112,7 @@ Page {
                                           })
             }
 
+
             SectionHeader { text: "Execute custom request" }
             TextArea {
                 id: customRequestArea
@@ -122,8 +122,32 @@ Page {
             Button {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: "Execute"
-                onClicked: tdLibWrapper.sendRequest(JSON.parse(customRequestArea.text))
+                onClicked: customRequestResponseLabel.requestId = tdLibWrapper.sendRequestWithId(JSON.parse(customRequestArea.text))
             }
+
+            Label {
+                id: customRequestResponseLabel
+                property var requestId
+                x: Theme.horizontalPageMargin
+                width: parent.width - 2*x
+                wrapMode: Text.Wrap
+                text: "Response to your request will be here.\n\n@extra field is not supported here and will be overwritten, because it is used for request identification.\n\nClick on the text to copy"
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        Clipboard.text = parent.text
+                        appNotification.show("Copied")
+                    }
+                }
+            }
+
+            Connections {
+                target: tdLibWrapper
+                onResponseForRequestIdReceived:
+                    if (requestId == customRequestResponseLabel.requestId)
+                        customRequestResponseLabel.text = JSON.stringify(response, null, '\t')
+            }
+
 
             SectionHeader { text: "Options" }
             Label {
@@ -131,6 +155,13 @@ Page {
                 width: parent.width - 2*x
                 wrapMode: Text.Wrap
                 text: JSON.stringify(tdLibWrapper.options, null, '\t')
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        Clipboard.text = parent.text
+                        appNotification.show("Copied")
+                    }
+                }
             }
         }
 
