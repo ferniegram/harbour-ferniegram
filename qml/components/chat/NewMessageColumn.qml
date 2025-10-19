@@ -3,8 +3,8 @@ import Sailfish.Silica 1.0
 import Nemo.Thumbnailer 1.0
 import ".."
 
-import "../js/debug.js" as Debug
-import "../js/twemoji.js" as Emoji
+import "../../js/debug.js" as Debug
+import "../../js/twemoji.js" as Emoji
 
 Column {
     id: newMessageColumn

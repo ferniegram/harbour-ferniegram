@@ -22,9 +22,9 @@ import QtGraphicalEffects 1.0
 import WerkWolf.Fernschreiber 1.0
 import ".."
 
-import "../js/debug.js" as Debug
-import "../js/twemoji.js" as Emoji
-import "../js/functions.js" as Functions
+import "../../js/debug.js" as Debug
+import "../../js/twemoji.js" as Emoji
+import "../../js/functions.js" as Functions
 
 Column {
     id: messagesView
