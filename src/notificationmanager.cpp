@@ -18,7 +18,7 @@
 */
 
 #include "notificationmanager.h"
-#include "chatmanager.h"
+#include "chat/chatmanager.h"
 #include <sailfishapp.h>
 #include <QListIterator>
 #include <QUrl>
