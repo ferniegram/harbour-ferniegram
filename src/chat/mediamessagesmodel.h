@@ -1,15 +1,15 @@
 #ifndef MEDIAMESSAGESMODEL_H
 #define MEDIAMESSAGESMODEL_H
 
-#include "invertedmessagesmodel.h"
+#include "messagesmodel.h"
 
-class MediaMessagesModel : public InvertedMessagesModel {
+class MediaMessagesModel : public MessagesModel {
     Q_OBJECT
 public:
     MediaMessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent = nullptr);
 
     Q_INVOKABLE virtual bool clear() override;
-    Q_INVOKABLE void init(qlonglong chatId);
+    Q_INVOKABLE void init(qlonglong chatId, qlonglong fromMessageId = 0);
     Q_INVOKABLE void triggerLoadMoreHistory();
     Q_INVOKABLE void triggerLoadMoreFuture();
 
@@ -18,7 +18,7 @@ private slots:
     void handleNewMessageReceived(qlonglong chatId, const QVariantMap &message);
 
 private:
-    void loadMessages(qlonglong fromMessageId = 0, int offset = 100);
+    void loadMessages(qlonglong fromMessageId = 0, int offset = 0, int limit = 100);
 
 private:
     qlonglong nextFromMessageId;

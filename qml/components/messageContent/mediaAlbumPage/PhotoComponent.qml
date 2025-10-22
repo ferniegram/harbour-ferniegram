@@ -2,7 +2,7 @@
 import QtQuick 2.6
 
 ZoomImage {
-    photoData: model.modelData.content.photo
+    photoData: display.content.photo//model.modelData.content.photo
     onClicked: {
         console.log('clicked', zoomed)
         if(zoomed) {

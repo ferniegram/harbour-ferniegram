@@ -52,12 +52,18 @@ Page {
     // transitions
 
 
+    Component.onCompleted: {
+        //console.log(JSON.stringify(messages[0]))
+        console.log(messages[0].chat_id, messages[0].id)
+        chatManager.initializeMediaMessagesModel(messages[0].id)
+    }
 
     // content
     PagedView {
         id: pagedView
         anchors.fill: parent
-        model: messages
+        model: chatManager.mediaMessagesModel //messages
+        wrapMode: PagedView.NoWrap
         delegate: Component {
             Loader {
                 id: loader
@@ -65,24 +71,38 @@ Page {
                 visible: status == Loader.Ready
                 width: PagedView.contentWidth
                 height: PagedView.contentHeight
+                property var _model: display//.modelData
 
                 states: [
                     State {
-                        when: model.modelData.content['@type'] === 'messagePhoto'
+                        when: display.content['@type'] === 'messagePhoto'
                         PropertyChanges {
                             target: loader
                             source: "../components/messageContent/mediaAlbumPage/PhotoComponent.qml"
+                            //sourceComponent: photoComponent2
                         }
                     },
                     State {
-                        when: model.modelData.content['@type'] === 'messageVideo' || model.modelData.content['@type'] === 'messageAnimation' || model.modelData.content['@type'] === 'messageVideoNote'
+                        when: display.content['@type'] === 'messageVideo' || model.modelData.content['@type'] === 'messageAnimation' || model.modelData.content['@type'] === 'messageVideoNote'
                         PropertyChanges {
                             target: loader
                             source: "../components/messageContent/mediaAlbumPage/VideoComponent.qml"
+                            /*sourceComponent: Component {
+
+                            }*/
                         }
                     }
                 ]
+                //Component.onCompleted: console.log("Hello", model, JSON.stringify(display.content.photo))
             }
+        }
+    }
+    Button {
+        text: "Jump to first in album"
+        onClicked: {
+            var i = chatManager.mediaMessagesModel.getMessageIndex(messages[0].id)
+            text = "Jump to first in album " + i
+            pagedView.currentIndex = i
         }
     }
 
@@ -91,6 +111,12 @@ Page {
         id: overlay
         pageCount: messages.length
         currentIndex: page.index
-        message: messages[currentIndex]
+        message: pagedView.currentItem ? pagedView.currentItem._model : messages[0]//messages[currentIndex]
+
+        Button {
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            text: overlay.message.id + "  " + pagedView.currentIndex
+        }
     }
 }

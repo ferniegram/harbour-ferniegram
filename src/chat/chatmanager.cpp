@@ -236,8 +236,8 @@ void ChatManager::initialize(const QVariantMap &chatInformation, qlonglong fromM
 
 
 
-void ChatManager::initializeMediaMessagesModel() {
-    this->mediaMessagesModel->init(this->chatId);
+void ChatManager::initializeMediaMessagesModel(qlonglong fromMessageId) {
+    this->mediaMessagesModel->init(this->chatId, fromMessageId);
 }
 
 bool ChatManager::viewAsTopics() {

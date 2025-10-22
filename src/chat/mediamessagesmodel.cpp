@@ -11,7 +11,7 @@ namespace {
     const QString TYPE_MESSAGE_VIDEO("messageVideo");
 }
 
-MediaMessagesModel::MediaMessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent) : InvertedMessagesModel(tdLibWrapper, parent), inIncrementalUpdate(false) {
+MediaMessagesModel::MediaMessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent) : MessagesModel(tdLibWrapper, parent), inIncrementalUpdate(false) {
     connect(this->tdLibWrapper, &TDLibWrapper::foundChatMessagesReceived, this, &MediaMessagesModel::handleMessagesReceived);
     connect(this->tdLibWrapper, &TDLibWrapper::newMessageReceived, this, &MediaMessagesModel::handleNewMessageReceived);
 }
@@ -22,14 +22,15 @@ bool MediaMessagesModel::clear() {
     return MessagesModel::clear();
 }
 
-inline void MediaMessagesModel::loadMessages(qlonglong fromMessageId, int offset) {
-    this->tdLibWrapper->searchChatMessages(this->chatId, QString(), fromMessageId, TDLibWrapper::SearchMessagesFilterPhotoAndVideo, offset);
+void MediaMessagesModel::loadMessages(qlonglong fromMessageId, int offset, int limit) {
+    LOG("Loading messages" << fromMessageId << offset);
+    this->tdLibWrapper->searchChatMessages(this->chatId, QString(), fromMessageId, TDLibWrapper::SearchMessagesFilterPhotoAndVideo, limit, offset);
 }
 
-void MediaMessagesModel::init(qlonglong chatId) {
-    LOG("Initializing" << chatId);
+void MediaMessagesModel::init(qlonglong chatId, qlonglong fromMessageId) {
+    LOG("Initializing" << chatId << fromMessageId);
     this->chatId = chatId;
-    loadMessages();
+    loadMessages(fromMessageId, fromMessageId == 0 ? 0 : -1);
 }
 
 void MediaMessagesModel::triggerLoadMoreHistory() {
