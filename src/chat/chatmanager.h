@@ -36,8 +36,8 @@ class ChatManager : public QObject {
     Q_PROPERTY(QVariantMap smallPhoto READ smallPhoto NOTIFY smallPhotoChanged)
     Q_PROPERTY(TDLibWrapper::ChatType chatType READ chatType NOTIFY chatIdChanged)
     Q_PROPERTY(bool isChannel READ isChannel NOTIFY chatIdChanged)
-    Q_PROPERTY(QVariantMap userInfo READ userInfo NOTIFY userInfoChanged)
-    Q_PROPERTY(QVariantMap groupInfo READ groupInfo NOTIFY groupInfoChanged)
+    Q_PROPERTY(QVariant userInfo READ userInfo NOTIFY userInfoChanged)
+    Q_PROPERTY(QVariant groupInfo READ groupInfo NOTIFY groupInfoChanged)
 
     Q_PROPERTY(ChatMessagesModel* model MEMBER chatMessagesModel CONSTANT)
     Q_PROPERTY(MediaMessagesModel* mediaMessagesModel MEMBER mediaMessagesModel CONSTANT)
@@ -61,8 +61,8 @@ public:
     QVariantMap smallPhoto() const;
     TDLibWrapper::ChatType chatType() const;
     bool isChannel() const;
-    QVariantMap userInfo() const;
-    QVariantMap groupInfo() const;
+    QVariant userInfo() const;
+    QVariant groupInfo() const;
 
 signals:
     void chatIdChanged();

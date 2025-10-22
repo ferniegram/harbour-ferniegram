@@ -118,20 +118,20 @@ qlonglong ChatManager::groupId() const {
     return tdLibWrapper->getChat(chatId).value(TYPE).toMap().value(chatType() == TDLibWrapper::ChatTypeSupergroup ? SUPERGROUP_ID : BASIC_GROUP_ID).toLongLong();
 }
 
-QVariantMap ChatManager::userInfo() const {
+QVariant ChatManager::userInfo() const {
     const TDLibWrapper::ChatType type = chatType();
     if (type == TDLibWrapper::ChatTypePrivate || type == TDLibWrapper::ChatTypeSecret)
         return tdLibWrapper->getUserInformation(QString::number(this->userId()));
-    return QVariantMap();
+    return QVariant();
 }
 
-QVariantMap ChatManager::groupInfo() const {
+QVariant ChatManager::groupInfo() const {
     const TDLibWrapper::ChatType type = chatType();
     if (type == TDLibWrapper::ChatTypeBasicGroup)
         return tdLibWrapper->getBasicGroup(groupId());
     if (type == TDLibWrapper::ChatTypeSupergroup)
         return tdLibWrapper->getSuperGroup(groupId());
-    return QVariantMap();
+    return QVariant();
 }
 
 void ChatManager::handleUserUpdated(const QString &userId) {
