@@ -760,7 +760,7 @@ Column {
                 bottom: parent.bottom
                 bottomMargin: Theme.paddingMedium
             }
-            visible: !chatPage.loading && chatOverviewItem.visible && (unreadCount > 0 || (!chatManager.model.historyEndLoaded && chatView.count > 0))
+            visible: !chatPage.loading && chatOverviewItem.visible && (unreadCount > 0 || (!chatManager.model.endReached && chatView.count > 0))
             property bool highlighted: chatUnreadMessagesMouseArea.containsPress
 
             // not ideal:
@@ -792,7 +792,7 @@ Column {
                     if (lastReadIndex > -1) {
                         if (chatView.indexAt(chatView.contentX, chatView.contentY) >= lastReadIndex - 2
                                 || chatView.indexAt(chatView.contentX + chatView.contentWidth, chatView.contentY + chatView.contentHeight) >= lastReadIndex - 2)
-                            if (chatManager.model.historyEndLoaded) chatView.scrollToBottom()
+                            if (chatManager.model.endReached) chatView.scrollToBottom()
                             else chatManager.model.loadEnd(true)
                         else chatView.scrollToIndex(Math.min(lastReadIndex + 1, chatView.count))
                     } else

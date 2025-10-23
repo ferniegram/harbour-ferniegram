@@ -90,11 +90,6 @@ void ChatManager::handleChatReadOutboxUpdated(const QString &id) {
         emit this->chatMessagesModel->lastReadSentMessageUpdated();
 }
 
-void ChatManager::handleChatLastMessageUpdated(qlonglong id) {
-    if (this->chatId == id)
-        emit this->chatMessagesModel->historyEndLoadedChanged();
-}
-
 QVariantMap ChatManager::smallPhoto() const {
     return chatInformation().value(PHOTO).toMap().value(SMALL).toMap();
 }
@@ -228,7 +223,7 @@ void ChatManager::initialize(const QVariantMap &chatInformation, qlonglong fromM
         LOG("Initializing a regular chat");
         chatMessagesModel->chatId = chatId;
         chatMessagesModel->chatIdChanged();
-        emit chatMessagesModel->historyEndLoadedChanged();
+        emit chatMessagesModel->endReachedChanged();
 
         tdLibWrapper->getChatHistory(chatId, fromMessageId != 0 ? fromMessageId : this->chatInformation().value(LAST_READ_INBOX_MESSAGE_ID).toLongLong());
     }

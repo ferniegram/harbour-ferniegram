@@ -9,16 +9,13 @@ class ReadableMessagesModel : public JumpableMessagesModel {
     Q_PROPERTY(int lastReadIncomingMessageIndex READ getLastReadMessageIndex NOTIFY lastReadMessageIndexChanged)
 
     Q_PROPERTY(int lastReadSentMessageIndex READ calculateLastReadSentMessageIndex NOTIFY lastReadSentMessageUpdated)
-    Q_PROPERTY(bool historyEndLoaded READ isMostRecentMessageLoaded NOTIFY historyEndLoadedChanged)
+    Q_PROPERTY(bool endReached MEMBER endReached NOTIFY endReachedChanged)
 
 public:
     ReadableMessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent = nullptr);
 
     Q_INVOKABLE virtual bool clear() override;
-    Q_INVOKABLE bool isMostRecentMessageLoaded();
-
     Q_INVOKABLE void loadEnd(bool markAllAsRead = false);
-
     Q_INVOKABLE int calculateScrollPosition();
 
 signals:
@@ -26,7 +23,7 @@ signals:
     void unreadCountUpdated(int unreadCount, const QString &lastReadInboxMessageId);
 
     void lastReadSentMessageUpdated();
-    void historyEndLoadedChanged();
+    void endReachedChanged();
     void lastReadMessageIndexChanged();
 
 private slots:
@@ -48,8 +45,12 @@ protected:
     virtual qlonglong lastReadOutboxMessageId() const = 0;
     virtual qlonglong lastMessageId() const = 0; // FIXME: this is wrong and shouldn't be used ideally
 
+protected slots:
+    void updateIsEndReached();
+
 protected:
     bool loadingFullEnd;
+    bool endReached;
 };
 
 #endif // READABLEMESSAGESMODEL_H

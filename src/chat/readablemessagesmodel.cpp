@@ -13,7 +13,8 @@ namespace {
 
 ReadableMessagesModel::ReadableMessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent) :
     JumpableMessagesModel(tdLibWrapper, parent),
-    loadingFullEnd(false)
+    loadingFullEnd(false),
+    endReached(false)
 {
     connect(this->tdLibWrapper, &TDLibWrapper::messagesReceived, this, &ReadableMessagesModel::handleMessagesReceived);
     connect(this->tdLibWrapper, &TDLibWrapper::foundChatMessagesReceived, this, &ReadableMessagesModel::handleFoundChatMessagesReceived);
@@ -29,14 +30,14 @@ ReadableMessagesModel::ReadableMessagesModel(TDLibWrapper *tdLibWrapper, QObject
     connect(this, &ReadableMessagesModel::unreadCountUpdated, this, &ReadableMessagesModel::lastReadMessageIndexChanged);
 
     // FIXME: can this be implemented better?
-    connect(this, &ReadableMessagesModel::messagesReceived, this, &ReadableMessagesModel::historyEndLoadedChanged);
+    connect(this, &ReadableMessagesModel::messagesReceived, this, &ReadableMessagesModel::updateIsEndReached);
 }
 
 bool ReadableMessagesModel::clear() {
     LOG("Clearing readable messages model");
-    loadingFullEnd = false;
+    loadingFullEnd = endReached = false;
+    emit endReachedChanged();
     if (JumpableMessagesModel::clear()) {
-        emit historyEndLoadedChanged();
         emit lastReadSentMessageUpdated();
         return true;
     }
@@ -88,14 +89,23 @@ int ReadableMessagesModel::calculateScrollPosition() {
     return qMin(scrollPosition + 1, this->messages.size() - 1);
 }
 
-bool ReadableMessagesModel::isMostRecentMessageLoaded() {
+void ReadableMessagesModel::updateIsEndReached() {
     // Need to check if we can actually add messages (only possible if the previously latest messages are loaded)
     // some other things also depend on this now
 
-    const qlonglong messageId = lastMessageId();
-    const bool result = this->messageIndexMap.contains(messageId);
-    LOG("Checking if most recent message is loaded" << messageId << result << messageIndexMap);
-    return result;
+    if (chatId == 0)
+        endReached = false;
+    else if (messages.isEmpty())
+        endReached = true;
+    else {
+        const qlonglong messageId = lastMessageId();
+        endReached = this->messageIndexMap.contains(messageId);
+        LOG("Updating endReached by checking if last message is loaded" << messageId << endReached);
+    }
+
+    LOG("Updated endReached" << endReached);
+
+    emit endReachedChanged();
 }
 
 int ReadableMessagesModel::calculateLastReadMessageIndexInBounds() {
@@ -152,7 +162,7 @@ void ReadableMessagesModel::handleSponsoredMessageReceived(qlonglong chatId, con
 void ReadableMessagesModel::handleNewMessageReceived(qlonglong chatId, const QVariantMap &message) {
     const qlonglong messageId = message.value(ID).toLongLong();
     if (chatId == this->chatId && !messageIndexMap.contains(messageId)) {
-        if (canLoadMoreMessages() && this->isMostRecentMessageLoaded()) {
+        if (canLoadMoreMessages() && this->endReached) {
             LOG("New message received for this chat");
             QList<MessageData*> messagesToBeAdded;
             messagesToBeAdded.append(new MessageData(message, messageId));
