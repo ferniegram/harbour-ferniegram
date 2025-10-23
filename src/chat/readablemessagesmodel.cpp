@@ -177,7 +177,7 @@ void ReadableMessagesModel::handleNewMessageReceived(qlonglong chatId, const QVa
 
 
 void ReadableMessagesModel::loadEnd(bool markAllAsRead) {
-    if (!this->inIncrementalUpdate && !messages.isEmpty() && !inReload) {
+    if (this->waitingFor == UpdateNone && !messages.isEmpty()) {
         LOG("Loading end of the chat... markAllAsRead:" << markAllAsRead << (markAllAsRead ? 0 : lastReadOutboxMessageId()) << chatId);
 
         //if (markAllAsRead) // FIXME: is this really needed?

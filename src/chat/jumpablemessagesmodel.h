@@ -24,6 +24,14 @@ protected slots:
     void handleMessagesReceived(const QVariantList &messages, int totalCount);
 
 protected:
+    enum UpdateType {
+        UpdateNone,
+        UpdatePreviousSlice,
+        UpdateNextSlice,
+        UpdateReload
+    };
+
+    virtual inline bool waitingForSlice() const { return waitingFor == UpdatePreviousSlice || waitingFor == UpdateNextSlice; }
     virtual inline bool canLoadMoreMessages() const { return true; }
 
     virtual void loadMoreHistoryImpl() = 0;
@@ -32,8 +40,7 @@ protected:
 
 protected:
     qlonglong highlightedMessageId;
-    bool inReload;
-    bool inIncrementalUpdate; // if we are waiting for messages after sending a request to load more of them
+    UpdateType waitingFor; // if we are waiting for messages after sending a request to load more of them
 };
 
 #endif // JUMPABLEMESSAGESMODEL_H

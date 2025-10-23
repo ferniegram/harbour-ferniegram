@@ -6,36 +6,34 @@
 JumpableMessagesModel::JumpableMessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent) :
     MessagesModel(tdLibWrapper, parent),
     highlightedMessageId(0),
-    inReload(false),
-    inIncrementalUpdate(false)
+    waitingFor(UpdateNone)
 {}
 
 bool JumpableMessagesModel::clear() {
     LOG("Clearing jumpable messages model");
-    inReload = false;
-    inIncrementalUpdate = false;
+    waitingFor = UpdateNone;
     highlightedMessageId = 0;
     return MessagesModel::clear();
 }
 
 void JumpableMessagesModel::loadMoreHistory() {
-    if (!this->inIncrementalUpdate && !messages.isEmpty()) {
+    if (!waitingForSlice() && !messages.isEmpty()) {
         LOG("Loading older messages...");
-        this->inIncrementalUpdate = true;
+        this->waitingFor = UpdatePreviousSlice;
         this->loadMoreHistoryImpl();
     }
 }
 
 void JumpableMessagesModel::loadMoreFuture() {
-    if (canLoadMoreMessages() && !this->inIncrementalUpdate && !messages.isEmpty()) {
+    if (canLoadMoreMessages() && !waitingForSlice() && !messages.isEmpty()) {
         LOG("Loading newer messages...");
-        this->inIncrementalUpdate = true;
+        this->waitingFor = UpdateNextSlice;
         this->loadMoreFutureImpl();
     }
 }
 
 void JumpableMessagesModel::loadHistoryForMessage(qlonglong messageId) {
-    if (!this->inIncrementalUpdate && !messages.isEmpty()) {
+    if (!waitingForSlice() && !messages.isEmpty()) {
         LOG("Trigger loading message with id..." << messageId);
         this->clear();
         this->highlightedMessageId = messageId;
@@ -47,33 +45,31 @@ void JumpableMessagesModel::handleMessagesReceived(const QVariantList &messages,
     LOG("Receiving new messages :)" << messages.size());
 
     auto notifyMessagesLoaded = [&]() {
-        this->inReload = false;
-
-        bool fromIncrementalUpdate = this->inIncrementalUpdate;
-        this->inIncrementalUpdate = false;
-        emit messagesReceived(totalCount, fromIncrementalUpdate);
+        const bool fromSliceUpdate = waitingForSlice();
+        this->waitingFor = UpdateNone;
+        emit messagesReceived(totalCount, fromSliceUpdate);
     };
 
     if (messages.size() == 0) {
         LOG("No additional messages loaded, notifying chat UI...");
         notifyMessagesLoaded();
     } else {
-        if (this->inIncrementalUpdate || this->inReload || this->messages.size() == 0) {
+        if (this->waitingFor != UpdateNone || this->messages.size() == 0) {
             QList<MessageData*> addedMessages;
             const bool reloadNeeded = handleInsertMessages(messages, addedMessages);
 
             // First call only returns a few messages, we need to get a little more than that...
-            if (reloadNeeded && !inReload) {
+            if (reloadNeeded && this->waitingFor != UpdateReload) {
                 LOG("Only a few messages received in first call, loading more...");
-                this->inReload = true;
-                this->loadMessages(addedMessages.first()->messageId, 0); // (possibly) fixme
+                this->waitingFor = UpdateReload;
+                this->loadMessages(addedMessages.first()->messageId, 0); // (possibly) FIXME
             } else {
                 LOG("Messages loaded, notifying chat UI...");
                 notifyMessagesLoaded();
             }
         } else {
             // Cleanup... Is that really needed? Well, let's see...
-            this->inReload = this->inIncrementalUpdate = false;
+            this->waitingFor = UpdateNone;
             LOG("New messages in this chat, but not relevant as less recent messages need to be loaded first!");
         }
     }
