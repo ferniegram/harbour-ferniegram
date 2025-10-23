@@ -6,6 +6,7 @@
 JumpableMessagesModel::JumpableMessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent) :
     MessagesModel(tdLibWrapper, parent),
     waitingFor(UpdateNone),
+    startReached(false),
     endReached(false),
     highlightedMessageId(0)
 {}
@@ -20,7 +21,7 @@ bool JumpableMessagesModel::clear() {
 }
 
 void JumpableMessagesModel::loadMoreHistory() {
-    if (!waitingForSlice() && !messages.isEmpty()) {
+    if (!startReached && !waitingForSlice() && !messages.isEmpty()) {
         LOG("Loading older messages...");
         this->waitingFor = UpdatePreviousSlice;
         this->loadMoreHistoryImpl();
@@ -44,6 +45,15 @@ void JumpableMessagesModel::loadHistoryForMessage(qlonglong messageId) {
     }
 }
 
+void JumpableMessagesModel::updateStartEndReached(int totalCount, UpdateType fromUpdate) {
+    if (totalCount == 0) {
+        if (fromUpdate == UpdateNextSlice)
+            endReached = true;
+        else if (fromUpdate == UpdatePreviousSlice)
+            startReached = true;
+    }
+}
+
 void JumpableMessagesModel::handleMessagesReceived(const QVariantList &messages, int totalCount) {
     LOG("Receiving new messages :)" << messages.size());
 
@@ -51,7 +61,7 @@ void JumpableMessagesModel::handleMessagesReceived(const QVariantList &messages,
         const UpdateType fromUpdate = this->waitingFor;
         const bool fromSliceUpdate = waitingForSlice();
         this->waitingFor = UpdateNone;
-        emit messagesReceivedPre(totalCount, fromUpdate);
+        this->updateStartEndReached(totalCount, fromUpdate);
         emit messagesReceived(totalCount, fromSliceUpdate);
     };
 

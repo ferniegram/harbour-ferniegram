@@ -44,7 +44,7 @@ protected:
     virtual qlonglong lastMessageId() const = 0; // FIXME: this is wrong and shouldn't be used ideally
 
 protected slots:
-    void updateIsEndReached();
+    virtual void updateStartEndReached(int totalCount, UpdateType fromUpdate) override;
 
 protected:
     bool loadingFullEnd;

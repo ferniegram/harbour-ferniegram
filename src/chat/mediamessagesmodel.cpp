@@ -14,8 +14,6 @@ namespace {
 MediaMessagesModel::MediaMessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent) : JumpableMessagesModel(tdLibWrapper, parent) {
     connect(this->tdLibWrapper, &TDLibWrapper::foundChatMessagesReceived, this, &MediaMessagesModel::handleMessagesReceived);
     connect(this->tdLibWrapper, &TDLibWrapper::newMessageReceived, this, &MediaMessagesModel::handleNewMessageReceived);
-
-    connect(this, &MediaMessagesModel::messagesReceivedPre, this, &MediaMessagesModel::updateIsEndReached);
 }
 
 bool MediaMessagesModel::clear() {
@@ -45,11 +43,6 @@ void MediaMessagesModel::loadMoreFutureImpl() {
 }
 void MediaMessagesModel::loadHistoryForMessageImpl(qlonglong messageId) {
     this->loadMessagesWithLimit(messageId, -26, 51);
-}
-
-void MediaMessagesModel::updateIsEndReached(int totalCount, UpdateType fromUpdate) {
-    if (fromUpdate == UpdateNextSlice && totalCount == 0)
-        endReached = true;
 }
 
 void MediaMessagesModel::handleMessagesReceived(TDLibWrapper::SearchMessagesFilter filter, const QVariantList &messages, int totalCount, qlonglong nextFromMessageId) {

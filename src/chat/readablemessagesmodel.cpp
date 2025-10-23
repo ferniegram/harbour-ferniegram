@@ -28,7 +28,6 @@ ReadableMessagesModel::ReadableMessagesModel(TDLibWrapper *tdLibWrapper, QObject
     connect(this, &ReadableMessagesModel::newMessageReceived, this, &ReadableMessagesModel::lastReadMessageIndexChanged);
     connect(this, &ReadableMessagesModel::unreadCountUpdated, this, &ReadableMessagesModel::lastReadMessageIndexChanged);
 
-    connect(this, &ReadableMessagesModel::messagesReceivedPre, this, &ReadableMessagesModel::updateIsEndReached);
 }
 
 bool ReadableMessagesModel::clear() {
@@ -86,7 +85,10 @@ int ReadableMessagesModel::calculateScrollPosition() {
     return qMin(scrollPosition + 1, this->messages.size() - 1);
 }
 
-void ReadableMessagesModel::updateIsEndReached() {
+void ReadableMessagesModel::updateStartEndReached(int totalCount, UpdateType fromUpdate) {
+    if (totalCount == 0 && fromUpdate == UpdatePreviousSlice)
+        this->startReached = true;
+
     // Need to check if we can actually add messages (only possible if the previously latest messages are loaded)
     // some other things also depend on this now
 
