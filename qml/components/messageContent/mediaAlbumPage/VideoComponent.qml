@@ -7,7 +7,7 @@ import "../.."
 
 TDLibVideo {
     id: video
-    messageContent: model.modelData.content
+    messageContent: display.content
     readonly property bool isCurrent: index === page.index
     onIsCurrentChanged: if(!isCurrent) pause()
 
@@ -20,6 +20,7 @@ TDLibVideo {
     Binding {
         target: overlay
         property: "videoSpeed"
+        when: isCurrent // FIXME: speed handle is still shown when the page is closed
         value: playbackRate
     }
 

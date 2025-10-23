@@ -1,10 +1,8 @@
-
 import QtQuick 2.6
 
 ZoomImage {
-    photoData: display.content.photo//model.modelData.content.photo
+    photoData: display.content.photo
     onClicked: {
-        console.log('clicked', zoomed)
         if(zoomed) {
             zoomOut(true)
             page.overlayActive = true
@@ -12,5 +10,4 @@ ZoomImage {
             page.overlayActive = !page.overlayActive
         }
     }
-
 }
