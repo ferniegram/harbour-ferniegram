@@ -40,9 +40,9 @@ protected:
     int getLastReadMessageIndex();
     int calculateLastReadSentMessageIndex();
 
-    virtual inline void loadMoreHistoryImpl() override;
-    virtual inline void loadMoreFutureImpl() override;
-    virtual inline void loadHistoryForMessageImpl(qlonglong messageId) override;
+    virtual void loadMoreHistoryImpl() override;
+    virtual void loadMoreFutureImpl() override;
+    virtual void loadHistoryForMessageImpl(qlonglong messageId) override;
 
     virtual qlonglong lastReadInboxMessageId() const = 0;
     virtual qlonglong lastReadOutboxMessageId() const = 0;

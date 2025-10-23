@@ -121,13 +121,13 @@ int ReadableMessagesModel::calculateLastReadMessageIndexInBounds() {
 }
 
 
-void ReadableMessagesModel::loadMoreHistoryImpl() {
+inline void ReadableMessagesModel::loadMoreHistoryImpl() {
     this->loadMessages(messages.first()->messageId);
 }
-void ReadableMessagesModel::loadMoreFutureImpl() {
+inline void ReadableMessagesModel::loadMoreFutureImpl() {
     this->loadMessages(messages.last()->messageId, -49);
 }
-void ReadableMessagesModel::loadHistoryForMessageImpl(qlonglong messageId) {
+inline void ReadableMessagesModel::loadHistoryForMessageImpl(qlonglong messageId) {
     this->loadMessages(messageId);
 }
 

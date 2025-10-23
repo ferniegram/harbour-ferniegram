@@ -19,9 +19,9 @@ private:
     virtual void loadMessages(qlonglong fromMessageId = 0, int offset = 0) override;
 
 protected:
-    virtual inline void loadMoreHistoryImpl() override;
-    virtual inline void loadMoreFutureImpl() override;
-    virtual inline void loadHistoryForMessageImpl(qlonglong messageId) override;
+    virtual void loadMoreHistoryImpl() override;
+    virtual void loadMoreFutureImpl() override;
+    virtual void loadHistoryForMessageImpl(qlonglong messageId) override;
 
 private:
     qlonglong nextFromMessageId;
