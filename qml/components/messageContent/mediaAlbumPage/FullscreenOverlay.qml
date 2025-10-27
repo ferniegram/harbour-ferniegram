@@ -229,17 +229,7 @@ Item {
 
         fileInformation: {
             if(isPhoto) {
-                var photoData = message.content.photo
-                var biggestIndex = -1
-                for (var i = 0; i < photoData.sizes.length; i++) {
-                    if (biggestIndex === -1 || photoData.sizes[i].width > photoData.sizes[biggestIndex].width) {
-                        biggestIndex = i;
-                    }
-                }
-                if (biggestIndex > -1) {
-                    return photoData.sizes[biggestIndex].photo
-                }
-                return {}
+                return utilities.findBiggestPhotoSize(message.content.photo.sizes) || {}
             }
             return videoData[message.content['@type'] === 'messageVideoNote' ? "video" : videoData['@type']]
         }
