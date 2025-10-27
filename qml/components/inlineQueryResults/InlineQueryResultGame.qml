@@ -38,7 +38,7 @@ InlineQueryResultDefaultBase {
     Component.onCompleted: {
         if (model.game.photo) {
             // Check first which size fits best...
-            var photo = utilities.findPhotoSize(model.game.photo.sizes, queryResultItem.width)
+            var photo = utilities.findPhotoSize(model.game.photo.sizes, queryResultItem.width).photo
             if (photo)
                 thumbnailFileInformation = photo
         }

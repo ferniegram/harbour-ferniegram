@@ -869,7 +869,7 @@ QString Utilities::getTemporaryDirectoryPath()
 }
 
 
-QVariant Utilities::findPhotoSize(const QVariantList &photoSizes, int width) {
+QVariantMap Utilities::findPhotoSize(const QVariantList &photoSizes, int width) {
     QVariantMap result = photoSizes.value(0).toMap();
     for (const QVariant &sizeVariant : photoSizes) {
         result = sizeVariant.toMap();
@@ -878,10 +878,10 @@ QVariant Utilities::findPhotoSize(const QVariantList &photoSizes, int width) {
             break;
     }
 
-    return !result.isEmpty() ? result : QVariant();
+    return result;
 }
 
-QVariant Utilities::findBiggestPhotoSize(const QVariantList &photoSizes) {
+QVariantMap Utilities::findBiggestPhotoSize(const QVariantList &photoSizes) {
     QVariantMap result = photoSizes.value(0).toMap();
     for (const QVariant &sizeVariant : photoSizes) {
         const QVariantMap size = sizeVariant.toMap();
@@ -890,10 +890,10 @@ QVariant Utilities::findBiggestPhotoSize(const QVariantList &photoSizes) {
             result = size;
     }
 
-    return !result.isEmpty() ? result : QVariant();
+    return result;
 }
 
-QVariant Utilities::findSmallestPhotoSize(const QVariantList &photoSizes) {
+QVariantMap Utilities::findSmallestPhotoSize(const QVariantList &photoSizes) {
     QVariantMap result = photoSizes.value(0).toMap();
     for (const QVariant &sizeVariant : photoSizes) {
         const QVariantMap size = sizeVariant.toMap();
@@ -902,7 +902,7 @@ QVariant Utilities::findSmallestPhotoSize(const QVariantList &photoSizes) {
             result = size;
     }
 
-    return !result.isEmpty() ? result : QVariant();
+    return result;
 }
 
 
