@@ -111,7 +111,7 @@ MessageContentBase {
         Component.onCompleted: {
             if (rawMessage.content.game.photo) {
                 // Check first which size fits best...
-                var photo = utilities.findPhotoSize(rawMessage.content.game.photo.sizes, gamePreviewItem.width)
+                var photo = utilities.findPhotoSize(rawMessage.content.game.photo.sizes, gamePreviewItem.width).photo
                 if (photo)
                     thumbnailFile.fileInformation = photo
             }

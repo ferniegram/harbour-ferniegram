@@ -240,7 +240,7 @@ Item {
 
         fileInformation: {
             if(isPhoto) {
-                return utilities.findBiggestPhotoSize(message.content.photo.sizes) || {}
+                return utilities.findBiggestPhotoSize(message.content.photo.sizes).photo || {}
             }
             return videoData[message.content['@type'] === 'messageVideoNote' ? "video" : videoData['@type']]
         }
