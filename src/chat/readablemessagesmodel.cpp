@@ -102,7 +102,7 @@ void ReadableMessagesModel::updateStartEndReached(int totalCount, UpdateType fro
         LOG("Updating endReached by checking if last message is loaded" << messageId << endReached);
     }
 
-    LOG("Updated endReached" << endReached);
+    LOG("Updated endReached" << endReached << "startReached" << startReached);
 
     emit endReachedChanged();
 }

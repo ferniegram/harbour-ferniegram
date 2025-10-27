@@ -223,7 +223,6 @@ void ChatManager::initialize(const QVariantMap &chatInformation, qlonglong fromM
         LOG("Initializing a regular chat");
         chatMessagesModel->chatId = chatId;
         chatMessagesModel->chatIdChanged();
-        emit chatMessagesModel->endReachedChanged();
 
         tdLibWrapper->getChatHistory(chatId, fromMessageId != 0 ? fromMessageId : this->chatInformation().value(LAST_READ_INBOX_MESSAGE_ID).toLongLong());
     }

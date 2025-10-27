@@ -52,6 +52,10 @@ void JumpableMessagesModel::updateStartEndReached(int totalCount, UpdateType fro
         else if (fromUpdate == UpdatePreviousSlice)
             startReached = true;
     }
+
+    LOG("Updated endReached" << endReached << "startReached" << startReached);
+
+    emit endReachedChanged();
 }
 
 void JumpableMessagesModel::handleMessagesReceived(const QVariantList &messages, int totalCount) {
