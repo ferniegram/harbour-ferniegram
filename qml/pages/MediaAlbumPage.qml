@@ -28,9 +28,7 @@ import "../js/twemoji.js" as Emoji
 import "../js/functions.js" as Functions
 
 Page {
-    // id
     id: page
-    // property declarations
 
     property alias index: pagedView.currentIndex
     property alias overlayActive: overlay.active
@@ -42,18 +40,7 @@ Page {
     navigationStyle: PageNavigation.Vertical
     backgroundColor: 'black'
     allowedOrientations: Orientation.All
-    // signal declarations
-    // JavaScript functions
 
-    // object (parent) properties
-    // large property bindings
-    // child objects
-    // states
-    // transitions
-
-
-
-    // content
     PagedView {
         id: pagedView
         anchors.fill: parent

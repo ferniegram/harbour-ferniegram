@@ -26,9 +26,8 @@ import "../.."
 
 
 Item {
-    // id
     id: overlay
-    // property declarations
+
     property int pageCount
     property int currentIndex
     property alias text: captionLabel.text
@@ -39,20 +38,10 @@ Item {
     property bool videoControlsVisible
     readonly property color gradientColor: '#bb000000'
     readonly property int gradientPadding: Theme.itemSizeMedium
-    // signal declarations
-    // JavaScript functions
-    // object properties
+
     anchors.fill: parent
     opacity: active ? 1 : 0
     Behavior on opacity { FadeAnimator {} }
-    // large property bindings
-    // child objects
-    // states
-    // transitions
-
-    onActiveChanged: {
-        console.log('overlay active', active)
-    }
 
     function forwardMessage() {
         var neededPermissions = Functions.getMessagesNeededForwardPermissions([message]);
