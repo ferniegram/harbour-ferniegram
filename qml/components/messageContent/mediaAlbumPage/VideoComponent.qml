@@ -140,7 +140,7 @@ TDLibVideo {
             stepSize: 500
             anchors {
                 bottom: parent.bottom
-                bottomMargin: Theme.itemSizeMedium
+                bottomMargin: Theme.itemSizeLarge
             }
             valueText: value > 0 || down ? Format.formatDuration(value/1000) : ''
             leftMargin: Theme.horizontalPageMargin

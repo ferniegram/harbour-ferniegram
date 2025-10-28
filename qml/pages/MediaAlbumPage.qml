@@ -21,6 +21,7 @@
 import QtQuick 2.6
 import Sailfish.Silica 1.0
 import WerkWolf.Fernschreiber 1.0
+import Opal.SortFilterProxyModel 1.0
 import "../components"
 
 import "../components/messageContent/mediaAlbumPage"
@@ -112,6 +113,23 @@ Page {
         id: overlay
         pageCount: messages.length
         currentIndex: page.index
-        message: pagedView.currentItem ? pagedView.currentItem._model : message
+        message: pagedView.currentItem ? pagedView.currentItem._model : page.message
+        previewModel: previewModelLoader.item
+
+        Loader {
+            id: previewModelLoader
+            active: overlay.message.media_album_id !== '0'
+            sourceComponent: Component {
+                SortFilterProxyModel {
+                    sourceModel: chatManager.mediaMessagesModel
+                    filters: ValueFilter {
+                        roleName: 'album_id'
+                        value: overlay.message.media_album_id
+                    }
+                }
+            }
+        }
+
+        onJumpedToIndex: page.index = index
     }
 }

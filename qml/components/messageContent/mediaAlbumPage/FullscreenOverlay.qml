@@ -20,7 +20,6 @@ import QtQuick 2.6
 import QtGraphicalEffects 1.0
 import Sailfish.Silica 1.0
 import WerkWolf.Fernschreiber 1.0
-import Opal.SortFilterProxyModel 1.0
 import "../../../js/functions.js" as Functions
 import "../../../js/twemoji.js" as Emoji
 import "../.."
@@ -34,11 +33,14 @@ Item {
     property alias text: captionLabel.text
     property bool active: true
     property var message
+    property var previewModel
     property real videoSpeed
     signal speedButtonClicked
     property bool videoControlsVisible
     readonly property color gradientColor: '#bb000000'
     readonly property int gradientPadding: Theme.itemSizeMedium
+
+    signal jumpedToIndex(int index)
 
     anchors.fill: parent
     opacity: active ? 1 : 0
@@ -186,11 +188,13 @@ Item {
         }
     }
     Loader {
+        id: previewLoader
         asynchronous: true
-        active: overlay.pageCount > 1
+        active: !!previewModel && previewModel.count > 1
         anchors {
             horizontalCenter: parent.horizontalCenter
-            verticalCenter: buttons.bottom
+            bottom: parent.bottom
+            bottomMargin: Theme.paddingSmall
         }
 
         sourceComponent: Component {
@@ -198,27 +202,48 @@ Item {
                 id: pageIndicatorRow
                 height: Theme.itemSizeExtraSmall
                 spacing: Theme.paddingMedium
-                Repeater {
-                    id: pageIndicator
-                    model: SortFilterProxyModel {
-                        sourceModel: overlay.model
-                        filters: ValueFilter {
-                            roleName: 'album_id'
-                            value: message.media_album_id
-                        }
-                    }
 
-                    TDLibThumbnail {
-                        property bool current: message.id === message_id
-                        property bool isVideo: content_type === 'messageVideo'
+                Repeater {
+                    model: previewModel
+
+                    Loader {
+                        id: indicatorLoader
+
+                        readonly property bool current: message.id === message_id
+                        readonly property bool isVideo: content_type === 'messageVideo'
+                        readonly property var minithumbnail: (isVideo ? (display.content.cover || display.content.video) : display.content.photo).minithumbnail
 
                         height: parent.height
                         width: current ? height : (height / 2)
 
-                        Behavior on width { NumberAnimation { duration: 200 } }
+                        Behavior on width { NumberAnimation { duration: 150 } }
 
-                        thumbnail: null // TODO
-                        minithumbnail: (isVideo ? (display.content.cover || display.content.video) : display.content.photo).minithumbnail
+                        sourceComponent: isVideo && !display.content.cover ? thumbnailComponent : photoComponent
+
+                        Component {
+                            id: thumbnailComponent
+                            TDLibThumbnail {
+                                anchors.fill: parent
+                                thumbnail: display.content.video.thumbnail
+                                minithumbnail: indicatorLoader.minithumbnail
+                                highlighted: indicatorMouseArea.containsPress
+                            }
+                        }
+
+                        Component {
+                            id: photoComponent
+                            TDLibPhoto {
+                                fileInformation: utilities.findSmallestPhotoSize((isVideo ? display.content.cover : display.content.photo).sizes).photo || {}
+                                minithumbnail: indicatorLoader.minithumbnail
+                                highlighted: indicatorMouseArea.containsPress
+                            }
+                        }
+
+                        MouseArea {
+                            id: indicatorMouseArea
+                            anchors.fill: parent
+                            onClicked: jumpedToIndex(previewModel.mapToSource(index))
+                        }
                     }
                 }
             }
@@ -259,8 +284,8 @@ Item {
         spacing:  Theme.paddingLarge
         anchors {
             horizontalCenter: parent.horizontalCenter
-            bottom: parent.bottom
-            bottomMargin: Theme.paddingLarge
+            bottom: previewLoader.top
+            bottomMargin: Theme.paddingSmall
         }
 
         IconButton {
