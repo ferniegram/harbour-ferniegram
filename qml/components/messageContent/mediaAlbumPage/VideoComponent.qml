@@ -17,24 +17,6 @@ TDLibVideo {
         }
     }
 
-    Binding {
-        target: overlay
-        property: "videoSpeed"
-        when: isCurrent // FIXME: speed handle is still shown when the page is closed
-        value: playbackRate
-    }
-
-    Binding {
-        target: overlay
-        property: "videoControlsVisible"
-        value: controlsRow.visible
-    }
-
-    Connections {
-        target: overlay
-        onSpeedButtonClicked: controlsRow.visible = !controlsRow.visible
-    }
-
     MouseArea {
         anchors.fill: parent
         onClicked: page.overlayActive = !page.overlayActive
@@ -70,18 +52,20 @@ TDLibVideo {
     Item {
         id: videoUI
         property bool active: overlay.active// && file.isDownloadingCompleted
-        anchors.fill: parent
         opacity: active ? 1 : 0
         Behavior on opacity { FadeAnimator {} }
+
+        x: Theme.horizontalPageMargin
+        width: parent.width - 2*x
+        height: parent.height
 
         Row {
             id: controlsRow
             anchors {
-                bottom: slider.top
+                bottom: sliderRow.top
                 //bottomMargin: Theme.paddingLarge
             }
-            x: Theme.horizontalPageMargin
-            width: parent.width - 2*x
+            width: parent.width
             visible: false
             spacing: Theme.paddingLarge
 
@@ -128,43 +112,59 @@ TDLibVideo {
             }
         }
 
-        Slider {
-            id: slider
-            value: video.position
-            minimumValue: 0
-            maximumValue: video.duration || 0.1
-            enabled: parent.active && video.seekable
+        Row {
+            id: sliderRow
             width: parent.width
-            handleVisible: false
-            animateValue: true
-            stepSize: 500
+            spacing: Theme.paddingLarge
             anchors {
                 bottom: parent.bottom
                 bottomMargin: Theme.itemSizeLarge
             }
-            valueText: value > 0 || down ? Format.formatDuration(value/1000) : ''
-            leftMargin: Theme.horizontalPageMargin
-            rightMargin: Theme.horizontalPageMargin
-            onDownChanged: {
-                if(!down) {
-                    video.seek(value)
-                    value = Qt.binding(function() { return video.position })
+
+            Slider {
+                width: parent.width - (controlsButton.width) - parent.spacing*1
+                leftMargin: 0
+                rightMargin: 0
+
+                value: video.position
+                minimumValue: 0
+                maximumValue: video.duration || 0.1
+                enabled: videoUI.active && video.seekable
+                handleVisible: false
+                animateValue: true
+                stepSize: 500
+                valueText: value > 0 || down ? Format.formatDuration(value/1000) : ''
+                onDownChanged: {
+                    if(!down) {
+                        video.seek(value)
+                        value = Qt.binding(function() { return video.position })
+                    }
+                }
+                Label {
+                    anchors {
+                        right: parent.right
+                        rightMargin: Theme.horizontalPageMargin
+                        bottom: parent.bottom
+                        topMargin: Theme.paddingSmall
+                    }
+                    font.pixelSize: Theme.fontSizeExtraSmall
+                    text: file.isDownloadingCompleted
+                          ? Format.formatDuration((parent.maximumValue - parent.value)/1000)
+                          : (video.videoData.duration
+                            ? Format.formatDuration(video.videoData.duration, Formatter.Duration) + ', '
+                            : '') + Format.formatFileSize(file.size || file.expectedSize)
+                    color: Theme.secondaryColor
                 }
             }
-            Label {
-                anchors {
-                    right: parent.right
-                    rightMargin: Theme.horizontalPageMargin
-                    bottom: parent.bottom
-                    topMargin: Theme.paddingSmall
-                }
-                font.pixelSize: Theme.fontSizeExtraSmall
-                text: file.isDownloadingCompleted
-                      ? Format.formatDuration((parent.maximumValue - parent.value)/1000)
-                      : (video.videoData.duration
-                        ? Format.formatDuration(video.videoData.duration, Formatter.Duration) + ', '
-                        : '') + Format.formatFileSize(file.size || file.expectedSize)
-                color: Theme.secondaryColor
+
+            IconButton {
+                id: controlsButton
+                anchors.verticalCenter: parent.verticalCenter
+                icon.source: "image://theme/icon-m-setting"
+                enabled: videoUI.active
+                highlighted: controlsRow.visible ? !down : down
+                onClicked:
+                    controlsRow.visible = !controlsRow.visible
             }
         }
     }
