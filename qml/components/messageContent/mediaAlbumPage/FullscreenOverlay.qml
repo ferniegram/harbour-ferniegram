@@ -33,9 +33,6 @@ Item {
     property alias text: captionLabel.text
     property bool active: true
     property var message
-    property real videoSpeed
-    signal speedButtonClicked
-    property bool videoControlsVisible
     readonly property color gradientColor: '#bb000000'
     readonly property int gradientPadding: Theme.itemSizeMedium
 
@@ -281,26 +278,6 @@ Item {
                       ? Theme.highlightColor
                       : Theme.lightPrimaryColor)
             onClicked: forwardMessage()
-        }
-    }
-
-    Text {
-        id: videoSpeedText
-        anchors {
-            bottom: parent.bottom
-            bottomMargin: Theme.paddingLarge
-            right: parent.right
-            rightMargin: Theme.horizontalPageMargin
-        }
-        visible: !!text
-        font.pixelSize: Theme.fontSizeExtraLarge
-        text: videoSpeed ? videoSpeed+'x' : ''
-        color: videoSpeedMouseArea.pressed || videoControlsVisible ? Theme.highlightColor : Theme.primaryColor
-        MouseArea {
-            id: videoSpeedMouseArea
-            anchors.fill: parent
-            enabled: parent.visible
-            onClicked: speedButtonClicked()
         }
     }
 
