@@ -21,7 +21,7 @@ QtObject {
     }
 
     function load() {
-        if (_messagePropertiesLoading || loaded) return
+        if (messageId === 0 || _messagePropertiesLoading || loaded) return
         tdLibWrapper.getMessageProperties(loader.chatId, loader.messageId)
         _messagePropertiesLoading = true
     }
@@ -30,4 +30,5 @@ QtObject {
     }
 
     Component.onCompleted: if (autoLoad) load()
+    onMessageIdChanged: if (autoLoad) load()
 }
