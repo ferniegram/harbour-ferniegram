@@ -16,7 +16,7 @@ Column {
     height: show ? implicitHeight : 0
     Behavior on height { SmoothedAnimation { duration: 200 } }
 
-    property int allowedOrientations: newMessageColumn.allowedOrientations
+    property int allowedOrientations
     property var myUserId
     property bool show
     property string replyToMessageId: "0"

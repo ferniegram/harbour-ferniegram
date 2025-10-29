@@ -44,6 +44,7 @@ Column {
     property alias newMessageTextField: newMessageColumn.newMessageTextField
     property alias attachmentOptionsFlickable: newMessageColumn.attachmentOptionsFlickable
     property alias stickerPickerLoader: stickerPickerLoader
+    property alias allowedOrientations: newMessageColumn.allowedOrientations
 
     property bool overlayActive: stickerPickerLoader.active || voiceNoteOverlayLoader.active || messageOverlayLoader.active || stickerSetOverlayLoader.active
 
@@ -905,6 +906,7 @@ Column {
         id: newMessageColumn
         myUserId: chatPage.myUserId
         show: !messagesView.isSelecting && chatPage.canSendMessages
+        allowedOrientations: chatPage.allowedOrientations
     }
 
     Loader {
