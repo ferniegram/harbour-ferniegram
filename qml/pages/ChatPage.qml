@@ -194,10 +194,10 @@ Page {
             tdLibWrapper.openChat(chatInformation.id)
             if(!chatPage.isInitialized)
                 if (messagesView) messagesView.prepareView()
+            chatManager.initialize(chatInformation, messageIdToShow)
             break
         case PageStatus.Active:
             if (!chatPage.isInitialized) {
-                chatManager.initialize(chatInformation, messageIdToShow)
                 pageStack.pushAttached(Qt.resolvedUrl("ChatInformationPage.qml"), {
                                            chatInformation: chatInformation,
                                            privateChatUserInformation: chatPartnerInformation,
