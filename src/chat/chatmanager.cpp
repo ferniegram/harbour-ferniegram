@@ -76,6 +76,9 @@ ChatManager::ChatManager(TDLibWrapper *tdLibWrapper, QObject *parent) :
     connect(this->tdLibWrapper, &TDLibWrapper::basicGroupUpdated, this, &ChatManager::handleBasicGroupUpdated);
     connect(this->tdLibWrapper, &TDLibWrapper::superGroupUpdated, this, &ChatManager::handleSupergroupUpdated);
 
+    connect(this, &ChatManager::chatIdChanged, this, &ChatManager::smallPhotoChanged);
+    connect(this, &ChatManager::chatIdChanged, this, &ChatManager::chatInformationChanged);
+    connect(this, &ChatManager::chatIdChanged, this, &ChatManager::viewAsTopicsChanged);
     connect(this, &ChatManager::chatIdChanged, this, &ChatManager::userInfoChanged);
     connect(this, &ChatManager::chatIdChanged, this, &ChatManager::groupInfoChanged);
 }
@@ -192,8 +195,6 @@ void ChatManager::reset() {
 
     chatId = 0;
     emit chatIdChanged();
-    emit smallPhotoChanged();
-    emit chatInformationChanged();
 
     if (!chatActionsByUsers.isEmpty()) {
         chatActionsByUsers.clear();
@@ -212,9 +213,6 @@ void ChatManager::initialize(const QVariantMap &chatInformation, qlonglong fromM
     reset();
     this->chatId = chatId;
     emit chatIdChanged();
-    emit smallPhotoChanged();
-    emit chatInformationChanged();
-    emit viewAsTopicsChanged();
 
     if (viewAsTopics()) {
         LOG("Initializing a forum chat");
