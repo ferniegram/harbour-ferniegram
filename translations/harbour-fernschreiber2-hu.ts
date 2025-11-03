@@ -338,6 +338,13 @@
     </message>
 </context>
 <context>
+    <name>ChatInformationTabItemMedia</name>
+    <message>
+        <source>Jump to message</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ChatInformationTabItemMembersGroups</name>
     <message>
         <source>Loading common chats…</source>
