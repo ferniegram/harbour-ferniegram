@@ -36,11 +36,11 @@ Page {
     property var chatInformation
     property var secretChatDetails
     property alias chatPicture: chatPictureThumbnail.photoData
-    property bool isPrivateChat: chatManager.chatType == TDLibAPI.ChatTypePrivate
-    property bool isSecretChat: chatManager.chatType == TDLibAPI.ChatTypeSecret
+    property bool isPrivateChat: chatManager.chatType === TDLibAPI.ChatTypePrivate
+    property bool isSecretChat: chatManager.chatType === TDLibAPI.ChatTypeSecret
     property bool isSecretChatReady: false
-    property bool isBasicGroup: chatManager.chatType == TDLibAPI.ChatTypeBasicGroup
-    property bool isSuperGroup: chatManager.chatType == TDLibAPI.ChatTypeSupergroup
+    property bool isBasicGroup: chatManager.chatType === TDLibAPI.ChatTypeBasicGroup
+    property bool isSuperGroup: chatManager.chatType === TDLibAPI.ChatTypeSupergroup
     property bool isChannel: !!(chatGroupInformation && chatGroupInformation.is_channel)
     property bool viewAsTopics: chatManager.viewAsTopics
     property bool isDeletedUser: !!chatPartnerInformation && chatPartnerInformation.type['@type'] === "userTypeDeleted"
