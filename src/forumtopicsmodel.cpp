@@ -1,6 +1,6 @@
 #include "forumtopicsmodel.h"
 
-#define DEBUG_MODULE ChatManagerAndModel
+#define DEBUG_MODULE ForumTopicsModel
 #include "debuglog.h"
 
 namespace {
