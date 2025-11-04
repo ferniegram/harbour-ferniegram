@@ -358,18 +358,12 @@ SOURCES += \
     rlottie/src/vector/vrle.cpp
 
 NEON = $$system(g++ -dM -E -x c++ - < /dev/null | grep __ARM_NEON__)
-SSE2 = $$system(g++ -dM -E -x c++ - < /dev/null | grep __SSE2__)
 
 !isEmpty(NEON) {
     message(Using NEON render functions)
     SOURCES += rlottie/src/vector/pixman/pixman-arm-neon-asm.S
 } else {
-    !isEmpty(SSE2) {
-        message(Using SSE2 render functions)
-        SOURCES += rlottie/src/vector/vdrawhelper_sse2.cpp
-    } else {
-        message(Using default render functions)
-    }
+    message(Using default render functions)
 }
 
 include(libs/opal/sfpm/SortFilterProxyModel.pri)
