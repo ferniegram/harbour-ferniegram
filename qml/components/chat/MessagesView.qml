@@ -550,14 +550,19 @@ Column {
 
             onContentYChanged: {
                 if (!chatPage.loading && !chatView.inCooldown) {
-                    if (chatView.indexAt(chatView.contentX, chatView.contentY) < 10) {
+                    // check for startReached/endReached here so inCooldown won't be true forever
+                    if (!chatManager.model.startReached && chatView.indexAt(chatView.contentX, chatView.contentY) < 10) {
                         Debug.log("[ChatPage] Trying to get older history items...")
                         chatView.inCooldown = true
                         chatManager.model.loadMoreHistory()
-                    } else if (chatOverviewItem.visible && chatView.indexAt(chatView.contentX, chatView.contentY) > ( count - 10)) {
+                    } else if (!chatManager.model.endReached && chatOverviewItem.visible && chatView.indexAt(chatView.contentX, chatView.contentY) > ( count - 10)) {
                         Debug.log("[ChatPage] Trying to get newer history items...")
                         chatView.inCooldown = true
                         chatManager.model.loadMoreFuture()
+                        // NOTE: it might be needed to call loadMoreFuture() but without the check for endReached inside it
+                        // (so, forcefully, and without checking for endReached here in JS),
+                        // because sometimes tdlib might not return complete end
+                        // this was the previous behavior before endReached and startReached values were introduced
                     }
                 }
             }
