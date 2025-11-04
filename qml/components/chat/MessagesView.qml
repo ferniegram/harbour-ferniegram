@@ -524,8 +524,8 @@ Column {
 
             function handleScrollPositionChanged() {
                 Debug.log("Current position: ", chatView.contentY)
-                Debug.log("Contains sponsored messages?", chatPage.containsSponsoredMessages)
-                if (chatOverviewItem.visible && ( chatInformation.unread_count > 0 || chatPage.containsSponsoredMessages ) ) {
+                Debug.log("Contains sponsored messages?", containsSponsoredMessages)
+                if (chatOverviewItem.visible && ( chatInformation.unread_count > 0 || containsSponsoredMessages ) ) {
                     var bottomIndex = chatView.indexAt(chatView.contentX, ( chatView.contentY + chatView.height - Theme.horizontalPageMargin ))
                     if (bottomIndex > -1)
                         viewMessageTimer.queueViewMessage(bottomIndex)
