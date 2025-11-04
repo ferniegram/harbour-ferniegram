@@ -62,7 +62,6 @@ public:
     static QString formatDuration(int seconds);
     
     Q_INVOKABLE static QString fixReservedHtmlCharacters(const QString &text);
-    Q_INVOKABLE static void handleHtmlEntity(const QString &messageText, QList<QVariantMap> &messageInsertions, const QString &originalString, const QString &replacementString);
     Q_INVOKABLE static QString enhanceMessageText(const QVariantMap &formattedText, bool ignoreEntities = false, bool escapeReserved = true);
 
     Q_INVOKABLE QString getMessageText(const QVariantMap &messageContent, const QString &messageSenderType, qlonglong messageSenderUserId, bool isSponsored, MessageText type = MessageTextDefault, bool ignoreEntities = false, bool escapeReserved = true) const;
@@ -92,6 +91,11 @@ public:
     Q_INVOKABLE static QVariantMap findPhotoSize(const QVariantList &photoSizes, int width);
     Q_INVOKABLE static QVariantMap findBiggestPhotoSize(const QVariantList &photoSizes);
     Q_INVOKABLE static QVariantMap findSmallestPhotoSize(const QVariantList &photoSizes);
+
+private:
+    struct FormattedTextInsertion;
+
+    static void addInsertionsFor(const QString &messageText, QList<FormattedTextInsertion> &insertions, const QString &originalString, const QString &replacementString);
 
 signals:
     void voiceNoteDurationChanged();
