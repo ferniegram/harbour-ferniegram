@@ -92,6 +92,8 @@ public:
     Q_INVOKABLE static QVariantMap findBiggestPhotoSize(const QVariantList &photoSizes);
     Q_INVOKABLE static QVariantMap findSmallestPhotoSize(const QVariantList &photoSizes);
 
+    Q_INVOKABLE static bool messageMatchesSearchFilter(const QVariantMap &message, TDLibWrapper::SearchMessagesFilter filter);
+
 private:
     struct FormattedTextInsertion;
 

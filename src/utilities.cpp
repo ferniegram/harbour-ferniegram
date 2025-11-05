@@ -46,6 +46,12 @@ namespace {
     const QString ANIMATED_EMOJI("animated_emoji");
     const QString STICKER("sticker");
     const QString USER_ID("user_id");
+    const QString SENDING_STATE("sending_state");
+    const QString TYPE_MESSAGE_SENDING_STATE_FAILED("messageSendingStateFailed");
+    const QString IS_PINNED("is_pinned");
+    const QString CONTAINS_UNREAD_MENTION("contains_unread_mention");
+    const QString UNREAD_REACTIONS("unread_reactions");
+    const QString LINK_PREVIEW("link_preview");
 
     const QString MESSAGE_SENDER_TYPE_USER("messageSenderUser");
     const QString MESSAGE_SENDER_TYPE_CHAT("messageSenderChat");
@@ -63,6 +69,8 @@ namespace {
     const QString MESSAGE_CONTENT_TYPE_DOCUMENT("messageDocument");
     const QString MESSAGE_CONTENT_TYPE_LOCATION("messageLocation");
     const QString MESSAGE_CONTENT_TYPE_VENUE("messageVenue");
+    const QString MESSAGE_CONTENT_TYPE_CHAT_CHANGE_PHOTO("messageChatChangePhoto");
+    const QString MESSAGE_CONTENT_TYPE_CHAT_DELETE_PHOTO("messageChatDeletePhoto");
 
     const QString ENTITIES("entities");
     const QString TYPE_PLAIN_TEXT("plainText");
@@ -908,4 +916,46 @@ QVariantMap Utilities::findSmallestPhotoSize(const QVariantList &photoSizes) {
     }
 
     return result;
+}
+
+bool Utilities::messageMatchesSearchFilter(const QVariantMap &message, TDLibWrapper::SearchMessagesFilter filter) {
+    const QString contentType = message.value(CONTENT).toMap().value(_TYPE).toString();
+
+    switch (filter) {
+    case TDLibWrapper::SearchMessagesFilterEmpty:
+        return true;
+    case TDLibWrapper::SearchMessagesFilterAnimation:
+        return contentType == MESSAGE_CONTENT_TYPE_ANIMATION;
+    case TDLibWrapper::SearchMessagesFilterAudio:
+        return contentType == MESSAGE_CONTENT_TYPE_AUDIO;
+    case TDLibWrapper::SearchMessagesFilterChatPhoto:
+        return contentType == MESSAGE_CONTENT_TYPE_CHAT_CHANGE_PHOTO || contentType == MESSAGE_CONTENT_TYPE_CHAT_DELETE_PHOTO;
+    case TDLibWrapper::SearchMessagesFilterDocument:
+        return contentType == MESSAGE_CONTENT_TYPE_DOCUMENT;
+    case TDLibWrapper::SearchMessagesFilterPhoto:
+        return contentType == MESSAGE_CONTENT_TYPE_PHOTO;
+    case TDLibWrapper::SearchMessagesFilterPhotoAndVideo:
+        return contentType == MESSAGE_CONTENT_TYPE_PHOTO || contentType == MESSAGE_CONTENT_TYPE_VIDEO;
+    case TDLibWrapper::SearchMessagesFilterVideo:
+        return contentType == MESSAGE_CONTENT_TYPE_VIDEO;
+    case TDLibWrapper::SearchMessagesFilterVideoNote:
+        return contentType == MESSAGE_CONTENT_TYPE_VIDEO_NOTE;
+    case TDLibWrapper::SearchMessagesFilterVoiceAndVideoNote:
+        return contentType == MESSAGE_CONTENT_TYPE_VOICE_NOTE || contentType == MESSAGE_CONTENT_TYPE_VIDEO_NOTE;
+    case TDLibWrapper::SearchMessagesFilterVoiceNote:
+        return contentType == MESSAGE_CONTENT_TYPE_VOICE_NOTE;
+
+    case TDLibWrapper::SearchMessagesFilterFailedToSend:
+        return message.value(SENDING_STATE).toMap().value(_TYPE).toString() == TYPE_MESSAGE_SENDING_STATE_FAILED;
+    case TDLibWrapper::SearchMessagesFilterMention:
+        return false; // TODO (if ever needed)
+    case TDLibWrapper::SearchMessagesFilterPinned:
+        return message.value(IS_PINNED).toBool();
+    case TDLibWrapper::SearchMessagesFilterUnreadMention:
+        return message.value(CONTAINS_UNREAD_MENTION).toBool();
+    case TDLibWrapper::SearchMessagesFilterUnreadReaction:
+        return !message.value(UNREAD_REACTIONS).toList().isEmpty();
+    case TDLibWrapper::SearchMessagesFilterUrl:
+        return !message.value(CONTENT).toMap().value(LINK_PREVIEW).toMap().isEmpty();
+    }
 }
