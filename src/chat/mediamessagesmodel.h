@@ -29,7 +29,6 @@ protected:
 
 private:
     qlonglong nextFromMessageId;
-    bool inIncrementalUpdate; // if we are waiting for messages after sending a request to load more of them
 };
 
 #endif // MEDIAMESSAGESMODEL_H
