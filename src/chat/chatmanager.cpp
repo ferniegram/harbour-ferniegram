@@ -20,6 +20,11 @@ namespace {
     const QString BASIC_GROUP_ID("basic_group_id");
     const QString SUPERGROUP_ID("supergroup_id");
     const char* PROPERTY_CHAT_INFORMATION = "chatInformation";
+
+    const QString CONTENT_MESSAGE_PHOTO("messagePhoto");
+    const QString CONTENT_MESSAGE_VIDEO("messageVideo");
+    const QString CONTENT_MESSAGE_ANIMATION("messageAnimation");
+    const QString CONTENT_MESSAGE_VIDEO_NOTE("messageVideoNote");
 }
 
 ChatMessagesModel::ChatMessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent) : ReadableMessagesModel(tdLibWrapper, parent), searchQuery() {}
@@ -64,7 +69,9 @@ ChatManager::ChatManager(TDLibWrapper *tdLibWrapper, QObject *parent) :
     chatId(0),
     pinnedMessageId(0),
     chatMessagesModel(new ChatMessagesModel(tdLibWrapper, this)),
-    mediaMessagesModel(new MediaMessagesModel(tdLibWrapper, this)),
+    photoAndvideoNoteMessagesModel(new MediaMessagesModel(tdLibWrapper, TDLibWrapper::SearchMessagesFilterPhotoAndVideo, QStringList{CONTENT_MESSAGE_PHOTO, CONTENT_MESSAGE_VIDEO}, this)),
+    animationMessagesModel(new MediaMessagesModel(tdLibWrapper, TDLibWrapper::SearchMessagesFilterAnimation, CONTENT_MESSAGE_ANIMATION, this)),
+    videoNoteMessagesModel(new MediaMessagesModel(tdLibWrapper, TDLibWrapper::SearchMessagesFilterVideoNote, CONTENT_MESSAGE_VIDEO_NOTE, this)),
     topicsModel(new ForumTopicsModel(tdLibWrapper, this))
 {
     connect(this->tdLibWrapper, &TDLibWrapper::chatReadInboxUpdated, this, &ChatManager::handleChatReadInboxUpdated);
@@ -190,7 +197,9 @@ void ChatManager::handleChatActionUpdated(qlonglong chatId, const QVariantMap &s
 void ChatManager::reset(bool resetChatId) {
     LOG("Resetting chat manager resetChatId" << resetChatId);
     this->chatMessagesModel->reset();
-    this->mediaMessagesModel->reset();
+    this->photoAndvideoNoteMessagesModel->reset();
+    this->animationMessagesModel->reset();
+    this->videoNoteMessagesModel->reset();
     this->topicsModel->reset();
 
     if (resetChatId) {
@@ -240,8 +249,8 @@ void ChatManager::initialize(const QVariantMap &chatInformation, qlonglong fromM
 
 
 
-void ChatManager::initializeMediaMessagesModel(qlonglong fromMessageId) {
-    this->mediaMessagesModel->init(this->chatId, fromMessageId);
+void ChatManager::initializeMediaMessagesModel(MediaMessagesModel* model, qlonglong fromMessageId) {
+    model->init(this->chatId, fromMessageId);
 }
 
 bool ChatManager::viewAsTopics() {

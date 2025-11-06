@@ -172,7 +172,16 @@ MessageContentBase {
                     icon.source: "../../../images/icon-l-fullscreen.svg"
                     onClicked: pageStack.push(Qt.resolvedUrl("../../pages/MediaAlbumPage.qml"), {
                         message: rawMessage,
-                        singleElement: rawMessage.content['@type'] !== 'messageVideo' // GIFs and video messages models are not yet supported...
+                        model: function() {
+                            switch (rawMessage.content['@type']) {
+                            case 'messageVideoNote':
+                                return chatManager.videoNoteMessagesModel
+                            case 'messageAnimation':
+                                return chatManager.animationMessagesModel
+                            default:
+                                return chatManager.photoAndvideoNoteMessagesModel
+                            }
+                        }()
                     })
                 }
             }

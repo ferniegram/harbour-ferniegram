@@ -40,7 +40,11 @@ class ChatManager : public QObject {
     Q_PROPERTY(QVariant groupInfo READ groupInfo NOTIFY groupInfoChanged)
 
     Q_PROPERTY(ChatMessagesModel* model MEMBER chatMessagesModel CONSTANT)
-    Q_PROPERTY(MediaMessagesModel* mediaMessagesModel MEMBER mediaMessagesModel CONSTANT)
+
+    Q_PROPERTY(MediaMessagesModel* photoAndvideoNoteMessagesModel MEMBER photoAndvideoNoteMessagesModel CONSTANT)
+    Q_PROPERTY(MediaMessagesModel* animationMessagesModel MEMBER animationMessagesModel CONSTANT)
+    Q_PROPERTY(MediaMessagesModel* videoNoteMessagesModel MEMBER videoNoteMessagesModel CONSTANT)
+
     Q_PROPERTY(ForumTopicsModel* topicsModel MEMBER topicsModel CONSTANT)
 
     Q_PROPERTY(qlonglong pinnedMessageId MEMBER pinnedMessageId NOTIFY pinnedMessageChanged)
@@ -53,7 +57,7 @@ public:
     Q_INVOKABLE void reset(bool resetChatId = true);
     Q_INVOKABLE void doBasicInitialization(const QVariantMap &chatInformation);
     Q_INVOKABLE void initialize(const QVariantMap &chatInformation, qlonglong fromMessageId = 0);
-    Q_INVOKABLE void initializeMediaMessagesModel(qlonglong fromMessageId = 0);
+    Q_INVOKABLE void initializeMediaMessagesModel(MediaMessagesModel* model, qlonglong fromMessageId = 0);
     bool viewAsTopics();
     inline qlonglong getChatId() { return chatId; }
     inline bool infoInitialized() { return chatId != 0; }
@@ -96,7 +100,9 @@ private:
     qlonglong pinnedMessageId;
 
     ChatMessagesModel *chatMessagesModel;
-    MediaMessagesModel* mediaMessagesModel;
+    MediaMessagesModel* photoAndvideoNoteMessagesModel;
+    MediaMessagesModel* animationMessagesModel;
+    MediaMessagesModel* videoNoteMessagesModel;
     ForumTopicsModel *topicsModel;
 
     QVariantMap chatActionsByUsers; // QMap<qlonglong, QString>

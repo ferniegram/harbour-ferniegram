@@ -1,5 +1,7 @@
 #include "mediamessagesmodel.h"
 
+#include "utilities.h"
+
 #define DEBUG_MODULE MediaMessagesModel
 #include "debuglog.h"
 
@@ -7,11 +9,13 @@ namespace {
     const QString ID("id");
     const QString CONTENT("content");
     const QString _TYPE("@type");
-    const QString TYPE_MESSAGE_PHOTO("messagePhoto");
-    const QString TYPE_MESSAGE_VIDEO("messageVideo");
 }
 
-MediaMessagesModel::MediaMessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent) : JumpableMessagesModel(tdLibWrapper, parent) {
+MediaMessagesModel::MediaMessagesModel(TDLibWrapper *tdLibWrapper, TDLibWrapper::SearchMessagesFilter searchMessagesFilter, const QStringList &allowedMessageContentTypes, QObject *parent)
+    : JumpableMessagesModel(tdLibWrapper, parent),
+      searchMessagesFilter(searchMessagesFilter),
+      allowedMessageContentTypes(allowedMessageContentTypes)
+{
     connect(this->tdLibWrapper, &TDLibWrapper::foundChatMessagesReceived, this, &MediaMessagesModel::handleMessagesReceived);
     connect(this->tdLibWrapper, &TDLibWrapper::newMessageReceived, this, &MediaMessagesModel::handleNewMessageReceived);
 }
@@ -24,7 +28,7 @@ bool MediaMessagesModel::clear() {
 
 void MediaMessagesModel::loadMessagesWithLimit(qlonglong fromMessageId, int offset, int limit) {
     LOG("Loading messages" << fromMessageId << offset);
-    this->tdLibWrapper->searchChatMessages(this->chatId, QString(), fromMessageId, TDLibWrapper::SearchMessagesFilterPhotoAndVideo, limit, offset);
+    this->tdLibWrapper->searchChatMessages(this->chatId, QString(), fromMessageId, this->searchMessagesFilter, limit, offset);
 }
 
 void MediaMessagesModel::init(qlonglong chatId, qlonglong fromMessageId) {
@@ -68,7 +72,7 @@ void MediaMessagesModel::loadHistoryForMessageImpl(qlonglong messageId) {
 }
 
 void MediaMessagesModel::handleMessagesReceived(TDLibWrapper::SearchMessagesFilter filter, const QVariantList &messages, int totalCount, qlonglong nextFromMessageId) {
-    if (filter == TDLibWrapper::SearchMessagesFilterPhotoAndVideo) {
+    if (filter == this->searchMessagesFilter) {
         LOG("Messages received next id:" << nextFromMessageId);
         JumpableMessagesModel::handleMessagesReceived(messages, totalCount);
         this->nextFromMessageId = nextFromMessageId;
@@ -80,8 +84,7 @@ void MediaMessagesModel::handleNewMessageReceived(qlonglong chatId, const QVaria
 
     const qlonglong messageId = message.value(ID).toLongLong();
     if (chatId == this->chatId && !messageIndexMap.contains(messageId)) {
-        const QString contentType = message.value(CONTENT).toMap().value(_TYPE).toString();
-        if (contentType == TYPE_MESSAGE_PHOTO || contentType == TYPE_MESSAGE_VIDEO) {
+        if (Utilities::messageMatchesSearchFilter(message, this->searchMessagesFilter)) {
             LOG("New media message received for this chat");
             insertMessages(QList<MessageData*>{new MessageData(message, messageId)});
         }

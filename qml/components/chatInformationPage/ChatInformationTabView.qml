@@ -146,19 +146,25 @@ Item {
                             });
 
         tdLibWrapper.getChatMessageCount(chatInformation.id, TDLibAPI.SearchMessagesFilterPhotoAndVideo)
+        tdLibWrapper.getChatMessageCount(chatInformation.id, TDLibAPI.SearchMessagesFilterAnimation)
+        tdLibWrapper.getChatMessageCount(chatInformation.id, TDLibAPI.SearchMessagesFilterVideoNote)
     }
 
     Connections {
         target: tdLibWrapper
-        onCountReceived:
-            if (extra == "searchMessagesFilterPhotoAndVideo:" + chatInformation.id && count > 0) {
+        onCountReceived: {
+            if (count < 1) return
+            switch (extra) {
+                case "searchMessagesFilterPhotoAndVideo:" + chatInformation.id:
                 tabModel.insert(0, {
                     tab:"ChatInformationTabItemMedia",
                     title: qsTr("Media", "Button: Chat media (photos and videos)"),
                     image: "image://theme/icon-m-image"
                 })
                 tabView.openTab(0)
+                break
             }
+        }
     }
 
 }

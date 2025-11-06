@@ -38,7 +38,7 @@ Page {
     property alias index: pagedView.currentIndex
     property alias delegate: pagedView.delegate
     property bool singleElement: false
-    property bool useChatManagerMediaModel: !singleElement
+    property bool modelIsMedia: !singleElement
     property alias model: pagedView.model
     // message.content.caption.text
     palette.colorScheme: Theme.LightOnDark
@@ -48,24 +48,26 @@ Page {
     allowedOrientations: Orientation.All
 
     Component.onCompleted: {
-        if (useChatManagerMediaModel)
-            chatManager.initializeMediaMessagesModel(messageId)
+        if (modelIsMedia)
+            chatManager.initializeMediaMessagesModel(model, messageId)
     }
     Component.onDestruction: {
         // if end is reached model could be re-used in the media chat information tab
-        if (useChatManagerMediaModel && !chatManager.mediaMessagesModel.endReached)
-            chatManager.mediaMessagesModel.clear()
+        if (modelIsMedia && !model.endReached)
+            model.clear()
     }
 
     function goToScrollPosition() {
-        var i = chatManager.mediaMessagesModel.calculateScrollPosition()
+        // only called when model is media model
+        var i = model.calculateScrollPosition()
         Debug.log("[MediaAlbumPage] Going to scroll position", i)
         if (i !== -1)
             pagedView.currentIndex = i
     }
 
     Connections {
-        target: chatManager.mediaMessagesModel
+        target: modelIsMedia ? model : null
+        ignoreUnknownSignals: true
         onMessagesReceived:
             if (!fromIncrementalUpdate)
                 goToScrollPosition()
@@ -77,7 +79,7 @@ Page {
     PagedView {
         id: pagedView
         anchors.fill: parent
-        model: singleElement ? [message] : chatManager.mediaMessagesModel
+        model: singleElement ? [message] : chatManager.photoAndvideoNoteMessagesModel
         wrapMode: PagedView.NoWrap
         delegate: Component {
             Loader {
@@ -86,8 +88,7 @@ Page {
                 visible: status == Loader.Ready
                 width: PagedView.contentWidth
                 height: PagedView.contentHeight
-                property var _model: singleElement ? model.modelData : display
-                Component.onCompleted: console.log(_model)
+                property var _model: modelIsMedia ? display : model.modelData
 
                 states: [
                     State {
@@ -109,10 +110,12 @@ Page {
         }
 
         onCurrentIndexChanged: {
+            if (!modelIsMedia) return
+            
             if (currentIndex <= 10)
-                chatManager.mediaMessagesModel.loadMoreHistory()
+                model.loadMoreHistory()
             else if (currentIndex >= count - 1 - 10)
-                chatManager.mediaMessagesModel.loadMoreFuture()
+                model.loadMoreFuture()
         }
     }
 
@@ -120,16 +123,16 @@ Page {
     FullscreenOverlay {
         id: overlay
         currentIndex: page.index
-        message: (singleElement || !pagedView.currentItem) ? page.message : pagedView.currentItem._model
+        message: (modelIsMedia && pagedView.currentItem) ? pagedView.currentItem._model : page.message
         hidePreview: singleElement
-        previewModel: useChatManagerMediaModel ? previewModelLoader.item : null
+        previewModel: modelIsMedia ? previewModelLoader.item : null
 
         Loader {
             id: previewModelLoader
-            active: useChatManagerMediaModel && overlay.message.media_album_id !== '0'
+            active: modelIsMedia && overlay.message.media_album_id !== '0'
             sourceComponent: Component {
                 SortFilterProxyModel {
-                    sourceModel: chatManager.mediaMessagesModel
+                    sourceModel: page.model
                     filters: ValueFilter {
                         roleName: 'album_id'
                         value: overlay.message.media_album_id
