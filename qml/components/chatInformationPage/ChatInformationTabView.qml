@@ -35,6 +35,9 @@ TabView {
 
     wrapMode: PagedView.NoWrap
 
+    tabLoadingAnimation: false
+    tabFadeAnimation: true
+
     // Use a custom model to make it easy to add tabs dynamically with model.append()
     model: ListModel {}
 
