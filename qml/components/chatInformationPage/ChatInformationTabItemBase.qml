@@ -20,52 +20,21 @@ import QtQuick 2.6
 import Sailfish.Silica 1.0
 import "../../pages"
 import "../"
+import "../../modules/Opal/Tabs"
 
-Item {
+TabItem {
     id: tabItem
-    property string title
-    property url image
     property bool loading
     //overrideable:
-    property alias loadingVisible: loadingColumn.loadingVisible
-    property string loadingText
+    property alias loadingVisible: busyLabel.running
+    property alias loadingText: busyLabel.text
 
     property int tabIndex: index
     property bool active: index === tabView.currentIndex
 
-    default property alias _data: contentItem.data
-
-    opacity: active ? 1.0 : 0.0
-    Behavior on opacity { FadeAnimation {}}
-
-    Column {
-        id: loadingColumn
-        property bool loadingVisible: tabItem.loading
-        width: tabItem.width
-        height: loadingLabel.height + loadingBusyIndicator.height + Theme.paddingMedium
-        spacing: Theme.paddingMedium
-        topPadding: Theme.paddingLarge
-        anchors.top: parent.top
-        opacity: loadingVisible ? 1.0 : 0.0
-        Behavior on opacity { FadeAnimation {} }
+    BusyLabel {
+        id: busyLabel
+        running: tabItem.loading
         visible: tabItem.loading
-
-        InfoLabel {
-            id: loadingLabel
-            text: tabItem.loadingText
-        }
-
-        BusyIndicator {
-            id: loadingBusyIndicator
-            anchors.horizontalCenter: parent.horizontalCenter
-            running: parent.loadingVisible
-            size: BusyIndicatorSize.Large
-        }
     }
-    Item {
-        id: contentItem
-        width: parent.width
-        height: childrenRect.height
-    }
-
 }
