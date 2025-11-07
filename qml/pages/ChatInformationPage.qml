@@ -32,19 +32,24 @@ Page {
     property string searchString
 
     property int chatOnlineMemberCount: 0;
-    property int myUserId: tdLibWrapper.getUserInformation().id;
+    property var myUserId: tdLibWrapper.getUserInformation().id;
 
     property bool isPrivateChat: false
     property bool isSecretChat: false
     property bool isBasicGroup: false
     property bool isSuperGroup: false
     property bool isChannel: false
-    readonly property bool canGetMembers: ("can_get_members" in groupFullInformation) && groupFullInformation.can_get_members
 
-    property string chatPartnerGroupId
+    property string chatUserOrGroupId
+
+    property bool isInitialized: false
 
     readonly property bool isPrivateOrSecretChat: isPrivateChat || isSecretChat
     readonly property bool isGroup: isBasicGroup || isSuperGroup
+
+    readonly property bool isSavedMessages: isPrivateOrSecretChat && chatUserOrGroupId == myUserId
+
+    readonly property bool canGetMembers: ("can_get_members" in groupFullInformation) && groupFullInformation.can_get_members
     readonly property bool userIsMember: (isPrivateOrSecretChat && chatInformation["@type"]) || // should be optimized
                                 isGroup && (
                                     (groupInformation.status["@type"] === "chatMemberStatusMember")
@@ -52,7 +57,7 @@ Page {
                                     || (groupInformation.status["@type"] === "chatMemberStatusRestricted" && groupInformation.status.is_member)
                                     || (groupInformation.status["@type"] === "chatMemberStatusCreator" && groupInformation.status.is_member)
                                     )
-    readonly property bool isCreator: isGroup && groupInformation.status["@type"] === "chatMemberStatusCreator"
+    readonly property bool isGroupCreator: isGroup && groupInformation.status["@type"] === "chatMemberStatusCreator"
 
     property var chatInformation:({})
     property var privateChatUserInformation:({})
@@ -61,6 +66,7 @@ Page {
     property var groupInformation: ({})
     property var groupFullInformation: ({})
 
+    property bool fullInfoReady: false
     readonly property string username: isPrivateOrSecretChat ?
                                   (privateChatUserInformation.usernames.editable_username ? "@"+privateChatUserInformation.usernames.editable_username : "")
                                 : ((groupInformation && groupInformation.usernames && groupInformation.usernames.editable_username)

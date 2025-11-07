@@ -56,7 +56,7 @@ ChatInformationTabItemBase {
                 active: (chatInformationPage.isBasicGroup || chatInformationPage.isSuperGroup)
                         && !chatInformationPage.isChannel && chatInformationPage.groupInformation
 
-                        && (chatInformationPage.groupInformation.status.can_restrict_members || chatInformationPage.isCreator)
+                        && (chatInformationPage.groupInformation.status.can_restrict_members || chatInformationPage.isGroupCreator)
                 asynchronous: true
                 source: "./EditGroupChatPermissionsColumn.qml"
                 width: parent.width
@@ -64,7 +64,7 @@ ChatInformationTabItemBase {
 
             Loader {
                 active: chatInformationPage.isSuperGroup
-                        && (chatInformationPage.groupInformation.status.can_change_info || chatInformationPage.isCreator)
+                        && (chatInformationPage.groupInformation.status.can_change_info || chatInformationPage.isGroupCreator)
                 // todo: only show this for private groups
                 sourceComponent: Component {
                     Column {
@@ -79,7 +79,7 @@ ChatInformationTabItemBase {
                             checked: chatInformationPage.groupFullInformation.is_all_history_available
                             onClicked: {
                                 busy = true
-                                tdLibWrapper.toggleSupergroupIsAllHistoryAvailable(chatInformationPage.chatPartnerGroupId, !checked)
+                                tdLibWrapper.toggleSupergroupIsAllHistoryAvailable(chatInformationPage.chatUserOrGroupId, !checked)
                             }
                         }
                     }
@@ -87,7 +87,7 @@ ChatInformationTabItemBase {
             }
 
             Loader {
-                active: chatInformationPage.isSuperGroup && chatInformationPage.isCreator
+                active: chatInformationPage.isSuperGroup && chatInformationPage.isGroupCreator
                 width: parent.width
                 // todo: only show this for private groups
                 sourceComponent: Component {
@@ -114,7 +114,7 @@ ChatInformationTabItemBase {
             Loader {
                 active: chatInformationPage.isSuperGroup && chatInformationPage.groupInformation
                         && (chatInformationPage.groupInformation.status.can_restrict_members
-                            || chatInformationPage.isCreator)
+                            || chatInformationPage.isGroupCreator)
                 asynchronous: true
                 source: "./EditSuperGroupSlowModeColumn.qml"
                 width: parent.width

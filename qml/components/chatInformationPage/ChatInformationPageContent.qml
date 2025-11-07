@@ -44,8 +44,9 @@ SilicaFlickable {
         }
     }
     function handleBasicGroupFullInfo(groupFullInfo, groupId) {
-        if(!chatInformationPage.isBasicGroup || chatInformationPage.chatPartnerGroupId !== groupId) return
+        if(!chatInformationPage.isBasicGroup || chatInformationPage.chatUserOrGroupId !== groupId) return
         chatInformationPage.groupFullInformation = groupFullInfo;
+        fullInfoReady = true
         membersList.clear();
         if(groupFullInfo.members && groupFullInfo.members.length > 0) {
             for(var memberIndex in groupFullInfo.members) {
@@ -85,33 +86,37 @@ SilicaFlickable {
             }
         }
         onSupergroupFullInfoReceived: {
-            Debug.log("onSupergroupFullInfoReceived", chatInformationPage.isSuperGroup, chatInformationPage.chatPartnerGroupId, groupId)
-            if(chatInformationPage.isSuperGroup && chatInformationPage.chatPartnerGroupId === groupId) {
+            Debug.log("onSupergroupFullInfoReceived", chatInformationPage.isSuperGroup, chatInformationPage.chatUserOrGroupId, groupId)
+            if(chatInformationPage.isSuperGroup && chatInformationPage.chatUserOrGroupId === groupId) {
                 chatInformationPage.groupFullInformation = groupFullInfo
+                fullInfoReady = true
             }
         }
         onSupergroupFullInfoUpdated: {
-            Debug.log("onSupergroupFullInfoUpdated", chatInformationPage.isSuperGroup, chatInformationPage.chatPartnerGroupId, groupId)
-            if(chatInformationPage.isSuperGroup && chatInformationPage.chatPartnerGroupId === groupId) {
+            Debug.log("onSupergroupFullInfoUpdated", chatInformationPage.isSuperGroup, chatInformationPage.chatUserOrGroupId, groupId)
+            if(chatInformationPage.isSuperGroup && chatInformationPage.chatUserOrGroupId === groupId) {
                 chatInformationPage.groupFullInformation = groupFullInfo
+                fullInfoReady = true
             }
         }
         onBasicGroupFullInfoReceived: handleBasicGroupFullInfo(groupFullInfo, groupId)
         onBasicGroupFullInfoUpdated: handleBasicGroupFullInfo(groupFullInfo, groupId)
 
         onUserFullInfoReceived: {
-            if(chatInformationPage.isPrivateOrSecretChat && userFullInfo["@extra"] === chatInformationPage.chatPartnerGroupId) {
+            if(chatInformationPage.isPrivateOrSecretChat && userFullInfo["@extra"] === chatInformationPage.chatUserOrGroupId) {
                 chatInformationPage.chatPartnerFullInformation = userFullInfo
+                fullInfoReady = true
             }
         }
         onUserFullInfoUpdated: {
-            if(chatInformationPage.isPrivateOrSecretChat && userId === chatInformationPage.chatPartnerGroupId) {
+            if(chatInformationPage.isPrivateOrSecretChat && userId === chatInformationPage.chatUserOrGroupId) {
                 chatInformationPage.chatPartnerFullInformation = userFullInfo
+                fullInfoReady = true
             }
         }
 
         onUserProfilePhotosReceived: {
-            if(chatInformationPage.isPrivateOrSecretChat && extra === chatInformationPage.chatPartnerGroupId) {
+            if(chatInformationPage.isPrivateOrSecretChat && extra === chatInformationPage.chatUserOrGroupId) {
                 chatInformationPage.chatPartnerProfilePhotos = photos
             }
         }
@@ -151,45 +156,44 @@ SilicaFlickable {
         switch(chatInformation.type["@type"]) {
         case "chatTypePrivate":
             chatInformationPage.isPrivateChat = true;
-            chatInformationPage.chatPartnerGroupId = chatInformationPage.chatInformation.type.user_id.toString();
+            chatInformationPage.chatUserOrGroupId = chatInformationPage.chatInformation.type.user_id.toString();
             if(!chatInformationPage.privateChatUserInformation.id) {
-                chatInformationPage.privateChatUserInformation = tdLibWrapper.getUserInformation(chatInformationPage.chatPartnerGroupId);
+                chatInformationPage.privateChatUserInformation = tdLibWrapper.getUserInformation(chatInformationPage.chatUserOrGroupId);
             }
-            tdLibWrapper.getUserFullInfo(chatInformationPage.chatPartnerGroupId);
-            tdLibWrapper.getUserProfilePhotos(chatInformationPage.chatPartnerGroupId, 100, 0);
+            tdLibWrapper.getUserFullInfo(chatInformationPage.chatUserOrGroupId);
+            tdLibWrapper.getUserProfilePhotos(chatInformationPage.chatUserOrGroupId, 100, 0);
             break;
         case "chatTypeSecret":
             chatInformationPage.isSecretChat = true;
-            chatInformationPage.chatPartnerGroupId = chatInformationPage.chatInformation.type.user_id.toString();
+            chatInformationPage.chatUserOrGroupId = chatInformationPage.chatInformation.type.user_id.toString();
             if(!chatInformationPage.privateChatUserInformation.id) {
-                chatInformationPage.privateChatUserInformation = tdLibWrapper.getUserInformation(chatInformationPage.chatPartnerGroupId);
+                chatInformationPage.privateChatUserInformation = tdLibWrapper.getUserInformation(chatInformationPage.chatUserOrGroupId);
             }
-            tdLibWrapper.getUserFullInfo(chatInformationPage.chatPartnerGroupId);
-            tdLibWrapper.getUserProfilePhotos(chatInformationPage.chatPartnerGroupId, 100, 0);
+            tdLibWrapper.getUserFullInfo(chatInformationPage.chatUserOrGroupId);
+            tdLibWrapper.getUserProfilePhotos(chatInformationPage.chatUserOrGroupId, 100, 0);
             break;
         case "chatTypeBasicGroup":
             chatInformationPage.isBasicGroup = true;
-            chatInformationPage.chatPartnerGroupId = chatInformation.type.basic_group_id.toString();
+            chatInformationPage.chatUserOrGroupId = chatInformation.type.basic_group_id.toString();
             if(!chatInformationPage.groupInformation.id) {
-                chatInformationPage.groupInformation = tdLibWrapper.getBasicGroup(chatInformationPage.chatPartnerGroupId);
+                chatInformationPage.groupInformation = tdLibWrapper.getBasicGroup(chatInformationPage.chatUserOrGroupId);
             }
-            tdLibWrapper.getGroupFullInfo(chatInformationPage.chatPartnerGroupId, false);
+            tdLibWrapper.getGroupFullInfo(chatInformationPage.chatUserOrGroupId, false);
             break;
         case "chatTypeSupergroup":
             chatInformationPage.isSuperGroup = true;
-            chatInformationPage.chatPartnerGroupId = chatInformation.type.supergroup_id.toString();
+            chatInformationPage.chatUserOrGroupId = chatInformation.type.supergroup_id.toString();
             if(!chatInformationPage.groupInformation.id) {
-                chatInformationPage.groupInformation = tdLibWrapper.getSuperGroup(chatInformationPage.chatPartnerGroupId);
+                chatInformationPage.groupInformation = tdLibWrapper.getSuperGroup(chatInformationPage.chatUserOrGroupId);
             }
 
-            tdLibWrapper.getGroupFullInfo(chatInformationPage.chatPartnerGroupId, true);
+            tdLibWrapper.getGroupFullInfo(chatInformationPage.chatUserOrGroupId, true);
             chatInformationPage.isChannel = chatInformationPage.groupInformation.is_channel;
             break;
         }
-        Debug.log("is set up", chatInformationPage.isPrivateChat, chatInformationPage.isSecretChat, chatInformationPage.isBasicGroup, chatInformationPage.isSuperGroup, chatInformationPage.chatPartnerGroupId)
+        Debug.log("is set up", chatInformationPage.isPrivateChat, chatInformationPage.isSecretChat, chatInformationPage.isBasicGroup, chatInformationPage.isSuperGroup, chatInformationPage.chatUserOrGroupId)
 
-
-        tabViewLoader.active = true
+        isInitialized = true
     }
 
     ListModel {
@@ -227,7 +231,7 @@ SilicaFlickable {
         MenuItem {
             visible: chatInformationPage.isPrivateChat
             onClicked: {
-                tdLibWrapper.createNewSecretChat(chatInformationPage.chatPartnerGroupId, "openDirectly");
+                tdLibWrapper.createNewSecretChat(chatInformationPage.chatUserOrGroupId, "openDirectly");
             }
             text: qsTr("New Secret Chat")
         }
@@ -299,7 +303,7 @@ SilicaFlickable {
                 return Functions.getGroupStatusText(chatInformationPage.groupInformation.member_count, chatInformationPage.chatOnlineMemberCount, isChannel)
 
 
-            var status = Functions.getChatPartnerStatusText(chatInformationPage.privateChatUserInformation.status['@type'], chatInformationPage.privateChatUserInformation.status.was_online, chatInformationPage.privateChatUserInformation.is_support, chatInformationPage.chatPartnerGroupId)
+            var status = Functions.getChatPartnerStatusText(chatInformationPage.privateChatUserInformation.status['@type'], chatInformationPage.privateChatUserInformation.status.was_online, chatInformationPage.privateChatUserInformation.is_support, chatInformationPage.chatUserOrGroupId)
             /*if (chatInformationPage.secretChatDetails) { // TODO
                 var secretChatStatus = Functions.getSecretChatStatus(chatPage.secretChatDetails)
                 if (status && secretChatStatus)
@@ -356,7 +360,7 @@ SilicaFlickable {
 
         Column {
             id: groupInfoItem
-            bottomPadding: Theme.paddingLarge
+            bottomPadding: tabViewLoader.active ? 0 : Theme.paddingLarge
             topPadding: Theme.paddingLarge
             anchors {
                 top: parent.top
@@ -379,7 +383,7 @@ SilicaFlickable {
                 Label {
                     id: copyIdText
                     x: Math.max(headerItem.x + imageContainer.x - parent.x + (imageContainer.width - width)/2, 0)
-                    text: chatInformationPage.chatPartnerGroupId
+                    text: chatInformationPage.chatUserOrGroupId
                     font.pixelSize: Theme.fontSizeSmall
                     color: copyIdMouseArea.pressed ? Theme.secondaryHighlightColor : Theme.highlightColor
                     visible: text !== ""
@@ -542,7 +546,7 @@ SilicaFlickable {
         Loader {
             id: tabViewLoader
             asynchronous: true
-            active: false
+            active: isInitialized && fullInfoReady
             anchors {
                 left: parent.left
                 right: parent.right

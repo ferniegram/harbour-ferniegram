@@ -164,7 +164,7 @@ ChatInformationTabItemBase {
         onTriggered: {
             if(chatInformationPage.isSuperGroup && (!chatInformationPage.isChannel || chatInformationPage.canGetMembers) && (chatInformationPage.groupInformation.member_count > membersView.count)) {
                 tabBase.loading = true
-                tdLibWrapper.getSupergroupMembers(chatInformationPage.chatPartnerGroupId, fetchLimit, pageContent.membersList.count);
+                tdLibWrapper.getSupergroupMembers(chatInformationPage.chatUserOrGroupId, fetchLimit, pageContent.membersList.count);
                 fetchLimit = 200
                 interval = 400
             }
@@ -175,7 +175,7 @@ ChatInformationTabItemBase {
         target: tdLibWrapper
 
         onChatMembersReceived: {
-            if (chatInformationPage.isSuperGroup && chatInformationPage.chatPartnerGroupId === extra) {
+            if (chatInformationPage.isSuperGroup && chatInformationPage.chatUserOrGroupId === extra) {
                 if(members && members.length > 0 && chatInformationPage.groupInformation.member_count > membersView.count) {
                     for(var memberIndex in members) {
                         var memberData = members[memberIndex];
@@ -198,7 +198,7 @@ ChatInformationTabItemBase {
             }
         }
         onChatsReceived: {// common chats with user
-            if((isPrivateChat || isSecretChat) && extra === chatInformationPage.chatPartnerGroupId) {
+            if((isPrivateChat || isSecretChat) && extra === chatInformationPage.chatUserOrGroupId) {
                 tabBase.chatPartnerCommonGroupsIds = chatIds;
                 delegateModel.applyFilter();
                 // if we set it directly, the views start scrolling
@@ -216,7 +216,7 @@ ChatInformationTabItemBase {
 
     Component.onCompleted: {
         if(chatInformationPage.isPrivateChat || chatInformationPage.isSecretChat) {
-            tdLibWrapper.getGroupsInCommon(chatInformationPage.chatPartnerGroupId, 200, 0); // we only use the first 200
+            tdLibWrapper.getGroupsInCommon(chatInformationPage.chatUserOrGroupId, 200, 0); // we only use the first 200
         } else if(chatInformationPage.isSuperGroup) {
             fetchMoreMembersTimer.start();
         }

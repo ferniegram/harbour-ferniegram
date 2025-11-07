@@ -22,129 +22,43 @@ import "./"
 import "../"
 import "../../pages"
 import WerkWolf.Fernschreiber 1.0
+import "../../modules/Opal/Tabs"
 
-Item {
-    id: tabViewItem
-    property alias count: tabView.count
+TabView {
+    id: tabView
+    width: parent.width
     height: Screen.width
+
     opacity: count > 0 ? 1.0 : 0.0
-    Behavior on height { PropertyAnimation {duration: 300}}
-    Behavior on opacity { PropertyAnimation {duration: 300}}
+    Behavior on height { PropertyAnimation { duration: 300 } }
+    Behavior on opacity { PropertyAnimation { duration: 300 } }
 
-    Item {
-        id: tabViewHeader
-        /*
-         * Tab view was prepared for
-         * shared media/links/…, but for this
-         * we need message search with filters
-         */
+    wrapMode: PagedView.NoWrap
 
-        height: visible ? headerGrid.height : 0
-        clip: true
-        visible: tabView.count > 0
+    // Use a custom model to make it easy to add tabs dynamically with model.append()
+    model: ListModel {}
 
-        anchors {
-            left: parent.left
-            right: parent.right
-            top: parent.top
-        }
-
-        Grid {
-            id: headerGrid
-            width: parent.width
-            columns: tabView.count
-            Repeater {
-                model: tabModel
-                delegate: BackgroundItem {
-                    id: headerItem
-                    property bool loaded: image !== "" && title !== ""
-                    width: loaded ? (headerGrid.width / tabView.count) : 0
-                    opacity: loaded ? 1.0 : 0.0
-
-                    Behavior on opacity { FadeAnimation {}}
-                    height: Theme.itemSizeLarge
-                    property int itemIndex: index
-                    property bool itemIsActive: tabView.currentIndex === itemIndex
-                    Icon {
-                        id: headerIcon
-                        source: image
-                        highlighted: headerItem.pressed || headerItem.itemIsActive
-                        anchors {
-                            top: parent.top
-                            horizontalCenter: parent.horizontalCenter
-                        }
-                    }
-                    Label {
-                        text: title
-                        width: parent.width
-                        horizontalAlignment: Text.AlignHCenter
-                        anchors.top: headerIcon.bottom
-                        highlighted: headerItem.pressed || headerItem.itemIsActive
-                        font.pixelSize: Theme.fontSizeTiny
-                    }
-                    onClicked: {
-                        pageContent.scrollDown()
-                        tabView.openTab(itemIndex)
-                    }
-                }
-            }
-        }
-    }
-
-    ListView {
-        id: tabView
-        orientation: ListView.Horizontal
-        clip: true
-        snapMode: ListView.SnapOneItem
-        highlightRangeMode: ListView.StrictlyEnforceRange
-        highlightFollowsCurrentItem: true
-        boundsBehavior: Flickable.StopAtBounds
-        currentIndex: 0
-        highlightMoveDuration: 500
-        property int maxHeight: tabViewItem.height - tabViewHeader.height
-
-        anchors {
-            top: tabViewHeader.bottom
-            left: parent.left
-            right: parent.right
-            bottom: parent.bottom
-        }
-
-        function openTab(index) {
-            currentIndex = index;
-        }
-        model: ListModel {
-            id: tabModel
-        }
-        delegate: Loader {
-            width: tabView.width
-            height: tabView.maxHeight
-            asynchronous: true
-            source: Qt.resolvedUrl(tab+".qml")
-        }
-    }
     Component.onCompleted: {
-        if(!((isPrivateChat || isSecretChat) && chatPartnerGroupId === myUserId.toString())) {
-            tabModel.append({
-                tab:"ChatInformationTabItemMembersGroups",
-                title: ( chatInformationPage.isPrivateChat || chatInformationPage.isSecretChat ) ? qsTr("Groups", "Button: groups in common (short)") : qsTr("Members", "Button: Group Members"),
-                image: "image://theme/icon-m-people"
-            });
-        }
-        if(!(isPrivateChat || isSecretChat) && (groupInformation.status.can_restrict_members || groupInformation.status["@type"] === "chatMemberStatusCreator")) {
-            tabModel.append({
-                tab:"ChatInformationTabItemSettings",
+        if(!isSavedMessages && (isPrivateOrSecretChat || groupFullInformation.can_get_members))
+            model.append({
+                source: Qt.resolvedUrl("ChatInformationTabItemMembersGroups.qml"),
+                title: chatInformationPage.isPrivateOrSecretChat ? qsTr("Groups", "Button: groups in common (short)") : qsTr("Members", "Button: Group Members"),
+                icon: "image://theme/icon-m-people"
+            })
+
+        if(isGroup && (groupInformation.status.can_restrict_members || isGroupCreator))
+            model.append({
+                source: Qt.resolvedUrl("ChatInformationTabItemSettings.qml"),
                 title: qsTr("Settings", "Button: Chat Settings"),
-                image: "image://theme/icon-m-developer-mode"
-            });
-        }
+                icon: "image://theme/icon-m-developer-mode"
+            })
+
         if (DebugLog.enabled)
-            tabModel.append({
-                                tab:"ChatInformationTabItemDebug",
+            model.append({
+                                source: Qt.resolvedUrl("ChatInformationTabItemDebug.qml"),
                                 title: "Debug",
                                 image: "image://theme/icon-m-diagnostic"
                             });
-
         tdLibWrapper.getChatMessageCount(chatInformation.id, TDLibAPI.SearchMessagesFilterPhotoAndVideo)
         tdLibWrapper.getChatMessageCount(chatInformation.id, TDLibAPI.SearchMessagesFilterAnimation)
         tdLibWrapper.getChatMessageCount(chatInformation.id, TDLibAPI.SearchMessagesFilterVideoNote)
@@ -156,10 +70,10 @@ Item {
             if (count < 1) return
             switch (extra) {
                 case "searchMessagesFilterPhotoAndVideo:" + chatInformation.id:
-                tabModel.insert(0, {
-                    tab:"ChatInformationTabItemMedia",
+                model.insert(0, {
+                    source: Qt.resolvedUrl("ChatInformationTabItemMedia.qml"),
                     title: qsTr("Media", "Button: Chat media (photos and videos)"),
-                    image: "image://theme/icon-m-image"
+                    icon: "image://theme/icon-m-image"
                 })
                 tabView.openTab(0)
                 break
