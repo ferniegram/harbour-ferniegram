@@ -15,6 +15,8 @@ property bool tabBarVisible:true
 property bool _tabBarIsTop:tabBarPosition==Qt.AlignTop
 default property alias items:itemContainer.data
 model:items
+property bool tabLoadingAnimation:true
+property bool tabFadeAnimation:true
 property Component header
 property Component footer
 property bool hasFooter:footer
@@ -57,13 +59,13 @@ property int _ctxTopMargin:_tabBarIsTop?tabBarHeight:0
 property int _ctxBottomMargin:_tabBarIsTop?0:tabBarHeight
 readonly property bool isCurrentItem:PagedView.isCurrentItem
 readonly property real _yOffset:item&&item._yOffset||0
-property bool loading:Qt.application.active&&isCurrentItem&&status===Loader.Loading
+property bool loading:tabLoadingAnimation&&Qt.application.active&&isCurrentItem&&status===Loader.Loading
 sourceComponent:model.modelData?model.modelData.body:model.body
 source:model.modelData?model.modelData.source:model.source
 asynchronous:true
 width:item?item.implicitWidth:root.contentItem.width
 height:item?item.implicitHeight:root.contentItem.height
-onItemChanged:{if(!item)return
+onItemChanged:{if(!tabFadeAnimation||!item)return
 tabFadeAnimation.target=null
 item.focus=true
 item.opacity=0
