@@ -3,7 +3,7 @@
 
 #include <QAbstractListModel>
 
-#include "tdlibwrapper.h"
+#include "tdlib/tdlibwrapper.h"
 
 class ForumTopicsModel : public QAbstractListModel {
     Q_OBJECT
