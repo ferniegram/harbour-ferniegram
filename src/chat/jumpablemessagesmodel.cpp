@@ -51,6 +51,8 @@ void JumpableMessagesModel::updateStartEndReached(int totalCount, UpdateType fro
             endReached = true;
         else if (fromUpdate == UpdatePreviousSlice)
             startReached = true;
+        else if (fromUpdate == UpdateNone) // No messages in chat
+            startReached = endReached = true;
     }
 
     LOG("Updated endReached" << endReached << "startReached" << startReached);
