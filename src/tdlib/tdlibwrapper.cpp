@@ -2692,11 +2692,13 @@ void TDLibWrapper::handleCountReceived(int count, const QString &extra) {
         const QString filterType = match.captured(1);
         const bool local = !match.captured(2).isEmpty();
         const qlonglong chatId = match.captured(3).toLongLong();
-        LOG("Received chat message count" << chatId << filterType << local);
+        LOG("Received chat message count" << chatId << filterType << local << count);
 
         emit chatMessageCountReceived(count, chatId, getSearchMessagesFilterForType(filterType), local);
-    } else
+    } else {
+        LOG("Unknown count received" << count << extra);
         emit countReceived(count, extra);
+    }
 }
 
 void TDLibWrapper::getForumTopics(qlonglong chatId, qint32 offsetDate, qlonglong offsetMessageId, qlonglong offsetMessageThreadId, const QString &query, int limit) {

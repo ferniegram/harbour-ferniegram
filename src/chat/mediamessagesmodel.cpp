@@ -16,6 +16,7 @@ MediaMessagesModel::MediaMessagesModel(TDLibWrapper *tdLibWrapper, TDLibWrapper:
       searchMessagesFilter(searchMessagesFilter),
       allowedMessageContentTypes(allowedMessageContentTypes)
 {
+    connect(this->tdLibWrapper, &TDLibWrapper::chatMessageCountReceived, this, &MediaMessagesModel::handleChatMessageCountReceived);
     connect(this->tdLibWrapper, &TDLibWrapper::foundChatMessagesReceived, this, &MediaMessagesModel::handleMessagesReceived);
     connect(this->tdLibWrapper, &TDLibWrapper::newMessageReceived, this, &MediaMessagesModel::handleNewMessageReceived);
 }
@@ -34,7 +35,7 @@ void MediaMessagesModel::loadMessagesWithLimit(qlonglong fromMessageId, int offs
 void MediaMessagesModel::init(qlonglong chatId, qlonglong fromMessageId) {
     LOG("Initializing" << chatId << fromMessageId);
 
-    // TODO: add this to JumpableMessagesModel too
+    // TODO: (maybe) add this to JumpableMessagesModel too
     if (this->chatId == chatId) {
         LOG("Model already initialized for this chat ID, checking if other required stuff is already loaded");
 
@@ -57,8 +58,12 @@ void MediaMessagesModel::init(qlonglong chatId, qlonglong fromMessageId) {
     clear();
     this->chatId = chatId;
     this->highlightedMessageId = fromMessageId;
-    loadMessagesWithLimit(fromMessageId, fromMessageId == 0 ? 0 : -16, fromMessageId == 0 ? 100 : 32);
     this->endReached = fromMessageId == 0;
+
+    if (fromMessageId != 0)
+        loadMessagesWithLimit(fromMessageId, -16, 32);
+    else
+        tdLibWrapper->getChatMessageCount(chatId, this->searchMessagesFilter);
 }
 
 void MediaMessagesModel::loadMoreHistoryImpl() {
@@ -69,6 +74,24 @@ void MediaMessagesModel::loadMoreFutureImpl() {
 }
 void MediaMessagesModel::loadHistoryForMessageImpl(qlonglong messageId) {
     this->loadMessagesWithLimit(messageId, -26, 51);
+}
+
+void MediaMessagesModel::handleChatMessageCountReceived(int count, qlonglong chatId, TDLibWrapper::SearchMessagesFilter filter, bool onlyLocal) {
+    Q_UNUSED(onlyLocal) // TODO: we should first try to get count with onlyLocal = true,
+    // then if we have an error (or -1 as result) try again with onlyLocal = false
+    // see tgx implementatinon as well as tdlib docs for more info
+
+    if (this->chatId == chatId && this->searchMessagesFilter == filter) {
+        if (count == 0) {
+            LOG("No messages in chat" << chatId << "for filter" << TDLibWrapper::getSearchMessagesFilterType(filter));
+            startReached = endReached = true;
+            emit endReachedChanged();
+        } else {
+            LOG("Found" << count << "messages in chat" << chatId << "for filter" << TDLibWrapper::getSearchMessagesFilterType(filter) << ", loading messages");
+            emit notEmptyDetected();
+            loadMessages();
+        }
+    }
 }
 
 void MediaMessagesModel::handleMessagesReceived(TDLibWrapper::SearchMessagesFilter filter, const QVariantList &messages, int totalCount, qlonglong nextFromMessageId) {
@@ -87,6 +110,7 @@ void MediaMessagesModel::handleNewMessageReceived(qlonglong chatId, const QVaria
         if (Utilities::messageMatchesSearchFilter(message, this->searchMessagesFilter)) {
             LOG("New media message received for this chat");
             insertMessages(QList<MessageData*>{new MessageData(message, messageId)});
+            emit notEmptyDetected();
         }
     }
 }

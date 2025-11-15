@@ -198,6 +198,7 @@ public:
     Q_INVOKABLE void readChatList(bool archive = false);
     Q_INVOKABLE void readFolderChatList(int folderId);
     SearchMessagesFilter getSearchMessagesFilterForType(const QString &type);
+    static QString getSearchMessagesFilterType(SearchMessagesFilter filter);
 
     inline Utilities *getUtilities() const { return this->utilities; }
     DBusAdaptor *getDBusAdaptor();
@@ -515,8 +516,7 @@ private:
     void initializeTDLibReceiver();
     void updateUserInformation(const QString &userId, const QVariantMap &userInformation);
     void updateChatPositions(qlonglong chatId, const QVariantList &positions);
-    QString getTopChatCategoryType(TopChatCategory category);
-    QString getSearchMessagesFilterType(SearchMessagesFilter filter);
+    static QString getTopChatCategoryType(TopChatCategory category);
 
 private:
     int tdLibClientId;

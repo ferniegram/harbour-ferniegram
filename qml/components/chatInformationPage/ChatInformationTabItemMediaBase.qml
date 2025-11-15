@@ -20,6 +20,9 @@ ChatInformationTabItemBase {
         appWindow.pageStack.push(Qt.resolvedUrl("../../pages/MediaAlbumPage.qml"), {message: message})
     }
 
+    Component.onCompleted:
+        chatManager.initializeMediaMessagesModel(tabBase.model)
+
     SilicaGridView {
         id: gridView
         height: tabBase.height
@@ -91,9 +94,6 @@ ChatInformationTabItemBase {
                 }
             }
         }
-
-        Component.onCompleted:
-            chatManager.initializeMediaMessagesModel(tabBase.model)
 
         Connections {
             target: tabBase.model

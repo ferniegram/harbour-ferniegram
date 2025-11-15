@@ -58,6 +58,7 @@ public:
     Q_INVOKABLE void doBasicInitialization(const QVariantMap &chatInformation);
     Q_INVOKABLE void initialize(const QVariantMap &chatInformation, qlonglong fromMessageId = 0);
     Q_INVOKABLE void initializeMediaMessagesModel(MediaMessagesModel* model, qlonglong fromMessageId = 0);
+    Q_INVOKABLE void initializeMediaMessagesModels();
     bool viewAsTopics();
     inline qlonglong getChatId() { return chatId; }
     inline bool infoInitialized() { return chatId != 0; }

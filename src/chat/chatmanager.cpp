@@ -253,6 +253,12 @@ void ChatManager::initializeMediaMessagesModel(MediaMessagesModel* model, qlongl
     model->init(this->chatId, fromMessageId);
 }
 
+void ChatManager::initializeMediaMessagesModels() {
+    initializeMediaMessagesModel(photoAndVideoMessagesModel);
+    initializeMediaMessagesModel(animationMessagesModel);
+    initializeMediaMessagesModel(videoNoteMessagesModel);
+}
+
 bool ChatManager::viewAsTopics() {
     // TODO
     return false;
