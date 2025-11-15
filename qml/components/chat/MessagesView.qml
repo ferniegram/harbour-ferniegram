@@ -33,7 +33,6 @@ Column {
     readonly property bool isSelecting: selectedMessages.length > 0
     property bool containsSponsoredMessages: false
     property string messageIdToScrollTo
-    property bool iterativeInitialization: false
     property int unreadCount: chatInformation.unread_count
 
     property alias chatView: chatView
@@ -264,18 +263,7 @@ Column {
         onMessagesReceived: {
             var originalScrollPosition = chatManager.model.calculateScrollPosition()
             var scrollPosition = chatProxyModel.mapRowFromSource(originalScrollPosition, -1)
-            Debug.log("[ChatPage] Messages received, from incremental update: ", fromIncrementalUpdate, ", view has ", chatView.count, " messages, possibly need to scroll to ", scrollPosition, "("+originalScrollPosition+")")
-
-            if (!fromIncrementalUpdate && totalCount === 0) {
-                if (iterativeInitialization) {
-                    iterativeInitialization = false
-                    Debug.log("[ChatPage] actually, skipping that: No Messages in Chat.")
-                    chatView.positionViewAtEnd()
-                    chatPage.loading = false
-                    return
-                } else
-                    iterativeInitialization = true
-            }
+            Debug.log("[MessagesView] Messages received, from incremental update:", fromIncrementalUpdate, ", view has", chatView.count, "messages, possibly need to scroll to", scrollPosition, "("+originalScrollPosition+")")
 
             if (!fromIncrementalUpdate || (!chatPage.isInitialized && scrollPosition > -1))
                 chatView.scrollToIndex(scrollPosition)
