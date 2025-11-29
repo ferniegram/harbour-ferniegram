@@ -114,9 +114,9 @@ To debug complex issues you can use GDB. First, ensure that you installed not on
 
 Inside GDB, you will have to enter `handle SIGILL nostop noprint` command to ignore some false errors coming from OpenSSL. Otherwise app will fail
 
-You can then proceed with adding required breakpoints via `b ../harbour-fernschreiber/src/file_name.cpp:line_number`. A breakpoint can also be removed with `clear ../harbour-fernschreiber/src/file_name.cpp:line_number`.
+You can then proceed with adding required breakpoints via `b ../harbour-fernschreiber/src/file_name.cpp:line_number` (`break`). A breakpoint can also be removed with `clear ../harbour-fernschreiber/src/file_name.cpp:line_number`.
 
-After that you can run the program with `run`. It will pause at your specified breakpoints. In those cases you can use `step` to jump to the next part of the code, `next` to jump to next code line directly (without diving into functions) or `continue` to run the program normally (for example, if you only need to debug the second time the program reaches a specific code block).
+After that you can run the program with `run`. It will pause at your specified breakpoints. In those cases you can use `step` to jump to the next part of the code, `next` to jump to next code line directly (without diving into functions) or `continue` to run the program normally (for example, if you only need to debug the second time the program reaches a specific code block). If the program crashes, it will also be possible to read the stack trace using `bt` (`backtrace`).
 
 ## Contribute
 
