@@ -110,7 +110,7 @@ You can append ` &> fernschreiber2.log` to the command to create a text file con
 
 ### GDB
 
-To debug complex issues you can use GDB. First, ensure you are installing the debug version of the app, including the debugsource and debuginfo packages. Then launch it with `gdb /usr/bin/harbour-fernschreiber2`, optionally prepending the command with `QT_LOGGING_RULES="fernschreiber2.*=true"` if you want to read the logs.
+To debug complex issues you can use GDB. First, ensure that you installed not only the app, but also its debugsource and debuginfo packages. Then launch it with `gdb /usr/bin/harbour-fernschreiber2`, optionally prepending the command with `QT_LOGGING_RULES="fernschreiber2.*=true"` if you want to read the logs.
 
 Inside GDB, you will have to enter `handle SIGILL nostop noprint` command to ignore some false errors coming from OpenSSL. Otherwise app will fail
 
