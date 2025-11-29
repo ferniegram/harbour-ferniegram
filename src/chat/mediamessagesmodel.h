@@ -6,9 +6,7 @@
 class MediaMessagesModel : public JumpableMessagesModel {
     Q_OBJECT
 public:
-    MediaMessagesModel(TDLibWrapper *tdLibWrapper, TDLibWrapper::SearchMessagesFilter searchMessagesFilter, const QStringList &allowedMessageContentTypes, QObject *parent = nullptr);
-    MediaMessagesModel(TDLibWrapper *tdLibWrapper, TDLibWrapper::SearchMessagesFilter searchMessagesFilter, const QString &allowedMessageContentTypes, QObject *parent = nullptr)
-        : MediaMessagesModel(tdLibWrapper, searchMessagesFilter, QStringList{allowedMessageContentTypes}, parent) {}
+    MediaMessagesModel(TDLibWrapper *tdLibWrapper, TDLibWrapper::SearchMessagesFilter searchMessagesFilter, QObject *parent = nullptr);
 
     Q_INVOKABLE virtual bool clear() override;
     Q_INVOKABLE void init(qlonglong chatId, qlonglong fromMessageId = 0);

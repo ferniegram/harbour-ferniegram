@@ -27,18 +27,21 @@
 #include "mceinterface.h"
 #include "utilities.h"
 
-class ChatManager;
-
 class NotificationManager : public QObject
 {
     Q_OBJECT
+
+    Q_PROPERTY(qlonglong activeChatId MEMBER activeChatId WRITE setActiveChatId)
+
     class ChatInfo;
     class NotificationGroup;
 
 public:
 
-    NotificationManager(TDLibWrapper *tdLibWrapper, AppSettings *appSettings, MceInterface *mceInterface, ChatManager *chatManager, Utilities *utilities);
+    NotificationManager(TDLibWrapper *tdLibWrapper, AppSettings *appSettings, MceInterface *mceInterface, Utilities *utilities);
     ~NotificationManager() override;
+
+    void setActiveChatId(qlonglong chatId);
 
 public slots:
 
@@ -62,12 +65,11 @@ private:
     TDLibWrapper *tdLibWrapper;
     AppSettings *appSettings;
     MceInterface *mceInterface;
-    ChatManager *chatManager;
     Utilities *utilities;
     QMap<qlonglong,ChatInfo*> chatMap;
     QMap<int,NotificationGroup*> notificationGroups;
     QString appIconFile;
-
+    qlonglong activeChatId;
 };
 
 #endif // NOTIFICATIONMANAGER_H

@@ -33,10 +33,11 @@ Page {
     property bool loading: true
     property bool isInitialized: false
     readonly property int myUserId: tdLibWrapper.getUserInformation().id
+    property alias chatManager: chatManagerLoader.chatManager
     property var chatInformation
     property var secretChatDetails
     property alias chatPicture: chatPictureThumbnail.photoData
-    property bool isPrivateChat: chatManager.chatType === TDLibAPI.ChatTypePrivate
+    property bool isPrivateChat: chatManagerLoader.chatManager.chatType === TDLibAPI.ChatTypePrivate
     property bool isSecretChat: chatManager.chatType === TDLibAPI.ChatTypeSecret
     property bool isSecretChatReady: false
     property bool isBasicGroup: chatManager.chatType === TDLibAPI.ChatTypeBasicGroup
@@ -65,8 +66,14 @@ Page {
     property var availableReactions
     property bool timepointStatus
 
-    readonly property Item messagesView: viewAsTopics ? null : contentLoader.item
-    readonly property Item topicsListView: viewAsTopics ? contentLoader.item : null
+    readonly property MessagesView messagesView: viewAsTopics ? null : contentLoader.item
+    readonly property TopicsListView topicsListView: viewAsTopics ? contentLoader.item : null
+
+    ChatManagerLoader {
+        id: chatManagerLoader
+        parent: chatPage
+        onReady: initializeChatManager()
+    }
 
     function setMessageText(text, doSend) {
         if (messagesView)
@@ -185,33 +192,38 @@ Page {
 
     Component.onDestruction: {
         tdLibWrapper.closeChat(chatInformation.id)
-        chatManager.reset()
+        if (notificationManager.activeChatId === chatInformation.id)
+            notificationManager.activeChatId = 0
     }
 
-    onStatusChanged: {
+    function initializeChatManager() {
+        if (!chatManager) return
+
         switch(status) {
         case PageStatus.Activating:
             tdLibWrapper.openChat(chatInformation.id)
             if(!chatPage.isInitialized) {
                 if (messagesView) messagesView.prepareView()
-                chatManager.doBasicInitialization(chatInformation)
+                chatManager.beginInitialization(chatInformation)
             }
             break
         case PageStatus.Active:
             if (!chatPage.isInitialized) {
-                chatManager.initialize(chatInformation, messageIdToShow)
+                chatManager.finishInitialization(chatInformation, messageIdToShow)
                 pageStack.pushAttached(Qt.resolvedUrl("ChatInformationPage.qml"), {
-                                           chatInformation: chatInformation,
-                                           privateChatUserInformation: chatPartnerInformation,
-                                           groupInformation: chatGroupInformation,
+                                           chatManager: chatManager,
                                            chatOnlineMemberCount: chatOnlineMemberCount,
                                        })
                 if(doSendBotStartMessage)
                     tdLibWrapper.sendBotStartMessage(chatInformation.id, chatInformation.id, sendBotStartMessageParameter, "")
+                notificationManager.activeChatId = chatInformation.id
             }
             break
         }
     }
+
+    onStatusChanged:
+        initializeChatManager()
 
     Connections {
         target: tdLibWrapper
@@ -272,7 +284,8 @@ Page {
     Connections {
         target: chatManager
         onChatInformationChanged:
-            if (!!chatManager.chatInformation.id) // this is needed for closeChat request and some other stuff
+            // FIXME 2: this if statement shouldn't be needed now because chat manager is loaded along with the page now
+            //if (!!chatManager.chatInformation.id) // this is needed for closeChat request and some other stuff
                 chatPage.chatInformation = chatManager.chatInformation // FIXME
     }
 
@@ -399,6 +412,7 @@ Page {
                         // when the ChatModel indicates a change. This also avoids flickering when the page is loaded...
                         Connections {
                             target: chatManager
+                            ignoreUnknownSignals: true
                             onSmallPhotoChanged:
                                 chatPictureThumbnail.photoData = chatManager.smallPhoto
                         }

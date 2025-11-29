@@ -27,7 +27,9 @@ namespace {
     const QString CONTENT_MESSAGE_VIDEO_NOTE("messageVideoNote");
 }
 
-ChatMessagesModel::ChatMessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent) : ReadableMessagesModel(tdLibWrapper, parent), searchQuery() {}
+ChatMessagesModel::ChatMessagesModel(TDLibWrapper *tdLibWrapper, qlonglong chatId, QObject *parent) : ReadableMessagesModel(tdLibWrapper, parent), searchQuery() {
+    this->chatId = chatId;
+}
 
 bool ChatMessagesModel::clear() {
     LOG("Clearing chat model");
@@ -63,26 +65,20 @@ qlonglong ChatMessagesModel::lastMessageId() const { // FIXME: this is wrong and
 
 
 
-ChatManager::ChatManager(TDLibWrapper *tdLibWrapper, QObject *parent) :
-    QObject(parent),
-    tdLibWrapper(tdLibWrapper),
-    chatId(0),
-    pinnedMessageId(0),
-    chatMessagesModel(new ChatMessagesModel(tdLibWrapper, this)),
-    photoAndVideoMessagesModel(new MediaMessagesModel(tdLibWrapper, TDLibWrapper::SearchMessagesFilterPhotoAndVideo, QStringList{CONTENT_MESSAGE_PHOTO, CONTENT_MESSAGE_VIDEO}, this)),
-    animationMessagesModel(new MediaMessagesModel(tdLibWrapper, TDLibWrapper::SearchMessagesFilterAnimation, CONTENT_MESSAGE_ANIMATION, this)),
-    videoNoteMessagesModel(new MediaMessagesModel(tdLibWrapper, TDLibWrapper::SearchMessagesFilterVideoNote, CONTENT_MESSAGE_VIDEO_NOTE, this)),
-    topicsModel(new ForumTopicsModel(tdLibWrapper, this))
-{
-    connect(this->tdLibWrapper, &TDLibWrapper::chatReadInboxUpdated, this, &ChatManager::handleChatReadInboxUpdated);
-    connect(this->tdLibWrapper, &TDLibWrapper::chatReadOutboxUpdated, this, &ChatManager::handleChatReadOutboxUpdated);
-    connect(this->tdLibWrapper, &TDLibWrapper::chatRolesUpdated, this, &ChatManager::handleChatRolesUpdated);
-    connect(this->tdLibWrapper, &TDLibWrapper::chatPinnedMessageUpdated, this, &ChatManager::handleChatPinnedMessageUpdated);
-    connect(this->tdLibWrapper, &TDLibWrapper::chatActionUpdated, this, &ChatManager::handleChatActionUpdated);
-    connect(this->tdLibWrapper, &TDLibWrapper::userUpdated, this, &ChatManager::handleUserUpdated);
-    connect(this->tdLibWrapper, &TDLibWrapper::basicGroupUpdated, this, &ChatManager::handleBasicGroupUpdated);
-    connect(this->tdLibWrapper, &TDLibWrapper::superGroupUpdated, this, &ChatManager::handleSupergroupUpdated);
+ChatManager::ChatManager(QObject *parent)
+    : QObject(parent),
+      tdLibWrapper(nullptr),
+      chatId(0),
+      pinnedMessageId(0),
+      initializationFinishScheduled(false),
+      initializationFinishScheduledFromMessageId(0),
 
+      chatMessagesModel(nullptr),
+      photoAndVideoMessagesModel(nullptr),
+      animationMessagesModel(nullptr),
+      videoNoteMessagesModel(nullptr),
+      topicsModel(nullptr)
+{
     connect(this, &ChatManager::chatIdChanged, this, &ChatManager::smallPhotoChanged);
     connect(this, &ChatManager::chatIdChanged, this, &ChatManager::chatInformationChanged);
     connect(this, &ChatManager::chatIdChanged, this, &ChatManager::viewAsTopicsChanged);
@@ -90,13 +86,47 @@ ChatManager::ChatManager(TDLibWrapper *tdLibWrapper, QObject *parent) :
     connect(this, &ChatManager::chatIdChanged, this, &ChatManager::groupInfoChanged);
 }
 
+ChatManager::~ChatManager() {
+    LOG("Destroying myself...");
+}
+
+void ChatManager::setTDLibWrapper(QObject *obj) {
+    TDLibWrapper *wrapper = qobject_cast<TDLibWrapper*>(obj);
+    if (tdLibWrapper != wrapper) {
+        tdLibWrapper = wrapper;
+        LOG("TDLibWrapper set" << wrapper);
+        emit tdlibChanged();
+
+        if (tdLibWrapper) {
+            connect(this->tdLibWrapper, &TDLibWrapper::chatReadInboxUpdated, this, &ChatManager::handleChatReadInboxUpdated);
+            connect(this->tdLibWrapper, &TDLibWrapper::chatReadOutboxUpdated, this, &ChatManager::handleChatReadOutboxUpdated);
+            connect(this->tdLibWrapper, &TDLibWrapper::chatRolesUpdated, this, &ChatManager::handleChatRolesUpdated);
+            connect(this->tdLibWrapper, &TDLibWrapper::chatPinnedMessageUpdated, this, &ChatManager::handleChatPinnedMessageUpdated);
+            connect(this->tdLibWrapper, &TDLibWrapper::chatActionUpdated, this, &ChatManager::handleChatActionUpdated);
+            connect(this->tdLibWrapper, &TDLibWrapper::userUpdated, this, &ChatManager::handleUserUpdated);
+            connect(this->tdLibWrapper, &TDLibWrapper::basicGroupUpdated, this, &ChatManager::handleBasicGroupUpdated);
+            connect(this->tdLibWrapper, &TDLibWrapper::superGroupUpdated, this, &ChatManager::handleSupergroupUpdated);
+
+            if (chatId)
+                emit this->chatIdChanged(); // emit signals for chat, user, group info and so on
+
+            if (initializationFinishScheduled) {
+                LOG("tdLibWrapper set, running scheduled initialization finish");
+                this->finishInitialization(initializationFinishScheduledFromMessageId);
+                initializationFinishScheduled = false;
+                initializationFinishScheduledFromMessageId = 0;
+            }
+        }
+    }
+}
+
 void ChatManager::handleChatReadInboxUpdated(const QString &id) {
-    if (this->chatId == id.toLongLong())
+    if (this->chatId == id.toLongLong() && this->chatMessagesModel)
         emit this->chatMessagesModel->lastReadMessageIndexChanged();
 }
 
 void ChatManager::handleChatReadOutboxUpdated(const QString &id) {
-    if (this->chatId == id.toLongLong())
+    if (this->chatId == id.toLongLong() && this->chatMessagesModel)
         emit this->chatMessagesModel->lastReadSentMessageUpdated();
 }
 
@@ -105,22 +135,26 @@ QVariantMap ChatManager::smallPhoto() const {
 }
 
 TDLibWrapper::ChatType ChatManager::chatType() const {
-    ChatData* chatData = tdLibWrapper->getChatData(chatId);
-    if (chatData)
-        return chatData->chatType;
+    if (tdLibWrapper) {
+        ChatData* chatData = tdLibWrapper->getChatData(chatId);
+        if (chatData) {
+            LOG(chatData);
+            return chatData->chatType;
+        }
+    }
     return TDLibWrapper::ChatTypeUnknown;
 }
 
 bool ChatManager::isChannel() const {
-    return chatType() == TDLibWrapper::ChatTypeSupergroup && tdLibWrapper->getChat(chatId).value(TYPE).toMap().value(IS_CHANNEL).toBool();
+    return chatType() == TDLibWrapper::ChatTypeSupergroup && chatInformation().value(TYPE).toMap().value(IS_CHANNEL).toBool();
 }
 
 qlonglong ChatManager::userId() const {
-    return tdLibWrapper->getChat(chatId).value(TYPE).toMap().value(USER_ID).toLongLong();
+    return chatInformation().value(TYPE).toMap().value(USER_ID).toLongLong();
 }
 
 qlonglong ChatManager::groupId() const {
-    return tdLibWrapper->getChat(chatId).value(TYPE).toMap().value(chatType() == TDLibWrapper::ChatTypeSupergroup ? SUPERGROUP_ID : BASIC_GROUP_ID).toLongLong();
+    return chatInformation().value(TYPE).toMap().value(chatType() == TDLibWrapper::ChatTypeSupergroup ? SUPERGROUP_ID : BASIC_GROUP_ID).toLongLong();
 }
 
 QVariant ChatManager::userInfo() const {
@@ -195,17 +229,25 @@ void ChatManager::handleChatActionUpdated(qlonglong chatId, const QVariantMap &s
 
 
 void ChatManager::reset(bool resetChatId) {
-    LOG("Resetting chat manager resetChatId" << resetChatId);
-    this->chatMessagesModel->reset();
-    this->photoAndVideoMessagesModel->reset();
-    this->animationMessagesModel->reset();
-    this->videoNoteMessagesModel->reset();
-    this->topicsModel->reset();
+    LOG("Resetting chat manager resetChatId:" << resetChatId);
+    if (this->chatMessagesModel)
+        this->chatMessagesModel->reset();
+    if (this->photoAndVideoMessagesModel)
+        this->photoAndVideoMessagesModel->reset();
+    if (this->animationMessagesModel)
+        this->animationMessagesModel->reset();
+    if (this->videoNoteMessagesModel)
+        this->videoNoteMessagesModel->reset();
+    if (this->topicsModel)
+        this->topicsModel->reset();
 
     if (resetChatId) {
         chatId = 0;
         emit chatIdChanged();
     }
+
+    initializationFinishScheduled = false;
+    initializationFinishScheduledFromMessageId = 0;
 
     if (!chatActionsByUsers.isEmpty()) {
         chatActionsByUsers.clear();
@@ -215,12 +257,21 @@ void ChatManager::reset(bool resetChatId) {
         chatActionsByChats.clear();
         emit chatActionsChanged();
     }
-    LOG("Finished resetting chat manager" << resetChatId);
+    LOG("Finished resetting chat manager resetChatId:" << resetChatId);
 }
 
-void ChatManager::doBasicInitialization(const QVariantMap &chatInformation) {
+void ChatManager::initializeMessageModels() {
+    LOG("Initializing message models");
+    chatMessagesModel = new ChatMessagesModel(tdLibWrapper, this->chatId, this);
+    photoAndVideoMessagesModel = new MediaMessagesModel(tdLibWrapper, TDLibWrapper::SearchMessagesFilterPhotoAndVideo, this);
+    animationMessagesModel = new MediaMessagesModel(tdLibWrapper, TDLibWrapper::SearchMessagesFilterAnimation, this);
+    videoNoteMessagesModel = new MediaMessagesModel(tdLibWrapper, TDLibWrapper::SearchMessagesFilterVideoNote, this);
+    emit messageModelsChanged();
+}
+
+void ChatManager::beginInitialization(const QVariantMap &chatInformation) {
     const qlonglong chatId = chatInformation.value(ID).toLongLong();
-    LOG("Doing basic chat manager initialization..." << chatId);
+    LOG("Beginning initialization..." << chatId);
 
     if (this->chatId != chatId) {
         this->chatId = chatId;
@@ -228,23 +279,36 @@ void ChatManager::doBasicInitialization(const QVariantMap &chatInformation) {
     }
 }
 
-void ChatManager::initialize(const QVariantMap &chatInformation, qlonglong fromMessageId) {
-    doBasicInitialization(chatInformation);
-    LOG("Continuing with full initialization" << chatId << "from message id" << fromMessageId);
+void ChatManager::finishInitialization(qlonglong fromMessageId) {
+    //doBasicInitialization(chatInformation);
+    if (!tdLibWrapper) {
+        LOG("tdLibWrapper not yet set, not finishing initialization and scheduling it instead");
+        this->initializationFinishScheduled = true;
+        this->initializationFinishScheduledFromMessageId = fromMessageId;
+        return;
+    }
+
+    LOG("Finishing initialization" << chatId << "from message id" << fromMessageId);
 
     reset(false);
     LOG("Reset for initialization done" << chatId);
 
     if (viewAsTopics()) {
         LOG("Initializing a forum chat");
-        topicsModel->init(chatId);
+        this->topicsModel = new ForumTopicsModel(tdLibWrapper, this);
+        this->topicsModel->init(chatId);
     } else {
         LOG("Initializing a regular chat");
-        chatMessagesModel->chatId = chatId;
-        emit chatMessagesModel->chatIdChanged();
+        initializeMessageModels();
 
         tdLibWrapper->getChatHistory(chatId, fromMessageId != 0 ? fromMessageId : this->chatInformation().value(LAST_READ_INBOX_MESSAGE_ID).toLongLong());
     }
+}
+
+void ChatManager::initialize(const QVariantMap &chatInformation, qlonglong fromMessageId) {
+    LOG("Doing full initialization at once");
+    beginInitialization(chatInformation);
+    finishInitialization(fromMessageId);
 }
 
 

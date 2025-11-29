@@ -105,6 +105,7 @@ DISTFILES += qml/harbour-fernschreiber2.qml \
     qml/components/TextBadge.qml \
     qml/components/TopicsListView.qml \
     qml/components/VoiceNoteOverlay.qml \
+    qml/components/chat/ChatManagerLoader.qml \
     qml/components/chatInformationPage/ChatInformationPageContent.qml \
     qml/components/chatInformationPage/ChatInformationProfilePicture.qml \
     qml/components/chatInformationPage/ChatInformationTabItemBase.qml \

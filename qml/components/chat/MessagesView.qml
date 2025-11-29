@@ -260,6 +260,7 @@ Column {
 
     Connections {
         target: chatManager.model
+        ignoreUnknownSignals: true
         onMessagesReceived: {
             var originalScrollPosition = chatManager.model.calculateScrollPosition()
             var scrollPosition = chatProxyModel.mapRowFromSource(originalScrollPosition, -1)
@@ -310,6 +311,7 @@ Column {
 
     Connections {
         target: chatManager
+        ignoreUnknownSignals: true
         onPinnedMessageChanged: {
             if (chatManager.pinnedMessageId !== 0) {
                 Debug.log("[ChatPage] Loading pinned message ", chatManager.pinnedMessageId)

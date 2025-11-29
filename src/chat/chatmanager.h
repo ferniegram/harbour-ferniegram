@@ -8,7 +8,7 @@
 class ChatMessagesModel : public ReadableMessagesModel {
     Q_OBJECT
 public:
-    ChatMessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent = nullptr);
+    ChatMessagesModel(TDLibWrapper *tdLibWrapper, qlonglong chatId, QObject *parent = nullptr);
 
     Q_INVOKABLE virtual bool clear() override;
     Q_INVOKABLE void setSearchQuery(const QString newSearchQuery);
@@ -29,6 +29,7 @@ private:
 
 class ChatManager : public QObject {
     Q_OBJECT
+    Q_PROPERTY(QObject* tdlib MEMBER tdLibWrapper WRITE setTDLibWrapper NOTIFY tdlibChanged)
     Q_PROPERTY(qlonglong chatId MEMBER chatId NOTIFY chatIdChanged)
     Q_PROPERTY(bool infoInitialized READ infoInitialized NOTIFY chatIdChanged)
     Q_PROPERTY(QVariantMap chatInformation READ chatInformation NOTIFY chatInformationChanged)
@@ -39,30 +40,38 @@ class ChatManager : public QObject {
     Q_PROPERTY(QVariant userInfo READ userInfo NOTIFY userInfoChanged)
     Q_PROPERTY(QVariant groupInfo READ groupInfo NOTIFY groupInfoChanged)
 
-    Q_PROPERTY(ChatMessagesModel* model MEMBER chatMessagesModel CONSTANT)
+    Q_PROPERTY(ChatMessagesModel* model MEMBER chatMessagesModel NOTIFY messageModelsChanged)
 
-    Q_PROPERTY(MediaMessagesModel* photoAndVideoMessagesModel MEMBER photoAndVideoMessagesModel CONSTANT)
-    Q_PROPERTY(MediaMessagesModel* animationMessagesModel MEMBER animationMessagesModel CONSTANT)
-    Q_PROPERTY(MediaMessagesModel* videoNoteMessagesModel MEMBER videoNoteMessagesModel CONSTANT)
+    Q_PROPERTY(MediaMessagesModel* photoAndVideoMessagesModel MEMBER photoAndVideoMessagesModel NOTIFY messageModelsChanged)
+    Q_PROPERTY(MediaMessagesModel* animationMessagesModel MEMBER animationMessagesModel NOTIFY messageModelsChanged)
+    Q_PROPERTY(MediaMessagesModel* videoNoteMessagesModel MEMBER videoNoteMessagesModel NOTIFY messageModelsChanged)
 
-    Q_PROPERTY(ForumTopicsModel* topicsModel MEMBER topicsModel CONSTANT)
+    Q_PROPERTY(ForumTopicsModel* topicsModel MEMBER topicsModel NOTIFY topicsModelChanged)
 
     Q_PROPERTY(qlonglong pinnedMessageId MEMBER pinnedMessageId NOTIFY pinnedMessageChanged)
     Q_PROPERTY(QVariantMap chatActionsByUsers MEMBER chatActionsByUsers NOTIFY chatActionsChanged)
     Q_PROPERTY(QVariantMap chatActionsByChats MEMBER chatActionsByChats NOTIFY chatActionsChanged)
 
 public:
-    ChatManager(TDLibWrapper *tdLibWrapper, QObject *parent = nullptr);
+    ChatManager(QObject *parent = nullptr);
+    ~ChatManager();
+
+    void setTDLibWrapper(QObject* obj);
 
     Q_INVOKABLE void reset(bool resetChatId = true);
-    Q_INVOKABLE void doBasicInitialization(const QVariantMap &chatInformation);
+    Q_INVOKABLE void beginInitialization(const QVariantMap &chatInformation);
+    Q_INVOKABLE void finishInitialization(qlonglong fromMessageId = 0);
     Q_INVOKABLE void initialize(const QVariantMap &chatInformation, qlonglong fromMessageId = 0);
     Q_INVOKABLE void initializeMediaMessagesModel(MediaMessagesModel* model, qlonglong fromMessageId = 0);
     Q_INVOKABLE void initializeMediaMessagesModels();
     bool viewAsTopics();
     inline qlonglong getChatId() { return chatId; }
     inline bool infoInitialized() { return chatId != 0; }
-    inline QVariantMap chatInformation() const { return tdLibWrapper->getChat(chatId); }
+    inline QVariantMap chatInformation() const {
+        if (tdLibWrapper)
+            return tdLibWrapper->getChat(chatId);
+        return QVariantMap();
+    }
 
     QVariantMap smallPhoto() const;
     TDLibWrapper::ChatType chatType() const;
@@ -71,6 +80,9 @@ public:
     QVariant groupInfo() const;
 
 signals:
+    void tdlibChanged();
+    void messageModelsChanged();
+    void topicsModelChanged();
     void chatIdChanged();
     void smallPhotoChanged();
     void pinnedMessageChanged();
@@ -94,11 +106,15 @@ private:
     qlonglong userId() const;
     qlonglong groupId() const;
 
+    void initializeMessageModels();
+
 private:
     TDLibWrapper *tdLibWrapper;
 
     qlonglong chatId;
     qlonglong pinnedMessageId;
+    bool initializationFinishScheduled;
+    qlonglong initializationFinishScheduledFromMessageId;
 
     ChatMessagesModel *chatMessagesModel;
     MediaMessagesModel* photoAndVideoMessagesModel;

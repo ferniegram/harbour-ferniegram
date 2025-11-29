@@ -20,6 +20,7 @@ import QtQuick 2.6
 import Sailfish.Silica 1.0
 import "../components"
 import "../components/chatInformationPage"
+import "../components/chat"
 import "../js/twemoji.js" as Emoji
 import "../js/functions.js" as Functions
 import "../js/debug.js" as Debug
@@ -59,11 +60,12 @@ Page {
                                     )
     readonly property bool isGroupCreator: isGroup && groupInformation.status["@type"] === "chatMemberStatusCreator"
 
-    property var chatInformation:({})
-    property var privateChatUserInformation:({})
+    property alias chatManager: chatManagerLoader.chatManager
+    property var chatInformation: chatManager.chatInformation
+    property var privateChatUserInformation: chatManager.userInfo
     property var chatPartnerFullInformation:({})
     property var chatPartnerProfilePhotos:([])
-    property var groupInformation: ({})
+    property var groupInformation: chatManager.groupInfo
     property var groupFullInformation: ({})
 
     property bool fullInfoReady: false
@@ -73,6 +75,11 @@ Page {
                                    ? "@"+groupInformation.usernames.editable_username : "")
 
 //    property alias membersList: membersList
+
+    ChatManagerLoader {
+        id: chatManagerLoader
+        parent: chatInformationPage
+    }
 
     onStatusChanged: {
         switch(status) {

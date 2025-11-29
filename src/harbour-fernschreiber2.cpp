@@ -135,6 +135,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<BoolFilterModel>(uri, 1, 0, "BoolFilterModel");
     qmlRegisterType<InvertedProxyModel>(uri, 1, 0, "InvertedProxyModel");
     qmlRegisterType<ChatPermissionFilterModel>(uri, 1, 0, "ChatPermissionFilterModel");
+    qmlRegisterType<ChatManager>(uri, 1, 0, "ChatManager");
     qmlRegisterSingletonType<DebugLogJS>(uri, 1, 0, "DebugLog", DebugLogJS::createSingleton);
 
     AppSettings *appSettings = new AppSettings(view.data());
@@ -165,10 +166,7 @@ int main(int argc, char *argv[])
     ChatListModel* archiveChatListModel = chatFoldersModel.getArchiveChatListModel();
     context->setContextProperty("archiveChatListModel", archiveChatListModel);
 
-    ChatManager chatManager(tdLibWrapper);
-    context->setContextProperty("chatManager", &chatManager);
-
-    NotificationManager notificationManager(tdLibWrapper, appSettings, mceInterface, &chatManager, utilities);
+    NotificationManager notificationManager(tdLibWrapper, appSettings, mceInterface, utilities);
     context->setContextProperty("notificationManager", &notificationManager);
 
     ProcessLauncher processLauncher;

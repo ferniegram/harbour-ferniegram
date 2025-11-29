@@ -11,10 +11,9 @@ namespace {
     const QString _TYPE("@type");
 }
 
-MediaMessagesModel::MediaMessagesModel(TDLibWrapper *tdLibWrapper, TDLibWrapper::SearchMessagesFilter searchMessagesFilter, const QStringList &allowedMessageContentTypes, QObject *parent)
+MediaMessagesModel::MediaMessagesModel(TDLibWrapper *tdLibWrapper, TDLibWrapper::SearchMessagesFilter searchMessagesFilter, QObject *parent)
     : JumpableMessagesModel(tdLibWrapper, parent),
-      searchMessagesFilter(searchMessagesFilter),
-      allowedMessageContentTypes(allowedMessageContentTypes)
+      searchMessagesFilter(searchMessagesFilter)
 {
     connect(this->tdLibWrapper, &TDLibWrapper::chatMessageCountReceived, this, &MediaMessagesModel::handleChatMessageCountReceived);
     connect(this->tdLibWrapper, &TDLibWrapper::foundChatMessagesReceived, this, &MediaMessagesModel::handleMessagesReceived);

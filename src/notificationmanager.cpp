@@ -18,7 +18,6 @@
 */
 
 #include "notificationmanager.h"
-#include "chat/chatmanager.h"
 #include <sailfishapp.h>
 #include <QListIterator>
 #include <QUrl>
@@ -124,13 +123,13 @@ NotificationManager::NotificationGroup::~NotificationGroup()
     delete nemoNotification;
 }
 
-NotificationManager::NotificationManager(TDLibWrapper *tdLibWrapper, AppSettings *appSettings, MceInterface *mceInterface, ChatManager *chatManager, Utilities *utilities) :
+NotificationManager::NotificationManager(TDLibWrapper *tdLibWrapper, AppSettings *appSettings, MceInterface *mceInterface, Utilities *utilities) :
     tdLibWrapper(tdLibWrapper),
     appSettings(appSettings),
     mceInterface(mceInterface),
-    chatManager(chatManager),
     utilities(utilities),
-    appIconFile(SailfishApp::pathTo("images/fernschreiber2-notification.png").toLocalFile())
+    appIconFile(SailfishApp::pathTo("images/fernschreiber2-notification.png").toLocalFile()),
+    activeChatId(0)
 {
     LOG("Initializing...");
 
@@ -169,6 +168,11 @@ NotificationManager::~NotificationManager()
     LOG("Destroying myself...");
     qDeleteAll(chatMap.values());
     qDeleteAll(notificationGroups.values());
+}
+
+void NotificationManager::setActiveChatId(qlonglong chatId) {
+    LOG("Set active chat ID to" << chatId);
+    this->activeChatId = chatId;
 }
 
 void NotificationManager::handleUpdateActiveNotifications(const QVariantList &notificationGroups)
@@ -370,8 +374,8 @@ void NotificationManager::publishNotification(const NotificationGroup *notificat
     nemoNotification->setHintValue(HINT_VIBRA, needFeedback);
     nemoNotification->setHintValue(HINT_IMAGE_PATH, QString());
 
-    // Don't show popup for chatManager currently open chat
-    if (!needFeedback || (chatManager->getChatId() == notificationGroup->chatId &&
+    // Don't show popup for currently open chat
+    if (!needFeedback || (activeChatId == notificationGroup->chatId &&
             qGuiApp->applicationState() == Qt::ApplicationActive)) {
         nemoNotification->setHintValue(HINT_SUPPRESS_SOUND, true);
         nemoNotification->setHintValue(HINT_DISPLAY_ON, false);
