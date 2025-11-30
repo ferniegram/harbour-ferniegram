@@ -178,8 +178,14 @@ void TgsIOHandler::render(int frameIndex)
         // The first frame only gets rendered once
         currentImage = firstImage;
     } else {
-        const int width = (int)(scaledSize.width() || size.width());
-        const int height = (int)(scaledSize.height() || size.height());
+        int width, height;
+        if (scaledSize.isValid()) {
+            width = scaledSize.width();
+            height = scaledSize.height();
+        } else {
+            width = size.width();
+            height = size.height();
+        }
         currentImage = QImage(width, height, QImage::Format_ARGB32_Premultiplied);
         currentRender = animation->render(currentFrame,
             rlottie::Surface((uint32_t*)currentImage.bits(),
