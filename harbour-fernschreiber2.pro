@@ -43,6 +43,7 @@ SOURCES += src/harbour-fernschreiber2.cpp \
     src/chat/messagesmodel.cpp \
     src/chat/readablemessagesmodel.cpp \
     src/invertedproxymodel.cpp \
+    src/movieitem.cpp \
     src/suggestedactionsmodel.cpp \
     src/utilities.cpp \
     src/knownusersmodel.cpp \
@@ -296,6 +297,7 @@ HEADERS += \
     src/chat/messagesmodel.h \
     src/chat/readablemessagesmodel.h \
     src/invertedproxymodel.h \
+    src/movieitem.h \
     src/suggestedactionsmodel.h \
     src/utilities.h \
     src/knownusersmodel.h \

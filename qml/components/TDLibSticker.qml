@@ -103,11 +103,16 @@ Item {
 
         Component {
             id: animatedComponent
-            AnimatedImage {
+            MovieItem {
                 id: animatedSticker
                 anchors.fill: parent
                 source: file.path
-                asynchronous: true
+                sourceSize {
+                    width: appSettings.downscaleAnimatedStickers ? Theme.itemSizeSmall : width
+                    height: appSettings.downscaleAnimatedStickers ? (Theme.itemSizeSmall * aspectRatio) : height
+                }
+
+                //asynchronous: true
                 paused: !Qt.application.active
                 cache: false
                 layer.enabled: sticker.highlighted

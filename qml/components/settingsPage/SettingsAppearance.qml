@@ -99,17 +99,31 @@ AccordionItem {
                 }
                 visible: !appSettings.showStickersAsEmojis
                 opacity: visible ? 1 : 0
-                Behavior on opacity { FadeAnimation  { } }
+                Behavior on opacity { FadeAnimation {} }
             }
 
             TextSwitch {
                 width: parent.columnWidth
                 checked: appSettings.videoStickers
                 visible: !appSettings.showStickersAsEmojis
+                opacity: visible ? 1 : 0
+                Behavior on opacity { FadeAnimation {} }
                 text: qsTr("Video stickers")
                 //description: qsTr("Animated stickers option doesn't affect this")
                 automaticCheck: false
                 onClicked: appSettings.videoStickers = !checked
+            }
+
+            TextSwitch {
+                width: parent.columnWidth
+                checked: appSettings.downscaleAnimatedStickers
+                visible: !appSettings.showStickersAsEmojis && appSettings.animateStickers
+                opacity: visible ? 1 : 0
+                Behavior on opacity { FadeAnimation {} }
+                text: qsTr("Downscale animated stickers")
+                description: qsTr("May improve performance on low-end devices")
+                automaticCheck: false
+                onClicked: appSettings.downscaleAnimatedStickers = !checked
             }
         }
     }
