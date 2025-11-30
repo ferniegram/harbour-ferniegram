@@ -36,6 +36,7 @@ SOURCES += src/harbour-fernschreiber2.cpp \
     src/dbusinterface.cpp \
     src/folderchatlistmodel.cpp \
     src/invertedproxymodel.cpp \
+    src/movieitem.cpp \
     src/suggestedactionsmodel.cpp \
     src/utilities.cpp \
     src/knownusersmodel.cpp \
@@ -275,6 +276,7 @@ HEADERS += \
     src/debuglogjs.h \
     src/folderchatlistmodel.h \
     src/invertedproxymodel.h \
+    src/movieitem.h \
     src/suggestedactionsmodel.h \
     src/utilities.h \
     src/knownusersmodel.h \

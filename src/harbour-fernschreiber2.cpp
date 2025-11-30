@@ -57,6 +57,7 @@
 #include "contactsmodel.h"
 #include "chatfoldersmodel.h"
 #include "invertedproxymodel.h"
+#include "movieitem.h"
 
 // The default filter can be overridden by QT_LOGGING_RULES envinronment variable, e.g.
 // QT_LOGGING_RULES="fernschreiber2.*=true" harbour-fernschreiber2
@@ -134,6 +135,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<BoolFilterModel>(uri, 1, 0, "BoolFilterModel");
     qmlRegisterType<InvertedProxyModel>(uri, 1, 0, "InvertedProxyModel");
     qmlRegisterType<ChatPermissionFilterModel>(uri, 1, 0, "ChatPermissionFilterModel");
+    qmlRegisterType<MovieItem>(uri, 1, 0, "MovieItem");
     qmlRegisterSingletonType<DebugLogJS>(uri, 1, 0, "DebugLog", DebugLogJS::createSingleton);
 
     AppSettings *appSettings = new AppSettings(view.data());
