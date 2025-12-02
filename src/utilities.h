@@ -58,7 +58,7 @@ public:
     };
     Q_ENUM(MessageText)
 
-    static QString getUserName(const QVariantMap &userInformation);
+    Q_INVOKABLE static QString getUserName(const QVariantMap &userInformation);
     static QString formatDuration(int seconds);
     
     Q_INVOKABLE static QString fixReservedHtmlCharacters(const QString &text);
