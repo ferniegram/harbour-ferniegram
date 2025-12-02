@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
 
     migrateSettings();
 
-    const char *uri = "WerkWolf.Fernschreiber";
+    const char *uri = "App.Logic";
     qmlRegisterType<TDLibFile>(uri, 1, 0, "TDLibFile");
     qmlRegisterType<TextFilterModel>(uri, 1, 0, "TextFilterModel");
     qmlRegisterType<BoolFilterModel>(uri, 1, 0, "BoolFilterModel");
