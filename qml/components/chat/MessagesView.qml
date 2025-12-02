@@ -255,7 +255,7 @@ Column {
     Binding {
         target: chatPage
         property: 'loading'
-        value: chatManager.model.loading
+        value: !chatManager.model || chatManager.model.loading
     }
 
     Connections {
