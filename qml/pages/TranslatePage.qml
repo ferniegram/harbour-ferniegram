@@ -66,9 +66,7 @@ Page {
 
                 property string searchQuery: headerItem ? headerItem.query : ''
 
-                // When searchins, sometimes search field looses focus.
-                // To workaround this we ensure that currentIndex of the list view is always -1 (highlighting is cleared)
-                onCurrentIndexChanged: currentIndex = -1
+                currentIndex: -1 // don't steal focus from search field
 
                 model: SortFilterProxyModel {
                     sourceModel: ListModel {
