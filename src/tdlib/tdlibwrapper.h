@@ -215,8 +215,8 @@ public:
     Q_INVOKABLE void loadChats(bool archive = false);
     Q_INVOKABLE void loadChatsForFolder(int folderId);
     Q_INVOKABLE void downloadFile(int fileId);
-    Q_INVOKABLE void openChat(const QString &chatId);
-    Q_INVOKABLE void closeChat(const QString &chatId);
+    Q_INVOKABLE void openChat(qlonglong chatId);
+    Q_INVOKABLE void closeChat(qlonglong chatId);
     Q_INVOKABLE void joinChat(const QString &chatId);
     Q_INVOKABLE void leaveChat(const QString &chatId);
     Q_INVOKABLE void deleteChat(qlonglong chatId);

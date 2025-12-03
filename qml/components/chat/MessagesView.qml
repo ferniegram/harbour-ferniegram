@@ -34,6 +34,7 @@ Column {
     property bool containsSponsoredMessages: false
     property string messageIdToScrollTo
     property int unreadCount: chatInformation.unread_count
+    property bool isPrepared
 
     property alias chatView: chatView
     property alias newMessageColumn: newMessageColumn
@@ -157,7 +158,10 @@ Column {
     }
 
     function prepareView() {
-        if(chatInformation.draft_message) {
+        if (isPrepared) return
+        isPrepared = true
+
+        if (chatInformation.draft_message) {
             if(chatInformation.draft_message && chatInformation.draft_message.input_message_text) {
                 newMessageTextField.text = chatInformation.draft_message.input_message_text.text.text
                 if(chatInformation.draft_message.reply_to_message_id) {

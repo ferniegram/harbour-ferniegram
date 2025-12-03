@@ -30,7 +30,7 @@ private:
 class ChatManager : public QObject {
     Q_OBJECT
     Q_PROPERTY(QObject* tdlib MEMBER tdLibWrapper WRITE setTDLibWrapper NOTIFY tdlibChanged)
-    Q_PROPERTY(qlonglong chatId MEMBER chatId NOTIFY chatIdChanged)
+    Q_PROPERTY(qlonglong chatId MEMBER chatId WRITE setChatId NOTIFY chatIdChanged)
     Q_PROPERTY(bool infoInitialized READ infoInitialized NOTIFY chatIdChanged)
     Q_PROPERTY(QVariantMap chatInformation READ chatInformation NOTIFY chatInformationChanged)
     Q_PROPERTY(bool viewAsTopics READ viewAsTopics NOTIFY viewAsTopicsChanged)
@@ -61,9 +61,8 @@ public:
     void setTDLibWrapper(QObject* obj);
 
     Q_INVOKABLE void reset(bool resetChatId = true);
-    Q_INVOKABLE void beginInitialization(const QVariantMap &chatInformation);
-    Q_INVOKABLE void finishInitialization(qlonglong fromMessageId = 0);
-    Q_INVOKABLE void initialize(const QVariantMap &chatInformation, qlonglong fromMessageId = 0);
+    void setChatId(qlonglong chatId);
+    Q_INVOKABLE void initializeMainModels(qlonglong fromMessageId = 0);
     Q_INVOKABLE void initializeMediaMessagesModel(MediaMessagesModel* model, qlonglong fromMessageId = 0);
     Q_INVOKABLE void initializeMediaMessagesModels();
     bool viewAsTopics();
@@ -113,6 +112,7 @@ private:
     qlonglong userId() const;
     qlonglong groupId() const;
 
+    void finishInitialization();
     void initializeMessageModels();
 
 private:
@@ -121,7 +121,8 @@ private:
     qlonglong chatId;
     qlonglong pinnedMessageId;
     bool initializationFinishScheduled;
-    qlonglong initializationFinishScheduledFromMessageId;
+    bool mainModelsInitializationScheduled;
+    qlonglong mainModelsInitializationScheduledFromMessageId;
 
     ChatMessagesModel *chatMessagesModel;
     MediaMessagesModel* photoAndVideoMessagesModel;

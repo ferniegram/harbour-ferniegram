@@ -72,6 +72,7 @@ Page {
     ChatManagerLoader {
         id: chatManagerLoader
         parent: chatPage
+        chatId: chatInformation.id
         onReady: initializeChatManager()
     }
 
@@ -197,28 +198,21 @@ Page {
     }
 
     function initializeChatManager() {
-        if (!chatManager) return
+        if (!chatManager || isInitialized) return
 
-        switch(status) {
-        case PageStatus.Activating:
-            tdLibWrapper.openChat(chatInformation.id)
-            if(!chatPage.isInitialized) {
-                if (messagesView) messagesView.prepareView()
-                chatManager.beginInitialization(chatInformation)
-            }
-            break
-        case PageStatus.Active:
-            if (!chatPage.isInitialized) {
-                chatManager.finishInitialization(chatInformation, messageIdToShow)
-                pageStack.pushAttached(Qt.resolvedUrl("ChatInformationPage.qml"), {
-                                           chatManager: chatManager,
-                                           chatOnlineMemberCount: chatOnlineMemberCount,
-                                       })
-                if(doSendBotStartMessage)
-                    tdLibWrapper.sendBotStartMessage(chatInformation.id, chatInformation.id, sendBotStartMessageParameter, "")
-                notificationManager.activeChatId = chatInformation.id
-            }
-            break
+        if (status == PageStatus.Activating || status == PageStatus.Active) {
+            if (messagesView) messagesView.prepareView()
+        }
+
+        if (status == PageStatus.Active) {
+            chatManager.initializeMainModels(chatInformation, messageIdToShow)
+            pageStack.pushAttached(Qt.resolvedUrl("ChatInformationPage.qml"), {
+                                       chatManager: chatManager,
+                                       chatOnlineMemberCount: chatOnlineMemberCount,
+                                   })
+            if(doSendBotStartMessage)
+                tdLibWrapper.sendBotStartMessage(chatInformation.id, chatInformation.id, sendBotStartMessageParameter, "")
+            notificationManager.activeChatId = chatInformation.id
         }
     }
 

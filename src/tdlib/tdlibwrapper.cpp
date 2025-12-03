@@ -414,12 +414,12 @@ void TDLibWrapper::downloadFile(int fileId) {
     });
 }
 
-void TDLibWrapper::openChat(const QString &chatId) {
+void TDLibWrapper::openChat(qlonglong chatId) {
     LOG("Opening chat " << chatId);
     this->sendRequest(QVariantMap{{_TYPE, "openChat"}, {CHAT_ID, chatId}});
 }
 
-void TDLibWrapper::closeChat(const QString &chatId) {
+void TDLibWrapper::closeChat(qlonglong chatId) {
     LOG("Closing chat " << chatId);
     this->sendRequest(QVariantMap{{_TYPE, "closeChat"}, {CHAT_ID, chatId}});
 }

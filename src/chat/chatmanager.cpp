@@ -71,7 +71,8 @@ ChatManager::ChatManager(QObject *parent)
       chatId(0),
       pinnedMessageId(0),
       initializationFinishScheduled(false),
-      initializationFinishScheduledFromMessageId(0),
+      mainModelsInitializationScheduled(false),
+      mainModelsInitializationScheduledFromMessageId(0),
 
       chatMessagesModel(nullptr),
       photoAndVideoMessagesModel(nullptr),
@@ -112,9 +113,15 @@ void ChatManager::setTDLibWrapper(QObject *obj) {
 
             if (initializationFinishScheduled) {
                 LOG("tdLibWrapper set, running scheduled initialization finish");
-                this->finishInitialization(initializationFinishScheduledFromMessageId);
+                finishInitialization();
                 initializationFinishScheduled = false;
-                initializationFinishScheduledFromMessageId = 0;
+            }
+
+            if (mainModelsInitializationScheduled) {
+                LOG("tdLibWrapper set, running scheduled main models initialization");
+                this->initializeMainModels(mainModelsInitializationScheduledFromMessageId);
+                mainModelsInitializationScheduled = false;
+                mainModelsInitializationScheduledFromMessageId = 0;
             }
         }
     }
@@ -257,7 +264,8 @@ void ChatManager::reset(bool resetChatId) {
     }
 
     initializationFinishScheduled = false;
-    initializationFinishScheduledFromMessageId = 0;
+    mainModelsInitializationScheduled = false;
+    mainModelsInitializationScheduledFromMessageId = 0;
 
     if (!chatActionsByUsers.isEmpty()) {
         chatActionsByUsers.clear();
@@ -279,31 +287,44 @@ void ChatManager::initializeMessageModels() {
     emit messageModelsChanged();
 }
 
-void ChatManager::beginInitialization(const QVariantMap &chatInformation) {
-    const qlonglong chatId = chatInformation.value(ID).toLongLong();
-    LOG("Beginning initialization..." << chatId);
-
-    if (this->chatId != chatId) {
-        this->chatId = chatId;
-        emit chatIdChanged();
-        if (!pendingJoinRequests().isEmpty())
-            emit pendingJoinRequestsChanged();
-    }
-}
-
-void ChatManager::finishInitialization(qlonglong fromMessageId) {
-    //doBasicInitialization(chatInformation);
-    if (!tdLibWrapper) {
-        LOG("tdLibWrapper not yet set, not finishing initialization and scheduling it instead");
-        this->initializationFinishScheduled = true;
-        this->initializationFinishScheduledFromMessageId = fromMessageId;
+void ChatManager::setChatId(qlonglong chatId) {
+    if (this->chatId == chatId) {
+        LOG("Chat ID" << chatId << "already set");
         return;
     }
 
-    LOG("Finishing initialization" << chatId << "from message id" << fromMessageId);
+    LOG("Setting chat ID to" << chatId);
+
+    this->chatId = chatId;
+    emit chatIdChanged();
+
+    if (tdLibWrapper)
+        finishInitialization();
+    else {
+        LOG("tdLibWrapper not yet set, not finishing initialization and scheduling instead");
+        this->initializationFinishScheduled = true;
+    }
+}
+
+void ChatManager::finishInitialization() {
+    tdLibWrapper->openChat(chatId);
+    if (!pendingJoinRequests().isEmpty())
+        emit pendingJoinRequestsChanged();
+}
+
+void ChatManager::initializeMainModels(qlonglong fromMessageId) {
+    //doBasicInitialization(chatInformation);
+    if (!tdLibWrapper) {
+        LOG("tdLibWrapper not yet set, not initializing main models and scheduling instead");
+        this->mainModelsInitializationScheduled = true;
+        this->mainModelsInitializationScheduledFromMessageId = fromMessageId;
+        return;
+    }
+
+    LOG("Initializing main models" << chatId << "from message id" << fromMessageId);
 
     reset(false);
-    LOG("Reset for initialization done" << chatId);
+    LOG("Reset for initializing main models done" << chatId);
 
     if (viewAsTopics()) {
         LOG("Initializing a forum chat");
@@ -315,12 +336,6 @@ void ChatManager::finishInitialization(qlonglong fromMessageId) {
 
         tdLibWrapper->getChatHistory(chatId, fromMessageId != 0 ? fromMessageId : this->chatInformation().value(LAST_READ_INBOX_MESSAGE_ID).toLongLong());
     }
-}
-
-void ChatManager::initialize(const QVariantMap &chatInformation, qlonglong fromMessageId) {
-    LOG("Doing full initialization at once");
-    beginInitialization(chatInformation);
-    finishInitialization(fromMessageId);
 }
 
 

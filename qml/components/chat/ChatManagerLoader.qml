@@ -5,6 +5,7 @@ QtObject {
     id: root
 
     property var chatManager
+    property var chatId
     property bool doDestroy
     property var parent
     property bool doInit: true
@@ -12,6 +13,7 @@ QtObject {
     property Component chatManagerComponent: Component {
         ChatManager {
             tdlib: tdLibWrapper
+            chatId: root.chatId
         }
     }
 
