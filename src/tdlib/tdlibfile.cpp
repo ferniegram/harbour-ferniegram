@@ -52,6 +52,7 @@ namespace {
     s(TdLib,tdlib) \
     s(FileInfo,fileInfo) \
     s(AutoLoad,autoLoad) \
+    s(ClearWithInvalidFileInfo,clearWithInvalidFileInfo) \
     s(Id,id) \
     s(ExpectedSize,expectedSize) \
     s(Size,size) \
@@ -107,6 +108,7 @@ void TDLibFile::init()
     queuedSignals = 0;
     firstQueuedSignal = SignalCount;
     autoLoad = false;
+    clearWithInvalidFileInfo = false;
     downloadHoldOffTimer = 0;
     id = 0;
     expected_size = 0;
@@ -190,6 +192,14 @@ void TDLibFile::setAutoLoad(bool enableAutoLoad)
         if (autoLoad) {
             downloadFile();
         }
+        emitQueuedSignals();
+    }
+}
+
+void TDLibFile::setClearWithInvalidFileInfo(bool clearWithInvalidFileInfo) {
+    if (this->clearWithInvalidFileInfo != clearWithInvalidFileInfo) {
+        this->clearWithInvalidFileInfo = clearWithInvalidFileInfo;
+        queueSignal(SignalClearWithInvalidFileInfoChanged);
         emitQueuedSignals();
     }
 }
@@ -399,6 +409,79 @@ void TDLibFile::updateFileInfo(const QVariantMap &file)
 
         if (fileChanged) {
             infoMap = file;
+            queueSignal(SignalFileInfoChanged);
+        }
+    } else if (clearWithInvalidFileInfo) {
+        if (id != 0) {
+            LOG("File id has reset" << id << "=>" << 0);
+            id = 0;
+            queueSignal(SignalIdChanged);
+        }
+        if (expected_size != 0) {
+            expected_size = 0;
+            queueSignal(SignalExpectedSizeChanged);
+        }
+        if (size != 0) {
+            size = 0;
+            queueSignal(SignalSizeChanged);
+        }
+
+        if (download_offset != 0) {
+            download_offset = 0;
+            queueSignal(SignalDownloadOffsetChanged);
+        }
+        if (downloaded_prefix_size != 0) {
+            downloaded_prefix_size = 0;
+            queueSignal(SignalDownloadedPrefixSizeChanged);
+        }
+        if (downloaded_size != 0) {
+            downloaded_size = 0;
+            queueSignal(SignalDownloadedSizeChanged);
+        }
+        if (can_be_deleted) {
+            can_be_deleted = false;
+            queueSignal(SignalCanBeDeletedChanged);
+        }
+        if (can_be_downloaded) {
+            can_be_downloaded = false;
+            queueSignal(SignalCanBeDownloadedChanged);
+        }
+        if (is_downloading_active) {
+            is_downloading_active = false;
+            queueSignal(SignalDownloadingActiveChanged);
+        }
+        if (is_downloading_completed) {
+            is_downloading_completed = false;
+            queueSignal(SignalDownloadingCompletedChanged);
+        }
+        if (!path.isEmpty()) {
+            path = "";
+            queueSignal(SignalPathChanged);
+        }
+
+        if (uploaded_size != 0) {
+            uploaded_size = 0;
+            queueSignal(SignalUploadedSizeChanged);
+        }
+        if (is_uploading_active) {
+            is_uploading_active = false;
+            queueSignal(SignalUploadingActiveChanged);
+        }
+        if (is_uploading_completed) {
+            is_uploading_completed = false;
+            queueSignal(SignalUploadingCompletedChanged);
+        }
+        if (!remote_id.isEmpty()) {
+            remote_id = "";
+            queueSignal(SignalRemoteIdChanged);
+        }
+        if (!unique_id.isEmpty()) {
+            unique_id = "";
+            queueSignal(SignalUniqueIdChanged);
+        }
+
+        if (!infoMap.isEmpty()) {
+            infoMap.clear();
             queueSignal(SignalFileInfoChanged);
         }
     }

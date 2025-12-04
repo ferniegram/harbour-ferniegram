@@ -28,6 +28,7 @@ class TDLibFile : public QObject
     Q_PROPERTY(QObject* tdlib READ getTDLibWrapper WRITE setTDLibWrapper NOTIFY tdlibChanged)
     Q_PROPERTY(QVariantMap fileInformation READ getFileInfo WRITE setFileInfo NOTIFY fileInfoChanged)
     Q_PROPERTY(bool autoLoad READ isAutoLoad WRITE setAutoLoad NOTIFY autoLoadChanged)
+    Q_PROPERTY(bool clearWithInvalidFileInfo READ getClearWithInvalidFileInfo WRITE setClearWithInvalidFileInfo NOTIFY clearWithInvalidFileInfoChanged)
     Q_PROPERTY(int fileId READ getId NOTIFY idChanged)
     Q_PROPERTY(qlonglong expectedSize READ getExpectedSize NOTIFY expectedSizeChanged)
     Q_PROPERTY(qlonglong size READ getSize NOTIFY sizeChanged)
@@ -61,6 +62,9 @@ public:
     bool isAutoLoad() const;
     void setAutoLoad(bool autoLoad);
 
+    bool getClearWithInvalidFileInfo() const;
+    void setClearWithInvalidFileInfo(bool clearWithInvalidFileInfo);
+
     int getId() const;
     qlonglong getExpectedSize() const;
     qlonglong getSize() const;
@@ -85,6 +89,7 @@ signals:
     void tdlibChanged();
     void fileInfoChanged();
     void autoLoadChanged();
+    void clearWithInvalidFileInfoChanged();
     void idChanged();
     void expectedSizeChanged();
     void sizeChanged();
@@ -122,6 +127,7 @@ private:
     uint firstQueuedSignal;
     bool autoLoad;
     int downloadHoldOffTimer;
+    bool clearWithInvalidFileInfo;
     // file
     QVariantMap infoMap;
     int id;
@@ -147,6 +153,7 @@ private:
 inline TDLibWrapper *TDLibFile::getTDLibWrapper() const { return tdLibWrapper; }
 inline const QVariantMap &TDLibFile::getFileInfo() const { return infoMap; }
 inline bool TDLibFile::isAutoLoad() const { return autoLoad; }
+inline bool TDLibFile::getClearWithInvalidFileInfo() const { return clearWithInvalidFileInfo; }
 inline int TDLibFile::getId() const { return id; }
 inline qlonglong TDLibFile::getExpectedSize() const { return expected_size; }
 inline qlonglong TDLibFile::getSize() const { return size; }
