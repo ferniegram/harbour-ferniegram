@@ -23,11 +23,11 @@ set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/share/${CMAKE_PROJECT_NAME}/lib
 # Configure Ccache if available
 find_program(CCACHE_FOUND ccache)
 if (CCACHE_FOUND)
-  message(STATUS "Found ccache")
-  set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
-  set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+    message(STATUS "Found ccache")
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
 else()
-  message(STATUS "Could NOT find ccache (this is NOT an error)")
+    message(STATUS "Could NOT find ccache (this is NOT an error)")
 endif()
 
 add_subdirectory(libs/opal/sfpm)
@@ -42,6 +42,14 @@ set_target_properties(TDLib PROPERTIES
 # rlottie
 # rlottie/CMakeLists.txt is too hard to adapt
 add_library(rlottie STATIC)
+
+set(RLOTTIE_CONFIG_PATH ${CMAKE_CURRENT_SOURCE_DIR}/rlottie/src/vector/config.h)
+# we could do file(TOUCH filename), but that requires CMake 3.12
+if (NOT EXISTS ${RLOTTIE_CONFIG_PATH})
+    file(WRITE ${RLOTTIE_CONFIG_PATH} "")
+endif()
+
+add_definitions(-DLOTTIE_THREAD_SUPPORT)
 target_include_directories(SortFilterProxyModel PUBLIC
     rlottie/inc
     rlottie/src/vector
