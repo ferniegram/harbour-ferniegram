@@ -25,7 +25,7 @@ signals:
     void lastReadMessageIndexChanged();
 
 private slots:
-    void handleFoundChatMessagesReceived(qlonglong chatId, int extra, TDLibWrapper::SearchMessagesFilter filter, const QVariantList &messages, int totalCount, qlonglong /*nextFromMessageId*/);
+    void handleFoundChatMessagesReceived(qlonglong chatId, TDLibWrapper::SearchMessagesFilter filter, int extra, const QVariantList &messages, int totalCount, qlonglong /*nextFromMessageId*/);
     void handleSponsoredMessageReceived(qlonglong chatId, const QVariantMap &sponsoredMessage);
     void handleNewMessageReceived(qlonglong chatId, const QVariantMap &message);
 

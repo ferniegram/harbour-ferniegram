@@ -27,7 +27,7 @@ bool MediaMessagesModel::clear() {
 }
 
 void MediaMessagesModel::loadMessagesWithLimit(int extra, qlonglong fromMessageId, int offset, int limit) {
-    LOG("Loading messages" << fromMessageId << offset);
+    LOG("Loading messages" << extra << fromMessageId << offset);
     this->tdLibWrapper->searchChatMessages(this->chatId, QString(), extra, fromMessageId, this->searchMessagesFilter, limit, offset);
 }
 
@@ -93,7 +93,7 @@ void MediaMessagesModel::handleChatMessageCountReceived(int count, qlonglong cha
     }
 }
 
-void MediaMessagesModel::handleMessagesReceived(qlonglong chatId, int extra, TDLibWrapper::SearchMessagesFilter filter, const QVariantList &messages, int totalCount, qlonglong nextFromMessageId) {
+void MediaMessagesModel::handleMessagesReceived(qlonglong chatId, TDLibWrapper::SearchMessagesFilter filter, int extra, const QVariantList &messages, int totalCount, qlonglong nextFromMessageId) {
     if (this->chatId == chatId && filter == this->searchMessagesFilter) {
         LOG("Messages received next id:" << nextFromMessageId);
         JumpableMessagesModel::handleMessagesReceived(chatId, extra, messages, totalCount);

@@ -409,8 +409,9 @@ void TDLibReceiver::processFoundChatMessages(const QVariantMap &receivedInformat
     const qlonglong nextFromMessageId = receivedInformation.value(NEXT_FROM_MESSAGE_ID).toLongLong();
     const QStringList extra = receivedInformation.value(_EXTRA).toString().split(":");
     qlonglong chatId = extra.value(0).toLongLong();
-    LOG("Received found chat messages for chat" << chatId << "amount:" << totalCount << "next from message id:" << nextFromMessageId);
-    emit foundChatMessagesReceived(chatId, extra.value(1).toInt(), extra.value(2).toInt(), cleanupList(receivedInformation.value(MESSAGES).toList()), totalCount, nextFromMessageId);
+    const int extra1 = extra.value(1).toInt(), extra2 = extra.value(2).toInt();
+    LOG("Received found chat messages for chat" << chatId << "extras" << extra1 << extra2 << "amount:" << totalCount << "next from message id:" << nextFromMessageId);
+    emit foundChatMessagesReceived(chatId, extra1, extra2, cleanupList(receivedInformation.value(MESSAGES).toList()), totalCount, nextFromMessageId);
 }
 
 void TDLibReceiver::processSponsoredMessages(const QVariantMap &receivedInformation) {

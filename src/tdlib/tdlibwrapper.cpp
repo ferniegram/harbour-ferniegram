@@ -1014,7 +1014,7 @@ void TDLibWrapper::removeContact(QString userId) {
 void TDLibWrapper::searchChatMessages(qlonglong chatId, const QString &query, int extra, qlonglong fromMessageId, SearchMessagesFilter filter, int limit, int offset) {
     const QString filterType = getSearchMessagesFilterType(filter);
 
-    LOG("Searching for messages" << chatId << query << fromMessageId << filterType << limit);
+    LOG("Searching for messages" << chatId << query << fromMessageId << filterType << limit << extra);
     this->sendRequest(QVariantMap{
         {_TYPE, "searchChatMessages"},
         {CHAT_ID, chatId},
@@ -2600,7 +2600,7 @@ void TDLibWrapper::removeRecentlyFoundChat(qlonglong chatId) {
 
 
 void TDLibWrapper::handleFoundChatMessagesReceived(qlonglong chatId, int extra, int extra2, const QVariantList &messages, int totalCount, qlonglong nextFromMessageId) {
-    emit foundChatMessagesReceived(chatId, extra, (SearchMessagesFilter)extra2, messages, totalCount, nextFromMessageId);
+    emit foundChatMessagesReceived(chatId, (SearchMessagesFilter)extra, extra2, messages, totalCount, nextFromMessageId);
 }
 
 QString TDLibWrapper::getSearchMessagesFilterType(SearchMessagesFilter filter) {

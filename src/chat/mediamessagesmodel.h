@@ -17,7 +17,7 @@ signals:
 
 private slots:
     void handleChatMessageCountReceived(int count, qlonglong chatId, TDLibWrapper::SearchMessagesFilter filter, bool onlyLocal);
-    void handleMessagesReceived(qlonglong chatId, int extra, TDLibWrapper::SearchMessagesFilter filter, const QVariantList &messages, int totalCount, qlonglong nextFromMessageId);
+    void handleMessagesReceived(qlonglong chatId, TDLibWrapper::SearchMessagesFilter filter, int extra, const QVariantList &messages, int totalCount, qlonglong nextFromMessageId);
     void handleNewMessageReceived(qlonglong chatId, const QVariantMap &message);
 
 private:

@@ -385,7 +385,7 @@ signals:
     void superGroupUpdated(qlonglong groupId);
     void chatOnlineMemberCountUpdated(const QString &chatId, int onlineMemberCount);
     void messagesReceived(qlonglong chatId, int extra, const QVariantList &messages, int totalCount);
-    void foundChatMessagesReceived(qlonglong chatId, int extra, SearchMessagesFilter filter, const QVariantList &messages, int totalCount, qlonglong nextFromMessageId);
+    void foundChatMessagesReceived(qlonglong chatId, SearchMessagesFilter filter, int extra, const QVariantList &messages, int totalCount, qlonglong nextFromMessageId);
     void sponsoredMessageReceived(qlonglong chatId, const QVariantMap &message);
     void messageLinkInfoReceived(const QString &url, const QVariantMap &messageLinkInfo, const QString &extra);
     void newMessageReceived(qlonglong chatId, const QVariantMap &message);

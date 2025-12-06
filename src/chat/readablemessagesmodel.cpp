@@ -130,7 +130,7 @@ void ReadableMessagesModel::loadHistoryForMessageImpl(qlonglong messageId) {
     this->loadMessages(UpdateInitial, messageId);
 }
 
-void ReadableMessagesModel::handleFoundChatMessagesReceived(qlonglong chatId, int extra, TDLibWrapper::SearchMessagesFilter filter, const QVariantList &messages, int totalCount, qlonglong /*nextFromMessageId*/) {
+void ReadableMessagesModel::handleFoundChatMessagesReceived(qlonglong chatId, TDLibWrapper::SearchMessagesFilter filter, int extra, const QVariantList &messages, int totalCount, qlonglong /*nextFromMessageId*/) {
     if (this->chatId == chatId && filter == TDLibWrapper::SearchMessagesFilterEmpty) {
         LOG("Found chat messages received");
         handleMessagesReceived(extra, messages, totalCount);
