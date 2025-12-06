@@ -85,6 +85,9 @@ Column {
         if (message.author_signature && !chatView.precalculatedValues.showUserInfo)
             messageStatusSuffix += " - " + message.author_signature
 
+        if (Debug.enabled)
+            messageStatusSuffix += " (ID: " + message.id + ")"
+
         return (useElapsed ? Functions.getDateTimeElapsed(message.date) : Functions.getDateTimeTranslated(message.date)) + messageStatusSuffix
     }
 
