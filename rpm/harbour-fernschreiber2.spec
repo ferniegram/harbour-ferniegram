@@ -30,6 +30,7 @@ BuildRequires:  pkgconfig(glib-2.0)
 BuildRequires:  gperf
 BuildRequires:  desktop-file-utils
 BuildRequires: make
+BuildRequires: ccache
 
 %description
 Ferniegram is a Telegram client for Sailfish OS
@@ -39,14 +40,13 @@ Ferniegram is a Telegram client for Sailfish OS
 
 %build
 
-echo %qmake5
-%qmake5 HARBOUR_COMPLIANCE=off
+%cmake  -DHARBOUR_COMPLIANCE=off
 
 %make_build
 
 %install
 rm -rf %{buildroot}
-%qmake5_install
+%make_install
 
 desktop-file-install --delete-original       \
   --dir %{buildroot}%{_datadir}/applications             \
