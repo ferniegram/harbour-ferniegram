@@ -264,8 +264,10 @@ bool TgsIOHandler::supportsOption(ImageOption option) const
 void TgsIOHandler::setOption(ImageOption option, const QVariant &value) {
     switch(option) {
     case ScaledSize:
-        scaledSize = value.toSize();
-        LOG_("Scaled to" << scaledSize);
+        if (scaledSize != value.toSize()) {
+            scaledSize = value.toSize();
+            LOG_("Scaled to" << scaledSize);
+        }
         break;
     default:
         break;
