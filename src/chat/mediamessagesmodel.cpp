@@ -96,7 +96,7 @@ void MediaMessagesModel::handleChatMessageCountReceived(int count, qlonglong cha
 void MediaMessagesModel::handleMessagesReceived(qlonglong chatId, TDLibWrapper::SearchMessagesFilter filter, int extra, const QVariantList &messages, int totalCount, qlonglong nextFromMessageId) {
     if (this->chatId == chatId && filter == this->searchMessagesFilter) {
         LOG("Messages received next id:" << nextFromMessageId);
-        JumpableMessagesModel::handleMessagesReceived(chatId, extra, messages, totalCount);
+        JumpableMessagesModel::handleMessagesReceived(extra, messages, totalCount);
         this->nextFromMessageId = nextFromMessageId;
     }
 }
