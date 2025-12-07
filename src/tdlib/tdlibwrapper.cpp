@@ -1023,7 +1023,7 @@ void TDLibWrapper::searchChatMessages(qlonglong chatId, const QString &query, in
         {OFFSET, offset},
         {LIMIT, limit},
         {FILTER, QVariantMap{{_TYPE, filterType}}},
-        {_EXTRA, QString::number(chatId)+":"+QString::number(filter)+QString::number(extra)}
+        {_EXTRA, QString::number(chatId)+":"+QString::number((int)filter)+":"+QString::number(extra)}
     });
 }
 
