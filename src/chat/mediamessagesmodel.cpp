@@ -59,7 +59,7 @@ void MediaMessagesModel::init(qlonglong chatId, qlonglong fromMessageId) {
     this->highlightedMessageId = fromMessageId;
 
     if (fromMessageId != 0)
-        loadMessagesWithLimit(fromMessageId, -16, 32);
+        loadMessagesWithLimit(UpdateInitial, fromMessageId, -16, 32);
     else
         tdLibWrapper->getChatMessageCount(chatId, this->searchMessagesFilter);
 }
