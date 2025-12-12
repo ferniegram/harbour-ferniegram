@@ -17,59 +17,19 @@
     along with Fernschreiber. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef QT_QML_DEBUG
-#include <QtQuick>
-#endif
+#include "mainshared.h"
 
 #include <sailfishapp.h>
-#include <QScopedPointer>
 #include <QQuickView>
-#include <QtQml>
-#include <QQmlContext>
+//#include <QtQml>
 #include <QQmlEngine>
 #include <QGuiApplication>
-#include <QLoggingCategory>
 #include <QSysInfo>
 #include <QSettings>
 #include <QDir>
 #include <QDirIterator>
 #include <QFile>
 #include <QFileInfo>
-
-#include "appsettings.h"
-#include "debuglog.h"
-#include "debuglogjs.h"
-#include "tdlib/tdlibfile.h"
-#include "tdlib/tdlibwrapper.h"
-#include "chatpermissionfiltermodel.h"
-#include "chatlistmodel.h"
-#include "chat/chatmanager.h"
-#include "notificationmanager.h"
-#include "mceinterface.h"
-#include "dbusadaptor.h"
-#include "processlauncher.h"
-#include "stickermanager.h"
-#include "textfiltermodel.h"
-#include "boolfiltermodel.h"
-#include "tgsplugin.h"
-#include "utilities.h"
-#include "knownusersmodel.h"
-#include "contactsmodel.h"
-#include "chatfoldersmodel.h"
-#include "invertedproxymodel.h"
-#include "waveformmanager.h"
-#include "movieitem.h"
-#include "suggestedactionsmanager.h"
-
-// The default filter can be overridden by QT_LOGGING_RULES envinronment variable, e.g.
-// QT_LOGGING_RULES="fernschreiber2.*=true" harbour-fernschreiber2
-#if defined (QT_DEBUG) || defined(DEBUG)
-#  define DEFAULT_LOG_FILTER "fernschreiber2.*=true"
-#else
-#  define DEFAULT_LOG_FILTER "fernschreiber2.*=false"
-#endif
-
-Q_IMPORT_PLUGIN(TgsIOPlugin)
 
 void migrateSettings() {
     const QStringList sailfishOSVersion = QSysInfo::productVersion().split(".");
@@ -120,77 +80,17 @@ void migrateSettings() {
     }
 }
 
-int main(int argc, char *argv[])
-{
-    QLoggingCategory::setFilterRules(DEFAULT_LOG_FILTER);
+int main(int argc, char *argv[]) {
+    MainShared::setupLogging();
 
     QScopedPointer<QGuiApplication> app(SailfishApp::application(argc, argv));
-    QScopedPointer<QQuickView> view(SailfishApp::createView());
+    QSharedPointer<QQuickView> view(SailfishApp::createView()); // FIXME: should we actually use QScopedPointer here?
 
     QQmlContext *context = view.data()->rootContext();
 
     migrateSettings();
 
-    const char *uri = "App.Logic";
-    qmlRegisterType<TDLibFile>(uri, 1, 0, "TDLibFile");
-    qmlRegisterType<TextFilterModel>(uri, 1, 0, "TextFilterModel");
-    qmlRegisterType<BoolFilterModel>(uri, 1, 0, "BoolFilterModel");
-    qmlRegisterType<InvertedProxyModel>(uri, 1, 0, "InvertedProxyModel");
-    qmlRegisterType<ChatPermissionFilterModel>(uri, 1, 0, "ChatPermissionFilterModel");
-    qmlRegisterType<ChatManager>(uri, 1, 0, "ChatManager");
-    qmlRegisterType<MovieItem>(uri, 1, 0, "MovieItem");
-    qmlRegisterSingletonType<DebugLogJS>(uri, 1, 0, "DebugLog", DebugLogJS::createSingleton);
-
-    AppSettings *appSettings = new AppSettings(view.data());
-    context->setContextProperty("appSettings", appSettings);
-    qmlRegisterUncreatableType<AppSettings>(uri, 1, 0, "AppSettings", QString());
-
-    MceInterface *mceInterface = new MceInterface(view.data());
-    TDLibWrapper *tdLibWrapper = new TDLibWrapper(argc, argv, appSettings, mceInterface, view.data());
-    context->setContextProperty("tdLibWrapper", tdLibWrapper);
-    qmlRegisterUncreatableType<TDLibWrapper>(uri, 1, 0, "TDLibAPI", QString());
-
-    Utilities *utilities = tdLibWrapper->getUtilities();
-    context->setContextProperty("utilities", utilities);
-    qmlRegisterUncreatableType<Utilities>(uri, 1, 0, "Utilities", QString());
-
-    WaveformManager *waveformManager = new WaveformManager(view.data());
-    context->setContextProperty("waveformManager", waveformManager);
-
-    DBusAdaptor *dBusAdaptor = tdLibWrapper->getDBusAdaptor();
-    context->setContextProperty("dBusAdaptor", dBusAdaptor);
-
-    ChatFoldersModel chatFoldersModel(tdLibWrapper, appSettings, utilities, view.data());
-    context->setContextProperty("chatFoldersModel", &chatFoldersModel);
-    qmlRegisterUncreatableType<ChatFoldersModel>(uri, 1, 0, "ChatFoldersModel", QString());
-
-    ChatListModel* chatListModel = chatFoldersModel.getMainChatListModel();
-    context->setContextProperty("chatListModel", chatListModel);
-    ChatListModel* archiveChatListModel = chatFoldersModel.getArchiveChatListModel();
-    context->setContextProperty("archiveChatListModel", archiveChatListModel);
-
-    NotificationManager notificationManager(tdLibWrapper, appSettings, mceInterface, utilities);
-    context->setContextProperty("notificationManager", &notificationManager);
-
-    ProcessLauncher processLauncher;
-    context->setContextProperty("processLauncher", &processLauncher);
-
-    StickerManager stickerManager(tdLibWrapper);
-    context->setContextProperty("stickerManager", &stickerManager);
-
-    KnownUsersModel knownUsersModel(tdLibWrapper, view.data());
-    context->setContextProperty("knownUsersModel", &knownUsersModel);
-    QSortFilterProxyModel knownUsersProxyModel(view.data());
-    knownUsersProxyModel.setSourceModel(&knownUsersModel);
-    knownUsersProxyModel.setFilterRole(KnownUsersModel::RoleFilter);
-    knownUsersProxyModel.setFilterCaseSensitivity(Qt::CaseInsensitive);
-    context->setContextProperty("knownUsersProxyModel", &knownUsersProxyModel);
-    
-    ContactsModel contactsModel(tdLibWrapper, view.data());
-    context->setContextProperty("contactsModel", &contactsModel);
-
-    SuggestedActionsManager suggestedActionsManager(tdLibWrapper, view.data());
-    context->setContextProperty("suggestedActionsManager", &suggestedActionsManager);
+    QScopedPointer<MainShared::AppContext> appContext(MainShared::registerTypes(argc, argv, view));
 
 #ifdef NO_HARBOUR_COMPLIANCE
     context->setContextProperty("NO_HARBOUR_COMPLIANCE", true);

@@ -1,14 +1,45 @@
 cmake_minimum_required(VERSION 3.5)
-project(harbour-fernschreiber2 CXX ASM)
+
+set(EDITION "sailfish" CACHE STRING "The version of the app to build. Must be one of: sailfish, asteroid.")
+
+if (EDITION STREQUAL "sailfish")
+    project(harbour-fernschreiber2 CXX ASM)
+    set(EDITION_SAILFISH TRUE)
+elseif (EDITION STREQUAL "asteroid")
+    project(asteroid-fernschreiber2 CXX ASM)
+    set(EDITION_ASTEROID TRUE)
+else()
+    message(FATAL_ERROR "Invalid edition '${EDITION}'. Must be one of: sailfish, asteroid.")
+endif()
+
+message(STATUS "Building ${CMAKE_PROJECT_NAME} for ${EDITION}")
 
 find_package(Qt5 COMPONENTS Core Network DBus Multimedia Positioning Qml Gui Quick LinguistTools REQUIRED)
 
 include(FindPkgConfig)
-pkg_search_module(SAILFISH sailfishapp REQUIRED)
 pkg_search_module(NEMONOTIFICATIONS nemonotifications-qt5 REQUIRED)
 pkg_search_module(ZLIB zlib REQUIRED)
 
-if(CMAKE_SYSTEM_PROCESSOR STREQUAL aarch64)
+if (EDITION_SAILFISH)
+    pkg_search_module(SAILFISH sailfishapp REQUIRED)
+elseif (EDITION_ASTEROID)
+    # FIXME: surely something from this large list isn't needed
+    find_package(ECM REQUIRED NO_MODULE)
+    find_package(AsteroidApp REQUIRED)
+
+    set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ASTEROID_MODULE_PATH})
+
+    include(FeatureSummary)
+    include(GNUInstallDirs)
+    include(ECMFindQmlModule)
+    include(AsteroidCMakeSettings)
+    include(AsteroidTranslations)
+endif()
+
+if (EDITION_ASTEROID)
+    # TODO: add other asteroidos architectures
+    set(TARGET_ARCHITECTURE asteroid)
+elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL aarch64)
     set(TARGET_ARCHITECTURE aarch64)
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES ^armv7)
     set(TARGET_ARCHITECTURE armv7hl)
@@ -51,12 +82,12 @@ if (NOT EXISTS ${RLOTTIE_CONFIG_PATH})
 endif()
 
 add_definitions(-DLOTTIE_THREAD_SUPPORT)
-target_include_directories(SortFilterProxyModel PUBLIC
+target_include_directories(SortFilterProxyModel PUBLIC # FIXME: should be rlottie?
     rlottie/inc
     rlottie/src/vector
     rlottie/src/vector/freetype
 )
-target_sources(SortFilterProxyModel
+target_sources(SortFilterProxyModel # FIXME: should be rlottie?
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/rlottie/src/lottie/lottieanimation.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rlottie/src/lottie/lottieitem.cpp
@@ -117,8 +148,6 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
     QT_STATICPLUGIN
 )
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
-    $<BUILD_INTERFACE:
-    ${SAILFISH_INCLUDE_DIRS}>
     ${NEMONOTIFICATIONS_INCLUDE_DIRS}
     ${ZLIB_INCLUDE_DIRS}
     tdlib/include
@@ -129,7 +158,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
     Qt5::DBus
     Qt5::Multimedia
     Qt5::Positioning
-    ${SAILFISH_LDFLAGS}
     ${NEMONOTIFICATIONS_LIBRARIES}
     ${ZLIB_LIBRARIES}
     SortFilterProxyModel
@@ -172,6 +200,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     src/tgsplugin.cpp
     src/waveformmanager.cpp
     
+    src/mainshared.h
     src/appsettings.h
     src/boolfiltermodel.h
     src/chat/jumpablemessagesmodel.h
@@ -210,22 +239,41 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     src/waveformmanager.h
 )
 
-option(HARBOUR_COMPLIANCE "Harbour compliance" OFF)
-
-if(HARBOUR_COMPLIANCE)
-    message(STATUS "Harbour compliance enabled")
-    add_definitions(-DHARBOUR_COMPLIANCE)
-else()
-    message(STATUS "Harbour compliance disabled")
-    add_definitions(-DNO_HARBOUR_COMPLIANCE)
-
-    target_sources(${CMAKE_PROJECT_NAME} PRIVATE
-        src/gstaudiorecorder.cpp
-        src/gstaudiorecorder.h
+if (EDITION_SAILFISH)
+    target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
+        $<BUILD_INTERFACE:
+        ${SAILFISH_INCLUDE_DIRS}>
     )
-    pkg_check_modules(GSTREAMER REQUIRED gstreamer-1.0 gstreamer-pbutils-1.0 glib-2.0)
-    target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${GSTREAMER_INCLUDE_DIRS})
-    target_link_libraries(${CMAKE_PROJECT_NAME} ${GSTREAMER_LIBRARIES})
+    target_link_libraries(${CMAKE_PROJECT_NAME} ${SAILFISH_LDFLAGS})
+
+    add_definitions(-DEDITION_SAILFISH)
+
+
+    option(HARBOUR_COMPLIANCE "Harbour compliance" OFF)
+
+    if(HARBOUR_COMPLIANCE)
+        message(STATUS "Harbour compliance enabled")
+        add_definitions(-DHARBOUR_COMPLIANCE)
+    else()
+        message(STATUS "Harbour compliance disabled")
+        add_definitions(-DNO_HARBOUR_COMPLIANCE)
+
+        target_sources(${CMAKE_PROJECT_NAME} PRIVATE
+            src/gstaudiorecorder.cpp
+            src/gstaudiorecorder.h
+        )
+        pkg_check_modules(GSTREAMER REQUIRED gstreamer-1.0 gstreamer-pbutils-1.0 glib-2.0)
+        target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${GSTREAMER_INCLUDE_DIRS})
+        target_link_libraries(${CMAKE_PROJECT_NAME} ${GSTREAMER_LIBRARIES})
+    endif()
+
+elseif (EDITION_ASTEROID)
+    target_link_libraries(${CMAKE_PROJECT_NAME} AsteroidApp)
+
+    add_definitions(-DEDITION_ASTEROID)
+
+    message(STATUS "Harbour compliance always enabled on AsteroidOS")
+    add_definitions(-DHARBOUR_COMPLIANCE)
 endif()
 
 # Update the translations
@@ -246,8 +294,8 @@ add_dependencies(${CMAKE_PROJECT_NAME} translations)
 install(TARGETS ${CMAKE_PROJECT_NAME}
     RUNTIME DESTINATION bin
 )
-install(DIRECTORY qml
-    DESTINATION share/${CMAKE_PROJECT_NAME}
+install(DIRECTORY qml/shared/
+    DESTINATION share/${CMAKE_PROJECT_NAME}/qml
 )
 install(DIRECTORY ${TRANSLATIONS_OUT_DIR}
     DESTINATION share/${CMAKE_PROJECT_NAME}
@@ -256,24 +304,44 @@ install(DIRECTORY ${TRANSLATIONS_OUT_DIR}
 install(FILES ${CMAKE_PROJECT_NAME}.desktop
     DESTINATION share/applications
 )
-install(FILES icons/86x86/${CMAKE_PROJECT_NAME}.png
-    DESTINATION share/icons/hicolor/86x86/apps
-)
-install(FILES icons/108x108/${CMAKE_PROJECT_NAME}.png
-    DESTINATION share/icons/hicolor/108x108/apps
-)
-install(FILES icons/128x128/${CMAKE_PROJECT_NAME}.png
-    DESTINATION share/icons/hicolor/128x128/apps
-)
-install(FILES icons/172x172/${CMAKE_PROJECT_NAME}.png
-    DESTINATION share/icons/hicolor/172x172/apps
-)
 install(DIRECTORY images
     DESTINATION share/${CMAKE_PROJECT_NAME}
 )
 install(DIRECTORY tdlib/${TARGET_ARCHITECTURE}/lib
     DESTINATION share/${CMAKE_PROJECT_NAME}
 )
+
+if (EDITION_SAILFISH)
+    install(DIRECTORY qml/harbour/
+        DESTINATION share/${CMAKE_PROJECT_NAME}/qml
+    )
+
+    install(FILES icons/86x86/${CMAKE_PROJECT_NAME}.png
+        DESTINATION share/icons/hicolor/86x86/apps
+    )
+    install(FILES icons/108x108/${CMAKE_PROJECT_NAME}.png
+        DESTINATION share/icons/hicolor/108x108/apps
+    )
+    install(FILES icons/128x128/${CMAKE_PROJECT_NAME}.png
+        DESTINATION share/icons/hicolor/128x128/apps
+    )
+    install(FILES icons/172x172/${CMAKE_PROJECT_NAME}.png
+        DESTINATION share/icons/hicolor/172x172/apps
+    )
+elseif (EDITION_ASTEROID)
+    # install(TARGETS ${CMAKE_PROJECT_NAME}
+	#     DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    # )
+
+    install(DIRECTORY qml/asteroid/
+        DESTINATION share/${CMAKE_PROJECT_NAME}/qml
+    )
+
+    install(FILES images/fernschreiber2.svg
+        DESTINATION share/icons/asteroid
+        RENAME ${CMAKE_PROJECT_NAME}.svg
+    )
+endif()
 
 # Get the other files reachable from the project tree in Qt Creator
 # FIXME: this is broken and doesn't work (but files are still editable from qt creator so it's not as bad)
