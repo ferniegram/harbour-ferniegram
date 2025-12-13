@@ -670,26 +670,6 @@
         <source>in</source>
         <translation>ban</translation>
     </message>
-    <message>
-        <source>Waiting for network...</source>
-        <translation>Hálózatra várakozás...</translation>
-    </message>
-    <message>
-        <source>Connecting to network...</source>
-        <translation>Csatlakozás a hálózathoz...</translation>
-    </message>
-    <message>
-        <source>Connecting to proxy...</source>
-        <translation>Csatlakozás a proxy-hoz...</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>Csatlakozva</translation>
-    </message>
-    <message>
-        <source>Updating content...</source>
-        <translation>Tartalom frissítése...</translation>
-    </message>
     <message numerus="yes">
         <source>chats</source>
         <translation type="unfinished">
@@ -1441,28 +1421,16 @@
         <source>Tap on the title bar to quickly open search</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Ferniegram</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>OverviewPageHeader</name>
     <message>
         <source>Ferniegram</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Waiting for network...</source>
-        <translation type="unfinished">Hálózatra várakozás...</translation>
-    </message>
-    <message>
-        <source>Connecting to network...</source>
-        <translation type="unfinished">Csatlakozás a hálózathoz...</translation>
-    </message>
-    <message>
-        <source>Connecting to proxy...</source>
-        <translation type="unfinished">Csatlakozás a proxy-hoz...</translation>
-    </message>
-    <message>
-        <source>Updating content...</source>
-        <translation type="unfinished">Tartalom frissítése...</translation>
     </message>
 </context>
 <context>
@@ -2293,6 +2261,25 @@
         <translation type="unfinished">
             <numerusform>%1 feliratkozott</numerusform>
         </translation>
+    </message>
+</context>
+<context>
+    <name>TDLibWrapper</name>
+    <message>
+        <source>Waiting for network...</source>
+        <translation type="unfinished">Hálózatra várakozás...</translation>
+    </message>
+    <message>
+        <source>Connecting to network...</source>
+        <translation type="unfinished">Csatlakozás a hálózathoz...</translation>
+    </message>
+    <message>
+        <source>Connecting to proxy...</source>
+        <translation type="unfinished">Csatlakozás a proxy-hoz...</translation>
+    </message>
+    <message>
+        <source>Updating content...</source>
+        <translation type="unfinished">Tartalom frissítése...</translation>
     </message>
 </context>
 <context>

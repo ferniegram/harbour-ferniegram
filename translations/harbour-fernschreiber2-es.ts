@@ -673,26 +673,6 @@
         <source>in</source>
         <translation>en</translation>
     </message>
-    <message>
-        <source>Waiting for network...</source>
-        <translation>Esperando red...</translation>
-    </message>
-    <message>
-        <source>Connecting to network...</source>
-        <translation>Conectando a servidor...</translation>
-    </message>
-    <message>
-        <source>Connecting to proxy...</source>
-        <translation>Conectando a proxy...</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>Conectado</translation>
-    </message>
-    <message>
-        <source>Updating content...</source>
-        <translation>Actualizando contenido...</translation>
-    </message>
     <message numerus="yes">
         <source>chats</source>
         <translation>
@@ -1457,28 +1437,16 @@
         <source>Tap on the title bar to quickly open search</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Ferniegram</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>OverviewPageHeader</name>
     <message>
         <source>Ferniegram</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Waiting for network...</source>
-        <translation type="unfinished">Esperando red...</translation>
-    </message>
-    <message>
-        <source>Connecting to network...</source>
-        <translation type="unfinished">Conectando a servidor...</translation>
-    </message>
-    <message>
-        <source>Connecting to proxy...</source>
-        <translation type="unfinished">Conectando a proxy...</translation>
-    </message>
-    <message>
-        <source>Updating content...</source>
-        <translation type="unfinished">Actualizando contenido...</translation>
     </message>
 </context>
 <context>
@@ -2319,6 +2287,25 @@
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
+    </message>
+</context>
+<context>
+    <name>TDLibWrapper</name>
+    <message>
+        <source>Waiting for network...</source>
+        <translation type="unfinished">Esperando red...</translation>
+    </message>
+    <message>
+        <source>Connecting to network...</source>
+        <translation type="unfinished">Conectando a servidor...</translation>
+    </message>
+    <message>
+        <source>Connecting to proxy...</source>
+        <translation type="unfinished">Conectando a proxy...</translation>
+    </message>
+    <message>
+        <source>Updating content...</source>
+        <translation type="unfinished">Actualizando contenido...</translation>
     </message>
 </context>
 <context>

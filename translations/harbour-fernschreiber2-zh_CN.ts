@@ -670,26 +670,6 @@
         <source>in</source>
         <translation>位于</translation>
     </message>
-    <message>
-        <source>Waiting for network...</source>
-        <translation>等候网络连接…</translation>
-    </message>
-    <message>
-        <source>Connecting to network...</source>
-        <translation>正在连接到网络…</translation>
-    </message>
-    <message>
-        <source>Connecting to proxy...</source>
-        <translation>正在连接到代理…</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>已连接</translation>
-    </message>
-    <message>
-        <source>Updating content...</source>
-        <translation>正在更新内容…</translation>
-    </message>
     <message numerus="yes">
         <source>chats</source>
         <translation>
@@ -1442,28 +1422,16 @@
         <source>Tap on the title bar to quickly open search</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Ferniegram</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>OverviewPageHeader</name>
     <message>
         <source>Ferniegram</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Waiting for network...</source>
-        <translation type="unfinished">等候网络连接…</translation>
-    </message>
-    <message>
-        <source>Connecting to network...</source>
-        <translation type="unfinished">正在连接到网络…</translation>
-    </message>
-    <message>
-        <source>Connecting to proxy...</source>
-        <translation type="unfinished">正在连接到代理…</translation>
-    </message>
-    <message>
-        <source>Updating content...</source>
-        <translation type="unfinished">正在更新内容…</translation>
     </message>
 </context>
 <context>
@@ -2294,6 +2262,25 @@
         <translation type="unfinished">
             <numerusform>%1 位订阅者</numerusform>
         </translation>
+    </message>
+</context>
+<context>
+    <name>TDLibWrapper</name>
+    <message>
+        <source>Waiting for network...</source>
+        <translation type="unfinished">等候网络连接…</translation>
+    </message>
+    <message>
+        <source>Connecting to network...</source>
+        <translation type="unfinished">正在连接到网络…</translation>
+    </message>
+    <message>
+        <source>Connecting to proxy...</source>
+        <translation type="unfinished">正在连接到代理…</translation>
+    </message>
+    <message>
+        <source>Updating content...</source>
+        <translation type="unfinished">正在更新内容…</translation>
     </message>
 </context>
 <context>

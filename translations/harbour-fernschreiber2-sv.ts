@@ -673,26 +673,6 @@
         <source>in</source>
         <translation>i</translation>
     </message>
-    <message>
-        <source>Waiting for network...</source>
-        <translation>Väntar på nätverket...</translation>
-    </message>
-    <message>
-        <source>Connecting to network...</source>
-        <translation>Ansluter till nätverket...</translation>
-    </message>
-    <message>
-        <source>Connecting to proxy...</source>
-        <translation>Ansluter till proxy...</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>Ansluten</translation>
-    </message>
-    <message>
-        <source>Updating content...</source>
-        <translation>Uppdaterar innehåll...</translation>
-    </message>
     <message numerus="yes">
         <source>chats</source>
         <translation>
@@ -1457,28 +1437,16 @@
         <source>Tap on the title bar to quickly open search</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Ferniegram</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>OverviewPageHeader</name>
     <message>
         <source>Ferniegram</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Waiting for network...</source>
-        <translation type="unfinished">Väntar på nätverket...</translation>
-    </message>
-    <message>
-        <source>Connecting to network...</source>
-        <translation type="unfinished">Ansluter till nätverket...</translation>
-    </message>
-    <message>
-        <source>Connecting to proxy...</source>
-        <translation type="unfinished">Ansluter till proxy...</translation>
-    </message>
-    <message>
-        <source>Updating content...</source>
-        <translation type="unfinished">Uppdaterar innehåll...</translation>
     </message>
 </context>
 <context>
@@ -2319,6 +2287,25 @@
             <numerusform>%1 prenumerant</numerusform>
             <numerusform>%1 prenumeranter</numerusform>
         </translation>
+    </message>
+</context>
+<context>
+    <name>TDLibWrapper</name>
+    <message>
+        <source>Waiting for network...</source>
+        <translation type="unfinished">Väntar på nätverket...</translation>
+    </message>
+    <message>
+        <source>Connecting to network...</source>
+        <translation type="unfinished">Ansluter till nätverket...</translation>
+    </message>
+    <message>
+        <source>Connecting to proxy...</source>
+        <translation type="unfinished">Ansluter till proxy...</translation>
+    </message>
+    <message>
+        <source>Updating content...</source>
+        <translation type="unfinished">Uppdaterar innehåll...</translation>
     </message>
 </context>
 <context>

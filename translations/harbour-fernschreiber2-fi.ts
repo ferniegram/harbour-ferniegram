@@ -674,26 +674,6 @@
         <translatorcomment>The preposition &apos;in&apos; is translated to Finnish using the inessive case (suffix ‑ssa/‑ssä), so this string should be left empty in the translation. Unfortunately Qt will ignore empty translations, so let&apos;s use the character U+200B (zero width space) instead.</translatorcomment>
         <translation>​</translation>
     </message>
-    <message>
-        <source>Waiting for network...</source>
-        <translation>Odotetaan verkkoa...</translation>
-    </message>
-    <message>
-        <source>Connecting to network...</source>
-        <translation>Yhdistetään verkkoon...</translation>
-    </message>
-    <message>
-        <source>Connecting to proxy...</source>
-        <translation>Yhdistetään välityspalvelimeen...</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>Yhdistetty</translation>
-    </message>
-    <message>
-        <source>Updating content...</source>
-        <translation>Päivitetään sisältöä...</translation>
-    </message>
     <message numerus="yes">
         <source>chats</source>
         <translation>
@@ -1458,28 +1438,16 @@
         <source>Tap on the title bar to quickly open search</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Ferniegram</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>OverviewPageHeader</name>
     <message>
         <source>Ferniegram</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Waiting for network...</source>
-        <translation type="unfinished">Odotetaan verkkoa...</translation>
-    </message>
-    <message>
-        <source>Connecting to network...</source>
-        <translation type="unfinished">Yhdistetään verkkoon...</translation>
-    </message>
-    <message>
-        <source>Connecting to proxy...</source>
-        <translation type="unfinished">Yhdistetään välityspalvelimeen...</translation>
-    </message>
-    <message>
-        <source>Updating content...</source>
-        <translation type="unfinished">Päivitetään sisältöä...</translation>
     </message>
 </context>
 <context>
@@ -2320,6 +2288,25 @@
             <numerusform>%1 tilaaja</numerusform>
             <numerusform>%1 tilaajaa</numerusform>
         </translation>
+    </message>
+</context>
+<context>
+    <name>TDLibWrapper</name>
+    <message>
+        <source>Waiting for network...</source>
+        <translation type="unfinished">Odotetaan verkkoa...</translation>
+    </message>
+    <message>
+        <source>Connecting to network...</source>
+        <translation type="unfinished">Yhdistetään verkkoon...</translation>
+    </message>
+    <message>
+        <source>Connecting to proxy...</source>
+        <translation type="unfinished">Yhdistetään välityspalvelimeen...</translation>
+    </message>
+    <message>
+        <source>Updating content...</source>
+        <translation type="unfinished">Päivitetään sisältöä...</translation>
     </message>
 </context>
 <context>

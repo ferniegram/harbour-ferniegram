@@ -676,26 +676,6 @@
         <source>in</source>
         <translation>в</translation>
     </message>
-    <message>
-        <source>Waiting for network...</source>
-        <translation>Ожидание сети...</translation>
-    </message>
-    <message>
-        <source>Connecting to network...</source>
-        <translation>Подключение к сети...</translation>
-    </message>
-    <message>
-        <source>Connecting to proxy...</source>
-        <translation>Подключение к прокси...</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>В сети</translation>
-    </message>
-    <message>
-        <source>Updating content...</source>
-        <translation>Обновление контента...</translation>
-    </message>
     <message numerus="yes">
         <source>chats</source>
         <translation>
@@ -1476,28 +1456,16 @@
         <source>Tap on the title bar to quickly open search</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Ferniegram</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>OverviewPageHeader</name>
     <message>
         <source>Ferniegram</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Waiting for network...</source>
-        <translation type="unfinished">Ожидание сети...</translation>
-    </message>
-    <message>
-        <source>Connecting to network...</source>
-        <translation type="unfinished">Подключение к сети...</translation>
-    </message>
-    <message>
-        <source>Connecting to proxy...</source>
-        <translation type="unfinished">Подключение к прокси...</translation>
-    </message>
-    <message>
-        <source>Updating content...</source>
-        <translation type="unfinished">Обновление контента...</translation>
     </message>
 </context>
 <context>
@@ -2348,6 +2316,25 @@
             <numerusform>%1 подписчика</numerusform>
             <numerusform>%1 подписчиков</numerusform>
         </translation>
+    </message>
+</context>
+<context>
+    <name>TDLibWrapper</name>
+    <message>
+        <source>Waiting for network...</source>
+        <translation type="unfinished">Ожидание сети...</translation>
+    </message>
+    <message>
+        <source>Connecting to network...</source>
+        <translation type="unfinished">Подключение к сети...</translation>
+    </message>
+    <message>
+        <source>Connecting to proxy...</source>
+        <translation type="unfinished">Подключение к прокси...</translation>
+    </message>
+    <message>
+        <source>Updating content...</source>
+        <translation type="unfinished">Обновление контента...</translation>
     </message>
 </context>
 <context>

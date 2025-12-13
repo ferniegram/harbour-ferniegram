@@ -676,26 +676,6 @@
         <source>in</source>
         <translation>v</translation>
     </message>
-    <message>
-        <source>Waiting for network...</source>
-        <translation>Čakanie na sieť...</translation>
-    </message>
-    <message>
-        <source>Connecting to network...</source>
-        <translation>Pripájanie k sieti...</translation>
-    </message>
-    <message>
-        <source>Connecting to proxy...</source>
-        <translation>Pripájanie k proxy...</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>Pripojené</translation>
-    </message>
-    <message>
-        <source>Updating content...</source>
-        <translation>Aktualizácia obsahu...</translation>
-    </message>
     <message numerus="yes">
         <source>chats</source>
         <translation>
@@ -1473,28 +1453,16 @@
         <source>Tap on the title bar to quickly open search</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Ferniegram</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>OverviewPageHeader</name>
     <message>
         <source>Ferniegram</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Waiting for network...</source>
-        <translation type="unfinished">Čakanie na sieť...</translation>
-    </message>
-    <message>
-        <source>Connecting to network...</source>
-        <translation type="unfinished">Pripájanie k sieti...</translation>
-    </message>
-    <message>
-        <source>Connecting to proxy...</source>
-        <translation type="unfinished">Pripájanie k proxy...</translation>
-    </message>
-    <message>
-        <source>Updating content...</source>
-        <translation type="unfinished">Aktualizácia obsahu...</translation>
     </message>
 </context>
 <context>
@@ -2345,6 +2313,25 @@
             <numerusform>%1 odberatelia</numerusform>
             <numerusform>%1 odberateľov</numerusform>
         </translation>
+    </message>
+</context>
+<context>
+    <name>TDLibWrapper</name>
+    <message>
+        <source>Waiting for network...</source>
+        <translation type="unfinished">Čakanie na sieť...</translation>
+    </message>
+    <message>
+        <source>Connecting to network...</source>
+        <translation type="unfinished">Pripájanie k sieti...</translation>
+    </message>
+    <message>
+        <source>Connecting to proxy...</source>
+        <translation type="unfinished">Pripájanie k proxy...</translation>
+    </message>
+    <message>
+        <source>Updating content...</source>
+        <translation type="unfinished">Aktualizácia obsahu...</translation>
     </message>
 </context>
 <context>
