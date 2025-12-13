@@ -287,6 +287,7 @@ FILE(GLOB TsFiles "translations/*.ts")
 set(TRANSLATIONS_OUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/translations)
 file(MAKE_DIRECTORY ${TRANSLATIONS_OUT_DIR})
 set_source_files_properties(${TsFiles} PROPERTIES OUTPUT_LOCATION ${TRANSLATIONS_OUT_DIR})
+set(Qt5_LUPDATE_EXECUTABLE Qt5::lupdate -no-obsolete)
 qt5_create_translation(TRANSLATION_QM_FILES
     "qml/"
     "src/"
