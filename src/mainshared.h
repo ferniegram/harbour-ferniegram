@@ -31,6 +31,7 @@
 #include "debuglogjs.h"
 #include "tdlib/tdlibfile.h"
 #include "tdlib/tdlibwrapper.h"
+#include "tdlib/tdlibresponse.h"
 #include "chatpermissionfiltermodel.h"
 #include "chatlistmodel.h"
 #include "chat/chatmanager.h"
@@ -111,6 +112,8 @@ namespace MainShared {
         TDLibWrapper *tdLibWrapper = new TDLibWrapper(argc, argv, appSettings, mceInterface, view.data());
         context->setContextProperty("tdLibWrapper", tdLibWrapper);
         qmlRegisterUncreatableType<TDLibWrapper>(uri, 1, 0, "TDLibAPI", QString());
+
+        qmlRegisterUncreatableType<TDLibResponse>(uri, 1, 0, "TDLibResponse", QString());
 
         Utilities *utilities = tdLibWrapper->getUtilities();
         context->setContextProperty("utilities", utilities);

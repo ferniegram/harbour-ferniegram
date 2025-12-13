@@ -28,6 +28,7 @@
 #include <QQmlPropertyMap>
 #include <td/telegram/td_json_client.h>
 #include "tdlibreceiver.h"
+#include "tdlibresponse.h"
 #include "dbusadaptor.h"
 #include "dbusinterface.h"
 #include "appsettings.h"
@@ -207,7 +208,7 @@ public:
 
     // Direct TDLib functions
     Q_INVOKABLE void sendRequest(const QVariantMap &requestObject);
-    Q_INVOKABLE qlonglong sendRequestWithId(const QVariantMap &requestObject);
+    Q_INVOKABLE TDLibResponse *sendRequestWithId(const QVariantMap &requestObject);
     void close();
     Q_INVOKABLE void setAuthenticationPhoneNumber(const QString &phoneNumber);
     Q_INVOKABLE void setAuthenticationCode(const QString &authenticationCode);

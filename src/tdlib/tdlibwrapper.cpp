@@ -337,13 +337,13 @@ void TDLibWrapper::sendRequest(const QVariantMap &requestObject) {
     td_send(this->tdLibClientId, requestDocument.toJson().constData());
 }
 
-qlonglong TDLibWrapper::sendRequestWithId(const QVariantMap &requestObject) {
+TDLibResponse *TDLibWrapper::sendRequestWithId(const QVariantMap &requestObject) {
     LOG("Sending request to TDLib with request ID" << nextRequestId);
     QVariantMap newRequestObject = requestObject;
     newRequestObject.insert(_EXTRA, "R"+QString::number(nextRequestId));
     this->sendRequest(newRequestObject);
     nextRequestId++;
-    return nextRequestId - 1;
+    return new TDLibResponse(nextRequestId - 1, this);
 }
 
 void TDLibWrapper::setAuthenticationPhoneNumber(const QString &phoneNumber) {

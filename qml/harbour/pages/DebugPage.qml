@@ -122,12 +122,15 @@ Page {
             Button {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: "Execute"
-                onClicked: customRequestResponseLabel.requestId = tdLibWrapper.sendRequestWithId(JSON.parse(customRequestArea.text))
+                onClicked: {
+                    tdLibWrapper.sendRequestWithId(JSON.parse(customRequestArea.text)).finished.connect(function(response) {
+                        customRequestResponseLabel.text = JSON.stringify(response, null, '\t')
+                    })
+                }
             }
 
             Label {
                 id: customRequestResponseLabel
-                property var requestId
                 x: Theme.horizontalPageMargin
                 width: parent.width - 2*x
                 wrapMode: Text.Wrap
@@ -139,13 +142,6 @@ Page {
                         appNotification.show("Copied")
                     }
                 }
-            }
-
-            Connections {
-                target: tdLibWrapper
-                onResponseForRequestIdReceived:
-                    if (requestId == customRequestResponseLabel.requestId)
-                        customRequestResponseLabel.text = JSON.stringify(response, null, '\t')
             }
 
 

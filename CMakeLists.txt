@@ -197,6 +197,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     src/tdlib/tdlibfile.cpp
     src/tdlib/tdlibreceiver.cpp
     src/tdlib/tdlibwrapper.cpp
+    src/tdlib/tdlibresponse.cpp
     src/textfiltermodel.cpp
     src/tgsplugin.cpp
     src/waveformmanager.cpp
@@ -236,6 +237,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     src/tdlib/tdlibreceiver.h
     src/tdlibsecrets.h
     src/tdlib/tdlibwrapper.h
+    src/tdlib/tdlibresponse.h
     src/textfiltermodel.h
     src/tgsplugin.h
     src/waveformmanager.h
