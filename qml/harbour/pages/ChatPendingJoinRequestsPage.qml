@@ -132,7 +132,8 @@ Page {
         delegate: PhotoTextsListItem {
             pictureThumbnail.photoData: user.info.profile_photo.small
             primaryText.text: utilities.getUserName(user.info)
-            secondaryText.text: qsTr("requested to join %1", "Indicates when a user sent the join request").arg(Functions.formatDate(date, Formatter.TimepointRelative))
+            // FIXME: should we use Timepoint instead of TimepointRelative here?
+            secondaryText.text: qsTr("requested to join %1", "Indicates when a user sent the join request").arg(Functions.getDateTimeTimepointRelative(date))
             tertiaryText.text: bio // FIXME: is this needed?
 
             TDLibUser {

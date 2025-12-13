@@ -36,13 +36,7 @@ ApplicationWindow {
         onPleaseOpenUrl: appWindow.activate()
     }
 
-    Connections {
-        target: tdLibWrapper
-        onOpenFileExternally: Qt.openUrlExternally(filePath)
-        onTgUrlFound: Functions.handleLink(tgUrl)
-        onErrorReceived: Functions.handleErrorMessage(code, message, extra)
-        onServiceNotificationReceived: appNotification.show(utilities.getMessageContentText(content, true))
-    }
+    MainShared {}
 
     AppNotification {
         id: appNotification
@@ -55,21 +49,5 @@ ApplicationWindow {
                   case Orientation.PortraitInverted: return 180
                   case Orientation.LandscapeInverted: return 270
                   }
-    }
-
-    Component {
-        id: tdlibFileComponent
-        TDLibFile {
-            tdlib: tdLibWrapper
-            autoLoad: true
-        }
-    }
-
-    Component.onCompleted: {
-        Functions.setGlobals({
-            tdLibWrapper: tdLibWrapper,
-            appNotification: appNotification,
-            utilities: utilities,
-        })
     }
 }

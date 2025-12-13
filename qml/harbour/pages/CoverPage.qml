@@ -95,19 +95,7 @@ CoverBackground {
 
         Text {
             id: connectionStateText
-            text: switch (tdLibWrapper.connectionState) {
-            case TDLibAPI.WaitingForNetwork:
-                return qsTr("Waiting for network...")
-            case TDLibAPI.Connecting:
-                return qsTr("Connecting to network...")
-            case TDLibAPI.ConnectingToProxy:
-                return qsTr("Connecting to proxy...")
-            case TDLibAPI.ConnectionReady:
-                return qsTr("Connected")
-            case TDLibAPI.Updating:
-                return qsTr("Updating content...")
-            default: return ''
-            }
+            text: tdLibWrapper.connectionStateText
             font.pixelSize: Theme.fontSizeLarge
             color: Theme.highlightColor
             visible: coverPage.authenticated

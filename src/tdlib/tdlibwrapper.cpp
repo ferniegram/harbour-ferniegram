@@ -2782,3 +2782,18 @@ void TDLibWrapper::processChatJoinRequests(qlonglong chatId, bool approve, const
                           {INVITE_LINK, inviteLink}
                       });
 }
+
+QString TDLibWrapper::connectionStateText() {
+    switch (connectionState) {
+    case WaitingForNetwork:
+        return tr("Waiting for network...");
+    case Connecting:
+        return tr("Connecting to network...");
+    case ConnectingToProxy:
+        return tr("Connecting to proxy...");
+    case Updating:
+        return tr("Updating content...");
+    default:
+        return QString();
+    }
+}

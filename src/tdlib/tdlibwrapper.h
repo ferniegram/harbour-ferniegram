@@ -42,6 +42,7 @@ class TDLibWrapper : public QObject
     Q_PROPERTY(AuthorizationState authorizationState MEMBER authorizationState NOTIFY authorizationStateChanged)
     Q_PROPERTY(QVariantMap authorizationStateData MEMBER authorizationStateData NOTIFY authorizationStateChanged)
     Q_PROPERTY(ConnectionState connectionState MEMBER connectionState NOTIFY connectionStateChanged)
+    Q_PROPERTY(QString connectionStateText READ connectionStateText NOTIFY connectionStateChanged)
     Q_PROPERTY(QVariantMap userInformation READ getUserInformation NOTIFY ownUserUpdated)
     Q_PROPERTY(QQmlPropertyMap* options MEMBER options CONSTANT)
 
@@ -199,6 +200,7 @@ public:
     Q_INVOKABLE void readFolderChatList(int folderId);
     SearchMessagesFilter getSearchMessagesFilterForType(const QString &type);
     static QString getSearchMessagesFilterType(SearchMessagesFilter filter);
+    QString connectionStateText();
 
     inline Utilities *getUtilities() const { return this->utilities; }
     DBusAdaptor *getDBusAdaptor();
