@@ -70,6 +70,7 @@ Item {
                 id: singleImage
                 width: parent.width - Theme.paddingSmall
                 height: width
+                anchors.centerIn: parent
                 source: file.path
                 sourceSize.width: optimizeImageSize ? width : undefined
                 sourceSize.height: optimizeImageSize ? height : undefined
@@ -111,6 +112,7 @@ Item {
     Item {
         width: parent.width - Theme.paddingSmall
         height: parent.height - Theme.paddingSmall
+        anchors.centerIn: parent
         visible: !profileImageLoader.item || !profileImageLoader.item.visible
 
         Rectangle {
