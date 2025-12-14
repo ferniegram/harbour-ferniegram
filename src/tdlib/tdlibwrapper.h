@@ -566,7 +566,6 @@ private:
     QStringList diceEmojis;
 
     int versionNumber;
-    QString activeChatSearchName;
     bool joinChatRequested;
     bool isLoggingOut;
     bool closing;

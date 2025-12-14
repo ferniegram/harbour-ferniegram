@@ -120,6 +120,8 @@ namespace {
     const QString LINK("link");
     const QString EXTRA_OPEN_DIRECTLY("openDirectly");
     const QString URL("url");
+    const QString BASIC_GROUP_ID("basic_group_id");
+    const QString SUPERGROUP_ID("supergroup_id");
 
     const QStringList ALL_FILE_TYPES(QStringList()
                                      << "fileTypeAnimation"
@@ -773,7 +775,7 @@ void TDLibWrapper::getSupergroupMembers(const QString &groupId, int limit, int o
     this->sendRequest(QVariantMap{
         {_TYPE, "getSupergroupMembers"},
         {_EXTRA, groupId},
-        {"supergroup_id", groupId},
+        {SUPERGROUP_ID, groupId},
         {OFFSET, offset},
         {LIMIT, limit}
     });
@@ -784,10 +786,10 @@ void TDLibWrapper::getGroupFullInfo(const QString &groupId, bool isSuperGroup) {
     QVariantMap requestObject{{_EXTRA, groupId}};
     if(isSuperGroup) {
         requestObject.insert(_TYPE, "getSupergroupFullInfo");
-        requestObject.insert("supergroup_id", groupId);
+        requestObject.insert(SUPERGROUP_ID, groupId);
     } else {
         requestObject.insert(_TYPE, "getBasicGroupFullInfo");
-        requestObject.insert("basic_group_id", groupId);
+        requestObject.insert(BASIC_GROUP_ID, groupId);
     }
     this->sendRequest(requestObject);
 }
@@ -823,7 +825,7 @@ void TDLibWrapper::createSupergroupChat(const QString &supergroupId, const QStri
     LOG("Creating Supergroup Chat");
     this->sendRequest(QVariantMap{
         {_TYPE, "createSupergroupChat"},
-        {"supergroup_id", supergroupId},
+        {SUPERGROUP_ID, supergroupId},
         {_EXTRA, extra} //"openDirectly" gets matched in qml
     });
 }
@@ -832,7 +834,7 @@ void TDLibWrapper::createBasicGroupChat(const QString &basicGroupId, const QStri
     LOG("Creating Basic Group Chat");
     this->sendRequest(QVariantMap{
         {_TYPE, "createBasicGroupChat"},
-        {"basic_group_id", basicGroupId},
+        {BASIC_GROUP_ID, basicGroupId},
         {_EXTRA, extra} //"openDirectly"/"openAndSend:*" gets matched in qml
     });
 }
@@ -908,7 +910,7 @@ void TDLibWrapper::toggleSupergroupIsAllHistoryAvailable(const QString &groupId,
     LOG("Toggling SupergroupIsAllHistoryAvailable");
     this->sendRequest(QVariantMap{
         {_TYPE, "toggleSupergroupIsAllHistoryAvailable"},
-        {"supergroup_id", groupId},
+        {SUPERGROUP_ID, groupId},
         {"is_all_history_available", isAllHistoryAvailable}
     });
 }
@@ -947,14 +949,13 @@ void TDLibWrapper::getPollVoters(const QString &chatId, qlonglong messageId, int
 
 void TDLibWrapper::searchPublicChat(const QString &userName, bool doOpenOnFound) {
     LOG("Search public chat" << userName);
-    if(doOpenOnFound) this->activeChatSearchName = userName;
 
     this->sendRequest(QVariantMap{
         {_TYPE, "searchPublicChat"},
         {USERNAME, userName},
         {_EXTRA, QVariantMap{
             {TYPE, "searchPublicChat:"+userName},
-            {"doOpenOnFound", doOpenOnFound},
+            {EXTRA_OPEN_DIRECTLY, doOpenOnFound},
         }}
     });
 }
@@ -1877,21 +1878,26 @@ void TDLibWrapper::handleChatUnreadReactionCountUpdated(qlonglong chatId, int un
 
 void TDLibWrapper::handleChatReceived(const QVariantMap &chatInformation) {
     emit chatReceived(chatInformation);
-    if (!this->activeChatSearchName.isEmpty()) {
+
+    const QVariantMap extra = chatInformation.value(_EXTRA).toMap();
+    if (extra.value(EXTRA_OPEN_DIRECTLY).toBool()) {
         QVariantMap chatType = chatInformation.value(TYPE).toMap();
-        ChatType receivedChatType = chatTypeFromString(chatType.value(_TYPE).toString());
-        if (receivedChatType == ChatTypeBasicGroup) {
-            LOG("Found basic group for active search" << this->activeChatSearchName);
-            this->activeChatSearchName.clear();
-            this->createBasicGroupChat(chatType.value("basic_group_id").toString(), EXTRA_OPEN_DIRECTLY);
-        } else if (receivedChatType == ChatTypeSupergroup) {
-            LOG("Found supergroup for active search" << this->activeChatSearchName);
-            this->activeChatSearchName.clear();
-            this->createSupergroupChat(chatType.value("supergroup_id").toString(), EXTRA_OPEN_DIRECTLY);
-        } else if (receivedChatType == ChatTypePrivate) {
-            LOG("Found private chat for active search" << this->activeChatSearchName);
-            this->activeChatSearchName.clear();
+
+        switch (chatTypeFromString(chatType.value(_TYPE).toString())) {
+        case ChatTypeBasicGroup:
+            LOG("Found basic group for opening directly");
+            this->createBasicGroupChat(chatType.value(BASIC_GROUP_ID).toString(), EXTRA_OPEN_DIRECTLY);
+            break;
+        case ChatTypeSupergroup:
+            LOG("Found supergroup for opening directly");
+            this->createSupergroupChat(chatType.value(SUPERGROUP_ID).toString(), EXTRA_OPEN_DIRECTLY);
+            break;
+        case ChatTypePrivate:
+            LOG("Found private chat for opening directly");
             this->createPrivateChat(chatType.value(USER_ID).toString(), EXTRA_OPEN_DIRECTLY);
+            break;
+        default:
+            LOG("Found unknown chat for opening directly, ignoring");
         }
     }
 }
@@ -1937,21 +1943,11 @@ void TDLibWrapper::handleChatAvailableReactionsUpdated(qlonglong chatId, const Q
 
 void TDLibWrapper::handleBasicGroupUpdated(qlonglong groupId, const QVariantMap &groupInformation) {
     emit basicGroupUpdated(updateGroup(groupId, groupInformation, &basicGroups)->groupId);
-    if (!this->activeChatSearchName.isEmpty() && this->activeChatSearchName == groupInformation.value(USERNAME).toString()) {
-        LOG("Found basic group for active search" << this->activeChatSearchName);
-        this->activeChatSearchName.clear();
-        this->createBasicGroupChat(groupInformation.value(ID).toString(), EXTRA_OPEN_DIRECTLY);
-    }
 }
 
 void TDLibWrapper::handleSuperGroupUpdated(qlonglong groupId, const QVariantMap &groupInformation) {
     superGroupsByName.insert(groupInformation.value(USERNAMES).toMap().value(EDITABLE_USERNAME).toString().toLower(), groupInformation);
     emit superGroupUpdated(updateGroup(groupId, groupInformation, &superGroups)->groupId);
-    if (!this->activeChatSearchName.isEmpty() && this->activeChatSearchName == groupInformation.value(USERNAME).toString()) {
-        LOG("Found supergroup for active search" << this->activeChatSearchName);
-        this->activeChatSearchName.clear();
-        this->createSupergroupChat(groupInformation.value(ID).toString(), EXTRA_OPEN_DIRECTLY);
-    }
 }
 
 void TDLibWrapper::handleStickerSets(const QVariantList &stickerSets) {
