@@ -95,7 +95,7 @@ CoverBackground {
 
         Text {
             id: connectionStateText
-            text: tdLibWrapper.connectionStateText
+            text: tdLibWrapper.connectionStateText || qsTr("Connected")
             font.pixelSize: Theme.fontSizeLarge
             color: Theme.highlightColor
             visible: coverPage.authenticated
