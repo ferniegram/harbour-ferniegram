@@ -167,6 +167,7 @@ public:
     public:
         Group(qlonglong id) : groupId(id) { }
         ChatMemberStatus chatMemberStatus() const;
+        bool isPublic() const;
     public:
         const qlonglong groupId;
         QVariantMap groupInfo;
@@ -202,6 +203,7 @@ public:
     SearchMessagesFilter getSearchMessagesFilterForType(const QString &type);
     static QString getSearchMessagesFilterType(SearchMessagesFilter filter);
     QString connectionStateText();
+    Q_INVOKABLE bool canSkipChatJoinDialog(qlonglong chatId);
 
     inline Utilities *getUtilities() const { return this->utilities; }
     DBusAdaptor *getDBusAdaptor();

@@ -122,6 +122,7 @@ namespace {
     const QString URL("url");
     const QString BASIC_GROUP_ID("basic_group_id");
     const QString SUPERGROUP_ID("supergroup_id");
+    const QString ACTIVE_USERNAMES("active_usernames");
 
     const QStringList ALL_FILE_TYPES(QStringList()
                                      << "fileTypeAnimation"
@@ -2336,6 +2337,13 @@ TDLibWrapper::ChatMemberStatus TDLibWrapper::Group::chatMemberStatus() const {
     return statusType.isEmpty() ? ChatMemberStatusUnknown : chatMemberStatusFromString(statusType);
 }
 
+bool TDLibWrapper::Group::isPublic() const {
+    return !this->groupInfo.value(USERNAMES).toMap().value(ACTIVE_USERNAMES).toList().isEmpty()
+            || this->groupInfo.value("has_linked_chat").toBool()
+            || this->groupInfo.value("has_location").toBool()
+            || this->groupInfo.value("is_direct_messages_group").toBool(); // last one is questionable
+}
+
 void TDLibWrapper::getMessageProperties(qlonglong chatId, qlonglong messageId) {
     LOG("Retrieving message properties" << chatId << messageId);
     QVariantMap requestObject{{CHAT_ID, chatId}, {MESSAGE_ID, messageId}};
@@ -2778,4 +2786,19 @@ void TDLibWrapper::handleUserReceived(const QVariantMap &user, bool doOpenOnFoun
 void TDLibWrapper::checkChatInviteLink(const QString &link) {
     LOG("Checking chat invite link info" << link);
     this->sendRequest({{_TYPE, "checkChatInviteLink"}, {INVITE_LINK, link}, {_EXTRA, link}});
+}
+
+bool TDLibWrapper::canSkipChatJoinDialog(qlonglong chatId) {
+    const QVariantMap chat = getChat(chatId);
+    if (chat.isEmpty())
+        return false;
+
+    const QVariantMap chatType = chat.value(TYPE).toMap();
+    if (chatTypeFromString(chatType.value(_TYPE).toString()) == ChatTypeSupergroup) {
+        const Group *supergroup = superGroups.value(chatType.value(SUPERGROUP_ID).toLongLong());
+
+        return supergroup && (supergroup->chatMemberStatus() != ChatMemberStatusLeft || supergroup->isPublic());
+    }
+
+    return true;
 }
