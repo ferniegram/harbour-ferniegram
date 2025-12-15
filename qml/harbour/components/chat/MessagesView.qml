@@ -471,12 +471,6 @@ Column {
                     chatView.handleScrollPositionChanged()
                     if (chatPage.isChannel)
                         tdLibWrapper.getChatSponsoredMessage(chatInformation.id)
-                    if (typeof chatPage.messageToShow !== "undefined" && chatPage.messageToShow !== {}) {
-                        messageOverlayLoader.overlayMessage = chatPage.messageToShow
-                        messageOverlayLoader.active = true
-                    }
-                    if (chatPage.messageIdToShow)
-                        tdLibWrapper.getMessage(chatPage.chatInformation.id, chatPage.messageIdToShow)
                 }
             }
         }

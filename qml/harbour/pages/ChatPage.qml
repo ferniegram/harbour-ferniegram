@@ -26,6 +26,7 @@ import "../js/twemoji.js" as Emoji
 import "../js/functions.js" as Functions
 
 Page {
+    objectName: 'chatPage'
     id: chatPage
     allowedOrientations: Orientation.All
     backNavigation: !messagesView || !messagesView.stickerPickerLoader.active
@@ -49,8 +50,7 @@ Page {
     property var botInformation
     property var chatGroupInformation: chatManager.groupInfo
     property int chatOnlineMemberCount: 0
-    property var messageToShow
-    property string messageIdToShow
+    property var messageIdToShow
     readonly property bool userIsMember: ((isPrivateChat || isSecretChat) &&
                                           chatInformation["@type"] &&
                                           chatInformation.id !== chatPage.myUserId) || // should be optimized

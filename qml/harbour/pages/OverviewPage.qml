@@ -53,10 +53,11 @@ Page {
     Connections {
         target: dBusAdaptor
         onPleaseOpenMessage: {
-            Debug.log("[OverviewPage] Opening chat from external requested: ", chatId, messageId);
+            Debug.log("[OverviewPage] Opening chat from external requested: ", chatId, messageId)
             // We open the chat only for now - as it's automatically positioned at the last read message
-            // it's probably better as if the message itself is displayed in the overlay
-            openChat(chatId)
+            // this also doesn't highlight the message which isn't really needed
+            openChat(chatId, {}, true)
+            //openChatWithMessageId(chatId, messageId, true)
         }
         onPleaseOpenUrl: {
             Debug.log("[OverviewPage] Opening URL requested: ", url)
@@ -107,36 +108,39 @@ Page {
         }
     }
 
-    function openChat(chatId) {
+    function openChat(chatId, options, doPop) {
         if(chatListCreated && chatId) {
-            Debug.log("[OverviewPage] Opening Chat: ", chatId)
-            pageStack.pop(overviewPage, PageStackAction.Immediate)
-            pageStack.push(Qt.resolvedUrl("../pages/ChatPage.qml"), { "chatInformation" : tdLibWrapper.getChat(chatId) }, PageStackAction.Immediate)
+            Debug.log("[OverviewPage] Opening chat:", chatId)
+            pageStack.completeAnimation()
+
+            if (doPop)
+                pageStack.pop(overviewPage, PageStackAction.Immediate)
+            else {
+                // TODO: if a duplicate chat page is found in the page stack, remove it
+                // also we should not add a maximum of pages after which they begin to pop
+                /*var page = pageStack.find(function (page) {
+                    return page.objectName === 'chatPage' && page.chatInformation.id === chatId
+                })
+                if (page)
+                    pageStack.pop(page) // here it will pop the duplicate chat page AND everything above it, but we need just the duplicate chat page
+                */
+            }
+
+            options = options || {}
+            options.chatInformation = tdLibWrapper.getChat(chatId)
+            pageStack.push(Qt.resolvedUrl("../pages/ChatPage.qml"), {chatInformation: tdLibWrapper.getChat(chatId) }, doPop ? PageStackAction.Immediate : PageStackAction.Animated)
+
             chatToOpen = null
         }
     }
 
-    function openChatWithMessageId(chatId, messageId) {
+    function openChatWithMessageId(chatId, messageId, doPop) {
         if(chatId && messageId) {
-            chatToOpen = [chatId, messageId];
+            chatToOpen = [chatId, messageId]
         }
         if(chatListCreated && chatToOpen && chatToOpen.length === 2) {
-            Debug.log("[OverviewPage] Opening Chat: ", chatToOpen[0], "message ID: " + chatToOpen[1])
-            pageStack.pop(overviewPage, PageStackAction.Immediate)
-            pageStack.push(Qt.resolvedUrl("../pages/ChatPage.qml"), { "chatInformation" : tdLibWrapper.getChat(chatToOpen[0]), "messageIdToShow" : chatToOpen[1] }, PageStackAction.Immediate)
-            chatToOpen = null
-        }
-    }
-
-    function openChatWithMessage(chatId, message) {
-        if(chatId && message) {
-            chatToOpen = [chatId, message];
-        }
-        if(chatListCreated && chatToOpen && chatToOpen.length === 2) {
-            Debug.log("[OverviewPage] Opening Chat (with provided message): ", chatToOpen[0]);
-            pageStack.pop(overviewPage, PageStackAction.Immediate);
-            pageStack.push(Qt.resolvedUrl("../pages/ChatPage.qml"), { "chatInformation" : tdLibWrapper.getChat(chatToOpen[0]), "messageToShow" : chatToOpen[1] }, PageStackAction.Immediate);
-            chatToOpen = null;
+            Debug.log("[OverviewPage] Opening chat:", chatToOpen[0], "message ID:" + chatToOpen[1])
+            openChat(chatToOpen[0], {messageIdToShow: chatToOpen[1]}, doPop)
         }
     }
 
@@ -216,18 +220,16 @@ Page {
         }
         onChatReceived: {
             var openAndSendStartToBot = chat["@extra"].toString().indexOf("openAndSendStartToBot:") === 0
-            if(chat['@extra'] === 'openDirectly' || chat['@extra'].openDirectly || openAndSendStartToBot && chat.type["@type"] === "chatTypePrivate") {
-                //pageStack.pop(overviewPage, PageStackAction.Immediate)
-                pageStack.completeAnimation()
-                // TODO: allow maximum of 3 chats in the page stack at the same time, also see ChatInformationTabItemMembers
-                // if we get a new chat (no messages?), we can not use the provided data
-                var chatinfo = tdLibWrapper.getChat(chat.id)
-                var options = {chatInformation: chatinfo}
+            if (chat['@extra'] === 'openDirectly' || chat['@extra'].openDirectly || openAndSendStartToBot && chat.type["@type"] === "chatTypePrivate") {
+                // why was this here: "if we get a new chat (no messages?), we can not use the provided data"?
+                // it doesn't seem to be true, TGX and Unigram don't do additional
+                // createPrivateChat/createBasicGroupChat/createSupergroupChat calls after searchPublicChat...
+                var options = {}
                 if(openAndSendStartToBot) {
                     options.doSendBotStartMessage = true
                     options.sendBotStartMessageParameter = chat["@extra"].substring(22)
                 }
-                pageStack.push(Qt.resolvedUrl("../pages/ChatPage.qml"), options)
+                openChat(chat.id, options)
             }
         }
         onCopyToDownloadsSuccessful: {
