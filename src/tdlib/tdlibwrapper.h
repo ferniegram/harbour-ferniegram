@@ -502,7 +502,6 @@ public slots:
     void handleChatUnreadMentionCountUpdated(qlonglong chatId, int unreadMentionCount);
     void handleChatUnreadReactionCountUpdated(qlonglong chatId, int unreadReactionCount);
     void handleChatAvailableReactionsUpdated(qlonglong chatId, const QVariantMap &availableReactions);
-    void handleChatReceived(const QVariantMap &chatInformation);
     void handleUnreadMessageCountUpdated(const QVariantMap &messageCountInformation);
     void handleUnreadChatCountUpdated(const QVariantMap &chatCountInformation);
     void handleBasicGroupUpdated(qlonglong groupId, const QVariantMap &groupInformation);

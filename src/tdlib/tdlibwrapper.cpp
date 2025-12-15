@@ -278,7 +278,7 @@ void TDLibWrapper::initializeTDLibReceiver() {
     connect(this->tdLibReceiver, &TDLibReceiver::messagesDeleted, this, &TDLibWrapper::messagesDeleted);
     connect(this->tdLibReceiver, &TDLibReceiver::chats, this, &TDLibWrapper::chatsReceived);
     connect(this->tdLibReceiver, &TDLibReceiver::sponsoredChatsReceived, this, &TDLibWrapper::sponsoredChatsReceived);
-    connect(this->tdLibReceiver, &TDLibReceiver::chat, this, &TDLibWrapper::handleChatReceived);
+    connect(this->tdLibReceiver, &TDLibReceiver::chat, this, &TDLibWrapper::chatReceived);
     connect(this->tdLibReceiver, &TDLibReceiver::secretChat, this, &TDLibWrapper::handleSecretChatReceived);
     connect(this->tdLibReceiver, &TDLibReceiver::secretChatUpdated, this, &TDLibWrapper::handleSecretChatUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::recentStickersUpdated, this, &TDLibWrapper::recentStickersUpdated);
@@ -1881,32 +1881,6 @@ void TDLibWrapper::handleChatUnreadReactionCountUpdated(qlonglong chatId, int un
     this->getChatDataForce(chatId)->chatData.insert(UNREAD_REACTION_COUNT, unreadReactionCount);
     emit chatRolesUpdated(chatId, QVector<int>{ChatData::RoleUnreadReactionCount});
     emit chatUnreadReactionCountUpdated(chatId, unreadReactionCount);
-}
-
-void TDLibWrapper::handleChatReceived(const QVariantMap &chatInformation) {
-    emit chatReceived(chatInformation);
-
-    const QVariantMap extra = chatInformation.value(_EXTRA).toMap();
-    if (extra.value(EXTRA_OPEN_DIRECTLY).toBool()) {
-        QVariantMap chatType = chatInformation.value(TYPE).toMap();
-
-        switch (chatTypeFromString(chatType.value(_TYPE).toString())) {
-        case ChatTypeBasicGroup:
-            LOG("Found basic group for opening directly");
-            this->createBasicGroupChat(chatType.value(BASIC_GROUP_ID).toString(), EXTRA_OPEN_DIRECTLY);
-            break;
-        case ChatTypeSupergroup:
-            LOG("Found supergroup for opening directly");
-            this->createSupergroupChat(chatType.value(SUPERGROUP_ID).toString(), EXTRA_OPEN_DIRECTLY);
-            break;
-        case ChatTypePrivate:
-            LOG("Found private chat for opening directly");
-            this->createPrivateChat(chatType.value(USER_ID).toString(), EXTRA_OPEN_DIRECTLY);
-            break;
-        default:
-            LOG("Found unknown chat for opening directly, ignoring");
-        }
-    }
 }
 
 void TDLibWrapper::handleUnreadMessageCountUpdated(const QVariantMap &messageCountInformation) {
