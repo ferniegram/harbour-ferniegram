@@ -7,6 +7,8 @@
 
 class ChatMessagesModel : public ReadableMessagesModel {
     Q_OBJECT
+
+    Q_PROPERTY(bool containsSponsoredMessages MEMBER containsSponsoredMessages NOTIFY containsSponsoredMessagesChanged)
 public:
     ChatMessagesModel(TDLibWrapper *tdLibWrapper, qlonglong chatId, QObject *parent = nullptr);
 
@@ -15,16 +17,34 @@ public:
 
     friend class ChatManager;
 
+signals:
+    void containsSponsoredMessagesChanged();
+
 protected:
     virtual void loadMessages(int extra, qlonglong fromMessageId, int offset = -1) override;
     virtual inline bool canLoadMoreMessages() const override { return searchQuery.isEmpty(); }
 
     virtual qlonglong lastReadInboxMessageId() const override;
     virtual qlonglong lastReadOutboxMessageId() const override;
-    virtual qlonglong lastMessageId() const override; // FIXME: this is (might be) wrong and shouldn't be used ideally
+    virtual qlonglong lastMessageId() const override;
+
+    virtual void appendMessages(const QList<MessageData*> newMessages, bool updateIsLastInSequence = true) override;
+
+private:
+    void insertSponsoredMessage(int insertIndex, const QVariantMap &message, qlonglong messageId);
+
+protected slots:
+    virtual void handlePrepareMessagesReceived(int totalCount, UpdateType fromUpdate) override;
+
+private slots:
+    void handleSponsoredMessagesReceived(qlonglong chatId, const QVariantList &sponsoredMessages, int messagesBetween);
 
 private:
     QString searchQuery;
+
+    bool containsSponsoredMessages;
+    QVariantList pendingSponsoredMessages;
+    int sponsoredMessagesMessagesBetween;
 };
 
 class ChatManager : public QObject {
@@ -38,9 +58,12 @@ class ChatManager : public QObject {
     Q_PROPERTY(bool isChannel READ isChannel NOTIFY chatIdChanged)
     Q_PROPERTY(QVariant userInfo READ userInfo NOTIFY userInfoChanged)
     Q_PROPERTY(QVariant groupInfo READ groupInfo NOTIFY groupInfoChanged)
+    Q_PROPERTY(bool isBot READ isBot NOTIFY userInfoChanged)
 
     Q_PROPERTY(QVariantMap smallPhoto READ smallPhoto NOTIFY smallPhotoChanged)
     Q_PROPERTY(QVariantMap pendingJoinRequests READ pendingJoinRequests NOTIFY pendingJoinRequestsChanged)
+
+    Q_PROPERTY(QVariantMap botSponsoredMessage MEMBER botSponsoredMessage NOTIFY botSponsoredMessageChanged)
 
     Q_PROPERTY(ChatMessagesModel* model MEMBER chatMessagesModel NOTIFY messageModelsChanged)
 
@@ -78,6 +101,7 @@ public:
     bool isChannel() const;
     QVariant userInfo() const;
     QVariant groupInfo() const;
+    bool isBot() const;
 
     QVariantMap smallPhoto() const;
     QVariantMap pendingJoinRequests() const;
@@ -97,6 +121,8 @@ signals:
     void smallPhotoChanged();
     void pendingJoinRequestsChanged();
 
+    void botSponsoredMessageChanged();
+
 private slots:
     void handleChatReadInboxUpdated(const QString &id);
     void handleChatReadOutboxUpdated(const QString &id);
@@ -107,6 +133,7 @@ private slots:
     void handleUserUpdated(const QString &userId);
     void handleBasicGroupUpdated(qlonglong groupId);
     void handleSupergroupUpdated(qlonglong groupId);
+    void handleSponsoredMessagesReceived(qlonglong chatId, const QVariantList &sponsoredMessages, int messagesBetween);
 
 private:
     qlonglong userId() const;
@@ -122,6 +149,8 @@ private:
     qlonglong pinnedMessageId;
     bool mainModelsInitializationScheduled;
     qlonglong mainModelsInitializationScheduledFromMessageId;
+
+    QVariantMap botSponsoredMessage;
 
     ChatMessagesModel *chatMessagesModel;
     MediaMessagesModel* photoAndVideoMessagesModel;

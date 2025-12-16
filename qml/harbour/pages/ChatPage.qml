@@ -43,7 +43,8 @@ Page {
     property bool isSecretChatReady: false
     property bool isBasicGroup: chatManager.chatType === TDLibAPI.ChatTypeBasicGroup
     property bool isSuperGroup: chatManager.chatType === TDLibAPI.ChatTypeSupergroup
-    property bool isChannel: !!(chatGroupInformation && chatGroupInformation.is_channel)
+    property bool isChannel: chatManager.isChannel
+    property bool isBot: chatManager.isBot
     property bool viewAsTopics: chatManager.viewAsTopics
     property bool isDeletedUser: !!chatPartnerInformation && chatPartnerInformation.type['@type'] === "userTypeDeleted"
     property var chatPartnerInformation: chatManager.userInfo
@@ -549,6 +550,13 @@ Page {
                 }
             }
 
+            ChatBotSponsoredMessageItem {
+                id: chatBotSponsoredMessageItem
+                width: parent.width
+                message: chatManager.botSponsoredMessage
+                chatId: chatInformation.id
+            }
+
             ChatPendingJoinRequestsItem {
                 id: pendingJoinRequestsItem
                 width: parent.width
@@ -559,7 +567,7 @@ Page {
             Loader {
                 id: contentLoader
                 width: parent.width
-                height: chatColumn.height - header.height - pendingJoinRequestsItem.height
+                height: chatColumn.height - header.height - chatBotSponsoredMessageItem.height - pendingJoinRequestsItem.height
                 sourceComponent: viewAsTopics ? topicsListViewComponent : messagesViewComponent
 
                 Component {

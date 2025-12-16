@@ -21,6 +21,7 @@ ListItem {
     property alias muted: chatBadges.muted
     property alias ad: chatBadges.ad
 
+    property alias pictureThumbnailItem: pictureItem
     property alias pictureThumbnail: pictureItem.pictureThumbnail
     property var minithumbnail
     property int minithumbnailRadius: Theme.paddingSmall / 2

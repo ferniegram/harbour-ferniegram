@@ -19,7 +19,11 @@ namespace {
     const QString IS_CHANNEL("is_channel");
     const QString BASIC_GROUP_ID("basic_group_id");
     const QString SUPERGROUP_ID("supergroup_id");
+    const QString MESSAGE_ID("message_id");
+    const QString TYPE_USER_TYPE_BOT("userTypeBot");
+
     const char* PROPERTY_CHAT_INFORMATION = "chatInformation";
+    const char* PROPERTY_IS_CHANNEL = "isChannel";
 
     const QString CONTENT_MESSAGE_PHOTO("messagePhoto");
     const QString CONTENT_MESSAGE_VIDEO("messageVideo");
@@ -27,8 +31,16 @@ namespace {
     const QString CONTENT_MESSAGE_VIDEO_NOTE("messageVideoNote");
 }
 
-ChatMessagesModel::ChatMessagesModel(TDLibWrapper *tdLibWrapper, qlonglong chatId, QObject *parent) : ReadableMessagesModel(tdLibWrapper, parent), searchQuery() {
+ChatMessagesModel::ChatMessagesModel(TDLibWrapper *tdLibWrapper, qlonglong chatId, QObject *parent)
+    : ReadableMessagesModel(tdLibWrapper, parent),
+      searchQuery(),
+
+      containsSponsoredMessages(false),
+      sponsoredMessagesMessagesBetween(0)
+{
     this->chatId = chatId;
+
+    connect(this->tdLibWrapper, &TDLibWrapper::sponsoredMessagesReceived, this, &ChatMessagesModel::handleSponsoredMessagesReceived);
 }
 
 bool ChatMessagesModel::clear() {
@@ -62,6 +74,130 @@ qlonglong ChatMessagesModel::lastReadOutboxMessageId() const {
 qlonglong ChatMessagesModel::lastMessageId() const {
     return this->parent()->property(PROPERTY_CHAT_INFORMATION).toMap().value(LAST_MESSAGE).toMap().value(ID).toLongLong();
 }
+
+
+void ChatMessagesModel::insertSponsoredMessage(int insertIndex, const QVariantMap &message, qlonglong messageId) {
+    LOG("New sponsored message will be added:" << messageId << "at" << insertIndex);
+
+    beginInsertRows(QModelIndex(), insertIndex, insertIndex);
+    messages.insert(insertIndex, new MessageData(message, messageId));
+    for (int j = insertIndex; j < messages.size(); j++)
+        messageIndexMap.insert(messages.at(j)->messageId, j);
+    endInsertRows();
+
+
+    if (insertIndex > 0) {
+        QModelIndex modelIndex = index(insertIndex - 1);
+        emit dataChanged(modelIndex, modelIndex, QVector<int>{MessageData::RoleIsLastInSequence});
+    }
+    if (insertIndex + 1 < messages.size()) {
+        QModelIndex modelIndex = index(insertIndex + 1);
+        emit dataChanged(modelIndex, modelIndex, QVector<int>{MessageData::RoleIsFirstInSequence});
+    }
+}
+
+void ChatMessagesModel::appendMessages(const QList<MessageData *> newMessages, bool updateIsLastInSequence) {
+    LOG("Appending" << newMessages.size() << "messages");
+    if (containsSponsoredMessages && sponsoredMessagesMessagesBetween == 0) {
+        LOG("Contains a single sponsored message, inserting before it");
+        int lastIndex = messages.size() - 1;
+        for (; lastIndex >= 0; lastIndex--) {
+            if (!messages.at(lastIndex)->isSponsored)
+                break;
+        }
+        insertMessagesAt(lastIndex, newMessages, updateIsLastInSequence);
+    } else
+        // Have multiple sponsored messages, don't move anything and instead add pending ones when needed
+        MessagesModel::appendMessages(newMessages, updateIsLastInSequence);
+}
+
+void ChatMessagesModel::handleSponsoredMessagesReceived(qlonglong chatId, const QVariantList &sponsoredMessages, int messagesBetween) {
+    if (this->chatId != chatId || !this->parent()->property(PROPERTY_IS_CHANNEL).toBool())
+        return;
+
+    LOG("Handling sponsored messages" << chatId << sponsoredMessages.size() << messagesBetween);
+    if (sponsoredMessages.length() == 0) {
+        LOG("No sponsored messages");
+        return;
+    }
+
+    if (messagesBetween == 0) {
+        const QVariantMap message = sponsoredMessages.at(0).toMap();
+        const qlonglong messageId = message.value(MESSAGE_ID).toLongLong();
+        if (messageId && !messageIndexMap.contains(messageId)) {
+            LOG("Single sponsored message will be added:" << messageId);
+            appendMessages({new MessageData(message, messageId)});
+            this->pendingSponsoredMessages.empty();
+        }
+    } else {
+        int insertIndex = messages.size();
+        for (int i=0; i < sponsoredMessages.size(); i++) {
+            const QVariantMap message = sponsoredMessages.at(i).toMap();
+
+            const qlonglong messageId = message.value(MESSAGE_ID).toLongLong();
+            if (messageId && !messageIndexMap.contains(messageId)) {
+                insertSponsoredMessage(insertIndex, message, messageId);
+
+                insertIndex -= messagesBetween;
+                if (insertIndex < 0) {
+                    this->pendingSponsoredMessages = sponsoredMessages.mid(i + 1);
+                    this->sponsoredMessagesMessagesBetween = messagesBetween;
+                    LOG("Received" << this->pendingSponsoredMessages.size() << "extra sponsored messages, saving for later use");
+                    break;
+                }
+            }
+        }
+    }
+
+    if (!containsSponsoredMessages) {
+        containsSponsoredMessages = true;
+        emit containsSponsoredMessagesChanged();
+    }
+    sponsoredMessagesMessagesBetween = messagesBetween;
+}
+
+void ChatMessagesModel::handlePrepareMessagesReceived(int totalCount, UpdateType fromUpdate) {
+    ReadableMessagesModel::handlePrepareMessagesReceived(totalCount, fromUpdate);
+
+    // Insert pending sponsored messages
+    if (totalCount > 0 && containsSponsoredMessages && messages.size() > 0 && !pendingSponsoredMessages.isEmpty()) {
+        if (fromUpdate == UpdatePreviousSlice) {
+            LOG("Attempting to insert pending sponsored messages after UpdatePreviousSlice");
+            int firstSponsored = 0;
+            for (; firstSponsored < messages.size(); firstSponsored++)
+                if (messages.at(firstSponsored)->isSponsored)
+                    break;
+
+            int i = 0;
+            for (int insertIndex = firstSponsored - sponsoredMessagesMessagesBetween;
+                 i < pendingSponsoredMessages.size() && insertIndex >= 0;
+                 i++, insertIndex -= sponsoredMessagesMessagesBetween) {
+                const QVariantMap message = pendingSponsoredMessages.at(i).toMap();
+                insertSponsoredMessage(insertIndex, message, message.value(ID).toLongLong());
+            }
+
+            pendingSponsoredMessages.erase(pendingSponsoredMessages.begin(), pendingSponsoredMessages.begin() + i);
+        } else if (fromUpdate == UpdateNextSlice) {
+            LOG("Attempting to insert pending sponsored messages after UpdateNextSlice");
+            int lastSponsored = messages.size() - 1;
+            for (; lastSponsored >= 0; lastSponsored--)
+                if (messages.at(lastSponsored)->isSponsored)
+                    break;
+
+            int i = 0;
+            for (int insertIndex = lastSponsored + 1 + sponsoredMessagesMessagesBetween;
+                 i < pendingSponsoredMessages.size() && insertIndex <= messages.size();
+                 i++, insertIndex += 1 + sponsoredMessagesMessagesBetween) {
+                const QVariantMap message = pendingSponsoredMessages.at(i).toMap();
+                insertSponsoredMessage(insertIndex, message, message.value(ID).toLongLong());
+            }
+
+            pendingSponsoredMessages.erase(pendingSponsoredMessages.begin(), pendingSponsoredMessages.begin() + i);
+        }
+    }
+}
+
+
 
 
 
@@ -106,6 +242,7 @@ void ChatManager::setTDLibWrapper(QObject *obj) {
             connect(this->tdLibWrapper, &TDLibWrapper::userUpdated, this, &ChatManager::handleUserUpdated);
             connect(this->tdLibWrapper, &TDLibWrapper::basicGroupUpdated, this, &ChatManager::handleBasicGroupUpdated);
             connect(this->tdLibWrapper, &TDLibWrapper::superGroupUpdated, this, &ChatManager::handleSupergroupUpdated);
+            connect(this->tdLibWrapper, &TDLibWrapper::sponsoredMessagesReceived, this, &ChatManager::handleSponsoredMessagesReceived);
 
             if (chatId) {
                 LOG("tdLibWrapper set when chatId already is set, finishing initialization");
@@ -183,6 +320,10 @@ QVariant ChatManager::groupInfo() const {
     return QVariant();
 }
 
+bool ChatManager::isBot() const {
+    return userInfo().toMap().value(TYPE).toMap().value(_TYPE).toString() == TYPE_USER_TYPE_BOT;
+}
+
 void ChatManager::handleUserUpdated(const QString &userId) {
     if (this->userId() == userId.toLongLong())
         emit userInfoChanged();
@@ -234,6 +375,17 @@ void ChatManager::handleChatActionUpdated(qlonglong chatId, const QVariantMap &s
         }
         LOG(chatActionsByChats << chatActionsByUsers << chatId << sender << action);
         emit chatActionsChanged();
+    }
+}
+
+void ChatManager::handleSponsoredMessagesReceived(qlonglong chatId, const QVariantList &sponsoredMessages, int messagesBetween) {
+    if (isBot() && this->chatId == chatId && !sponsoredMessages.isEmpty()) {
+        const QVariantMap message = sponsoredMessages.at(0).toMap();
+        if (this->botSponsoredMessage.value(MESSAGE_ID) != message.value(MESSAGE_ID)) {
+            LOG("Bot sponsored message received");
+            this->botSponsoredMessage = message;
+            emit botSponsoredMessageChanged();
+        }
     }
 }
 

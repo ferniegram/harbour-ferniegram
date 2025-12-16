@@ -469,7 +469,7 @@ Column {
                     Debug.log("Page is initialized!")
                     chatPage.isInitialized = true
                     chatView.handleScrollPositionChanged()
-                    if (chatPage.isChannel)
+                    if (chatPage.isChannel || chatPage.isBot)
                         tdLibWrapper.getChatSponsoredMessages(chatInformation.id)
                 }
             }
