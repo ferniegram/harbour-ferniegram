@@ -340,7 +340,7 @@ Column {
             }
             Debug.log("Received message ID: " + messageId)
         }
-        onSponsoredMessageReceived: messagesView.containsSponsoredMessages = true
+        onSponsoredMessagesReceived: messagesView.containsSponsoredMessages = true
     }
 
     Component.onCompleted: {
@@ -470,7 +470,7 @@ Column {
                     chatPage.isInitialized = true
                     chatView.handleScrollPositionChanged()
                     if (chatPage.isChannel)
-                        tdLibWrapper.getChatSponsoredMessage(chatInformation.id)
+                        tdLibWrapper.getChatSponsoredMessages(chatInformation.id)
                 }
             }
         }

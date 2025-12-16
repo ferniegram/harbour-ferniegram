@@ -322,6 +322,7 @@ void MessagesModel::insertMessages(const QList<MessageData*> newMessages) {
             const MessageData* message = messages.at(i);
             if (message->messageType != TYPE_SPONSORED_MESSAGE) {
                 lastKnownId = message->messageId;
+                break;
             }
         }
         const qlonglong firstNewId = newMessages.first()->messageId;
@@ -334,7 +335,39 @@ void MessagesModel::insertMessages(const QList<MessageData*> newMessages) {
     }
 }
 
-void MessagesModel::appendMessages(const QList<MessageData*> newMessages, bool updateIsLastInSequence, bool invertIsLastInSequence) {
+void MessagesModel::insertMessagesAt(int insertIndex, const QList<MessageData*> newMessages, bool updateIsFirstLastFirstInSequence) {
+    const int insertCount = newMessages.size();
+    const int totalCount = messages.size() + insertCount;
+    LOG("Inserting" << insertCount << "messages at" << insertIndex);
+
+    beginInsertRows(QModelIndex(), insertIndex, insertIndex + insertCount - 1);
+    // Too bad there's no bulk insert
+    messages.reserve(totalCount);
+    int i;
+    for (i = 0; i < insertCount; i++) {
+        MessageData* message = newMessages.at(i);
+        messages.insert(insertIndex + i, message);
+        messageIndexMap.insert(message->messageId, insertIndex + i);
+    }
+    // The rest of the map has been damaged too
+    for (i += insertIndex; i < totalCount; i++)
+        messageIndexMap.insert(messages.at(i)->messageId, i);
+    endInsertRows();
+
+
+    if (updateIsFirstLastFirstInSequence) {
+        if (insertIndex > 0) {
+            QModelIndex modelIndex = index(insertIndex - 1);
+            emit dataChanged(modelIndex, modelIndex, QVector<int>{MessageData::RoleIsLastInSequence});
+        }
+        if ((insertIndex + insertCount + 1) < totalCount) {
+            QModelIndex modelIndex = index(insertIndex + insertCount + 1);
+            emit dataChanged(modelIndex, modelIndex, QVector<int>{MessageData::RoleIsFirstInSequence});
+        }
+    }
+}
+
+void MessagesModel::appendMessages(const QList<MessageData*> newMessages, bool updateIsLastInSequence) {
     const int oldSize = messages.size();
     const int count = newMessages.size();
     LOG("Appending" << count << "new messages...");
@@ -350,11 +383,11 @@ void MessagesModel::appendMessages(const QList<MessageData*> newMessages, bool u
 
     if (updateIsLastInSequence && oldSize > 0) {
         QModelIndex modelIndex = index(oldSize - 1);
-        emit dataChanged(modelIndex, modelIndex, QVector<int>{invertIsLastInSequence ? MessageData::RoleIsFirstInSequence : MessageData::RoleIsLastInSequence});
+        emit dataChanged(modelIndex, modelIndex, QVector<int>{MessageData::RoleIsLastInSequence});
     }
 }
 
-void MessagesModel::prependMessages(const QList<MessageData*> newMessages, bool updateIsFirstInSequence, bool invertIsFirstInSequence) {
+void MessagesModel::prependMessages(const QList<MessageData*> newMessages, bool updateIsFirstInSequence) {
     const int insertCount = newMessages.size();
     const int totalCount = messages.size() + insertCount;
     LOG("Prepending" << insertCount << "messages...");
@@ -375,9 +408,9 @@ void MessagesModel::prependMessages(const QList<MessageData*> newMessages, bool 
     endInsertRows();
 
 
-    if (updateIsFirstInSequence && totalCount > insertCount) {
+    if (updateIsFirstInSequence && totalCount > insertCount) { // in other words if updateIsFirstInSequence and previously messages was not empty
         QModelIndex modelIndex = index(insertCount);
-        emit dataChanged(modelIndex, modelIndex, QVector<int>{invertIsFirstInSequence ? MessageData::RoleIsLastInSequence : MessageData::RoleIsFirstInSequence});
+        emit dataChanged(modelIndex, modelIndex, QVector<int>{MessageData::RoleIsFirstInSequence});
     }
 }
 

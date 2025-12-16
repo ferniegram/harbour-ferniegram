@@ -9,15 +9,18 @@ namespace {
     const QString LAST_READ_INBOX_MESSAGE_ID("last_read_inbox_message_id");
     const QString LAST_READ_OUTBOX_MESSAGE_ID("last_read_outbox_message_id");
     const QString MESSAGE_ID("message_id");
+    const QString TYPE_SPONSORED_MESSAGE("sponsoredMessage");
 }
 
 ReadableMessagesModel::ReadableMessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent) :
     JumpableMessagesModel(tdLibWrapper, parent),
-    loadingFullEnd(false)
+    loadingFullEnd(false),
+    containsSponsoredMessages(false),
+    sponsoredMessagesMessagesBetween(0)
 {
     connect(this->tdLibWrapper, SIGNAL(messagesReceived(qlonglong, int, const QVariantList &, int)), this, SLOT(handleMessagesReceived(qlonglong, int, const QVariantList &, int)));
     connect(this->tdLibWrapper, &TDLibWrapper::foundChatMessagesReceived, this, &ReadableMessagesModel::handleFoundChatMessagesReceived);
-    connect(this->tdLibWrapper, &TDLibWrapper::sponsoredMessageReceived, this, &ReadableMessagesModel::handleSponsoredMessageReceived);
+    connect(this->tdLibWrapper, &TDLibWrapper::sponsoredMessagesReceived, this, &ReadableMessagesModel::handleSponsoredMessagesReceived);
     connect(this->tdLibWrapper, &TDLibWrapper::newMessageReceived, this, &ReadableMessagesModel::handleNewMessageReceived);
 
     connect(this, &ReadableMessagesModel::messageSendSucceeded, this, &ReadableMessagesModel::lastReadSentMessageUpdated);
@@ -137,15 +140,84 @@ void ReadableMessagesModel::handleFoundChatMessagesReceived(qlonglong chatId, TD
     }
 }
 
-void ReadableMessagesModel::handleSponsoredMessageReceived(qlonglong chatId, const QVariantMap &sponsoredMessage) {
-    LOG("Handling sponsored message" << chatId);
-    QList<MessageData*> messagesToBeAdded;
-    const qlonglong messageId = sponsoredMessage.value(MESSAGE_ID).toLongLong();
-    if (messageId && !messageIndexMap.contains(messageId)) {
-        LOG("New sponsored message will be added:" << messageId);
-        messagesToBeAdded.append(new MessageData(sponsoredMessage, messageId));
+void ReadableMessagesModel::insertSponsoredMessage(int insertIndex, const QVariantMap &message, qlonglong messageId) {
+    LOG("New sponsored message will be added:" << messageId << "at" << insertIndex);
+
+    beginInsertRows(QModelIndex(), insertIndex, insertIndex);
+    messages.insert(insertIndex, new MessageData(message, messageId));
+    for (int j = insertIndex; j < messages.size(); j++)
+        messageIndexMap.insert(messages.at(j)->messageId, j);
+    endInsertRows();
+
+
+    if (insertIndex > 0) {
+        QModelIndex modelIndex = index(insertIndex - 1);
+        emit dataChanged(modelIndex, modelIndex, QVector<int>{MessageData::RoleIsLastInSequence});
     }
-    appendMessages(messagesToBeAdded);
+    if (insertIndex + 1 < messages.size()) {
+        QModelIndex modelIndex = index(insertIndex + 1);
+        emit dataChanged(modelIndex, modelIndex, QVector<int>{MessageData::RoleIsFirstInSequence});
+    }
+}
+
+void ReadableMessagesModel::appendMessages(const QList<MessageData *> newMessages, bool updateIsLastInSequence) {
+    LOG("Appending" << newMessages.size() << "messages");
+    if (containsSponsoredMessages && sponsoredMessagesMessagesBetween == 0) {
+        LOG("Contains a single sponsored message, inserting before it");
+        int lastIndex = messages.size() - 1;
+        for (; lastIndex >= 0; lastIndex--) {
+            if (messages.at(lastIndex)->messageType != TYPE_SPONSORED_MESSAGE)
+                break;
+        }
+        insertMessagesAt(lastIndex, newMessages, updateIsLastInSequence);
+    } else
+        // Have multiple sponsored messages, don't move anything and instead add pending ones when needed
+        MessagesModel::appendMessages(newMessages, updateIsLastInSequence);
+}
+
+void ReadableMessagesModel::handleSponsoredMessagesReceived(qlonglong chatId, const QVariantList &sponsoredMessages, int messagesBetween) {
+    if (this->chatId != chatId)
+        return;
+
+    LOG("Handling sponsored messages" << chatId << sponsoredMessages.size() << messagesBetween);
+    if (sponsoredMessages.length() == 0) {
+        LOG("No sponsored messages");
+        return;
+    }
+
+    if (messagesBetween == 0) {
+        const QVariantMap message = sponsoredMessages.at(0).toMap();
+        const qlonglong messageId = message.value(MESSAGE_ID).toLongLong();
+        if (messageId && !messageIndexMap.contains(messageId)) {
+            LOG("Single sponsored message will be added:" << messageId);
+            appendMessages({new MessageData(message, messageId)});
+        }
+    } else {
+        int insertIndex = messages.size();
+        for (int i=0; i < sponsoredMessages.size(); i++) {
+            const QVariantMap message = sponsoredMessages.at(i).toMap();
+
+            const qlonglong messageId = message.value(MESSAGE_ID).toLongLong();
+            if (messageId && !messageIndexMap.contains(messageId)) {
+                insertSponsoredMessage(insertIndex, message, messageId);
+
+                insertIndex -= messagesBetween;
+                if (insertIndex < 0) {
+                    this->pendingSponsoredMessages = sponsoredMessages.mid(i + 1);
+                    this->sponsoredMessagesMessagesBetween = messagesBetween;
+                    LOG("Received" << this->pendingSponsoredMessages.size() << "extra sponsored messages, saving for later use");
+                    // TODO: actually add pending sponsored messages
+                    break;
+                }
+            }
+        }
+    }
+
+    if (!containsSponsoredMessages) {
+        containsSponsoredMessages = true;
+        emit containsSponsoredMessagesChanged();
+    }
+    sponsoredMessagesMessagesBetween = messagesBetween;
 }
 
 void ReadableMessagesModel::handleNewMessageReceived(qlonglong chatId, const QVariantMap &message) {

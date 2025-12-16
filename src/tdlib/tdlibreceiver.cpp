@@ -422,11 +422,11 @@ void TDLibReceiver::processFoundChatMessages(const QVariantMap &receivedInformat
 }
 
 void TDLibReceiver::processSponsoredMessages(const QVariantMap &receivedInformation) {
-    const qlonglong chatId = receivedInformation.value(_EXTRA).toLongLong(); // See TDLibWrapper::getChatSponsoredMessage
+    const qlonglong chatId = receivedInformation.value(_EXTRA).toLongLong(); // See TDLibWrapper::getChatSponsoredMessages
     const QVariantList messages(receivedInformation.value(MESSAGES).toList());
-    LOG("Received" << messages.count() << "sponsored messages for chat" << chatId);
-    for (const QVariant &message : messages)
-        emit sponsoredMessageReceived(chatId, message.toMap());
+    const int messagesBetween = receivedInformation.value("messages_between").toInt();
+    LOG("Received" << messages.count() << "sponsored messages for chat" << chatId << "messages between" << messagesBetween);
+    emit sponsoredMessagesReceived(chatId, messages, messagesBetween);
 }
 
 void TDLibReceiver::processUpdateNewMessage(const QVariantMap &receivedInformation)

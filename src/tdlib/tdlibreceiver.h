@@ -61,7 +61,7 @@ signals:
     void messagesReceived(qlonglong chatId, int extra, const QVariantList &messages, int totalCount);
     void foundChatMessagesReceived(qlonglong chatId, int extra, int extra2, const QVariantList &messages, int totalCount, qlonglong nextFromMessageId);
     void messageLinkInfoReceived(qlonglong chatId, qlonglong messageId);
-    void sponsoredMessageReceived(qlonglong chatId, const QVariantMap &message);
+    void sponsoredMessagesReceived(qlonglong chatId, const QVariantList &messages, int messagesBetween);
     void newMessageReceived(qlonglong chatId, const QVariantMap &message);
     void messageInformation(qlonglong chatId, qlonglong messageId, const QVariantMap &message);
     void messageSendSucceeded(qlonglong messageId, qlonglong oldMessageId, const QVariantMap &message);

@@ -19,6 +19,7 @@ class AppSettings : public QObject {
 public:
     enum SponsoredMess {
         SponsoredMessHandle,
+        SponsoredMessHandleCustomMessagesBetween,
         SponsoredMessAutoView,
         SponsoredMessIgnore
     };
@@ -61,6 +62,7 @@ public:
     BOOL_SETTING_DEFINE(focusTextAreaOnChatOpen)
 
     SETTING_DEFINE(SponsoredMess, sponsoredMess)
+    SETTING_DEFINE(int, sponsoredMessagesMessagesBetween)
 
     BOOL_SETTING_DEFINE(sendAttachmentByEnter)
 
@@ -101,6 +103,7 @@ signals:
     void delayMessageReadChanged();
     void focusTextAreaOnChatOpenChanged();
     void sponsoredMessChanged();
+    void sponsoredMessagesMessagesBetweenChanged();
     void highlightUnreadConversationsChanged();
     void sendAttachmentByEnterChanged();
     void voiceNoteVolumeChanged();
@@ -122,5 +125,6 @@ private:
 };
 
 #undef BOOL_SETTING_DEFINE
+#undef SETTING_DEFINE
 
 #endif // APPSETTINGS_H

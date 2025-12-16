@@ -7,23 +7,6 @@ InvertedMessagesModel::InvertedMessagesModel(TDLibWrapper *tdLibWrapper, QObject
 
 }
 
-void InvertedMessagesModel::insertMessages(const QList<MessageData*> newMessages) {
-    // Caller ensures that newMessages is not empty
-    if (messages.isEmpty()) {
-        appendMessages(newMessages);
-    } else if (!newMessages.isEmpty()) {
-        // No sponsored messages here
-        // There is only an append or a prepend, tertium non datur! (probably ;))
-        const qlonglong lastKnownId = (messages.size() > 0) ? messages.at(0)->messageId : -1;
-        const qlonglong firstNewId = newMessages.first()->messageId;
-        LOG("Inserting messages, last known ID:" << lastKnownId << ", first new ID:" << firstNewId);
-        if (firstNewId > lastKnownId)
-            prependMessages(newMessages);
-        else
-            appendMessages(newMessages);
-    }
-}
-
 void InvertedMessagesModel::handleMessagesDeleted(qlonglong chatId, const QList<qlonglong> &messageIds) {
     LOG("Messages were deleted in a chat" << chatId);
     if (chatId == this->chatId) {

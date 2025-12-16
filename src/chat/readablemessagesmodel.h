@@ -10,6 +10,8 @@ class ReadableMessagesModel : public JumpableMessagesModel {
 
     Q_PROPERTY(int lastReadSentMessageIndex READ calculateLastReadSentMessageIndex NOTIFY lastReadSentMessageUpdated)
 
+    Q_PROPERTY(bool containsSponsoredMessages MEMBER containsSponsoredMessages NOTIFY containsSponsoredMessagesChanged)
+
 public:
     ReadableMessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent = nullptr);
 
@@ -24,9 +26,11 @@ signals:
     void lastReadSentMessageUpdated();
     void lastReadMessageIndexChanged();
 
+    void containsSponsoredMessagesChanged();
+
 private slots:
     void handleFoundChatMessagesReceived(qlonglong chatId, TDLibWrapper::SearchMessagesFilter filter, int extra, const QVariantList &messages, int totalCount, qlonglong /*nextFromMessageId*/);
-    void handleSponsoredMessageReceived(qlonglong chatId, const QVariantMap &sponsoredMessage);
+    void handleSponsoredMessagesReceived(qlonglong chatId, const QVariantList &sponsoredMessages, int messagesBetween);
     void handleNewMessageReceived(qlonglong chatId, const QVariantMap &message);
 
 protected:
@@ -35,19 +39,26 @@ protected:
     int getLastReadMessageIndex();
     int calculateLastReadSentMessageIndex();
 
+    virtual void appendMessages(const QList<MessageData*> newMessages, bool updateIsLastInSequence = true) override;
+
     virtual void loadMoreHistoryImpl() override;
     virtual void loadMoreFutureImpl() override;
     virtual void loadHistoryForMessageImpl(qlonglong messageId) override;
 
     virtual qlonglong lastReadInboxMessageId() const = 0;
     virtual qlonglong lastReadOutboxMessageId() const = 0;
-    virtual qlonglong lastMessageId() const = 0; // FIXME: this is wrong and shouldn't be used ideally
+    virtual qlonglong lastMessageId() const = 0;
+
+    void insertSponsoredMessage(int insertIndex, const QVariantMap &message, qlonglong messageId);
 
 protected slots:
     virtual void updateStartEndReached(int totalCount, UpdateType fromUpdate) override;
 
 protected:
     bool loadingFullEnd;
+    bool containsSponsoredMessages;
+    QVariantList pendingSponsoredMessages;
+    int sponsoredMessagesMessagesBetween;
 };
 
 #endif // READABLEMESSAGESMODEL_H

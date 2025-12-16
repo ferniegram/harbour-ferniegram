@@ -267,7 +267,7 @@ void TDLibWrapper::initializeTDLibReceiver() {
     connect(this->tdLibReceiver, &TDLibReceiver::chatOnlineMemberCountUpdated, this, &TDLibWrapper::chatOnlineMemberCountUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::messagesReceived, this, &TDLibWrapper::messagesReceived);
     connect(this->tdLibReceiver, &TDLibReceiver::foundChatMessagesReceived, this, &TDLibWrapper::handleFoundChatMessagesReceived);
-    connect(this->tdLibReceiver, &TDLibReceiver::sponsoredMessageReceived, this, &TDLibWrapper::handleSponsoredMessage);
+    connect(this->tdLibReceiver, &TDLibReceiver::sponsoredMessagesReceived, this, &TDLibWrapper::handleSponsoredMessagesReceived);
     connect(this->tdLibReceiver, &TDLibReceiver::messageLinkInfoReceived, this, &TDLibWrapper::messageLinkInfoReceived);
     connect(this->tdLibReceiver, &TDLibReceiver::newMessageReceived, this, &TDLibWrapper::newMessageReceived);
     connect(this->tdLibReceiver, &TDLibReceiver::messageInformation, this, &TDLibWrapper::handleMessageInformation);
@@ -667,7 +667,7 @@ void TDLibWrapper::getChatPinnedMessage(qlonglong chatId) {
     });
 }
 
-void TDLibWrapper::getChatSponsoredMessage(qlonglong chatId) {
+void TDLibWrapper::getChatSponsoredMessages(qlonglong chatId) {
     LOG("Retrieving sponsored message" << chatId);
     this->sendRequest(QVariantMap{
         {_TYPE, "getChatSponsoredMessages"},
@@ -2069,17 +2069,21 @@ void TDLibWrapper::handleUpdatedUserPrivacySettingRules(const QVariantMap &updat
     }
 }
 
-void TDLibWrapper::handleSponsoredMessage(qlonglong chatId, const QVariantMap &message) {
+void TDLibWrapper::handleSponsoredMessagesReceived(qlonglong chatId, const QVariantList &messages, int messagesBetween) {
     switch (appSettings->sponsoredMess()) {
     case AppSettings::SponsoredMessHandle:
-        emit sponsoredMessageReceived(chatId, message);
+        emit sponsoredMessagesReceived(chatId, messages, messagesBetween);
         break;
+    case AppSettings::SponsoredMessHandleCustomMessagesBetween:
+        LOG("Handling sponsored messages with custom messagesBetween" << messagesBetween);
+        emit sponsoredMessagesReceived(chatId, messages, appSettings->sponsoredMessagesMessagesBetween());
     case AppSettings::SponsoredMessAutoView:
-        LOG("Auto-viewing sponsored message");
-        viewMessage(chatId, message.value(MESSAGE_ID).toULongLong(), false);
+        LOG("Auto-viewing sponsored messages");
+        for (const QVariant &message : messages)
+            viewMessage(chatId, message.toMap().value(MESSAGE_ID).toULongLong(), false);
         break;
     case AppSettings::SponsoredMessIgnore:
-        LOG("Ignoring sponsored message");
+        LOG("Ignoring chat sponsored messages");
         break;
     }
 }

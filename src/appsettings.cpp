@@ -66,6 +66,7 @@ namespace {
     const QString DELAY_MESSAGE_READ("delayMessageRead");
     const QString FOCUS_TEXTAREA_ON_CHAT_OPEN("focusTextAreaOnChatOpen");
     const QString SPONSORED_MESS("sponsoredMess");
+    const QString SPONSORED_MESSAGES_MESSAGES_BETWEEN("sponsoredMessagesMessagesBetween");
     const QString HIGHLIGHT_UNREADCONVS("highlightUnreadConversations");
     const QString SEND_ATTACHMENT_BY_ENTER("sendAttachmentByEnter");
     const QString VOICE_NOTE_VOLUME("voiceNoteVolumne");
@@ -115,6 +116,7 @@ BOOL_SETTING(highlightUnreadConversations, HIGHLIGHT_UNREADCONVS)
 BOOL_SETTING(focusTextAreaOnChatOpen, FOCUS_TEXTAREA_ON_CHAT_OPEN)
 
 ENUM_SETTING(sponsoredMess, SPONSORED_MESS, SponsoredMess, SponsoredMessHandle)
+SETTING(sponsoredMessagesMessagesBetween, SPONSORED_MESSAGES_MESSAGES_BETWEEN, int, toInt)
 
 BOOL_SETTING(sendAttachmentByEnter, SEND_ATTACHMENT_BY_ENTER)
 
