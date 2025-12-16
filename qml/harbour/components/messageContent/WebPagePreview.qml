@@ -43,7 +43,7 @@ Item {
         id: infoColumn
         spacing: Theme.paddingSmall
         width: linkPreviewData.show_large_media ? parent.width : parent.width - (mediaItem.width + mediaItem.anchors.leftMargin + mediaItem.anchors.rightMargin)
-        visible: !!visibleChildren.length
+        opacity: (siteNameText.rawText || titleText.rawText || descriptionText.rawText) ? 1 : 0
 
         MultilineEmojiLabel {
             id: siteNameText
@@ -53,7 +53,6 @@ Item {
             font.pixelSize: webPagePreviewItem.fontSize
             font.bold: true
             color: Theme.secondaryHighlightColor
-            visible: !!rawText
             maxLineCount: 1
         }
 
@@ -196,7 +195,7 @@ Item {
         font.italic: true
         color: Theme.secondaryColor
         truncationMode: TruncationMode.Fade
-        visible: !infoColumn.visible && !mediaItem.visible
+        opacity: (infoColumn.opacity < 1 && !mediaItem.sourceComponent) ? 1 : 0
     }
 
 }
