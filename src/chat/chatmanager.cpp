@@ -504,7 +504,7 @@ void ChatManager::initializeMainModels(qlonglong fromMessageId) {
         LOG("Initializing a regular chat");
         initializeMessageModels();
 
-        tdLibWrapper->getChatHistory(chatId, fromMessageId != 0 ? fromMessageId : this->chatInformation().value(LAST_READ_INBOX_MESSAGE_ID).toLongLong());
+        this->chatMessagesModel->loadMessages(ChatMessagesModel::UpdateInitial, fromMessageId != 0 ? fromMessageId : this->chatInformation().value(LAST_READ_INBOX_MESSAGE_ID).toLongLong());
     }
 }
 
