@@ -27,6 +27,7 @@ AnimatedLoader {
                     anchors.verticalCenter: parent.verticalCenter
 
                     photoData: user.userInformation.profile_photo.small
+                    replacementStringHint: utilities.getUserName(user.userInformation)
                     TDLibUser {
                         id: user
                         userId: modelData
