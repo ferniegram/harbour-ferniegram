@@ -24,7 +24,6 @@ Column {
     property bool editIsCaption
 
     property var emojiProposals
-    property string emojiProposalsKeyword
 
     property alias newMessageInReplyToRow: newMessageInReplyToRow
     property alias knownUsersRepeater: knownUsersRepeater
@@ -67,10 +66,9 @@ Column {
         var currentWord = text.substring(wordBoundaries.beginIndex, wordBoundaries.endIndex)
         if (currentWord.length > 1 && currentWord.charAt(0) === ':')
             tdLibWrapper.searchEmojis(currentWord.substring(1))
-        else {
+        else
             emojiProposals = null
-            emojiProposalsKeyword = ''
-        }
+
         if (currentWord.length > 1 && currentWord.charAt(0) === '@') {
             knownUsersRepeater.model = knownUsersProxyModel
             knownUsersProxyModel.setFilterWildcard("*" + currentWord.substring(1) + "*")
@@ -101,7 +99,6 @@ Column {
     Connections {
         target: tdLibWrapper
         onEmojiKeywordsReceived: {
-            emojiProposalsKeyword = text
             emojiProposals = emojis
         }
     }
@@ -473,7 +470,6 @@ Column {
                             onClicked: {
                                 replaceMessageText(newMessageTextField.text, newMessageTextField.cursorPosition, modelData)
                                 emojiProposals = null
-                                emojiProposalsKeyword = ''
                             }
                         }
                     }
