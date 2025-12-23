@@ -41,7 +41,7 @@ Ferniegram is a Telegram client for Sailfish OS
 
 %build
 
-%cmake  -DHARBOUR_COMPLIANCE=off
+%cmake -GNinja -DHARBOUR_COMPLIANCE=off
 
 %ninja_build
 
