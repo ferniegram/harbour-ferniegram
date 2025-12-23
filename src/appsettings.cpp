@@ -86,7 +86,12 @@ namespace {
 AppSettings::AppSettings(QObject *parent) :
     QObject(parent),
     settings(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/io.github.roundedrectangle/fernschreiber2/settings.conf", QSettings::NativeFormat)
-{}
+{
+    if (sponsoredMess() != SponsoredMessHandle) {
+        settings.remove(SPONSORED_MESS);
+        sponsoredMessChanged();
+    }
+}
 
 
 BOOL_SETTING(sendByEnter, SEND_BY_ENTER)

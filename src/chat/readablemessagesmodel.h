@@ -42,6 +42,8 @@ protected:
     virtual qlonglong lastReadOutboxMessageId() const = 0;
     virtual qlonglong lastMessageId() const = 0;
 
+    virtual void processMessageData(MessageData *message) override;
+
 protected slots:
     virtual void handlePrepareMessagesReceived(int totalCount, UpdateType fromUpdate) override;
 

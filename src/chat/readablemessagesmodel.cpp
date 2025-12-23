@@ -141,7 +141,9 @@ void ReadableMessagesModel::handleNewMessageReceived(qlonglong chatId, const QVa
         if (canLoadMoreMessages() && this->endReached) {
             LOG("New message received for this chat");
             QList<MessageData*> messagesToBeAdded;
-            messagesToBeAdded.append(new MessageData(message, messageId));
+            MessageData *data = new MessageData(message, messageId);
+            processMessageData(data);
+            messagesToBeAdded.append(data);
             insertMessages(messagesToBeAdded);
             setMessagesAlbum(messagesToBeAdded);
             emit newMessageReceived(message);
@@ -162,5 +164,13 @@ void ReadableMessagesModel::loadEnd(bool markAllAsRead) {
 
         this->clear();
         this->loadMessages(UpdateInitial, markAllAsRead ? 0 : lastReadOutboxMessageId());
+    }
+}
+
+void ReadableMessagesModel::processMessageData(MessageData *message) {
+    LOG("OOOOAWE" << message->messageId << lastReadInboxMessageId());
+    if (message->messageId > lastReadInboxMessageId()) {
+        LOG("Marking generated content as unread since the message is unread" << message->messageId);
+        message->generatedContentUnread = true;
     }
 }

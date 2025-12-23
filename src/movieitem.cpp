@@ -6,20 +6,22 @@
 
 #define DEBUG_MODULE MovieItem
 #include "debuglog.h"
-#define LOG_(x) LOG(movie->fileName() << x)
+#define LOG_(x) LOG(qPrintable(movie->fileName()) << x)
 
 MovieItem::MovieItem()
     : QQuickItem(),
       movie(new QMovie(this)),
-      paused(false)
+      paused(false),
+      frame(-1),
+      pauseScheduled(false),
+      loop(true)
 {
-    setFlag(ItemHasContents, true);
+    setFlag(ItemHasContents);
 
-    connect(movie, &QMovie::frameChanged, this, &MovieItem::update);
-    connect(movie, &QMovie::frameChanged, this, &MovieItem::frameChanged);
+    connect(movie, &QMovie::frameChanged, this, &MovieItem::handleFrameChanged);
     connect(movie, &QMovie::started, this, &MovieItem::updateSize);
     connect(movie, &QMovie::started, this, &MovieItem::frameChanged);
-    connect(movie, &QMovie::stateChanged, this, &MovieItem::pausedChanged);
+    connect(movie, &QMovie::stateChanged, this, &MovieItem::handleStateChanged);
 }
 
 QUrl MovieItem::source() const {
@@ -35,11 +37,25 @@ void MovieItem::setSource(QUrl source) {
 
         if (movie->isValid()) {
             movie->start();
-            movie->setPaused(paused);
+            movie->setPaused(false);
+
+            if (this->frame >= 0) {
+                LOG_("Jumping to" << frame);
+                movie->jumpToFrame(this->frame);
+            }
+
+            if (paused) {
+                LOG_("Pausing newly started movie");
+                if (isNull())
+                    this->pauseScheduled = true;
+                else
+                    movie->setPaused(paused);
+            }
+
             emit frameCountChanged();
             updateSize();
             update();
-            LOG_(sourceSize() << movie->state());
+            LOG_(sourceSize() << movie->state() << movie->currentFrameNumber() << paused);
         }
     }
 }
@@ -56,15 +72,18 @@ void MovieItem::setPaused(bool paused) {
 }
 
 QSize MovieItem::sourceSize() const {
-    const QSize scaledSize = movie->scaledSize();
-    return scaledSize.isValid() ? scaledSize : movie->currentImage().size();
+    return movie->currentImage().size();
 }
 
-void MovieItem::setSourceSize(QSize size) {
+QSize MovieItem::scaledSize() const {
+    return movie->scaledSize();
+}
+
+void MovieItem::setScaledSize(QSize size) {
     if (movie->scaledSize() != size) {
         movie->setScaledSize(size);
         updateSize();
-        LOG_("New source size" << sourceSize());
+        LOG_("New scaled size" << size << sourceSize());
     }
 }
 
@@ -73,7 +92,9 @@ int MovieItem::currentFrame() const {
 }
 
 void MovieItem::setCurrentFrame(int frame) {
-    movie->jumpToFrame(frame);
+    this->frame = frame;
+    if (frame >= 0)
+        LOG_("Jumped" << movie->jumpToFrame(frame));
 }
 
 int MovieItem::frameCount() const {
@@ -92,6 +113,40 @@ void MovieItem::setCache(bool cache) {
     }
 }
 
+void MovieItem::setLoop(bool loop) {
+    if (this->loop != loop) {
+        this->loop = loop;
+        LOG_("Looping" << (loop ? "enabled" : "disabled"));
+    }
+}
+
+void MovieItem::handleStateChanged(QMovie::MovieState state) {
+    LOG_("State:" << state);
+}
+
+void MovieItem::handleFrameChanged(int frameNumber) {
+    LOG_("FRAME" << frameNumber << isNull());
+    if (!loop && frameNumber >= (movie->frameCount() - 1)) {
+        LOG_("Finished the loop, pausing");
+        setPaused(true);
+    }
+    emit this->frameChanged();
+
+    if (!isNull()) {
+        this->update();
+
+        if (this->pauseScheduled) {
+            this->pauseScheduled = false;
+            LOG("Scheduled pause triggered");
+            movie->setPaused(paused);
+            if (!this->paused) {
+                this->paused = true;
+                emit pausedChanged();
+            }
+        }
+    }
+}
+
 void MovieItem::updateSize() {
     const QSize size = sourceSize();
     if (size.isValid()) {
@@ -102,8 +157,10 @@ void MovieItem::updateSize() {
 
 QSGNode *MovieItem::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData*) {
     QImage frame = movie->currentImage();
+    LOG_("PAINT" << movie->currentFrameNumber());
 
     if (frame.isNull()) {
+        LOG_("IS NULL");
         delete oldNode;
         return nullptr;
     }

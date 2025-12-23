@@ -25,6 +25,9 @@ namespace {
 
     const QString TYPE_SPONSORED_MESSAGE("sponsoredMessage");
     const QString MEDIA_ALBUM_ID("media_album_id");
+
+    const QString TYPE_MESSAGE_DICE("messageDice");
+    const QString FINAL_STATE("final_state");
 }
 
 MessageData::MessageData(const QVariantMap &data, qlonglong msgid) :
@@ -35,8 +38,12 @@ MessageData::MessageData(const QVariantMap &data, qlonglong msgid) :
     viewCount(data.value(INTERACTION_INFO).toMap().value(VIEW_COUNT).toInt()),
     reactions(data.value(INTERACTION_INFO).toMap().value(REACTIONS).toMap().value(REACTIONS).toList()),
     albumEntryFilter(false),
-    albumMessageIds(QVariantList())
-{}
+    albumMessageIds(QVariantList()),
+    generatedContentUnread(false)
+{
+    if (messageContentType == TYPE_MESSAGE_DICE)
+        generatedContentUnread = !messageData.value(CONTENT).toMap().contains(FINAL_STATE);
+}
 
 QVector<int> MessageData::flagsToRoles(uint flags) {
     QVector<int> roles;
@@ -84,24 +91,20 @@ QVector<int> MessageData::diff(const MessageData *message) const {
     QVector<int> roles;
     if (message != this) {
         roles.append(RoleDisplay);
-        if (message->messageId != messageId) {
+        if (message->messageId != messageId)
             roles.append(RoleMessageId);
-        }
-        if (message->messageContentType != messageContentType) {
+        if (message->messageContentType != messageContentType)
             roles.append(RoleMessageContentType);
-        }
-        if (message->viewCount != viewCount) {
+        if (message->viewCount != viewCount)
             roles.append(RoleMessageViewCount);
-        }
-        if (message->reactions != reactions) {
+        if (message->reactions != reactions)
             roles.append(RoleMessageReactions);
-        }
-        if (message->albumEntryFilter != albumEntryFilter) {
+        if (message->albumEntryFilter != albumEntryFilter)
             roles.append(RoleMessageAlbumEntryFilter);
-        }
-        if (message->albumMessageIds != albumMessageIds) {
+        if (message->albumMessageIds != albumMessageIds)
             roles.append(RoleMessageAlbumMessageIds);
-        }
+        if (message->generatedContentUnread != generatedContentUnread)
+            roles.append(RoleGeneratedContentUnread);
     }
     return roles;
 }

@@ -207,6 +207,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     src/textfiltermodel.cpp
     src/tgsplugin.cpp
     src/waveformmanager.cpp
+        src/lottieitem.cpp
     
     src/mainshared.h
     src/appsettings.h
@@ -247,6 +248,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     src/textfiltermodel.h
     src/tgsplugin.h
     src/waveformmanager.h
+    src/lottieitem.h
 )
 
 if (EDITION_SAILFISH)

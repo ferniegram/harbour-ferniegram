@@ -21,41 +21,50 @@ import Sailfish.Silica 1.0
 import App.Logic 1.0
 import "../"
 
+// ignore appSettings.showStickersAsEmojis here (if really needed can be re-added later)
 MessageContentBase {
     id: stickerMessage
 
     readonly property var diceSticker: rawMessage.content.final_state || rawMessage.content.initial_state || {}
     readonly property string emoji: rawMessage.content.emoji
-    readonly property var pureStickerData: (diceSticker['@type'] === "diceStickersSlotMachine" ? diceSticker.lever : diceSticker.sticker) || {}
-    readonly property var stickerData: (appSettings.showStickersAsEmojis
-                                        ? {emoji: emoji, width: pureStickerData.width, height: pureStickerData.height}
-                                        : pureStickerData) || {}
+    readonly property var stickerData: (diceSticker['@type'] === "diceStickersSlotMachine" ? diceSticker.lever : diceSticker.sticker) || {}
     readonly property bool isOwnSticker: typeof messageListItem !== 'undefined' ? messageListItem.isOwnMessage : overlayFlickable.isOwnMessage
+
+    // do not play animation when viewing history
+    property bool completed
+    Component.onCompleted: {
+        if (!generatedContentUnread && rawMessage.content.value > 0)
+            completed = true
+        console.log(rawMessage.id, completed, generatedContentUnread)
+    }
 
     width: stickerData.width
     height: stickerData.height
 
     Loader {
         anchors.fill: sticker
-        active: !appSettings.showStickersAsEmojis && diceSticker['@type'] === "diceStickersSlotMachine"
+        active: diceSticker['@type'] === "diceStickersSlotMachine"
         sourceComponent: Component {
             Item {
                 anchors.fill: parent
                 Repeater {
                     model: [diceSticker.background, diceSticker.left_reel, diceSticker.center_reel, diceSticker.right_reel]
-                    TDLibSticker {
+                    TDLibAnimatedSticker {
                         anchors.fill: parent
                         loop: false
                         stickerData: modelData
+                        //currentFrame: completed ? (frameCount - 1) : -1
+                        //paused: !Qt.application.active || completed
                     }
                 }
             }
         }
     }
 
-    TDLibSticker {
+    TDLibAnimatedSticker {
         id: sticker
         width: Math.min(implicitWidth, parent.width)
+        height: width * aspectRatio
         // (centered in image mode, text-like in sticker mode)
         anchors {
             horizontalCenter: appSettings.showStickersAsImages ? parent.horizontalCenter : undefined
@@ -64,24 +73,26 @@ MessageContentBase {
         }
 
         stickerData: stickerMessage.stickerData
+        loop: !rawMessage.content.final_state
 
-        loop: false
-
-        // TODO: do not play animation when viewing history
-        /*property bool needSeekToEnd: false
-        visible: !needSeekToEnd
-        Component.onCompleted: needSeekToEnd = rawMessage.content.value > 0
-        onLoadedChanged: if (loaded && needSeekToEnd) {
-                             needSeekToEnd = false
-                             seekToFrame(getFrameCount() - 3)
-                             // pausing is done by loop=false
-                         }*/
+        paused: !Qt.application.active
+        stickerItem.source: ''
+        Component.onCompleted: {
+            stickerItem.autoLoad = false
+            stickerItem.source = Qt.binding(function() { return file.path })
+            if (completed) {
+                paused = true
+                currentFrame = frameCount - 2
+            } else
+                stickerItem.begin()
+        }
     }
 
     onClicked: {
         var canSend = hasSendPrivilege('can_send_other_messages')
+        var chatId = chatInformation.id, emojiCopy = emoji // So if the message item is deleted, notification would still work
         appNotification.show(qsTr("Send a %1 emoji to any chat to try your luck.", "in-app notification text").arg(emoji),
-                             canSend ? function() { tdLibWrapper.sendDiceMessage(chatInformation.id, emoji) } : null,
+                             canSend ? function() { tdLibWrapper.sendDiceMessage(chatId, emojiCopy) } : null,
                              canSend ? qsTr("Send", 'in-app notification button for "Send a %1 emoji to any chat to try your luck."') : null)
     }
 }

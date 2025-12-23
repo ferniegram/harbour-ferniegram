@@ -4,31 +4,16 @@ import QtMultimedia 5.6
 import App.Logic 1.0
 import "../js/twemoji.js" as Emoji
 
-Item {
+TDLibStickerBase {
     id: sticker
-    property bool highlighted
-    property var stickerData
-    property bool loop: true
 
-    property bool asEmoji: appSettings.showStickersAsEmojis
-    readonly property bool useThumbnail: !appSettings.videoStickers && stickerData.format['@type'] === 'stickerFormatWebm'
     readonly property bool animated: appSettings.animateStickers && stickerData.format["@type"] === "stickerFormatTgs"
-    readonly property bool stickerVisible: !!(stickerLoader.item && stickerLoader.item.visible)
-    property real aspectRatio: stickerData.width / stickerData.height
+
+    useThumbnail: !appSettings.videoStickers && stickerData.format['@type'] === 'stickerFormatWebm'
+    stickerVisible: !!(stickerLoader.item && stickerLoader.item.visible)
 
     property alias stickerItem: stickerLoader.item
     readonly property bool loaded: file.isDownloadingCompleted && stickerLoader.status == Loader.Ready
-
-    implicitWidth: stickerData.width
-    implicitHeight: width * aspectRatio
-
-    TDLibFile {
-        id: file
-        tdlib: tdLibWrapper
-        // in this implementation video (MPEG4) thumbnails are not supported, but they don't seem to appear in stickers
-        fileInformation: useThumbnail ? stickerData.thumbnail.file : stickerData.sticker
-        autoLoad: true
-    }
 
     function getFrameCount() {
         // can't use a property because is non-NOTIFYable (results in lots of warnings)
@@ -103,29 +88,21 @@ Item {
 
         Component {
             id: animatedComponent
-            MovieItem {
+            LottieItem {
                 id: animatedSticker
                 anchors.fill: parent
                 source: file.path
-                sourceSize {
+                // I don't know why but setting scaledSize to QSize(-1,-1) sometimes makes the quality worse,
+                // even though before we introduced LottieItem/MovieItem it worked fine without any scaling at all.
+                scaledSize {
                     width: appSettings.downscaleAnimatedStickers ? Theme.itemSizeSmall : width
                     height: appSettings.downscaleAnimatedStickers ? (Theme.itemSizeSmall * aspectRatio) : height
                 }
 
-                //asynchronous: true
                 paused: !Qt.application.active
-                cache: false
+                loop: sticker.loop
                 layer.enabled: sticker.highlighted
                 layer.effect: PressEffect { source: animatedSticker }
-                Connections {
-                    target: loop ? null : animatedSticker
-                    ignoreUnknownSignals: true
-                    onCurrentFrameChanged:
-                        if (animatedSticker.frameCount !== 0 // can't use this in target expression because non-NOTIFYable
-                                && animatedSticker.currentFrame >= animatedSticker.frameCount - 1) {
-                            animatedSticker.paused = true
-                        }
-                }
             }
         }
 
@@ -148,23 +125,6 @@ Item {
                 layer.enabled: sticker.highlighted
                 layer.effect: PressEffect { source: video }
             }
-        }
-    }
-
-    Loader {
-        anchors.fill: parent
-        sourceComponent: Component {
-            BackgroundImage {}
-        }
-
-        active: opacity > 0
-        opacity: !stickerVisible && !placeHolderDelayTimer.running ? 0.15 : 0
-        Behavior on opacity { FadeAnimation {} }
-
-        Timer {
-            id: placeHolderDelayTimer
-            interval: 1000
-            running: true
         }
     }
 }

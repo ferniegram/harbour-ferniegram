@@ -73,6 +73,7 @@ protected:
     void setMessagesAlbum(const QList<MessageData*> newMessages);
     int findLastSentMessageIndex();
     virtual bool handleInsertMessages(const QVariantList &messages, QList<MessageData*> &newMessagesList, bool setAlbum = true, bool reverseOrder = false);
+    inline virtual void processMessageData(MessageData* message) {}
     virtual bool messageIsFirstInSequence(const int index, const MessageData *message) const;
     virtual bool messageIsLastInSequence(const int index, const MessageData *message) const;
 

@@ -59,6 +59,7 @@ QHash<int,QByteArray> MessagesModel::roleNames() const
         {MessageData::RoleMessageAlbumEntryFilter, "album_entry_filter"},
         {MessageData::RoleMessageAlbumId, "album_id"},
         {MessageData::RoleMessageAlbumMessageIds, "album_message_ids"},
+        {MessageData::RoleGeneratedContentUnread, "generated_content_unread"},
         {MessageData::RoleIsFirstInSequence, "is_first_in_sequence"},
         {MessageData::RoleIsLastInSequence, "is_last_in_sequence"},
     };
@@ -81,6 +82,7 @@ QVariant MessagesModel::data(const QModelIndex &index, int role) const {
         case MessageData::RoleMessageAlbumEntryFilter: return message->albumEntryFilter;
         case MessageData::RoleMessageAlbumId: return message->mediaAlbumId();
         case MessageData::RoleMessageAlbumMessageIds: return message->albumMessageIds;
+        case MessageData::RoleGeneratedContentUnread: return message->generatedContentUnread;
         case MessageData::RoleIsFirstInSequence: return messageIsFirstInSequence(row, message);
         case MessageData::RoleIsLastInSequence: return messageIsLastInSequence(row, message);
         }
@@ -176,6 +178,8 @@ void MessagesModel::handleMessageSendSucceeded(qlonglong messageId, qlonglong ol
         const int pos = messageIndexMap.take(oldMessageId);
         MessageData* oldMessage = messages.at(pos);
         MessageData* newMessage = new MessageData(message, messageId);
+        this->processMessageData(newMessage);
+        newMessage->generatedContentUnread = true;
         messages.replace(pos, newMessage);
         messageIndexMap.remove(oldMessageId);
         messageIndexMap.insert(messageId, pos);
@@ -514,6 +518,7 @@ bool MessagesModel::handleInsertMessages(const QVariantList &messages, QList<Mes
         if (messageId && messageData.value(CHAT_ID).toLongLong() == chatId && !messageIndexMap.contains(messageId)) {
             LOG("New message will be added:" << messageId);
             MessageData* message = new MessageData(messageData, messageId);
+            this->processMessageData(message);
             newMessagesList.append(message);
         }
     }

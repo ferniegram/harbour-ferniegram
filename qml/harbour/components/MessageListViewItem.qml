@@ -48,7 +48,9 @@ ListItem {
                                        && (messageAlbumMessageIds.length === 0 || messageAlbumMessageIds.every(function(id) {
                                            return view.selectedMessages.some(function(m) { return m.id == id })
                                        }))
-    readonly property bool isSponsored: myMessage['@type'] === 'sponsoredMessage'
+    property bool isSponsored: myMessage['@type'] === 'sponsoredMessage'
+    property bool generatedContentUnread
+    readonly property bool isUnread: messageIndex > chatManager.model.lastReadMessageIndexInBounds && !isSponsored
 
     readonly property bool isOwnMessage: page.myUserId === myMessage.sender_id.user_id
     property bool hasContentComponent
@@ -468,7 +470,6 @@ ListItem {
                 }
                 height: messageTextColumn.height + precalculatedValues.paddingMediumDouble
                 width: precalculatedValues.backgroundWidth
-                property bool isUnread: messageIndex > chatManager.model.lastReadMessageIndexInBounds && !isSponsored
                 color: isUnread ? Theme.rgba(Theme.highlightBackgroundColor, Theme.highlightBackgroundOpacity) : Theme.rgba(Theme.primaryColor, Theme.opacityFaint)
                 radius: parent.width / 50
                 visible: appSettings.showStickersAsImages || (myMessage.content['@type'] !== "messageSticker" && myMessage.content['@type'] !== "messageAnimatedEmoji" && myMessage.content['@type'] !== "messageDice")

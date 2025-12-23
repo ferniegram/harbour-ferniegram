@@ -16,6 +16,7 @@ struct MessageData {
         RoleMessageAlbumEntryFilter,
         RoleMessageAlbumId,
         RoleMessageAlbumMessageIds,
+        RoleGeneratedContentUnread,
 
         RoleIsFirstInSequence,
         RoleIsLastInSequence,
@@ -72,6 +73,7 @@ struct MessageData {
     QVariantList reactions;
     bool albumEntryFilter;
     QVariantList albumMessageIds;
+    bool generatedContentUnread;
 };
 
 #endif // MESSAGEDATA_H
