@@ -1495,7 +1495,7 @@ ChatData* TDLibWrapper::getChatDataForce(qlonglong chatId) {
 
 QStringList TDLibWrapper::getChatReactions(qlonglong chatId) {
     LOG("Obtaining chat reactions for chat" << chatId);
-    const QVariant available_reactions(this->chats.value(chatId)->chatData.value(CHAT_AVAILABLE_REACTIONS));
+    const QVariant available_reactions(getChat(chatId).value(CHAT_AVAILABLE_REACTIONS));
     const QVariantMap map(available_reactions.toMap());
     const QString reactions_type(map.value(_TYPE).toString());
     if (reactions_type == CHAT_AVAILABLE_REACTIONS_ALL) {
