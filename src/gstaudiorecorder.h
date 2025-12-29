@@ -39,6 +39,7 @@ signals:
     void locationChanged();
 
 private:
+    bool initializePipeline();
     void run() Q_DECL_OVERRIDE;
     void handleMessage(GstMessage *msg);
 

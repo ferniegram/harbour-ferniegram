@@ -154,8 +154,11 @@ void Utilities::setupAudioRecorder() {
             this->gstAudioRecorder->setVolume(appSettings->voiceNoteVolume());
             connect(gstAudioRecorder, &GstAudioRecorder::stateChanged, this, &Utilities::voiceNoteRecordingStateChanged);
             connect(gstAudioRecorder, &GstAudioRecorder::durationChanged, this, &Utilities::voiceNoteDurationChanged);
-        } else
+        } else {
             LOG("Could not setup custom GStreamer backend, falling back to Vorbis codec from QtMultimedia");
+            delete gstAudioRecorder;
+            gstAudioRecorder = nullptr;
+        }
     }
 #endif
 

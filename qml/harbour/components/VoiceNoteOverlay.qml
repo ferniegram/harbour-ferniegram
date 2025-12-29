@@ -42,6 +42,9 @@ Item {
     }
 
     onRecordingDurationChanged: {
+        if (utilities.voiceNoteDuration === -1)
+            return
+
         var minutes = Math.floor(recordingDuration / 60);
         var seconds = recordingDuration % 60;
         recordingDurationLabel.text = getTwoDigitString(minutes) + ":" + getTwoDigitString(seconds);

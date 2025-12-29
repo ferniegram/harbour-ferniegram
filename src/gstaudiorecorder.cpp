@@ -31,18 +31,8 @@ GstAudioRecorder::GstAudioRecorder(int argc, char **argv, bool *error, QObject *
         return;
     }
 
-    pipeline = gst_parse_launch("pulsesrc ! audioconvert ! volume name=volume ! opusenc ! oggmux ! filesink name=sink", &gError);
-    if (gError) {
-        LOG_GERROR("Error occured while creating pipeline (not necessarily critical)", gError);
-        CLEAN_GERROR(gError);
-    }
-    if (!pipeline) {
-        WARN("Pipeline could not be created (a critical error occured). See above for details");
+    if (!initializePipeline())
         if (error) *error = true;
-        return;
-    }
-
-    LOG("No critical errors occured");
 }
 
 GstAudioRecorder::~GstAudioRecorder() {
@@ -54,14 +44,38 @@ GstAudioRecorder::~GstAudioRecorder() {
     }
 }
 
+bool GstAudioRecorder::initializePipeline() {
+    if (pipeline) {
+        LOG("Pipeline already initialized");
+        return true;
+    }
+
+    GError *gError = nullptr;
+
+    pipeline = gst_parse_launch("pulsesrc ! audioconvert ! volume name=volume ! opusenc ! oggmux ! filesink name=sink", &gError);
+    if (gError) {
+        LOG_GERROR("Error occured while creating pipeline (not necessarily critical)", gError);
+        CLEAN_GERROR(gError);
+    }
+    if (!pipeline) {
+        WARN("Pipeline could not be created (a critical error occured). See above for details");
+        return false;
+    }
+
+    LOG("No critical errors occured");
+    return true;
+}
+
 void GstAudioRecorder::run() {
     if (!pipeline) {
         LOG("Could not listen to the bus: pipeline not initialized");
         return;
     }
 
+    LOG("Listening to pipeline");
+
     GstBus *bus = gst_element_get_bus(pipeline);
-    do {
+    while (!needTerminate) {
         GstMessage *msg = gst_bus_timed_pop_filtered(bus, 100 * GST_MSECOND,
                                                             static_cast<GstMessageType>(GST_MESSAGE_STATE_CHANGED | GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
 
@@ -70,7 +84,7 @@ void GstAudioRecorder::run() {
         else {
             // We got no message, this means the timeout expired
             if (state == Recording) {
-                // TODO: sometimes, when recording again, position is messed up
+                LOG("Getting position");
                 int64_t newDuration;
                 if (gst_element_query_position(pipeline, GST_FORMAT_TIME, &newDuration)) {
                     newDuration = GST_TIME_AS_MSECONDS(newDuration);
@@ -87,12 +101,19 @@ void GstAudioRecorder::run() {
                 }
             }
         }
-    } while (!needTerminate);
+    }
 
     gst_object_unref(bus);
-    // Pipeline
-    //gst_element_set_state(pipeline, GST_STATE_NULL);
-    //gst_object_unref(pipeline);
+
+    gst_element_set_state(pipeline, GST_STATE_NULL);
+    gst_object_unref(pipeline);
+    pipeline = nullptr;
+
+    duration = -1;
+    emit durationChanged();
+
+    needTerminate = false;
+    LOG("Thread terminated");
 }
 
 void GstAudioRecorder::handleMessage(GstMessage *msg) {
@@ -133,6 +154,7 @@ void GstAudioRecorder::handleMessage(GstMessage *msg) {
                     break;
                 case GST_STATE_NULL:
                     newGstState = Ready;
+                    needTerminate = true;
                     break;
                 case GST_STATE_PLAYING:
                     newGstState = Recording;
@@ -161,8 +183,8 @@ void GstAudioRecorder::handleMessage(GstMessage *msg) {
 }
 
 void GstAudioRecorder::record(const QString &location) {
-    if (!pipeline) {
-        LOG("Could not start recording: pipeline not initialized");
+    if (!initializePipeline()) {
+        LOG("Could not start recording: can't initialize pipeline");
         return;
     }
 
@@ -177,17 +199,24 @@ void GstAudioRecorder::record(const QString &location) {
     gst_object_unref(filesink);
 
     GstStateChangeReturn ret = gst_element_set_state(pipeline, GST_STATE_PLAYING);
-    if (ret == GST_STATE_CHANGE_FAILURE) {
+    switch (ret) {
+    case GST_STATE_CHANGE_FAILURE:
         LOG("Could not start recording");
         return;
+
+    case GST_STATE_CHANGE_SUCCESS:
+        state = Recording;
+        emit stateChanged();
+        break;
+
+    default:
+        break;
     }
 
     start();
 
     this->location = location;
     emit locationChanged();
-    state = Recording;
-    emit stateChanged();
 }
 
 void GstAudioRecorder::pause() {
@@ -197,13 +226,19 @@ void GstAudioRecorder::pause() {
     }
 
     GstStateChangeReturn ret = gst_element_set_state(pipeline, GST_STATE_PAUSED);
-    if (ret == GST_STATE_CHANGE_FAILURE) {
+    switch (ret) {
+    case GST_STATE_CHANGE_FAILURE:
         LOG("Could not pause recording");
         return;
-    }
 
-    state = Paused;
-    stateChanged();
+    case GST_STATE_CHANGE_SUCCESS:
+        state = Paused;
+        emit stateChanged();
+        break;
+
+    default:
+        break;
+    }
 }
 
 void GstAudioRecorder::stop() {
@@ -213,13 +248,21 @@ void GstAudioRecorder::stop() {
     }
 
     GstStateChangeReturn ret = gst_element_set_state(pipeline, GST_STATE_NULL);
-    if (ret == GST_STATE_CHANGE_FAILURE) {
-        LOG("Could not stop recording");
-        return;
+    switch (ret) {
+    case GST_STATE_CHANGE_FAILURE:
+        LOG("Could not stop recording, terminating anyway");
+        break;
+
+    case GST_STATE_CHANGE_SUCCESS:
+        state = Ready;
+        emit stateChanged();
+        break;
+
+    default:
+        break;
     }
 
-    state = Ready;
-    stateChanged();
+    needTerminate = true;
 }
 
 void GstAudioRecorder::setVolume(qreal newVolume) {
