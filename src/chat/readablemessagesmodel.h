@@ -11,6 +11,7 @@ class ReadableMessagesModel : public JumpableMessagesModel {
     Q_PROPERTY(int lastReadSentMessageIndex READ calculateLastReadSentMessageIndex NOTIFY lastReadSentMessageUpdated)
 
 public:
+    ReadableMessagesModel(QObject *parent = nullptr);
     ReadableMessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent = nullptr);
 
     Q_INVOKABLE virtual bool clear() override;
@@ -24,9 +25,9 @@ signals:
     void lastReadSentMessageUpdated();
     void lastReadMessageIndexChanged();
 
-private slots:
-    void handleFoundChatMessagesReceived(qlonglong chatId, TDLibWrapper::SearchMessagesFilter filter, int extra, const QVariantList &messages, int totalCount, qlonglong /*nextFromMessageId*/);
+protected slots:
     void handleNewMessageReceived(qlonglong chatId, const QVariantMap &message);
+    void handleNewMessageReceived(const QVariantMap &message);
 
 protected:
     int calculateLastReadMessageIndexInBounds();

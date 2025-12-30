@@ -14,12 +14,8 @@ namespace {
     const QString PHOTO("photo");
     const QString SMALL("small");
     const QString ORDER("order");
-    const QString CHAT_ID("chat_id");
-    const QString CONTENT("content");
     const QString LAST_MESSAGE("last_message");
     const QString DRAFT_MESSAGE("draft_message");
-    const QString SENDER_ID("sender_id");
-    const QString USER_ID("user_id");
     const QString BASIC_GROUP_ID("basic_group_id");
     const QString SUPERGROUP_ID("supergroup_id");
     const QString UNREAD_COUNT("unread_count");
@@ -29,7 +25,6 @@ namespace {
     const QString NOTIFICATION_SETTINGS("notification_settings");
     const QString LAST_READ_INBOX_MESSAGE_ID("last_read_inbox_message_id");
     const QString LAST_READ_OUTBOX_MESSAGE_ID("last_read_outbox_message_id");
-    const QString SENDING_STATE("sending_state");
     const QString IS_CHANNEL("is_channel");
     const QString VERIFICATION_STATUS("verification_status");
     const QString IS_MARKED_AS_UNREAD("is_marked_as_unread");
@@ -40,8 +35,7 @@ namespace {
 }
 
 ChatData::ChatData(TDLibWrapper *tdLibWrapper, Utilities *utilities, const QVariantMap &data) :
-    tdLibWrapper(tdLibWrapper),
-    utilities(utilities),
+    BaseMessagableData(tdLibWrapper, utilities),
     chatId(data.value(ID).toLongLong()),
     groupId(0),
     memberStatus(TDLibWrapper::ChatMemberStatusUnknown),
@@ -51,8 +45,7 @@ ChatData::ChatData(TDLibWrapper *tdLibWrapper, Utilities *utilities, const QVari
 }
 
 ChatData::ChatData(TDLibWrapper *tdLibWrapper, Utilities *utilities, qlonglong chatId) :
-    tdLibWrapper(tdLibWrapper),
-    utilities(utilities),
+    BaseMessagableData(tdLibWrapper, utilities),
     chatData(),
     chatId(chatId),
     groupId(0),
@@ -91,8 +84,11 @@ void ChatData::updateChatData(const QVariantMap &data) {
 inline const QVariantMap ChatData::lastMessage() const {
     return chatData.value(LAST_MESSAGE).toMap();
 }
-inline const QVariant ChatData::lastMessage(const QString &key) const {
-    return lastMessage().value(key);
+
+inline QString ChatData::lastMessageStatus() const {
+    if (isChannel() || chatId == tdLibWrapper->myUserId())
+        return "";
+    return BaseMessagableData::lastMessageStatus();
 }
 
 QString ChatData::title() const
@@ -125,66 +121,14 @@ QVariant ChatData::photoSmall() const
     return chatData.value(PHOTO).toMap().value(SMALL);
 }
 
-qlonglong ChatData::lastReadInboxMessageId() const
-{
+qlonglong ChatData::lastReadInboxMessageId() const {
     return chatData.value(LAST_READ_INBOX_MESSAGE_ID).toLongLong();
 }
 
-qlonglong ChatData::senderUserId() const
-{
-    return lastMessage(SENDER_ID).toMap().value(USER_ID).toLongLong();
+qlonglong ChatData::lastReadOutboxMessageId() const {
+    return chatData.value(LAST_READ_OUTBOX_MESSAGE_ID).toLongLong();
 }
 
-qlonglong ChatData::senderChatId() const
-{
-    return lastMessage(SENDER_ID).toMap().value(CHAT_ID).toLongLong();
-}
-
-bool ChatData::senderIsChat() const
-{
-    return lastMessage(SENDER_ID).toMap().value(_TYPE).toString() == "messageSenderChat";
-}
-
-qlonglong ChatData::senderMessageDate() const
-{
-    return lastMessage(DATE).toLongLong();
-}
-
-QString ChatData::senderMessageText() const {
-    return utilities->getMessageText(lastMessage(), Utilities::MessageTextSimpleWithThumbnails);
-}
-
-QVariant ChatData::senderMessageMinithumbnail() const {
-    return utilities->getMessageMinithumbnail(lastMessage(CONTENT).toMap());
-}
-
-bool ChatData::senderMessageIsService() const {
-    return Utilities::messageContentIsService(lastMessage(CONTENT).toMap().value(_TYPE).toString());
-}
-
-
-QString ChatData::senderMessageStatus() const
-{
-    qlonglong myUserId = tdLibWrapper->getUserInformation().value(ID).toLongLong();
-    if (isChannel() || myUserId != senderUserId() || myUserId == chatId) {
-        return "";
-    }
-    if (lastMessage(ID) == chatData.value(LAST_READ_OUTBOX_MESSAGE_ID)) {
-        return "&nbsp;&nbsp;✅";
-    } else {
-        QVariantMap lastMessage = chatData.value(LAST_MESSAGE).toMap();
-        if (lastMessage.contains(SENDING_STATE)) {
-            QVariantMap sendingState = lastMessage.value(SENDING_STATE).toMap();
-            if (sendingState.value(_TYPE).toString() == "messageSendingStatePending") {
-                return "&nbsp;&nbsp;🕙";
-            } else {
-                return "&nbsp;&nbsp;❌";
-            }
-        } else {
-            return "&nbsp;&nbsp;☑️";
-        }
-    }
-}
 qlonglong ChatData::draftMessageDate() const
 {
     QVariantMap draft = chatData.value(DRAFT_MESSAGE).toMap();
@@ -228,35 +172,33 @@ bool ChatData::updateLastReadInboxMessageId(qlonglong messageId)
 }
 
 QVector<int> ChatData::updateLastMessage(const QVariantMap &message) {
-    const qlonglong prevSenderUserId(senderUserId());
-    const qlonglong prevSenderMessageDate(senderMessageDate());
-    const QString prevSenderMessageText(senderMessageText());
-    const QVariant prevSenderMessageMinithumbnail(senderMessageMinithumbnail());
-    const bool prevSenderMessageIsService(senderMessageIsService());
-    const QString prevSenderMessageStatus(senderMessageStatus());
-
+    const qlonglong prevSenderUserId(lastMessageSenderUserId());
+    const qlonglong prevLastMessageDate(lastMessageDate());
+    const QString prevLastMessageText(lastMessageText());
+    const QVariant prevLastMessageMinithumbnail(lastMessageMinithumbnail());
+    const bool prevLastMessageIsService(lastMessageIsService());
+    const QString prevLastMessageStatus(lastMessageStatus());
 
     chatData.insert(LAST_MESSAGE, message);
 
     QVector<int> changedRoles;
     changedRoles.append(ChatData::RoleDisplay);
-    if (prevSenderUserId != senderUserId()) {
+    if (prevSenderUserId != lastMessageSenderUserId()) {
         changedRoles.append(ChatData::RoleLastMessageSenderId);
     }
-    if (prevSenderMessageDate != senderMessageDate()) {
+    if (prevLastMessageDate != lastMessageDate()) {
         changedRoles.append(ChatData::RoleLastMessageDate);
     }
-    if (prevSenderMessageText != senderMessageText()) {
-        changedRoles.append(ChatData::RoleFilter);
+    if (prevLastMessageText != lastMessageText()) {
         changedRoles.append(ChatData::RoleLastMessageText);
     }
-    if (prevSenderMessageMinithumbnail != senderMessageMinithumbnail()) {
+    if (prevLastMessageMinithumbnail != lastMessageMinithumbnail()) {
         changedRoles.append(ChatData::RoleLastMessageMinithumbnail);
     }
-    if (prevSenderMessageIsService != senderMessageIsService()) {
+    if (prevLastMessageIsService != lastMessageIsService()) {
         changedRoles.append(ChatData::RoleLastMessageIsService);
     }
-    if (prevSenderMessageStatus != senderMessageStatus()) {
+    if (prevLastMessageStatus != lastMessageStatus()) {
         changedRoles.append(ChatData::RoleLastMessageStatus);
     }
     return changedRoles;

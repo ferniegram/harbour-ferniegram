@@ -304,6 +304,20 @@ Page {
                                 }
                             }
 
+                            // TODO: if user searches for saved messages, show it
+                            // additionally, if the chat matches by both TDLib and this, don't duplicate
+                            /*Loader {
+                                width: parent.width
+                                active: false
+                                height: active ? Theme.itemSizeExtraLarge : 0
+                                sourceComponent: Component {
+                                    TDLibChatListItem {
+                                        chatId: tdLibWrapper.myUserId
+                                        onClicked: tdLibWrapper.addRecentlyFoundChat(chatId)
+                                    }
+                                }
+                            }*/
+
                             ColumnView {
                                 id: localSearchListView
                                 width: parent.width

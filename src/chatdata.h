@@ -3,8 +3,9 @@
 
 #include <QObject>
 #include "tdlib/tdlibwrapper.h"
+#include "basemessagabledata.h"
 
-class ChatData {
+class ChatData : public BaseMessagableData {
 public:
     enum Role {
         RoleDisplay = Qt::DisplayRole,
@@ -30,7 +31,6 @@ public:
         RoleIsChannel,
         RoleIsMarkedAsUnread,
         RoleIsPinned,
-        RoleFilter,
         RoleDraftMessageText,
         RoleDraftMessageDate
     };
@@ -39,23 +39,17 @@ public:
     ChatData(TDLibWrapper *tdLibWrapper, Utilities *utilities, qlonglong chatId);
 
     void updateChatData(const QVariantMap &data);
-    const QVariantMap lastMessage() const;
-    const QVariant lastMessage(const QString &key) const;
+    virtual const QVariantMap lastMessage() const override;
+    virtual QString lastMessageStatus() const override;
     QString title() const;
     int unreadCount() const;
     int unreadMentionCount() const;
     int unreadReactionCount() const;
     QVariant availableReactions() const;
     QVariant photoSmall() const;
-    qlonglong lastReadInboxMessageId() const;
-    qlonglong senderUserId() const;
-    qlonglong senderChatId() const;
-    bool senderIsChat() const;
-    qlonglong senderMessageDate() const;
-    QString senderMessageText() const;
-    QVariant senderMessageMinithumbnail() const;
-    bool senderMessageIsService() const;
-    QString senderMessageStatus() const;
+    virtual qlonglong lastReadInboxMessageId() const override;
+    virtual qlonglong lastReadOutboxMessageId() const override;
+
     qlonglong draftMessageDate() const;
     QString draftMessageText() const;
     bool isChannel() const;
@@ -65,8 +59,6 @@ public:
     QVector<int> updateLastMessage(const QVariantMap &message);
     QVector<int> updateGroup(const TDLibWrapper::Group *group);
     QVector<int> updateSecretChat(const QVariantMap &secretChatDetails);
-    TDLibWrapper *tdLibWrapper;
-    Utilities *utilities;
 
 public:
     QVariantMap chatData;

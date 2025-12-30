@@ -71,15 +71,15 @@ QVector<int> MessageData::flagsToRoles(uint flags) {
     return roles;
 }
 
-int MessageData::senderUserId() const {
+int MessageData::lastMessageSenderUserId() const {
     return messageData.value(SENDER_ID).toMap().value(USER_ID).toInt();
 }
 
-qlonglong MessageData::senderChatId() const {
+qlonglong MessageData::lastMessageSenderChatId() const {
     return messageData.value(SENDER_ID).toMap().value(CHAT_ID).toLongLong();
 }
 
-bool MessageData::senderIsChat() const {
+bool MessageData::lastMessageSenderIsChat() const {
     return messageData.value(SENDER_ID).toMap().value(_TYPE).toString() == "messageSenderChat";
 }
 
@@ -215,9 +215,9 @@ bool MessageData::areTogether(const MessageData *message1, const MessageData *me
     if (Utilities::messageContentIsService(message1->messageContentType) || Utilities::messageContentIsService(message2->messageContentType))
         return false;
 
-    if (message1->senderIsChat() && message2->senderIsChat() && message1->senderChatId() != message2->senderChatId())
+    if (message1->lastMessageSenderIsChat() && message2->lastMessageSenderIsChat() && message1->lastMessageSenderChatId() != message2->lastMessageSenderChatId())
         return false;
-    else if (!message1->senderIsChat() && !message2->senderIsChat() && message1->senderUserId() != message2->senderUserId())
+    else if (!message1->lastMessageSenderIsChat() && !message2->lastMessageSenderIsChat() && message1->lastMessageSenderUserId() != message2->lastMessageSenderUserId())
         return false;
 
     return qAbs(message1->messageData.value(DATE).toInt() - message2->messageData.value(DATE).toInt()) <= 900;

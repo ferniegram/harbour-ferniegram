@@ -123,6 +123,9 @@ namespace {
     const QString BASIC_GROUP_ID("basic_group_id");
     const QString SUPERGROUP_ID("supergroup_id");
     const QString ACTIVE_USERNAMES("active_usernames");
+    const QString VIEW_AS_TOPICS("view_as_topics");
+    const QString FROM_MESSAGE_ID("from_message_id");
+    const QString MY_ID("my_id");
 
     const QStringList ALL_FILE_TYPES(QStringList()
                                      << "fileTypeAnimation"
@@ -334,6 +337,11 @@ void TDLibWrapper::initializeTDLibReceiver() {
     connect(this->tdLibReceiver, &TDLibReceiver::deepLinkInfoReceived, this, &TDLibWrapper::deepLinkInfoReceived);
     connect(this->tdLibReceiver, &TDLibReceiver::userReceived, this, &TDLibWrapper::handleUserReceived);
     connect(this->tdLibReceiver, &TDLibReceiver::chatInviteLinkInfoReceived, this, &TDLibWrapper::chatInviteLinkInfoReceived);
+    connect(this->tdLibReceiver, &TDLibReceiver::chatViewAsTopicsUpdated, this, &TDLibWrapper::handleChatViewAsTopicsUpdated);
+    connect(this->tdLibReceiver, &TDLibReceiver::threadMessagesReceived, this, &TDLibWrapper::threadMessagesReceived);
+    connect(this->tdLibReceiver, &TDLibReceiver::forumTopicMessagesReceived, this, &TDLibWrapper::forumTopicMessagesReceived);
+    connect(this->tdLibReceiver, &TDLibReceiver::forumTopicUpdated, this, &TDLibWrapper::forumTopicUpdated);
+    connect(this->tdLibReceiver, &TDLibReceiver::forumTopicInfoUpdated, this, &TDLibWrapper::forumTopicInfoUpdated);
 
     this->tdLibReceiver->start();
 }
@@ -457,7 +465,7 @@ void TDLibWrapper::getChatHistory(qlonglong chatId, int extra, qlonglong fromMes
     this->sendRequest(QVariantMap{
         {_TYPE, "getChatHistory"},
         {CHAT_ID, chatId},
-        {"from_message_id", fromMessageId},
+        {FROM_MESSAGE_ID, fromMessageId},
         {OFFSET, offset},
         {LIMIT, limit},
         {"only_local", onlyLocal},
@@ -1046,7 +1054,7 @@ void TDLibWrapper::searchChatMessages(qlonglong chatId, const QString &query, in
         {_TYPE, "searchChatMessages"},
         {CHAT_ID, chatId},
         {QUERY, query},
-        {"from_message_id", fromMessageId},
+        {FROM_MESSAGE_ID, fromMessageId},
         {OFFSET, offset},
         {LIMIT, limit},
         {FILTER, QVariantMap{{_TYPE, filterType}}},
@@ -1651,11 +1659,15 @@ void TDLibWrapper::handleOptionUpdated(const QString &optionName, const QVariant
            (release = parts.at(2).toInt(&ok), ok)) {
             versionNumber = VERSION_NUMBER(major, minor, release);
         }
-    } else if (optionName == "my_id") {
+    } else if (optionName == MY_ID) {
         QString ownUserId = optionValue.toString();
         this->userInformation = this->getUserInformation(ownUserId);
         emit ownUserIdFound(ownUserId);
     }
+}
+
+qlonglong TDLibWrapper::myUserId() const {
+    return options->value(MY_ID).toLongLong();
 }
 
 void TDLibWrapper::handleConnectionStateChanged(const QString &connectionState) {
@@ -1680,7 +1692,7 @@ void TDLibWrapper::handleConnectionStateChanged(const QString &connectionState) 
 
 void TDLibWrapper::handleUserUpdated(const QVariantMap &updatedUserInformation) {
     QString updatedUserId = updatedUserInformation.value(ID).toString();
-    if (updatedUserId == this->options->value("my_id").toString()) {
+    if (updatedUserId == this->options->value(MY_ID).toString()) {
         LOG("Current user information updated");
         this->userInformation = updatedUserInformation;
         emit ownUserUpdated(updatedUserInformation);
@@ -1691,7 +1703,7 @@ void TDLibWrapper::handleUserUpdated(const QVariantMap &updatedUserInformation) 
 }
 
 void TDLibWrapper::handleUserStatusUpdated(const QString &userId, const QVariantMap &userStatusInformation) {
-    if (userId == this->options->value("my_id").toString()) {
+    if (userId == this->options->value(MY_ID).toString()) {
         LOG("Current user status information updated");
         this->userInformation.insert(STATUS, userStatusInformation);
     }
@@ -1862,7 +1874,7 @@ void TDLibWrapper::handleChatReadOutboxUpdated(const QString &chatId, const QStr
 
 void TDLibWrapper::handleChatTitleUpdated(qlonglong chatId, const QString &title) {
     this->getChatDataForce(chatId)->chatData.insert(TITLE, title);
-    emit chatRolesUpdated(chatId, QVector<int>{ChatData::RoleTitle, ChatData::RoleFilter});
+    emit chatRolesUpdated(chatId, QVector<int>{ChatData::RoleTitle});
     emit chatTitleUpdated(chatId, title);
 }
 
@@ -2677,13 +2689,14 @@ void TDLibWrapper::handleCountReceived(int count, const QString &extra) {
 void TDLibWrapper::getForumTopics(qlonglong chatId, qint32 offsetDate, qlonglong offsetMessageId, qlonglong offsetMessageThreadId, const QString &query, int limit) {
     LOG("Retreiving forum topics" << chatId);
     this->sendRequest(QVariantMap{
+                          {_TYPE, "getForumTopics"},
                           {CHAT_ID, chatId},
                           {QUERY, query},
                           {"offset_date", offsetDate},
                           {"offset_message_id", offsetMessageId},
                           {"offset_message_thread_id", offsetMessageThreadId},
                           {LIMIT, limit},
-                          {_EXTRA, CHAT_ID}
+                          {_EXTRA, chatId}
                       });
 }
 
@@ -2831,5 +2844,41 @@ void TDLibWrapper::clickChatSponsoredMessage(qlonglong chatId, qlonglong message
                           {MESSAGE_ID, messageId},
                           {"is_media_click", isMediaClick},
                           {"from_fullscreen", fromFullscreen}
+                      });
+}
+
+void TDLibWrapper::toggleChatViewAsTopics(qlonglong chatId, bool viewAsTopics) {
+    LOG("Setting chat view as topics value" << chatId << viewAsTopics);
+    this->sendRequest({{_TYPE, "toggleChatViewAsTopics"}, {CHAT_ID, chatId}, {VIEW_AS_TOPICS, viewAsTopics}});
+}
+
+void TDLibWrapper::handleChatViewAsTopicsUpdated(qlonglong chatId, bool viewAsTopics) {
+    this->getChatDataForce(chatId)->chatData.insert(VIEW_AS_TOPICS, viewAsTopics);
+    emit chatViewAsTopicsUpdated(chatId);
+}
+
+void TDLibWrapper::getMessageThreadHistory(qlonglong chatId, qlonglong messageId, int extra, qlonglong fromMessageId, int offset, int limit) {
+    LOG("Getting message thread history" << chatId << messageId << fromMessageId << offset << limit);
+    this->sendRequest({
+                          {_TYPE, "getMessageThreadHistory"},
+                          {CHAT_ID, chatId},
+                          {MESSAGE_ID, messageId},
+                          {FROM_MESSAGE_ID, fromMessageId},
+                          {OFFSET, offset},
+                          {LIMIT, limit},
+                          {_EXTRA, "thread:"+QString::number(chatId)+":"+QString::number(messageId)+":"+QString::number(extra)}
+                      });
+}
+
+void TDLibWrapper::getForumTopicHistory(qlonglong chatId, int forumTopicId, int extra, qlonglong fromMessageId, int offset, int limit) {
+    LOG("Getting forum topic history" << chatId << forumTopicId << fromMessageId << offset << limit);
+    this->sendRequest({
+                          {_TYPE, "getForumTopicHistory"},
+                          {CHAT_ID, chatId},
+                          {"forum_topic_id", forumTopicId},
+                          {FROM_MESSAGE_ID, fromMessageId},
+                          {OFFSET, offset},
+                          {LIMIT, limit},
+                          {_EXTRA, "forumTopic:"+QString::number(chatId)+":"+QString::number(forumTopicId)+":"+QString::number(extra)}
                       });
 }

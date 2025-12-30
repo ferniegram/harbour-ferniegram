@@ -10,14 +10,10 @@ namespace {
     const QString LAST_READ_OUTBOX_MESSAGE_ID("last_read_outbox_message_id");
 }
 
-ReadableMessagesModel::ReadableMessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent) :
-    JumpableMessagesModel(tdLibWrapper, parent),
+ReadableMessagesModel::ReadableMessagesModel(QObject *parent) :
+    JumpableMessagesModel(parent),
     loadingFullEnd(false)
 {
-    connect(this->tdLibWrapper, SIGNAL(messagesReceived(qlonglong, int, const QVariantList &, int)), this, SLOT(handleMessagesReceived(qlonglong, int, const QVariantList &, int)));
-    connect(this->tdLibWrapper, &TDLibWrapper::foundChatMessagesReceived, this, &ReadableMessagesModel::handleFoundChatMessagesReceived);
-    connect(this->tdLibWrapper, &TDLibWrapper::newMessageReceived, this, &ReadableMessagesModel::handleNewMessageReceived);
-
     connect(this, &ReadableMessagesModel::messageSendSucceeded, this, &ReadableMessagesModel::lastReadSentMessageUpdated);
     connect(this, &ReadableMessagesModel::messagesReceived, this, &ReadableMessagesModel::lastReadSentMessageUpdated);
 
@@ -26,6 +22,11 @@ ReadableMessagesModel::ReadableMessagesModel(TDLibWrapper *tdLibWrapper, QObject
     connect(this, &ReadableMessagesModel::newMessageReceived, this, &ReadableMessagesModel::lastReadMessageIndexChanged);
     connect(this, &ReadableMessagesModel::unreadCountUpdated, this, &ReadableMessagesModel::lastReadMessageIndexChanged);
 
+}
+
+ReadableMessagesModel::ReadableMessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent) : ReadableMessagesModel(parent) {
+    this->tdLibWrapper = tdLibWrapper;
+    setupTDLibWrapper();
 }
 
 bool ReadableMessagesModel::clear() {
@@ -128,16 +129,14 @@ void ReadableMessagesModel::loadHistoryForMessageImpl(qlonglong messageId) {
     this->loadMessages(UpdateInitial, messageId);
 }
 
-void ReadableMessagesModel::handleFoundChatMessagesReceived(qlonglong chatId, TDLibWrapper::SearchMessagesFilter filter, int extra, const QVariantList &messages, int totalCount, qlonglong /*nextFromMessageId*/) {
-    if (this->chatId == chatId && filter == TDLibWrapper::SearchMessagesFilterEmpty) {
-        LOG("Found chat messages received");
-        handleMessagesReceived(extra, messages, totalCount);
-    }
+void ReadableMessagesModel::handleNewMessageReceived(qlonglong chatId, const QVariantMap &message) {
+    if (chatId == this->chatId)
+        handleNewMessageReceived(message);
 }
 
-void ReadableMessagesModel::handleNewMessageReceived(qlonglong chatId, const QVariantMap &message) {
+void ReadableMessagesModel::handleNewMessageReceived(const QVariantMap &message) {
     const qlonglong messageId = message.value(ID).toLongLong();
-    if (chatId == this->chatId && !messageIndexMap.contains(messageId)) {
+    if (!messageIndexMap.contains(messageId)) {
         if (canLoadMoreMessages() && this->endReached) {
             LOG("New message received for this chat");
             QList<MessageData*> messagesToBeAdded;

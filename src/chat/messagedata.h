@@ -57,9 +57,9 @@ struct MessageData {
     QVector<int> setAlbumEntryFilter(bool isAlbumChild);
     QVector<int> setAlbumEntryMessageIds(const QVariantList &newAlbumMessageIds);
 
-    int senderUserId() const;
-    qlonglong senderChatId() const;
-    bool senderIsChat() const;
+    int lastMessageSenderUserId() const;
+    qlonglong lastMessageSenderChatId() const;
+    bool lastMessageSenderIsChat() const;
 
     qlonglong mediaAlbumId() const;
 

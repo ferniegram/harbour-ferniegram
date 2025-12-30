@@ -622,6 +622,16 @@
         <source>Left chat</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>View as Messages</source>
+        <comment>view a forum chat in full chat mode</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>View as Topics</source>
+        <comment>view a forum chat as topics</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChatPendingJoinRequestsItem</name>

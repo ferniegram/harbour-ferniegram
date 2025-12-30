@@ -33,7 +33,7 @@ Page {
 
     property bool loading: true
     property bool isInitialized: false
-    readonly property int myUserId: tdLibWrapper.getUserInformation().id
+    readonly property var myUserId: tdLibWrapper.getUserInformation().id
     property alias chatManager: chatManagerLoader.chatManager
     property var chatInformation
     property var secretChatDetails
@@ -52,9 +52,10 @@ Page {
     property var chatGroupInformation: chatManager.groupInfo
     property int chatOnlineMemberCount: 0
     property var messageIdToShow
+    readonly property bool isSavedMessages: chatInformation.id === myUserId
     readonly property bool userIsMember: ((isPrivateChat || isSecretChat) &&
                                           chatInformation["@type"] &&
-                                          chatInformation.id !== chatPage.myUserId) || // should be optimized
+                                          !isSavedMessages) || // should be optimized
                                 (isBasicGroup || isSuperGroup) && (
                                     (chatGroupInformation.status["@type"] === "chatMemberStatusMember")
                                     || (chatGroupInformation.status["@type"] === "chatMemberStatusAdministrator")
@@ -314,6 +315,14 @@ Page {
 
         PullDownMenu {
             visible: !messagesView || !messagesView.overlayActive
+
+            MenuItem {
+                // TODO: saved messages topics
+                visible: /*isSavedMessages ||*/ (isSuperGroup && chatGroupInformation.is_forum)
+                text: viewAsTopics ? qsTr("View as Messages", "view a forum chat in full chat mode") : qsTr("View as Topics", "view a forum chat as topics")
+                onClicked:
+                    tdLibWrapper.toggleChatViewAsTopics(chatInformation.id, !viewAsTopics)
+            }
 
             MenuItem {
                 id: deleteChatMenuItem

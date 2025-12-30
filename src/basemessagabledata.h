@@ -1,0 +1,31 @@
+#ifndef BASEMESSAGABLEDATA_H
+#define BASEMESSAGABLEDATA_H
+
+#include <QObject>
+#include "tdlib/tdlibwrapper.h"
+
+class BaseMessagableData {
+public:
+    BaseMessagableData(TDLibWrapper *tdLibWrapper, Utilities *utilities);
+
+    virtual qlonglong lastReadInboxMessageId() const = 0;
+    virtual qlonglong lastReadOutboxMessageId() const = 0;
+
+    virtual const QVariantMap lastMessage() const = 0;
+    const QVariant lastMessage(const QString &key) const;
+
+    qlonglong lastMessageSenderUserId() const;
+    qlonglong lastMessageSenderChatId() const;
+    bool lastMessageSenderIsChat() const;
+    qlonglong lastMessageDate() const;
+    QString lastMessageText() const;
+    QVariant lastMessageMinithumbnail() const;
+    bool lastMessageIsService() const;
+    virtual QString lastMessageStatus() const;
+
+protected:
+    TDLibWrapper *tdLibWrapper;
+    Utilities *utilities;
+};
+
+#endif // BASEMESSAGABLEDATA_H

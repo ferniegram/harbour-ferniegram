@@ -33,8 +33,15 @@ namespace {
     const QString MEDIA_ALBUM_ID("media_album_id");
 }
 
-MessagesModel::MessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent) : QAbstractListModel(parent), chatId(0) {
+MessagesModel::MessagesModel(QObject *parent) : QAbstractListModel(parent), chatId(0) {
+}
+
+MessagesModel::MessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent) : MessagesModel(parent) {
     this->tdLibWrapper = tdLibWrapper;
+    setupTDLibWrapper();
+}
+
+void MessagesModel::setupTDLibWrapper() {
     connect(this->tdLibWrapper, &TDLibWrapper::receivedMessage, this, &MessagesModel::handleMessageReceived);
     connect(this->tdLibWrapper, &TDLibWrapper::messageSendSucceeded, this, &MessagesModel::handleMessageSendSucceeded);
     connect(this->tdLibWrapper, &TDLibWrapper::messageContentUpdated, this, &MessagesModel::handleMessageContentUpdated);
@@ -500,7 +507,7 @@ void MessagesModel::setMessagesAlbum(MessageData *message) {
 int MessagesModel::findLastSentMessageIndex() {
     const int myUserId = tdLibWrapper->getUserInformation().value(ID).toInt();
     for (int i = (messages.size() - 1); i >= 0; i--) // find last own message in list
-        if (messages.at(i)->senderUserId() == myUserId)
+        if (messages.at(i)->lastMessageSenderUserId() == myUserId)
             return i;
     return -1;
 }

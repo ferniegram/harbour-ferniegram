@@ -9,6 +9,7 @@ class JumpableMessagesModel : public MessagesModel {
     Q_PROPERTY(bool endReached MEMBER endReached NOTIFY endReachedChanged)
     Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
 public:
+    explicit JumpableMessagesModel(QObject *parent = nullptr);
     explicit JumpableMessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent = nullptr);
 
     Q_INVOKABLE virtual bool clear() override;

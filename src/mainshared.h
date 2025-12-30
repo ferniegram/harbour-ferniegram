@@ -51,6 +51,7 @@
 #include "waveformmanager.h"
 #include "suggestedactionsmanager.h"
 #include "lottieitem.h"
+#include "chat/forumtopicmessagesmodel.h"
 
 // The default filter can be overridden by QT_LOGGING_RULES envinronment variable, e.g.
 // QT_LOGGING_RULES="fernschreiber2.*=true" harbour-fernschreiber2
@@ -102,6 +103,7 @@ namespace MainShared {
         qmlRegisterType<ChatPermissionFilterModel>(uri, 1, 0, "ChatPermissionFilterModel");
         qmlRegisterType<ChatManager>(uri, 1, 0, "ChatManager");
         qmlRegisterType<LottieItem>(uri, 1, 0, "LottieItem");
+        qmlRegisterType<ForumTopicMessagesModel>(uri, 1, 0, "ForumTopicMessagesModel");
         qmlRegisterSingletonType<DebugLogJS>(uri, 1, 0, "DebugLog", DebugLogJS::createSingleton);
 
         AppSettings *appSettings = new AppSettings(view.data());

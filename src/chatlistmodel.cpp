@@ -162,7 +162,6 @@ QHash<int,QByteArray> ChatListModel::roleNames() const
     roles.insert(ChatData::RoleIsChannel, "is_channel");
     roles.insert(ChatData::RoleIsMarkedAsUnread, "is_marked_as_unread");
     roles.insert(ChatData::RoleIsPinned, "is_pinned");
-    roles.insert(ChatData::RoleFilter, "filter");
     roles.insert(ChatData::RoleDraftMessageDate, "draft_message_date");
     roles.insert(ChatData::RoleDraftMessageText, "draft_message_text");
     return roles;
@@ -190,19 +189,18 @@ QVariant ChatListModel::data(const QModelIndex &index, int role) const
         case ChatData::RoleAvailableReactions: return data->data->availableReactions();
         case ChatData::RoleUnreadReactionCount: return data->data->unreadReactionCount();
         case ChatData::RoleLastReadInboxMessageId: return data->data->lastReadInboxMessageId();
-        case ChatData::RoleLastMessageSenderId: return data->data->senderUserId();
-        case ChatData::RoleLastMessageText: return data->data->senderMessageText();
-        case ChatData::RoleLastMessageMinithumbnail: return data->data->senderMessageMinithumbnail();
-        case ChatData::RoleLastMessageIsService: return data->data->senderMessageIsService();
-        case ChatData::RoleLastMessageDate: return data->data->senderMessageDate();
-        case ChatData::RoleLastMessageStatus: return data->data->senderMessageStatus();
+        case ChatData::RoleLastMessageSenderId: return data->data->lastMessageSenderUserId();
+        case ChatData::RoleLastMessageText: return data->data->lastMessageText();
+        case ChatData::RoleLastMessageMinithumbnail: return data->data->lastMessageMinithumbnail();
+        case ChatData::RoleLastMessageIsService: return data->data->lastMessageIsService();
+        case ChatData::RoleLastMessageDate: return data->data->lastMessageDate();
+        case ChatData::RoleLastMessageStatus: return data->data->lastMessageStatus();
         case ChatData::RoleChatMemberStatus: return data->data->memberStatus;
         case ChatData::RoleSecretChatState: return data->data->secretChatState;
         case ChatData::RoleVerificationStatus: return data->data->verificationStatus;
         case ChatData::RoleIsChannel: return data->data->isChannel();
         case ChatData::RoleIsMarkedAsUnread: return data->data->isMarkedAsUnread();
         case ChatData::RoleIsPinned: return data->isPinned;
-        case ChatData::RoleFilter: return data->data->title() + " " + data->data->senderMessageText();
         case ChatData::RoleDraftMessageText: return data->data->draftMessageText();
         case ChatData::RoleDraftMessageDate: return data->data->draftMessageDate();
         }

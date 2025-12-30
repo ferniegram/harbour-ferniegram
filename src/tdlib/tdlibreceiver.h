@@ -126,14 +126,17 @@ signals:
     void archiveChatListSettingsReceived(bool archiveAndMuteNewChatsFromUnknownUsers, bool keepUnmutedChatsArchived, bool keepChatsFromFoldersArchived);
     void chatFoldersUpdated(const QVariantList &chatFolders, int mainChatListPosition, bool tagsEnabled);
     void forumTopicsReceived(qlonglong chatId, int totalCount, QVariantList topics, int nextOffsetDate, qlonglong nextOffsetMessageId, qlonglong nextOffsetMessageThreadId);
-    void forumTopicUpdated(qlonglong chatId, qlonglong messageThreadId, bool isPinned, qlonglong lastReadInboxMessageId, qlonglong lastReadOutboxMessageId, const QVariantMap &notificationSettings);
-    void forumTopicInfoUpdated(qlonglong chatId, qlonglong messageThreadId, const QVariantMap &info);
+    void forumTopicUpdated(qlonglong chatId, int forumTopicId, const QVariantMap &update);
+    void forumTopicInfoUpdated(qlonglong chatId, int forumTopicId, const QVariantMap &info);
     void chatPendingJoinRequestsUpdated(qlonglong chatId, const QVariantMap &pendingJoinRequests);
     void chatJoinRequestsReceived(qlonglong chatId, int totalCount, const QVariantList &requests);
     void internalLinkTypeReceived(const QVariantMap &internalLinkType);
     void deepLinkInfoReceived(const QVariantMap &text, bool needUpdateApplication);
     void userReceived(const QVariantMap &user, bool doOpenOnFound);
     void chatInviteLinkInfoReceived(const QString &link, const QVariantMap &info);
+    void chatViewAsTopicsUpdated(qlonglong chatId, bool viewAsTopics);
+    void threadMessagesReceived(qlonglong chatId, qlonglong messageId, int extra, const QVariantList &messages, int totalCount);
+    void forumTopicMessagesReceived(qlonglong chatId, int forumTopicId, int extra, const QVariantList &messages, int totalCount);
 
 private:
     typedef void (TDLibReceiver::*Handler)(const QVariantMap &);
@@ -243,6 +246,7 @@ private:
     void processDeepLinkInfo(const QVariantMap &receivedInformation);
     void processUser(const QVariantMap &receivedInformation);
     void processChatInviteLinkInfo(const QVariantMap &receivedInformation);
+    void processUpdateChatViewAsTopics(const QVariantMap &receivedInformation);
 };
 
 #endif // TDLIBRECEIVER_H

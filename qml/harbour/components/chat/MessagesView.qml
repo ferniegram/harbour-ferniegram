@@ -29,6 +29,8 @@ import "../../js/functions.js" as Functions
 Column {
     id: messagesView
 
+    property var messagesModel: chatManager.model
+
     property var selectedMessages: []
     readonly property bool isSelecting: selectedMessages.length > 0
     property bool containsSponsoredMessages: false
@@ -59,7 +61,7 @@ Column {
     }
 
     function getMessageStatusText(message, listItemIndex, useElapsed) {
-        var lastReadSentIndex = chatManager.model.lastReadSentMessageIndex
+        var lastReadSentIndex = messagesModel.lastReadSentMessageIndex
         log("Last read sent index: " + lastReadSentIndex)
         var messageStatusSuffix = ""
 
@@ -142,7 +144,7 @@ Column {
             messageIdToScrollTo = messageId
 
         if (messageIdToScrollTo) {
-            var index = chatManager.model.getMessageIndex(messagesView.messageIdToScrollTo)
+            var index = messagesModel.getMessageIndex(messagesView.messageIdToScrollTo)
             var proxyIndex = chatProxyModel.mapRowFromSource(index, -1)
             if(proxyIndex !== -1) {
                 messageIdToScrollTo = ""
@@ -150,7 +152,7 @@ Column {
                 navigatedTo(proxyIndex)
             } else if(initialRun)
                 // we only want to do this once.
-                chatManager.model.loadHistoryForMessage(messageIdToScrollTo)
+                messagesModel.loadHistoryForMessage(messageIdToScrollTo)
         }
     }
 
@@ -247,7 +249,7 @@ Column {
             toggleSingleMessageSelection(message)
         else {
             var albumMessages = [message]
-            chatManager.model.getMessagesForAlbum(message.media_album_id, 1).forEach(function(m) { albumMessages.push(m) })
+            messagesModel.getMessagesForAlbum(message.media_album_id, 1).forEach(function(m) { albumMessages.push(m) })
             toggleMultipleMessagesSelection(albumMessages)
         }
     }
@@ -268,14 +270,14 @@ Column {
     Binding {
         target: chatPage
         property: 'loading'
-        value: !chatManager.model || chatManager.model.loading
+        value: !messagesModel || messagesModel.loading
     }
 
     Connections {
-        target: chatManager.model
+        target: messagesModel
         ignoreUnknownSignals: true
         onMessagesReceived: {
-            var originalScrollPosition = chatManager.model.calculateScrollPosition()
+            var originalScrollPosition = messagesModel.calculateScrollPosition()
             var scrollPosition = chatProxyModel.mapRowFromSource(originalScrollPosition, -1)
             log("Messages received, from incremental update:", fromIncrementalUpdate, ", view has", chatView.count, "messages, possibly need to scroll to", scrollPosition, "("+originalScrollPosition+")")
 
@@ -286,7 +288,7 @@ Column {
                 if (chatOverviewItem.visible && scrollPosition >= (chatView.count - 10)) {
                     log("Not far from the end, loading more future...")
                     chatView.inCooldown = true
-                    chatManager.model.loadMoreFuture()
+                    messagesModel.loadMoreFuture()
                 }
             }
 
@@ -393,7 +395,7 @@ Column {
             log("scroll position changed, message index: ", lastQueuedIndex)
             log("unread count: ", chatInformation.unread_count)
             var modelIndex = chatProxyModel.mapRowToSource(lastQueuedIndex)
-            var messageToRead = chatManager.model.getMessage(modelIndex)
+            var messageToRead = messagesModel.getMessage(modelIndex)
             if (messageToRead['@type'] === "sponsoredMessage") {
                 log("sponsored message to read: ", messageToRead.id)
                 tdLibWrapper.viewMessage(chatInformation.id, messageToRead.message_id, false)
@@ -403,7 +405,7 @@ Column {
                     var messageId = messageToRead.id
                     var type = messageToRead.content["@type"]
                     if (messageToRead.media_album_id !== '0') {
-                        var albumIds = chatManager.model.getMessageIdsForAlbum(messageToRead.media_album_id)
+                        var albumIds = messagesModel.getMessageIdsForAlbum(messageToRead.media_album_id)
                         if (albumIds.length > 0) {
                             messageId = albumIds[albumIds.length - 1]
                             log("message to read last album message id: ", messageId)
@@ -554,14 +556,14 @@ Column {
             onContentYChanged: {
                 if (!chatPage.loading && !chatView.inCooldown) {
                     // check for startReached/endReached here so inCooldown won't be true forever
-                    if (!chatManager.model.startReached && chatView.indexAt(chatView.contentX, chatView.contentY) < 10) {
+                    if (!messagesModel.startReached && chatView.indexAt(chatView.contentX, chatView.contentY) < 10) {
                         log("Trying to get older history items...")
                         chatView.inCooldown = true
-                        chatManager.model.loadMoreHistory()
-                    } else if (!chatManager.model.endReached && chatOverviewItem.visible && chatView.indexAt(chatView.contentX, chatView.contentY) > ( count - 10)) {
+                        messagesModel.loadMoreHistory()
+                    } else if (!messagesModel.endReached && chatOverviewItem.visible && chatView.indexAt(chatView.contentX, chatView.contentY) > ( count - 10)) {
                         log("Trying to get newer history items...")
                         chatView.inCooldown = true
-                        chatManager.model.loadMoreFuture()
+                        messagesModel.loadMoreFuture()
                         // NOTE: it might be needed to call loadMoreFuture() but without the check for endReached inside it
                         // (so, forcefully, and without checking for endReached here in JS),
                         // because sometimes tdlib might not return complete end
@@ -585,7 +587,7 @@ Column {
 
             BoolFilterModel {
                 id: chatProxyModel
-                sourceModel: chatManager.model
+                sourceModel: messagesModel
                 filterRoleName: "album_entry_filter"
                 filterValue: false
             }
@@ -769,7 +771,7 @@ Column {
                 bottom: parent.bottom
                 bottomMargin: Theme.paddingMedium
             }
-            visible: !chatPage.loading && chatOverviewItem.visible && (unreadCount > 0 || (!chatManager.model.endReached && chatView.count > 0))
+            visible: !chatPage.loading && chatOverviewItem.visible && (unreadCount > 0 || (!messagesModel.endReached && chatView.count > 0))
             property bool highlighted: chatUnreadMessagesMouseArea.containsPress
 
             // not ideal:
@@ -796,16 +798,16 @@ Column {
                 anchors.fill: parent
                 onClicked: {
                     // probably not ideal
-                    var lastReadIndex = chatProxyModel.mapRowFromSource(chatManager.model.lastReadIncomingMessageIndex, -1)
+                    var lastReadIndex = chatProxyModel.mapRowFromSource(messagesModel.lastReadIncomingMessageIndex, -1)
                     log("Scrolling to the bottom lastReadIndex:", lastReadIndex)
                     if (lastReadIndex > -1) {
                         if (chatView.indexAt(chatView.contentX, chatView.contentY) >= lastReadIndex - 2
                                 || chatView.indexAt(chatView.contentX + chatView.contentWidth, chatView.contentY + chatView.contentHeight) >= lastReadIndex - 2)
-                            if (chatManager.model.endReached) chatView.scrollToBottom()
-                            else chatManager.model.loadEnd(true)
+                            if (messagesModel.endReached) chatView.scrollToBottom()
+                            else messagesModel.loadEnd(true)
                         else chatView.scrollToIndex(Math.min(lastReadIndex + 1, chatView.count))
                     } else
-                        chatManager.model.loadEnd()
+                        messagesModel.loadEnd()
                 }
             }
         }

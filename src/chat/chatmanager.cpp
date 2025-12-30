@@ -40,6 +40,10 @@ ChatMessagesModel::ChatMessagesModel(TDLibWrapper *tdLibWrapper, qlonglong chatI
 {
     this->chatId = chatId;
 
+    connect(this->tdLibWrapper, SIGNAL(messagesReceived(qlonglong, int, const QVariantList &, int)), this, SLOT(handleMessagesReceived(qlonglong, int, const QVariantList &, int)));
+    connect(this->tdLibWrapper, &TDLibWrapper::foundChatMessagesReceived, this, &ChatMessagesModel::handleFoundChatMessagesReceived);
+    connect(this->tdLibWrapper, SIGNAL(newMessageReceived(qlonglong, const QVariantMap &)), this, SIGNAL(handleNewMessageReceived(qlonglong, const QVariantMap &)));
+
     connect(this->tdLibWrapper, &TDLibWrapper::sponsoredMessagesReceived, this, &ChatMessagesModel::handleSponsoredMessagesReceived);
 }
 
@@ -73,6 +77,13 @@ qlonglong ChatMessagesModel::lastReadOutboxMessageId() const {
 }
 qlonglong ChatMessagesModel::lastMessageId() const {
     return this->parent()->property(PROPERTY_CHAT_INFORMATION).toMap().value(LAST_MESSAGE).toMap().value(ID).toLongLong();
+}
+
+void ChatMessagesModel::handleFoundChatMessagesReceived(qlonglong chatId, TDLibWrapper::SearchMessagesFilter filter, int extra, const QVariantList &messages, int totalCount, qlonglong /*nextFromMessageId*/) {
+    if (this->chatId == chatId && filter == TDLibWrapper::SearchMessagesFilterEmpty) {
+        LOG("Found chat messages received");
+        handleMessagesReceived(extra, messages, totalCount);
+    }
 }
 
 
@@ -245,6 +256,7 @@ void ChatManager::setTDLibWrapper(QObject *obj) {
             connect(this->tdLibWrapper, &TDLibWrapper::basicGroupUpdated, this, &ChatManager::handleBasicGroupUpdated);
             connect(this->tdLibWrapper, &TDLibWrapper::superGroupUpdated, this, &ChatManager::handleSupergroupUpdated);
             connect(this->tdLibWrapper, &TDLibWrapper::sponsoredMessagesReceived, this, &ChatManager::handleSponsoredMessagesReceived);
+            connect(this->tdLibWrapper, &TDLibWrapper::chatViewAsTopicsUpdated, this, &ChatManager::handleChatViewAsTopicsUpdated);
 
             if (chatId) {
                 LOG("tdLibWrapper set when chatId already is set, finishing initialization");
@@ -378,15 +390,15 @@ void ChatManager::handleChatActionUpdated(qlonglong chatId, const QVariantMap &s
     if (messageThreadId == 0 && chatId == this->chatId) {
         LOG("Chat action updated");
         if (sender.value(_TYPE).toString() == "messageSenderChat") {
-            const QString senderChatId = sender.value(CHAT_ID).toString();
+            const QString lastMessageSenderChatId = sender.value(CHAT_ID).toString();
             if (actionType == "chatActionCancel")
-                chatActionsByChats.remove(senderChatId);
-            else chatActionsByChats.insert(senderChatId, actionType);
+                chatActionsByChats.remove(lastMessageSenderChatId);
+            else chatActionsByChats.insert(lastMessageSenderChatId, actionType);
         } else {
-            const QString senderUserId = sender.value(USER_ID).toString();
+            const QString lastMessageSenderUserId = sender.value(USER_ID).toString();
             if (actionType == "chatActionCancel")
-                chatActionsByUsers.remove(senderUserId);
-            else chatActionsByUsers.insert(senderUserId, actionType);
+                chatActionsByUsers.remove(lastMessageSenderUserId);
+            else chatActionsByUsers.insert(lastMessageSenderUserId, actionType);
         }
         LOG(chatActionsByChats << chatActionsByUsers << chatId << sender << action);
         emit chatActionsChanged();
@@ -407,16 +419,20 @@ void ChatManager::handleSponsoredMessagesReceived(qlonglong chatId, const QVaria
 
 void ChatManager::reset(bool resetChatId) {
     LOG("Resetting chat manager resetChatId:" << resetChatId);
-    if (this->chatMessagesModel)
-        this->chatMessagesModel->reset();
-    if (this->photoAndVideoMessagesModel)
-        this->photoAndVideoMessagesModel->reset();
-    if (this->animationMessagesModel)
-        this->animationMessagesModel->reset();
-    if (this->videoNoteMessagesModel)
-        this->videoNoteMessagesModel->reset();
-    if (this->topicsModel)
-        this->topicsModel->reset();
+    if (chatMessagesModel)
+        chatMessagesModel->deleteLater();
+    if (photoAndVideoMessagesModel)
+        photoAndVideoMessagesModel->deleteLater();
+    if (animationMessagesModel)
+        animationMessagesModel->deleteLater();
+    if (videoNoteMessagesModel)
+        videoNoteMessagesModel->deleteLater();
+    if (topicsModel)
+        topicsModel->deleteLater();
+
+    chatMessagesModel = nullptr;
+    photoAndVideoMessagesModel = animationMessagesModel = videoNoteMessagesModel = nullptr;
+    topicsModel = nullptr;
 
     if (resetChatId) {
         chatId = 0;
@@ -498,8 +514,8 @@ void ChatManager::initializeMainModels(qlonglong fromMessageId) {
 
     if (viewAsTopics()) {
         LOG("Initializing a forum chat");
-        this->topicsModel = new ForumTopicsModel(tdLibWrapper, this);
-        this->topicsModel->init(chatId);
+        this->topicsModel = new ForumTopicsModel(tdLibWrapper, tdLibWrapper->getUtilities(), chatId, this);
+        emit topicsModelChanged();
     } else {
         LOG("Initializing a regular chat");
         initializeMessageModels();
@@ -521,6 +537,16 @@ void ChatManager::initializeMediaMessagesModels() {
 }
 
 bool ChatManager::viewAsTopics() {
-    // TODO
-    return false;
+    return chatInformation().value("view_as_topics").toBool();
+}
+
+void ChatManager::handleChatViewAsTopicsUpdated(qlonglong chatId) {
+    if (this->chatId == chatId) {
+        LOG("View as topics value updated" << viewAsTopics());
+        emit viewAsTopicsChanged();
+
+        // Reinitialize models
+        if (chatMessagesModel || topicsModel)
+            this->initializeMainModels();
+    }
 }

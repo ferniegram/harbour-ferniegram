@@ -3,13 +3,18 @@
 #define DEBUG_MODULE JumpableMessagesModel
 #include "debuglog.h"
 
-JumpableMessagesModel::JumpableMessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent) :
-    MessagesModel(tdLibWrapper, parent),
+JumpableMessagesModel::JumpableMessagesModel(QObject *parent) :
+    MessagesModel(parent),
     startReached(false),
     endReached(false),
     highlightedMessageId(0)
 {
     connect(this, &JumpableMessagesModel::endReachedChanged, this, &JumpableMessagesModel::loadingChanged);
+}
+
+JumpableMessagesModel::JumpableMessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent) : JumpableMessagesModel(parent) {
+    this->tdLibWrapper = tdLibWrapper;
+    setupTDLibWrapper();
 }
 
 bool JumpableMessagesModel::clear() {

@@ -32,6 +32,7 @@ class MessagesModel : public QAbstractListModel {
     Q_PROPERTY(qlonglong chatId READ getChatId NOTIFY chatIdChanged)
 
 public:
+    MessagesModel(QObject *parent = nullptr);
     MessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent = nullptr);
     ~MessagesModel() override;
 
@@ -67,6 +68,7 @@ private:
     void setMessagesAlbum(MessageData *message);
 
 protected:
+    virtual void setupTDLibWrapper();
     virtual void removeRange(int firstDeleted, int lastDeleted, bool updateAlbums = true, bool updateIsFirstLastInSequence = true, bool invertIsFirstLastInSequence = false);
     virtual void insertMessages(const QList<MessageData*> newMessages);
     virtual void insertMessagesAt(int index, const QList<MessageData*> newMessages, bool updateIsFirstLastFirstInSequence = true);

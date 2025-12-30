@@ -184,7 +184,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     src/dbusadaptor.cpp
     src/dbusinterface.cpp
     src/folderchatlistmodel.cpp
-    src/forumtopicsmodel.cpp
+    src/chat/forumtopicsmodel.cpp
     src/chat/invertedmessagesmodel.cpp
     src/chat/mediamessagesmodel.cpp
     src/chat/messagedata.cpp
@@ -206,7 +206,9 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     src/textfiltermodel.cpp
     src/tgsplugin.cpp
     src/waveformmanager.cpp
-        src/lottieitem.cpp
+    src/lottieitem.cpp
+    src/basemessagabledata.cpp
+    src/chat/forumtopicmessagesmodel.cpp
     
     src/mainshared.h
     src/appsettings.h
@@ -223,7 +225,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     src/debuglog.h
     src/debuglogjs.h
     src/folderchatlistmodel.h
-    src/forumtopicsmodel.h
+    src/chat/forumtopicsmodel.h
     src/chat/invertedmessagesmodel.h
     src/chat/mediamessagesmodel.h
     src/chat/messagedata.h
@@ -247,6 +249,8 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     src/tgsplugin.h
     src/waveformmanager.h
     src/lottieitem.h
+    src/basemessagabledata.h
+    src/chat/forumtopicmessagesmodel.h
 )
 
 if (EDITION_SAILFISH)

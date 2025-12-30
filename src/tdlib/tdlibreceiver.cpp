@@ -89,6 +89,7 @@ namespace {
     const QString NEXT_FROM_MESSAGE_ID("next_from_message_id");
     const QString NOTIFICATION_SETTINGS("notification_settings");
     const QString INFO("info");
+    const QString FORUM_TOPIC_ID("forum_topic_id");
 
     const QString _TYPE("@type");
     const QString _EXTRA("@extra");
@@ -208,6 +209,7 @@ TDLibReceiver::TDLibReceiver(int tdLibClientId, QObject *parent) : QThread(paren
     handlers.insert("deepLinkInfo", &TDLibReceiver::processDeepLinkInfo);
     handlers.insert("user", &TDLibReceiver::processUser);
     handlers.insert("chatInviteLinkInfo", &TDLibReceiver::processChatInviteLinkInfo);
+    handlers.insert("updateChatViewAsTopics", &TDLibReceiver::processUpdateChatViewAsTopics);
 }
 
 void TDLibReceiver::setActive(bool active)
@@ -405,10 +407,24 @@ void TDLibReceiver::processChatOnlineMemberCountUpdated(const QVariantMap &recei
 
 void TDLibReceiver::processMessages(const QVariantMap &receivedInformation) {
     const QStringList extra = receivedInformation.value(_EXTRA).toString().split(":");
-    const qlonglong chatId = extra.value(0).toLongLong();
     const int totalCount = receivedInformation.value(TOTAL_COUNT).toInt();
-    LOG("Received new messages for chat" << chatId << "amount:" << totalCount);
-    emit messagesReceived(chatId, extra.value(1).toInt(), cleanupList(receivedInformation.value(MESSAGES).toList()), totalCount);
+    const QVariantList messages = cleanupList(receivedInformation.value(MESSAGES).toList());
+    qlonglong chatId;
+    if (extra.value(0) == QStringLiteral("thread")) {
+        chatId = extra.value(1).toLongLong();
+        qlonglong messageId = extra.value(2).toLongLong();
+        LOG("Received messages for thread" << chatId << messageId << "amount:" << totalCount);
+        emit threadMessagesReceived(chatId, messageId, extra.value(3).toInt(), messages, totalCount);
+    } else if (extra.value(0) == QStringLiteral("forumTopic")) {
+        chatId = extra.value(1).toLongLong();
+        int forumTopicId = extra.value(2).toInt();
+        LOG("Received messages for forum topic" << chatId << forumTopicId << "amount:" << totalCount);
+        emit forumTopicMessagesReceived(chatId, forumTopicId, extra.value(3).toInt(), messages, totalCount);
+    } else {
+        chatId = extra.value(0).toLongLong();
+        LOG("Received messages for chat" << chatId << "amount:" << totalCount);
+        emit messagesReceived(chatId, extra.value(1).toInt(), messages, totalCount);
+    }
 }
 
 void TDLibReceiver::processFoundChatMessages(const QVariantMap &receivedInformation) {
@@ -1128,7 +1144,7 @@ void TDLibReceiver::processUpdateChatFolders(const QVariantMap &receivedInformat
 }
 
 void TDLibReceiver::processForumTopics(const QVariantMap &receivedInformation) {
-    const qlonglong chatId = receivedInformation.value(CHAT_ID).toLongLong();
+    const qlonglong chatId = receivedInformation.value(_EXTRA).toLongLong();
     const int totalCount = receivedInformation.value(TOTAL_COUNT).toInt();
     LOG("Received forumTopics" << chatId << totalCount);
 
@@ -1144,26 +1160,19 @@ void TDLibReceiver::processForumTopics(const QVariantMap &receivedInformation) {
 
 void TDLibReceiver::processUpdateForumTopic(const QVariantMap &receivedInformation) {
     const qlonglong chatId = receivedInformation.value(CHAT_ID).toLongLong();
-    const qlonglong messageThreadId = receivedInformation.value(MESSAGE_THREAD_ID).toLongLong();
-    LOG("Received updateForumTopic" << chatId << messageThreadId);
+    const int forumTopicId = receivedInformation.value(FORUM_TOPIC_ID).toInt();
+    LOG("Received updateForumTopic" << chatId << forumTopicId);
 
-    emit forumTopicUpdated(
-                chatId,
-                messageThreadId,
-                receivedInformation.value(IS_PINNED).toBool(),
-                receivedInformation.value(LAST_READ_INBOX_MESSAGE_ID).toLongLong(),
-                receivedInformation.value(LAST_READ_OUTBOX_MESSAGE_ID).toLongLong(),
-                receivedInformation.value(NOTIFICATION_SETTINGS).toMap()
-                );
+    emit forumTopicUpdated(chatId, forumTopicId, receivedInformation);
 }
 
 void TDLibReceiver::processUpdateForumTopicInfo(const QVariantMap &receivedInformation) {
-    const QVariantMap info = receivedInformation.value(INFO).toMap();
-    const qlonglong chatId = info.value(CHAT_ID).toLongLong();
-    const qlonglong messageThreadId = info.value(MESSAGE_THREAD_ID).toLongLong();
-    LOG("Received updateForumTopicInfo" << chatId << messageThreadId);
+    QVariantMap info = receivedInformation.value(INFO).toMap();
+    const qlonglong chatId = info.take(CHAT_ID).toLongLong();
+    const int forumTopicId = info.value(FORUM_TOPIC_ID).toInt();
+    LOG("Received updateForumTopicInfo" << chatId << forumTopicId);
 
-    emit forumTopicInfoUpdated(chatId, messageThreadId, info);
+    emit forumTopicInfoUpdated(chatId, forumTopicId, info);
 }
 
 void TDLibReceiver::processUpdateChatPendingJoinRequests(const QVariantMap &receivedInformation) {
@@ -1201,4 +1210,11 @@ void TDLibReceiver::processUser(const QVariantMap &receivedInformation) {
 void TDLibReceiver::processChatInviteLinkInfo(const QVariantMap &receivedInformation) {
     LOG("Received chatInviteLinkInfo" << receivedInformation.value(TITLE).toString() << receivedInformation.value(ID).toLongLong());
     emit chatInviteLinkInfoReceived(receivedInformation.value(_EXTRA).toString(), receivedInformation);
+}
+
+void TDLibReceiver::processUpdateChatViewAsTopics(const QVariantMap &receivedInformation) {
+    qlonglong chatId = receivedInformation.value(CHAT_ID).toLongLong();
+    bool viewAsTopics = receivedInformation.value("view_as_topics").toBool();
+    LOG("Received updateChatViewAsTopics" << chatId << viewAsTopics);
+    emit chatViewAsTopicsUpdated(chatId, viewAsTopics);
 }

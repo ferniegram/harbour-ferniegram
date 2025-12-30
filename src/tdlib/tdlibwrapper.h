@@ -46,6 +46,7 @@ class TDLibWrapper : public QObject
     Q_PROPERTY(QString connectionStateText READ connectionStateText NOTIFY connectionStateChanged)
     Q_PROPERTY(QVariantMap userInformation READ getUserInformation NOTIFY ownUserUpdated)
     Q_PROPERTY(QQmlPropertyMap* options MEMBER options CONSTANT)
+    Q_PROPERTY(qlonglong myUserId READ myUserId NOTIFY ownUserIdFound)
 
 public:
     explicit TDLibWrapper(int argc, char **argv, AppSettings *appSettings, MceInterface *mceInterface, QObject *parent = nullptr);
@@ -173,6 +174,7 @@ public:
         QVariantMap groupInfo;
     };
 
+    Q_INVOKABLE qlonglong myUserId() const;
     Q_INVOKABLE QVariantMap getUserInformation();
     Q_INVOKABLE QVariantMap getUserInformation(const QString &userId);
     Q_INVOKABLE bool hasUserInformation(const QString &userId);
@@ -343,6 +345,9 @@ public:
     Q_INVOKABLE void getInternalLinkType(const QString &link);
     Q_INVOKABLE void checkChatInviteLink(const QString &link);
     Q_INVOKABLE void clickChatSponsoredMessage(qlonglong chatId, qlonglong messageId, bool isMediaClick = false, bool fromFullscreen = false);
+    Q_INVOKABLE void toggleChatViewAsTopics(qlonglong chatId, bool viewAsTopics);
+    Q_INVOKABLE void getMessageThreadHistory(qlonglong chatId, qlonglong messageId, int extra, qlonglong fromMessageId = 0, int offset = -1, int limit = 50);
+    Q_INVOKABLE void getForumTopicHistory(qlonglong chatId, int forumTopicId, int extra, qlonglong fromMessageId = 0, int offset = -1, int limit = 50);
 
     // Others (candidates for extraction ;))
     Q_INVOKABLE void initializeOpenWith();
@@ -469,6 +474,11 @@ signals:
     void deepLinkInfoReceived(const QVariantMap &text, bool needUpdateApplication);
     void userReceived(const QVariantMap &user);
     void chatInviteLinkInfoReceived(const QString &link, const QVariantMap &info);
+    void chatViewAsTopicsUpdated(qlonglong chatId);
+    void threadMessagesReceived(qlonglong chatId, qlonglong messageId, int extra, const QVariantList &messages, int totalCount);
+    void forumTopicMessagesReceived(qlonglong chatId, int forumTopicId, int extra, const QVariantList &messages, int totalCount);
+    void forumTopicUpdated(qlonglong chatId, int forumTopicId, const QVariantMap &update);
+    void forumTopicInfoUpdated(qlonglong chatId, int forumTopicId, const QVariantMap &info);
 
     // Link types
     void linkUnsupportedByApp(const QString &type);
@@ -527,6 +537,7 @@ public slots:
     void handleChatPendingJoinRequestsUpdated(qlonglong chatId, const QVariantMap &pendingJoinRequests);
     void handleInternalLinkTypeReceived(const QVariantMap &type);
     void handleUserReceived(const QVariantMap &user, bool doOpenOnFound);
+    void handleChatViewAsTopicsUpdated(qlonglong chatId, bool viewAsTopics);
 
 private:
     void setOption(const QString &name, const QString &type, const QVariant &value);
