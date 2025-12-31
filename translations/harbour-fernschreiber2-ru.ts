@@ -622,6 +622,16 @@
         <source>Left chat</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>View as Messages</source>
+        <comment>view a forum chat in full chat mode</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>View as Topics</source>
+        <comment>view a forum chat as topics</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChatPendingJoinRequestsItem</name>
@@ -2400,6 +2410,29 @@
     <message>
         <source>Updating content...</source>
         <translation type="unfinished">Обновление контента...</translation>
+    </message>
+</context>
+<context>
+    <name>TopicsListView</name>
+    <message>
+        <source>No topics here yet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pull down to start the first topic or view the group as messages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Draft</source>
+        <translation type="unfinished">Черновик</translation>
+    </message>
+    <message>
+        <source>You</source>
+        <translation type="unfinished">Вы</translation>
+    </message>
+    <message>
+        <source>No message in this topic.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

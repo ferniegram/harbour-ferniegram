@@ -2395,6 +2395,14 @@
         <source>No message in this topic.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>No topics here yet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pull down to start the first topic or view the group as messages</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TranslatePage</name>
