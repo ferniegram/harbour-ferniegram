@@ -7,8 +7,6 @@
 
 namespace {
     const QString ID("id");
-    const QString DATE("date");
-    const QString TEXT("text");
     const QString TYPE("type");
     const QString TITLE("title");
     const QString PHOTO("photo");
@@ -91,6 +89,10 @@ inline QString ChatData::lastMessageStatus() const {
     return BaseMessagableData::lastMessageStatus();
 }
 
+inline const QVariantMap ChatData::draftMessage() const {
+    return chatData.value(DRAFT_MESSAGE).toMap();
+}
+
 QString ChatData::title() const
 {
     return chatData.value(TITLE).toString();
@@ -129,23 +131,7 @@ qlonglong ChatData::lastReadOutboxMessageId() const {
     return chatData.value(LAST_READ_OUTBOX_MESSAGE_ID).toLongLong();
 }
 
-qlonglong ChatData::draftMessageDate() const
-{
-    QVariantMap draft = chatData.value(DRAFT_MESSAGE).toMap();
-    if(draft.isEmpty()) {
-        return qlonglong(0);
-    }
-    return draft.value(DATE).toLongLong();
-}
 
-QString ChatData::draftMessageText() const
-{
-    QVariantMap draft = chatData.value(DRAFT_MESSAGE).toMap();
-    if(draft.isEmpty()) {
-        return QString();
-    }
-    return draft.value("input_message_text").toMap().value(TEXT).toMap().value(TEXT).toString();
-}
 
 bool ChatData::isChannel() const
 {

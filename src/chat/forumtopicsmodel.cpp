@@ -4,9 +4,8 @@
 #include "debuglog.h"
 
 namespace {
+    const QString _TYPE("@type");
     const QString INFO("info");
-    const QString LAST_MESSAGE("last_message");
-    const QString ORDER("order");
     const QString IS_PINNED("is_pinned");
     const QString UNREAD_COUNT("unread_count");
     const QString LAST_READ_INBOX_MESSAGE_ID("last_read_inbox_message_id");
@@ -19,71 +18,11 @@ namespace {
     const QString NAME("name");
     const QString FORUM_TOPIC_ID("forum_topic_id");
     const QString ID("id");
+    const QString ICON("icon");
+    const QString COLOR("color");
+    const QString CUSTOM_EMOJI_ID("custom_emoji_id");
+    const QString CREATOR_ID("creator_id");
 }
-
-ForumTopicsModel::ForumTopic::ForumTopic(TDLibWrapper *tdLibWrapper, Utilities *utilities, const QVariantMap &forumTopic) :
-    BaseMessagableData(tdLibWrapper, utilities),
-    data(forumTopic),
-    id(data.value(INFO).toMap().value(FORUM_TOPIC_ID).toLongLong())
-{}
-
-qlonglong ForumTopicsModel::ForumTopic::messageThreadId() const {
-    return data.value(INFO).toMap().value(MESSAGE_THREAD_ID).toLongLong();
-}
-
-bool ForumTopicsModel::ForumTopic::isPinned() const {
-    return data.value(IS_PINNED).toBool();
-}
-
-qlonglong ForumTopicsModel::ForumTopic::lastReadInboxMessageId() const {
-    return data.value(LAST_READ_INBOX_MESSAGE_ID).toLongLong();
-}
-
-qlonglong ForumTopicsModel::ForumTopic::lastReadOutboxMessageId() const {
-    return data.value(LAST_READ_OUTBOX_MESSAGE_ID).toLongLong();
-}
-
-const QVariantMap ForumTopicsModel::ForumTopic::lastMessage() const {
-    return data.value(LAST_MESSAGE).toMap();
-}
-
-const QVariantMap ForumTopicsModel::ForumTopic::notificationSettings() const {
-    return data.value(NOTIFICATION_SETTINGS).toMap();
-}
-
-const QVector<int> ForumTopicsModel::ForumTopic::updateIsPinned(bool value) {
-    if (data.value(IS_PINNED).toBool() != value) {
-        data.insert(IS_PINNED, value);
-        return {RoleIsPinned};
-    }
-    return {};
-}
-
-const QVector<int> ForumTopicsModel::ForumTopic::updateLastReadInboxMessageId(qlonglong value) {
-    if (data.value(LAST_READ_INBOX_MESSAGE_ID).toLongLong() != value) {
-        data.insert(LAST_READ_INBOX_MESSAGE_ID, value);
-        return {RoleLastReadInboxMessageId};
-    }
-    return {};
-}
-
-const QVector<int> ForumTopicsModel::ForumTopic::updateLastReadOutboxMessageId(qlonglong value) {
-    if (data.value(LAST_READ_OUTBOX_MESSAGE_ID).toLongLong() != value) {
-        data.insert(LAST_READ_OUTBOX_MESSAGE_ID, value);
-        return {RoleLastReadOutboxMessageId};
-    }
-    return {};
-}
-
-const QVector<int> ForumTopicsModel::ForumTopic::updateNotificationSettings(const QVariantMap &value) {
-    if (data.value(NOTIFICATION_SETTINGS).toMap() != value) {
-        data.insert(NOTIFICATION_SETTINGS, value);
-        return {RoleNotificationSettings};
-    }
-    return {};
-}
-
-
 
 ForumTopicsModel::ForumTopicsModel(TDLibWrapper *tdLibWrapper, Utilities *utilities, qlonglong chatId, QObject *parent) :
     QAbstractListModel(parent),
@@ -106,16 +45,32 @@ ForumTopicsModel::ForumTopicsModel(TDLibWrapper *tdLibWrapper, Utilities *utilit
 
 QHash<int,QByteArray> ForumTopicsModel::roleNames() const {
     return QHash<int,QByteArray>{
-        {RoleId, "forum_topic_id"},
-        {RoleName, "name"},
-        {RoleInfo, "info"},
-        //{RoleLastMessage, "last_message"}, // TODO
-        {RoleIsPinned, "is_pinned"},
-        {RoleUnreadCount, "unread_count"},
-        {RoleUnreadMentionCount, "unread_mention_count"},
-        {RoleUnreadReactionCount, "unread_reaction_count"},
-        {RoleNotificationSettings, "notification_settings"},
-        //{RoleDraftMessage, ""}
+        {ForumTopic::RoleId, "forum_topic_id"},
+        {ForumTopic::RoleName, "name"},
+        {ForumTopic::RoleIconColor, "icon_color"},
+        {ForumTopic::RoleIconCustomEmojiId, "icon_custom_emoji_id"},
+        {ForumTopic::RoleCreationDate, "creation_date"},
+        {ForumTopic::RoleCreatorIsChat, "creator_is_chat"},
+        {ForumTopic::RoleCreatorUserId, "creator_user_id"},
+        {ForumTopic::RoleCreatorChatId, "creator_chat_id"},
+        {ForumTopic::RoleIsGeneral, "is_general"},
+        {ForumTopic::RoleIsOutgoing, "is_outgoing"},
+        {ForumTopic::RoleIsClosed, "is_closed"},
+        {ForumTopic::RoleIsHidden, "is_hidden"},
+        {ForumTopic::RoleIsNameImplicit, "is_name_implicit"},
+        {ForumTopic::RoleLastMessageSenderId, "last_message_sender_id"},
+        {ForumTopic::RoleLastMessageDate, "last_message_date"},
+        {ForumTopic::RoleLastMessageText, "last_message_text"},
+        {ForumTopic::RoleLastMessageMinithumbnail, "last_message_minithumbnail"},
+        {ForumTopic::RoleLastMessageIsService, "last_message_is_service"},
+        {ForumTopic::RoleLastMessageStatus, "last_message_status"},
+        {ForumTopic::RoleIsPinned, "is_pinned"},
+        {ForumTopic::RoleUnreadCount, "unread_count"},
+        {ForumTopic::RoleUnreadMentionCount, "unread_mention_count"},
+        {ForumTopic::RoleUnreadReactionCount, "unread_reaction_count"},
+        {ForumTopic::RoleNotificationSettings, "notification_settings"},
+        {ForumTopic::RoleDraftMessageDate, "draft_message_date"},
+        {ForumTopic::RoleDraftMessageText, "draft_message_text"}
     };
 }
 
@@ -128,12 +83,47 @@ QVariant ForumTopicsModel::data(const QModelIndex &index, int role) const {
     if (row >= 0 && row < topics.size()) {
         const ForumTopic *topic = topics.at(row);
         switch (role) {
-        case RoleId:
+        case ForumTopic::RoleId:
             return topic->id;
-        case RoleName:
-            return topic->data.value(INFO).toMap().value(NAME).toString();
-        case RoleInfo:
-            return topic->data.value(INFO).toMap();
+        case ForumTopic::RoleName:
+            return topic->info().value(NAME).toString();
+        case ForumTopic::RoleIconColor:
+            return topic->info().value(ICON).toMap().value(COLOR).toInt();
+        case ForumTopic::RoleIconCustomEmojiId:
+            return topic->info().value(ICON).toMap().value(CUSTOM_EMOJI_ID).toLongLong();
+        case ForumTopic::RoleCreationDate:
+            return topic->info().value("creation_date").toInt();
+        case ForumTopic::RoleCreatorIsChat:
+            return topic->info().value(CREATOR_ID).toMap().value(_TYPE).toString() == "messageSenderChat";
+        case ForumTopic::RoleCreatorUserId:
+            return topic->info().value(CREATOR_ID).toMap().value("user_id");
+        case ForumTopic::RoleCreatorChatId:
+            return topic->info().value(CREATOR_ID).toMap().value("chat_id");
+        case ForumTopic::RoleIsGeneral:
+            return topic->info().value("is_general").toBool();
+        case ForumTopic::RoleIsOutgoing:
+            return topic->info().value("is_outgoing").toBool();
+        case ForumTopic::RoleIsClosed:
+            return topic->info().value("is_closed").toBool();
+        case ForumTopic::RoleIsHidden:
+            return topic->info().value("is_hidden").toBool();
+        case ForumTopic::RoleIsNameImplicit:
+            return topic->info().value("is_name_implicit").toBool();
+
+        case ForumTopic::RoleLastMessageSenderId: return topic->lastMessageSenderUserId();
+        case ForumTopic::RoleLastMessageText: return topic->lastMessageText();
+        case ForumTopic::RoleLastMessageMinithumbnail: return topic->lastMessageMinithumbnail();
+        case ForumTopic::RoleLastMessageIsService: return topic->lastMessageIsService();
+        case ForumTopic::RoleLastMessageDate: return topic->lastMessageDate();
+        case ForumTopic::RoleLastMessageStatus: return topic->lastMessageStatus();
+
+        case ForumTopic::RoleIsPinned: return topic->isPinned();
+        case ForumTopic::RoleUnreadCount: return topic->unreadCount();
+        case ForumTopic::RoleUnreadMentionCount: return topic->unreadCount();
+        case ForumTopic::RoleUnreadReactionCount: return topic->unreadCount();
+        case ForumTopic::RoleDraftMessageDate: return topic->draftMessageDate();
+        case ForumTopic::RoleDraftMessageText: return topic->draftMessageText();
+
         default:
             return QVariant();
         }
@@ -179,13 +169,7 @@ void ForumTopicsModel::handleForumTopicUpdated(qlonglong chatId, int forumTopicI
 
         const int topicIndex = topicIndexMap.value(forumTopicId);
         ForumTopic *topic = this->topics.value(topicIndex);
-        QVector<int> changedRoles;
-
-        changedRoles
-                << topic->updateIsPinned(update.value(IS_PINNED).toBool())
-                << topic->updateLastReadInboxMessageId(update.value(LAST_READ_INBOX_MESSAGE_ID).toLongLong())
-                << topic->updateLastReadOutboxMessageId(update.value(LAST_READ_OUTBOX_MESSAGE_ID).toLongLong())
-                << topic->updateNotificationSettings(update.value(NOTIFICATION_SETTINGS).toMap());
+        const QVector<int> changedRoles = topic->updateForumTopic(update);
 
         if (!changedRoles.isEmpty()) {
             const QModelIndex modelIndex = index(topicIndex);
@@ -201,13 +185,16 @@ void ForumTopicsModel::handleForumTopicInfoUpdated(qlonglong chatId, int forumTo
 
         const int topicIndex = topicIndexMap.value(forumTopicId);
         ForumTopic *topic = this->topics.value(topicIndex);
-        topic->data.insert(INFO, info);
-        const QModelIndex modelIndex = index(topicIndex);
-        emit dataChanged(modelIndex, modelIndex, QVector<int>{RoleInfo}); // TODO
-        emit forumTopicUpdated(forumTopicId);
+        const QVector<int> changedRoles = topic->updateForumTopicInfo(info);
+
+        if (!changedRoles.isEmpty()) {
+            const QModelIndex modelIndex = index(topicIndex);
+            emit dataChanged(modelIndex, modelIndex, changedRoles);
+            emit forumTopicUpdated(forumTopicId);
+        }
     }
 }
 
-ForumTopicsModel::ForumTopic *ForumTopicsModel::getTopic(int id) {
+ForumTopic *ForumTopicsModel::getTopic(int id) {
     return topicIndexMap.contains(id) ? topics.value(topicIndexMap.value(id)) : nullptr;
 }

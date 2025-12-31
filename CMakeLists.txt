@@ -209,6 +209,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     src/lottieitem.cpp
     src/basemessagabledata.cpp
     src/chat/forumtopicmessagesmodel.cpp
+    src/chat/forumtopic.cpp
     
     src/mainshared.h
     src/appsettings.h
@@ -251,6 +252,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     src/lottieitem.h
     src/basemessagabledata.h
     src/chat/forumtopicmessagesmodel.h
+    src/chat/forumtopic.h
 )
 
 if (EDITION_SAILFISH)

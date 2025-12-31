@@ -12,6 +12,8 @@ public:
     virtual qlonglong lastReadOutboxMessageId() const = 0;
 
     virtual const QVariantMap lastMessage() const = 0;
+    virtual const QVariantMap draftMessage() const = 0;
+
     const QVariant lastMessage(const QString &key) const;
 
     qlonglong lastMessageSenderUserId() const;
@@ -22,6 +24,9 @@ public:
     QVariant lastMessageMinithumbnail() const;
     bool lastMessageIsService() const;
     virtual QString lastMessageStatus() const;
+
+    qlonglong draftMessageDate() const;
+    QString draftMessageText() const;
 
 protected:
     TDLibWrapper *tdLibWrapper;

@@ -2354,6 +2354,21 @@
     </message>
 </context>
 <context>
+    <name>TopicsListView</name>
+    <message>
+        <source>Draft</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You</source>
+        <translation type="unfinished">Te</translation>
+    </message>
+    <message>
+        <source>No message in this topic.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>TranslatePage</name>
     <message>
         <source>Change language</source>

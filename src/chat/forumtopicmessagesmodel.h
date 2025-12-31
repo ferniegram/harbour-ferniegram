@@ -40,7 +40,7 @@ protected:
     virtual qlonglong lastMessageId() const override;
 
 private:
-    ForumTopicsModel::ForumTopic *getTopic() const;
+    ForumTopic *getTopic() const;
     void initialize();
 
 private slots:
@@ -50,8 +50,6 @@ private slots:
 
 private:
     ForumTopicsModel *forumTopicsModel;
-
-    using ForumTopic = ForumTopicsModel::ForumTopic;
 
     bool initialized;
     int forumTopicId;

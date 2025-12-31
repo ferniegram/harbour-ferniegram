@@ -14,6 +14,7 @@ namespace {
     const QString DATE("date");
     const QString CONTENT("content");
     const QString SENDING_STATE("sending_state");
+    const QString TEXT("text");
 }
 
 BaseMessagableData::BaseMessagableData(TDLibWrapper *tdLibWrapper, Utilities *utilities) :
@@ -73,4 +74,21 @@ QString BaseMessagableData::lastMessageStatus() const {
             return "&nbsp;&nbsp;☑️";
         }
     }
+}
+
+
+qlonglong BaseMessagableData::draftMessageDate() const {
+    QVariantMap draft = draftMessage();
+    if(draft.isEmpty())
+        return qlonglong(0);
+
+    return draft.value(DATE).toLongLong();
+}
+
+QString BaseMessagableData::draftMessageText() const {
+    QVariantMap draft = draftMessage();
+    if(draft.isEmpty())
+        return QString();
+
+    return draft.value("input_message_text").toMap().value(TEXT).toMap().value(TEXT).toString();
 }

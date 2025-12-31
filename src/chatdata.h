@@ -41,6 +41,7 @@ public:
     void updateChatData(const QVariantMap &data);
     virtual const QVariantMap lastMessage() const override;
     virtual QString lastMessageStatus() const override;
+    virtual const QVariantMap draftMessage() const override;
     QString title() const;
     int unreadCount() const;
     int unreadMentionCount() const;
@@ -50,8 +51,6 @@ public:
     virtual qlonglong lastReadInboxMessageId() const override;
     virtual qlonglong lastReadOutboxMessageId() const override;
 
-    qlonglong draftMessageDate() const;
-    QString draftMessageText() const;
     bool isChannel() const;
     bool isMarkedAsUnread() const;
     bool updateUnreadCount(int unreadCount);

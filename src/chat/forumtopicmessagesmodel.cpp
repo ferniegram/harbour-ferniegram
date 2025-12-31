@@ -117,7 +117,7 @@ void ForumTopicMessagesModel::setSearchQuery(const QString newSearchQuery) {
     }
 }
 
-inline ForumTopicsModel::ForumTopic *ForumTopicMessagesModel::getTopic() const {
+inline ForumTopic *ForumTopicMessagesModel::getTopic() const {
     return forumTopicsModel ? forumTopicsModel->getTopic(forumTopicId) : nullptr;
 }
 
