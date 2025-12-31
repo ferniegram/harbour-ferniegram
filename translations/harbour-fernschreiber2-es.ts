@@ -2809,6 +2809,132 @@
         <source>Sticker</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>created this topic</source>
+        <comment>myself</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>created this topic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>created the topic &quot;%1&quot;</source>
+        <comment>myself</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>created the topic &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>renamed this topic to &quot;%1&quot;</source>
+        <comment>myself</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>renamed this topic to &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>renamed the topic &quot;%1&quot;</source>
+        <comment>myself</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>renamed the topic &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>changed this topic&apos;s icon</source>
+        <comment>myself</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>changed this topic&apos;s icon</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>changed the icon of the topic &quot;%1&quot;</source>
+        <comment>myself</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>changed the icon of the topic &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>closed this topic</source>
+        <comment>myself</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>closed this topic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>closed the topic &quot;%1&quot;</source>
+        <comment>myself</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>closed the topic &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>reopened this topic</source>
+        <comment>myself</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>reopened this topic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>reopened the topic &quot;%1&quot;</source>
+        <comment>myself</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>reopened the topic &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>hid this topic</source>
+        <comment>myself</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>hid this topic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>hid the general topic</source>
+        <comment>myself</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>hid the general topic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>unhid this topic</source>
+        <comment>myself</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>unhid this topic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>unhid the general topic</source>
+        <comment>myself</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>unhid the general topic</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>VoiceNoteOverlay</name>

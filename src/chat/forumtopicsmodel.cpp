@@ -142,7 +142,6 @@ void ForumTopicsModel::reset() {
 }
 
 void ForumTopicsModel::loadMore() {
-    LOG("L" << chatId << nextOffsetDate << nextOffsetMessageId << nextOffsetForumTopicId);
     if (chatId != 0 && nextOffsetDate != 0 && nextOffsetMessageId != 0 && nextOffsetForumTopicId != 0) {
         if (endReached)
             LOG("End was reached, not loading more");
@@ -190,7 +189,7 @@ void ForumTopicsModel::handleForumTopicUpdated(qlonglong chatId, int forumTopicI
         if (!changedRoles.isEmpty()) {
             const QModelIndex modelIndex = index(topicIndex);
             emit dataChanged(modelIndex, modelIndex, changedRoles);
-            emit forumTopicUpdated(forumTopicId);
+            emit forumTopicUpdated(forumTopicId, changedRoles);
         }
     }
 }
@@ -206,7 +205,7 @@ void ForumTopicsModel::handleForumTopicInfoUpdated(qlonglong chatId, int forumTo
         if (!changedRoles.isEmpty()) {
             const QModelIndex modelIndex = index(topicIndex);
             emit dataChanged(modelIndex, modelIndex, changedRoles);
-            emit forumTopicUpdated(forumTopicId);
+            emit forumTopicUpdated(forumTopicId, changedRoles);
         }
     }
 }

@@ -67,11 +67,11 @@ class ChatManager : public QObject {
 
     Q_PROPERTY(QVariantMap botSponsoredMessage MEMBER botSponsoredMessage NOTIFY botSponsoredMessageChanged)
 
-    Q_PROPERTY(ChatMessagesModel* model MEMBER chatMessagesModel NOTIFY messageModelsChanged)
+    Q_PROPERTY(ChatMessagesModel* model MEMBER chatMessagesModel NOTIFY messagesModelChanged)
 
-    Q_PROPERTY(MediaMessagesModel* photoAndVideoMessagesModel MEMBER photoAndVideoMessagesModel NOTIFY messageModelsChanged)
-    Q_PROPERTY(MediaMessagesModel* animationMessagesModel MEMBER animationMessagesModel NOTIFY messageModelsChanged)
-    Q_PROPERTY(MediaMessagesModel* videoNoteMessagesModel MEMBER videoNoteMessagesModel NOTIFY messageModelsChanged)
+    Q_PROPERTY(MediaMessagesModel* photoAndVideoMessagesModel MEMBER photoAndVideoMessagesModel NOTIFY mediaMessageModelsChanged)
+    Q_PROPERTY(MediaMessagesModel* animationMessagesModel MEMBER animationMessagesModel NOTIFY mediaMessageModelsChanged)
+    Q_PROPERTY(MediaMessagesModel* videoNoteMessagesModel MEMBER videoNoteMessagesModel NOTIFY mediaMessageModelsChanged)
 
     Q_PROPERTY(ForumTopicsModel* topicsModel MEMBER topicsModel NOTIFY topicsModelChanged)
 
@@ -110,7 +110,8 @@ public:
 
 signals:
     void tdlibChanged();
-    void messageModelsChanged();
+    void messagesModelChanged();
+    void mediaMessageModelsChanged();
     void topicsModelChanged();
     void chatIdChanged();
     void infoInitializedChanged();
@@ -145,7 +146,6 @@ private:
     qlonglong groupId() const;
 
     void finishInitialization();
-    void initializeMessageModels();
 
 private:
     TDLibWrapper *tdLibWrapper;

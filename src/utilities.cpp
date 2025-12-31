@@ -105,6 +105,8 @@ namespace {
     const QString ALBUM_COVER_MINITHUMBNAIL("album_cover_minithumbnail");
     const QString FILE_NAME("file_name");
 
+    const QString NAME("name");
+
     const QChar LT('<');
     const QString HTML_LT("&lt;");
     const QChar GT('>');
@@ -434,11 +436,12 @@ QString Utilities::enhanceMessageText(const QVariantMap &formattedText, bool ign
     return messageText;
 }
 
-QString Utilities::getMessageText(const QVariantMap &messageContent, const QString &messageSenderType, qlonglong messageSenderUserId, bool isSponsored, MessageText type, bool ignoreEntities, bool escapeReserved) const {
+QString Utilities::getMessageText(const QVariantMap &messageContent, const QString &messageSenderType, qlonglong messageSenderUserId, bool isSponsored, MessageText type, bool ignoreEntities, bool escapeReserved, const QString &forumTopicName) const {
     if (messageContent.isEmpty()) return QString();
 
     const bool simple = type != MessageTextDefault;
     const bool simpleWithThumbnails = type == MessageTextSimpleWithThumbnails; // See getMessageMinithumbnail
+    const bool inForumTopic = type == MessageTextSimpleInForumTopic;
     // For messageAudio, messageDocument we always keep the "Audio:" or "File:" prefix
 
     const QString contentType = messageContent.value(_TYPE).toString();
@@ -615,6 +618,46 @@ QString Utilities::getMessageText(const QVariantMap &messageContent, const QStri
         return myself ? tr("started a giveaway", "myself") : tr("started a giveaway");
     if (contentType == "messageGiveawayCompleted")
         return myself ? tr("a giveaway was completed", "myself") : tr("a giveaway was completed");
+    // TODO: display topic icon custom emoji in topic service notifications
+    // also forumTopicName is not passed when viewing chat as messages, in chat last message, and the list goes on
+    if (contentType == "messageForumTopicCreated")
+        return (inForumTopic
+                    ? (myself ? tr("created this topic", "myself") : tr("created this topic"))
+                    : (myself ? tr("created the topic \"%1\"", "myself") : tr("created the topic \"%1\""))
+                        .arg(messageContent.value(NAME).toString()));
+    if (contentType == "messageForumTopicEdited") {
+        const QString newName = messageContent.value(NAME).toString();
+        if (!newName.isEmpty())
+            return (inForumTopic
+                        ? (myself ? tr("renamed this topic to \"%1\"", "myself") : tr("renamed this topic to \"%1\""))
+                        : (myself ? tr("renamed the topic \"%1\"", "myself") : tr("renamed the topic \"%1\"")))
+                    .arg(messageContent.value(NAME).toString());
+        else
+            return inForumTopic
+                    ? (myself ? tr("changed this topic's icon", "myself") : tr("changed this topic's icon"))
+                    : (myself ? tr("changed the icon of the topic \"%1\"", "myself") : tr("changed the icon of the topic \"%1\""))
+                        .arg(forumTopicName);
+    }
+    if (contentType == "messageForumTopicIsClosedToggled") {
+        if (messageContent.value("is_closed").toBool())
+            return inForumTopic
+                    ? (myself ? tr("closed this topic", "myself") : tr("closed this topic"))
+                    : (myself ? tr("closed the topic \"%1\"", "myself") : tr("closed the topic \"%1\"")).arg(forumTopicName);
+        else
+            return inForumTopic
+                    ? (myself ? tr("reopened this topic", "myself") : tr("reopened this topic"))
+                    : (myself ? tr("reopened the topic \"%1\"", "myself") : tr("reopened the topic \"%1\"")).arg(forumTopicName);
+    }
+    if (contentType == "messageForumTopicIsHiddenToggled") {
+        if (messageContent.value("is_hidden").toBool())
+            return inForumTopic
+                    ? (myself ? tr("hid this topic", "myself") : tr("hid this topic"))
+                    : (myself ? tr("hid the general topic", "myself") : tr("hid the general topic"));
+        else
+            return inForumTopic
+                    ? (myself ? tr("unhid this topic", "myself") : tr("unhid this topic"))
+                    : (myself ? tr("unhid the general topic", "myself") : tr("unhid the general topic"));
+    }
     if (contentType == "messageUnsupported")
         return myself ? tr("sent an unsupported message", "myself") : tr("sent an unsupported message");
 
@@ -623,7 +666,8 @@ QString Utilities::getMessageText(const QVariantMap &messageContent, const QStri
             : tr("sent an unsupported message: %1", "%1 is message type").arg(contentType.mid(7));
 }
 
-QString Utilities::getMessageText(const QVariantMap &message, MessageText type, bool ignoreEntities, bool escapeReserved) const {
+QString Utilities::getMessageText(const QVariantMap &message, MessageText type, bool ignoreEntities, bool escapeReserved, const QString &forumTopicName) const {
+    LOG(message);
     const QVariantMap messageSender = message.value(SENDER_ID).toMap();
     return getMessageText(
                 message.value(CONTENT).toMap(),
@@ -632,11 +676,12 @@ QString Utilities::getMessageText(const QVariantMap &message, MessageText type, 
                 message.value(_TYPE).toString() == SPONSORED_MESSAGE,
                 type,
                 ignoreEntities,
-                escapeReserved
+                escapeReserved,
+                forumTopicName
                 );
 }
 
-QString Utilities::getMessageContentText(const QVariantMap &messageContent, MessageText type, bool ignoreEntities, bool escapeReserved) const {
+QString Utilities::getMessageContentText(const QVariantMap &messageContent, MessageText type, bool ignoreEntities, bool escapeReserved, const QString &forumTopicName) const {
     return getMessageText(
                 messageContent,
                 MESSAGE_SENDER_TYPE_CHAT, // Skips all user-related checks
@@ -644,7 +689,8 @@ QString Utilities::getMessageContentText(const QVariantMap &messageContent, Mess
                 false,
                 type,
                 ignoreEntities,
-                escapeReserved
+                escapeReserved,
+                forumTopicName
                 );
 }
 

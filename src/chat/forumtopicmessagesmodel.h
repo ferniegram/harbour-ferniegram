@@ -10,6 +10,7 @@ class ForumTopicMessagesModel : public ReadableMessagesModel {
     Q_PROPERTY(QObject* forumTopicsModel MEMBER forumTopicsModel WRITE setForumTopicsModel NOTIFY forumTopicsModelChanged)
     Q_PROPERTY(qlonglong chatId MEMBER chatId WRITE setChatId NOTIFY chatIdChanged)
     Q_PROPERTY(int forumTopicId MEMBER forumTopicId WRITE setForumTopicId NOTIFY forumTopicIdChanged)
+    Q_PROPERTY(QString forumTopicName READ forumTopicName NOTIFY forumTopicNameChanged)
 
 public:
     ForumTopicMessagesModel(QObject *parent = nullptr);
@@ -20,6 +21,8 @@ public:
     void setChatId(qlonglong chatId);
     void setForumTopicId(int forumTopicId);
 
+    QString forumTopicName() const;
+
     Q_INVOKABLE virtual bool clear() override;
     Q_INVOKABLE void setSearchQuery(const QString newSearchQuery);
 
@@ -28,6 +31,7 @@ signals:
     void forumTopicsModelChanged();
     void chatIdChanged();
     void forumTopicIdChanged();
+    void forumTopicNameChanged();
 
 protected:
     virtual void setupTDLibWrapper() override;
@@ -44,7 +48,7 @@ private:
     void initialize();
 
 private slots:
-    void handleForumTopicUpdated(int forumTopicId);
+    void handleForumTopicUpdated(int forumTopicId, const QVector<int> changedRoles);
     void handleForumTopicMessagesReceived(qlonglong chatId, int forumTopicId, int extra, const QVariantList &messages, int totalCount);
     void handleNewMessageReceived(qlonglong chatId, const QVariantMap &message);
 

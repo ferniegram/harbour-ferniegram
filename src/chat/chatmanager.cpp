@@ -459,26 +459,6 @@ void ChatManager::reset(bool resetChatId) {
     LOG("Finished resetting chat manager resetChatId:" << resetChatId);
 }
 
-void ChatManager::initializeMessageModels() {
-    LOG("Initializing message models");
-
-    if (!chatMessagesModel)
-        chatMessagesModel = new ChatMessagesModel(tdLibWrapper, this->chatId, this);
-    else if (chatMessagesModel->chatId != this->chatId) {
-        chatMessagesModel->chatId = this->chatId;
-        emit chatMessagesModel->chatIdChanged();
-    }
-
-    if (!photoAndVideoMessagesModel)
-        photoAndVideoMessagesModel = new MediaMessagesModel(tdLibWrapper, TDLibWrapper::SearchMessagesFilterPhotoAndVideo, this);
-    if (!animationMessagesModel)
-        animationMessagesModel = new MediaMessagesModel(tdLibWrapper, TDLibWrapper::SearchMessagesFilterAnimation, this);
-    if (!videoNoteMessagesModel)
-        videoNoteMessagesModel = new MediaMessagesModel(tdLibWrapper, TDLibWrapper::SearchMessagesFilterVideoNote, this);
-
-    emit messageModelsChanged();
-}
-
 void ChatManager::setChatId(qlonglong chatId) {
     if (this->chatId == chatId) {
         LOG("Chat ID" << chatId << "already set");
@@ -523,10 +503,26 @@ void ChatManager::initializeMainModels(qlonglong fromMessageId) {
         emit topicsModelChanged();
     } else {
         LOG("Initializing a regular chat");
-        initializeMessageModels();
+
+        if (!chatMessagesModel) {
+            chatMessagesModel = new ChatMessagesModel(tdLibWrapper, this->chatId, this);
+            emit messagesModelChanged();
+        } else if (chatMessagesModel->chatId != this->chatId) {
+            chatMessagesModel->chatId = this->chatId;
+            emit chatMessagesModel->chatIdChanged();
+        }
 
         this->chatMessagesModel->loadMessages(ChatMessagesModel::UpdateInitial, fromMessageId != 0 ? fromMessageId : this->chatInformation().value(LAST_READ_INBOX_MESSAGE_ID).toLongLong());
     }
+
+    if (!photoAndVideoMessagesModel)
+        photoAndVideoMessagesModel = new MediaMessagesModel(tdLibWrapper, TDLibWrapper::SearchMessagesFilterPhotoAndVideo, this);
+    if (!animationMessagesModel)
+        animationMessagesModel = new MediaMessagesModel(tdLibWrapper, TDLibWrapper::SearchMessagesFilterAnimation, this);
+    if (!videoNoteMessagesModel)
+        videoNoteMessagesModel = new MediaMessagesModel(tdLibWrapper, TDLibWrapper::SearchMessagesFilterVideoNote, this);
+
+    emit mediaMessageModelsChanged();
 }
 
 

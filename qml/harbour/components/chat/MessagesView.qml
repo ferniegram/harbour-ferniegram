@@ -31,6 +31,7 @@ Column {
 
     property var messagesModel: chatManager.model
     property var topicId
+    property string forumTopicName
 
     property var selectedMessages: []
     readonly property bool isSelecting: selectedMessages.length > 0

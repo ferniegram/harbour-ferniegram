@@ -86,6 +86,7 @@ Item {
                     anchors.fill: parent
                     messagesModel: topicMessagesModel
                     topicId: {'@type': 'messageTopicForum', 'forum_topic_id': forumTopicId}
+                    forumTopicName: topicMessagesModel.forumTopicName
 
                     ForumTopicMessagesModel {
                         id: topicMessagesModel

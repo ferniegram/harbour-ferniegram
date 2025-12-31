@@ -56,7 +56,8 @@ public:
     enum MessageText {
         MessageTextDefault,
         MessageTextSimpleWithThumbnails,
-        MessageTextSimple
+        MessageTextSimple,
+        MessageTextSimpleInForumTopic
     };
     Q_ENUM(MessageText)
 
@@ -66,9 +67,9 @@ public:
     Q_INVOKABLE static QString fixReservedHtmlCharacters(const QString &text);
     Q_INVOKABLE static QString enhanceMessageText(const QVariantMap &formattedText, bool ignoreEntities = false, bool escapeReserved = true);
 
-    Q_INVOKABLE QString getMessageText(const QVariantMap &messageContent, const QString &messageSenderType, qlonglong messageSenderUserId, bool isSponsored, MessageText type = MessageTextDefault, bool ignoreEntities = false, bool escapeReserved = true) const;
-    Q_INVOKABLE QString getMessageText(const QVariantMap &message, MessageText type = MessageTextDefault, bool ignoreEntities = false, bool escapeReserved = true) const;
-    Q_INVOKABLE QString getMessageContentText(const QVariantMap &messageContent, MessageText type = MessageTextDefault, bool ignoreEntities = false, bool escapeReserved = true) const;
+    Q_INVOKABLE QString getMessageText(const QVariantMap &messageContent, const QString &messageSenderType, qlonglong messageSenderUserId, bool isSponsored, MessageText type = MessageTextDefault, bool ignoreEntities = false, bool escapeReserved = true, const QString &forumTopicName = QString()) const;
+    Q_INVOKABLE QString getMessageText(const QVariantMap &message, MessageText type = MessageTextDefault, bool ignoreEntities = false, bool escapeReserved = true, const QString &forumTopicName = QString()) const;
+    Q_INVOKABLE QString getMessageContentText(const QVariantMap &messageContent, MessageText type = MessageTextDefault, bool ignoreEntities = false, bool escapeReserved = true, const QString &forumTopicName = QString()) const;
 
     Q_INVOKABLE static bool messageContentIsService(const QString &contentType, bool includeTextOnly = false);
     Q_INVOKABLE static QVariant getMessageMinithumbnail(const QVariantMap &messageContent);

@@ -18,6 +18,7 @@
 */
 import QtQuick 2.6
 import Sailfish.Silica 1.0
+import App.Logic 1.0
 import "../js/twemoji.js" as Emoji
 import "../js/functions.js" as Functions
 import "../js/debug.js" as Debug
@@ -46,7 +47,7 @@ Item {
         color: Theme.highlightColor
         horizontalAlignment: Text.AlignHCenter
         font.pixelSize: Theme.fontSizeExtraSmall
-        property string messageContentText: Functions.getMessageText(messageListItem.myMessage, false, chatPage.myUserId, false)
+        property string messageContentText: utilities.getMessageText(messageListItem.myMessage, topicId ? Utilities.MessageTextSimpleInForumTopic : Utilities.MessageTextSimple, false, true, forumTopicName)
         text: (messageListItem.senderIsUser
                ? "<a style=\"text-decoration: none; font-weight: bold; color:"+Theme.primaryColor+"\" href=\"userId://" + messageListItem.userInformation.id + "\">" + (!messageListItem.isOwnMessage ? Emoji.emojify(Functions.getUserName(messageListItem.userInformation), font.pixelSize) : qsTr("You")) + "</a> "
                :  "<a style=\"text-decoration: none; font-weight: bold; color:"+Theme.secondaryHighlightColor+"\">" +  Emoji.emojify(chatPage.chatInformation.title || "") + "</a> ")

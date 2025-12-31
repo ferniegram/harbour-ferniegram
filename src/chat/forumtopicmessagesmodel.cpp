@@ -7,6 +7,7 @@ namespace {
     const QString ID("id");
     const QString TOPIC_ID("topic_id");
     const QString FORUM_TOPIC_ID("forum_topic_id");
+    const QString NAME("name");
 }
 
 ForumTopicMessagesModel::ForumTopicMessagesModel(QObject *parent) : ReadableMessagesModel(), forumTopicsModel(nullptr), initialized(false), forumTopicId(0) {
@@ -57,10 +58,12 @@ void ForumTopicMessagesModel::setForumTopicsModel(QObject *obj) {
     }
 }
 
-void ForumTopicMessagesModel::handleForumTopicUpdated(int forumTopicId) {
+void ForumTopicMessagesModel::handleForumTopicUpdated(int forumTopicId, const QVector<int> changedRoles) {
     if (this->forumTopicId == forumTopicId) {
         LOG("Forum topic info updated" << forumTopicId);
-        // TODO
+
+        if (changedRoles.contains(ForumTopic::RoleName))
+            emit forumTopicNameChanged();
     }
 }
 
@@ -92,6 +95,12 @@ void ForumTopicMessagesModel::initialize() {
         // todo...
         this->loadMessages(UpdateInitial, lastReadInboxMessageId());
     }
+}
+
+
+QString ForumTopicMessagesModel::forumTopicName() const {
+    const ForumTopic *topic = getTopic();
+    return topic ? topic->info().value(NAME).toString() : QString();
 }
 
 bool ForumTopicMessagesModel::clear() {
