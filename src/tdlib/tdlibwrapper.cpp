@@ -349,6 +349,7 @@ void TDLibWrapper::initializeTDLibReceiver() {
     connect(this->tdLibReceiver, &TDLibReceiver::forumTopicReceived, this, &TDLibWrapper::forumTopicReceived);
     connect(this->tdLibReceiver, &TDLibReceiver::messageSuggestedPostInfoUpdated, this, &TDLibWrapper::messageSuggestedPostInfoUpdated);
     connect(this->tdLibReceiver, &TDLibReceiver::messageContentOpened, this, &TDLibWrapper::messageContentOpened);
+    connect(this->tdLibReceiver, &TDLibReceiver::messageFactCheckUpdated, this, &TDLibWrapper::messageFactCheckUpdated);
 
     this->tdLibReceiver->start();
 }

@@ -213,6 +213,7 @@ TDLibReceiver::TDLibReceiver(int tdLibClientId, QObject *parent) : QThread(paren
     handlers.insert("forumTopic", &TDLibReceiver::processForumTopic);
     handlers.insert("updateMessageSuggestedPostInfo", &TDLibReceiver::processUpdateMessageSuggestedPostInfo);
     handlers.insert("updateMessageContentOpened", &TDLibReceiver::processUpdateMessageContentOpened);
+    handlers.insert("updateMessageFactCheck", &TDLibReceiver::processUpdateMessageFactCheck);
 }
 
 void TDLibReceiver::setActive(bool active)
@@ -1248,4 +1249,11 @@ void TDLibReceiver::processUpdateMessageContentOpened(const QVariantMap &receive
     qlonglong messageId = receivedInformation.value(MESSAGE_ID).toLongLong();
     LOG("Received updateMessageContentOpened" << chatId << messageId);
     emit messageContentOpened(chatId, messageId);
+}
+
+void TDLibReceiver::processUpdateMessageFactCheck(const QVariantMap &receivedInformation) {
+    qlonglong chatId = receivedInformation.value(CHAT_ID).toLongLong();
+    qlonglong messageId = receivedInformation.value(MESSAGE_ID).toLongLong();
+    LOG("Received updateMessageFactCheck" << chatId << messageId);
+    emit messageFactCheckUpdated(chatId, messageId, receivedInformation.value("fact_check").toMap());
 }

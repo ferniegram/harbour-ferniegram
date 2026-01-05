@@ -497,6 +497,7 @@ signals:
     void forumTopicReceived(qlonglong chatId, int forumTopicId, const QVariantMap &topic);
     void messageSuggestedPostInfoUpdated(qlonglong chatId, qlonglong messageId, const QVariantMap &suggestedPostInfo);
     void messageContentOpened(qlonglong chatId, qlonglong messageId);
+    void messageFactCheckUpdated(qlonglong chatId, qlonglong messageId, const QVariantMap &factCheck);
 
     // Link types
     void linkUnsupportedByApp(const QString &type);

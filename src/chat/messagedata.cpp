@@ -16,6 +16,7 @@ namespace {
     const QString EDIT_DATE("edit_date");
     const QString SUGGESTED_POST_INFO("suggested_post_info");
     const QString CONTAINS_UNREAD_MENTION("contains_unread_mention");
+    const QString FACT_CHECK("fact_check");
 
     // "interaction_info": {
     //     "@type": "messageInteractionInfo",
@@ -227,7 +228,7 @@ QVector<int> MessageData::setMentionRead() {
     return flagsToRoles(updateMentionRead());
 }
 
-uint MessageData::updateMessageContentOpened() {
+uint MessageData::updateContentOpened() {
     if (messageContentType == TYPE_MESSAGE_VOICE_NOTE) {
         if (messageData.value(CONTENT).toMap().value(IS_LISTENED).toBool())
             return 0;
@@ -247,8 +248,17 @@ uint MessageData::updateMessageContentOpened() {
     return 0;
 }
 
-QVector<int> MessageData::setMessageContentOpened() {
-    return flagsToRoles(updateMessageContentOpened());
+QVector<int> MessageData::setContentOpened() {
+    return flagsToRoles(updateContentOpened());
+}
+
+uint MessageData::updateFactCheck(const QVariantMap &factCheck) {
+    messageData.insert(FACT_CHECK, factCheck);
+    return RoleFlagDisplay;
+}
+
+QVector<int> MessageData::setFactCheck(const QVariantMap &factCheck) {
+    return flagsToRoles(updateFactCheck(factCheck));
 }
 
 

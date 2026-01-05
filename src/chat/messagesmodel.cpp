@@ -51,6 +51,7 @@ void MessagesModel::setupTDLibWrapper() {
     connect(this->tdLibWrapper, &TDLibWrapper::messageSuggestedPostInfoUpdated, this, &MessagesModel::handleMessageSuggestedPostInfoUpdated);
     connect(this->tdLibWrapper, &TDLibWrapper::messageMentionRead, this, &MessagesModel::handleMessageMentionRead);
     connect(this->tdLibWrapper, &TDLibWrapper::messageContentOpened, this, &MessagesModel::handleMessageContentOpened);
+    connect(this->tdLibWrapper, &TDLibWrapper::messageFactCheckUpdated, this, &MessagesModel::handleMessageFactCheckUpdated);
 }
 
 MessagesModel::~MessagesModel() {
@@ -274,7 +275,18 @@ void MessagesModel::handleMessageContentOpened(qlonglong chatId, qlonglong messa
         MessageData *messageData = messages.at(pos);
         LOG("Message content opened" << messageId << "at index" << pos);
         const QModelIndex messageIndex(index(pos));
-        emit dataChanged(messageIndex, messageIndex, messageData->setMessageContentOpened()); // TODO: begin self destruct timer here (if it's just a UI thing, do it from QML)
+        emit dataChanged(messageIndex, messageIndex, messageData->setContentOpened()); // TODO: begin self destruct timer here (if it's just a UI thing, do it from QML)
+        emit messageUpdated(pos);
+    }
+}
+
+void MessagesModel::handleMessageFactCheckUpdated(qlonglong chatId, qlonglong messageId, const QVariantMap &factCheck) {
+    if (this->chatId == chatId && messageIndexMap.contains(messageId)) {
+        const int pos = messageIndexMap.value(messageId);
+        MessageData *messageData = messages.at(pos);
+        LOG("Message fact check updated" << messageId << "at index" << pos);
+        const QModelIndex messageIndex(index(pos));
+        emit dataChanged(messageIndex, messageIndex, messageData->setFactCheck(factCheck));
         emit messageUpdated(pos);
     }
 }

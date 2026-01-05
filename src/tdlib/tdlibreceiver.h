@@ -141,6 +141,7 @@ signals:
     void forumTopicReceived(qlonglong chatId, int forumTopicId, const QVariantMap &topic);
     void messageSuggestedPostInfoUpdated(qlonglong chatId, qlonglong messageId, const QVariantMap &suggestedPostInfo);
     void messageContentOpened(qlonglong chatId, qlonglong messageId);
+    void messageFactCheckUpdated(qlonglong chatId, qlonglong messageId, const QVariantMap &factCheck);
 
 private:
     typedef void (TDLibReceiver::*Handler)(const QVariantMap &);
@@ -255,6 +256,7 @@ private:
     void processForumTopic(const QVariantMap &receivedInformation);
     void processUpdateMessageSuggestedPostInfo(const QVariantMap &receivedInformation);
     void processUpdateMessageContentOpened(const QVariantMap &receivedInformation);
+    void processUpdateMessageFactCheck(const QVariantMap &receivedInformation);
 };
 
 #endif // TDLIBRECEIVER_H
