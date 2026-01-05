@@ -39,6 +39,9 @@ struct ForumTopic : public BaseMessagableData {
 
     ForumTopic(TDLibWrapper *tdLibWrapper, Utilities *utilities, const QVariantMap &forumTopic);
 
+    static bool lessThan(const ForumTopic *topic1, const ForumTopic *topic2);
+    static bool moreThan(const ForumTopic *topic1, const ForumTopic *topic2);
+
     QVariantMap info() const;
     inline QVariant info(const QString &key) const {
         return info().value(key);

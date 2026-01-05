@@ -34,6 +34,27 @@ ForumTopic::ForumTopic(TDLibWrapper *tdLibWrapper, Utilities *utilities, const Q
     id(data.value(INFO).toMap().value(FORUM_TOPIC_ID).toLongLong())
 {}
 
+bool ForumTopic::lessThan(const ForumTopic *topic1, const ForumTopic *topic2) {
+    // TODO: when TDLib has forum topics order updates fully implemented, use that instead
+    int topic1Date = topic1->draftMessage().isEmpty() ? topic1->lastMessageDate() : topic1->draftMessageDate();
+    int topic2Date = topic2->draftMessage().isEmpty() ? topic2->lastMessageDate() : topic2->draftMessageDate();
+
+    if (topic1Date != topic2Date)
+        return topic1Date < topic2Date;
+
+    qlonglong topic1LastMessageId = topic1->lastMessage().value(ID).toLongLong();
+    qlonglong topic2LastMessageId = topic2->lastMessage().value(ID).toLongLong();
+
+    if (topic1LastMessageId != topic2LastMessageId)
+        return topic1LastMessageId < topic2LastMessageId;
+
+    return topic1->id < topic2->id;
+}
+
+bool ForumTopic::moreThan(const ForumTopic *topic1, const ForumTopic *topic2) {
+    return !lessThan(topic1, topic2);
+}
+
 QVariantMap ForumTopic::info() const {
     return data.value(INFO).toMap();
 }

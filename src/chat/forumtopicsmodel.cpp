@@ -164,13 +164,19 @@ void ForumTopicsModel::handleForumTopicsReceived(qlonglong chatId, int totalCoun
             return;
         }
 
-        LOG("Forum topics received" << totalCount);
-        beginInsertRows(QModelIndex(), topics.length(), topics.length() + newTopics.length() - 1);
-        for (const QVariant &topicVariant : newTopics) {
-            ForumTopic *topic = new ForumTopic(tdLibWrapper, utilities, topicVariant.toMap());
-            this->topics.append(topic);
-            this->topicIndexMap.insert(topic->id, this->topics.size() - 1);
-        }
+        QList<ForumTopic*> newForumTopics;
+
+        LOG("Forum topics received" << totalCount << newTopics.length());
+        for (const QVariant &topicVariant : newTopics)
+            newForumTopics.append(new ForumTopic(tdLibWrapper, utilities, topicVariant.toMap()));
+
+        std::sort(newForumTopics.begin(), newForumTopics.end(), ForumTopic::lessThan);
+
+        beginInsertRows(QModelIndex(), topics.length(), topics.length() + newForumTopics.length() - 1);
+        const int oldSize = this->topics.length();
+        this->topics.append(newForumTopics);
+        for (int i = 0; i < newForumTopics.length(); i++)
+            this->topicIndexMap.insert(newForumTopics.at(i)->id, oldSize + i);
         endInsertRows();
 
         this->nextOffsetDate = nextOffsetDate;
