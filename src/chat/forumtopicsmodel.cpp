@@ -65,6 +65,7 @@ QHash<int,QByteArray> ForumTopicsModel::roleNames() const {
         {ForumTopic::RoleIsClosed, "is_closed"},
         {ForumTopic::RoleIsHidden, "is_hidden"},
         {ForumTopic::RoleIsNameImplicit, "is_name_implicit"},
+        {ForumTopic::RoleLastMessageId, "last_message_id"},
         {ForumTopic::RoleLastMessageSenderId, "last_message_sender_id"},
         {ForumTopic::RoleLastMessageDate, "last_message_date"},
         {ForumTopic::RoleLastMessageText, "last_message_text"},
@@ -119,6 +120,7 @@ QVariant ForumTopicsModel::data(const QModelIndex &index, int role) const {
         case ForumTopic::RoleIsNameImplicit:
             return topic->info("is_name_implicit").toBool();
 
+        case ForumTopic::RoleLastMessageId: return topic->lastMessage().value(ID).toLongLong();
         case ForumTopic::RoleLastMessageSenderId: return topic->lastMessageSenderUserId();
         case ForumTopic::RoleLastMessageText: return topic->lastMessageText();
         case ForumTopic::RoleLastMessageMinithumbnail: return topic->lastMessageMinithumbnail();
@@ -230,7 +232,7 @@ void ForumTopicsModel::insertNewTopic(const QVariantMap &topic) {
     // Actually add the topic to list
     const int n = this->topics.size();
     int pos;
-    for (pos = 0; pos < n && ForumTopic::lessThan(forumTopic, topics.at(pos)); pos++);
+    for (pos = 0; pos < n && !ForumTopic::lessThan(forumTopic, topics.at(pos)); pos++);
     LOG("Adding topic" << forumTopic->id << "at" << pos);
 
     beginInsertRows(QModelIndex(), pos, pos);
@@ -244,6 +246,42 @@ void ForumTopicsModel::insertNewTopic(const QVariantMap &topic) {
     //enableRefreshTimer(); // TODO: add refresh timer here as well
 }
 
+int ForumTopicsModel::updateForumTopicOrder(const int index) {
+    ForumTopic *forumTopic = topics.at(index);
+
+    const int n = topics.size();
+    int newIndex = index;
+    while (newIndex > 0 && ForumTopic::lessThan(forumTopic, topics.at(newIndex-1)))
+        newIndex--;
+
+    if (newIndex == index)
+        while (newIndex < n-1 && !ForumTopic::lessThan(forumTopic, topics.at(newIndex+1)))
+            newIndex++;
+
+    if (newIndex != index) {
+        LOG("Moving forum topic" << forumTopic->id << "from position" << index << "to" << newIndex);
+        beginMoveRows(QModelIndex(), index, index, QModelIndex(), (newIndex < index) ? newIndex : (newIndex+1));
+        topics.move(index, newIndex);
+        topicIndexMap.insert(forumTopic->id, newIndex);
+
+        // Update damaged part of the map
+        const int last = qMax(index, newIndex);
+        if (newIndex < index)
+            // First index is already correct
+            for (int i = newIndex + 1; i <= last; i++)
+                topicIndexMap.insert(topics.at(i)->id, i);
+        else
+            // Last index is already correct
+            for (int i = index; i < last; i++)
+                topicIndexMap.insert(topics.at(i)->id, i);
+
+        endMoveRows();
+    } else
+        LOG("Forum topic" << forumTopic->id << "stays at position" << index);
+
+    return newIndex;
+}
+
 void ForumTopicsModel::handleNewMessageReceived(qlonglong chatId, const QVariantMap &message) {
     const QVariantMap topicId = message.value(TOPIC_ID).toMap();
     if (this->chatId != message.value(CHAT_ID).toLongLong() || topicId.value(_TYPE).toString() != TYPE_MESSAGE_TOPIC_FORUM)
@@ -254,12 +292,22 @@ void ForumTopicsModel::handleNewMessageReceived(qlonglong chatId, const QVariant
     if (topicIndexMap.contains(forumTopicId)) {
         int forumTopicIndex = topicIndexMap.value(forumTopicId);
         ForumTopic *topic = topics.at(forumTopicIndex);
-        const QModelIndex modelIndex = index(forumTopicIndex);
-        emit dataChanged(modelIndex, modelIndex, topic->updateLastMessage(message));
-        // TODO: update order
+        handleForumTopicRolesChanged(forumTopicIndex, topic->updateLastMessage(message));
     } else
         // Load the topic in case it's not yet loaded but a new message is received, or if it was just created
-        tdLibWrapper->getForumTopic(chatId, forumTopicId); // New topic
+        tdLibWrapper->getForumTopic(chatId, forumTopicId);
+}
+
+void ForumTopicsModel::handleForumTopicRolesChanged(int forumTopicIndex, const QVector<int> changedRoles) {
+    // RoleId never changes
+    if (changedRoles.contains(ForumTopic::RoleIsPinned)
+            || changedRoles.contains(ForumTopic::RoleLastMessageDate)
+            || changedRoles.contains(ForumTopic::RoleDraftMessageDate)
+            || changedRoles.contains(ForumTopic::RoleLastMessageId))
+        forumTopicIndex = updateForumTopicOrder(forumTopicIndex);
+
+    const QModelIndex modelIndex = index(forumTopicIndex);
+    emit dataChanged(modelIndex, modelIndex, changedRoles);
 }
 
 void ForumTopicsModel::handleForumTopicReceived(qlonglong chatId, int forumTopicId, const QVariantMap &topic) {
@@ -269,9 +317,7 @@ void ForumTopicsModel::handleForumTopicReceived(qlonglong chatId, int forumTopic
     if (topicIndexMap.contains(forumTopicId)) {
         int forumTopicIndex = topicIndexMap.value(forumTopicId);
         ForumTopic *forumTopic = topics.at(forumTopicIndex);
-        const QModelIndex modelIndex = index(forumTopicIndex);
-        emit dataChanged(modelIndex, modelIndex, forumTopic->updateForumTopicData(topic));
-        // TODO: update order
+        handleForumTopicRolesChanged(forumTopicIndex, forumTopic->updateForumTopicData(topic));
     } else
         insertNewTopic(topic);
 }

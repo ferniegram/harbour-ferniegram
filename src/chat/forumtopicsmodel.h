@@ -36,6 +36,8 @@ private slots:
 
 private:
     void insertNewTopic(const QVariantMap &topic);
+    int updateForumTopicOrder(const int index);
+    void handleForumTopicRolesChanged(int forumTopicIndex, const QVector<int> changedRoles);
 
 private:
     TDLibWrapper *tdLibWrapper;

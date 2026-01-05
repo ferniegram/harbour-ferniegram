@@ -121,6 +121,7 @@ const QVector<int> ForumTopic::updateLastReadOutboxMessageId(qlonglong value) {
 }
 
 const QVector<int> ForumTopic::updateLastMessage(const QVariantMap &message) {
+    const qlonglong prevLastMessageId = lastMessage().value(ID).toLongLong();
     const qlonglong prevSenderUserId(lastMessageSenderUserId());
     const qlonglong prevLastMessageDate(lastMessageDate());
     const QString prevLastMessageText(lastMessageText());
@@ -131,6 +132,8 @@ const QVector<int> ForumTopic::updateLastMessage(const QVariantMap &message) {
     data.insert(LAST_MESSAGE, message);
 
     QVector<int> changedRoles;
+    if (prevLastMessageId != lastMessage().value(ID).toLongLong())
+        changedRoles.append(RoleLastMessageId);
     if (prevSenderUserId != lastMessageSenderUserId())
         changedRoles.append(RoleLastMessageSenderId);
     if (prevLastMessageDate != lastMessageDate())

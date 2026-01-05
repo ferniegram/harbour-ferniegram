@@ -20,6 +20,7 @@ struct ForumTopic : public BaseMessagableData {
         RoleIsClosed,
         RoleIsHidden,
         RoleIsNameImplicit,
+        RoleLastMessageId,
         RoleLastMessageSenderId,
         RoleLastMessageDate,
         RoleLastMessageText,
