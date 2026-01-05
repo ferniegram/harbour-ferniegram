@@ -8,18 +8,10 @@ namespace {
     const QString TOPIC_ID("topic_id");
     const QString FORUM_TOPIC_ID("forum_topic_id");
     const QString NAME("name");
+    const QString INFO("info");
 }
 
-ForumTopicMessagesModel::ForumTopicMessagesModel(QObject *parent) : ReadableMessagesModel(), forumTopicsModel(nullptr), initialized(false), forumTopicId(0) {
-}
-
-ForumTopicMessagesModel::ForumTopicMessagesModel(TDLibWrapper *tdLibWrapper, qlonglong chatId, int forumTopicId, QObject *parent)
-    : ReadableMessagesModel(tdLibWrapper, parent),
-      initialized(false),
-      forumTopicId(forumTopicId)
-{
-    this->chatId = chatId;
-}
+ForumTopicMessagesModel::ForumTopicMessagesModel(QObject *parent) : ReadableMessagesModel() {}
 
 void ForumTopicMessagesModel::setTDLibWrapper(QObject *obj) {
     TDLibWrapper *wrapper = qobject_cast<TDLibWrapper*>(obj);
@@ -39,31 +31,29 @@ void ForumTopicMessagesModel::setTDLibWrapper(QObject *obj) {
 void ForumTopicMessagesModel::setupTDLibWrapper() {
     ReadableMessagesModel::setupTDLibWrapper();
 
+    connect(tdLibWrapper, &TDLibWrapper::forumTopicUpdated, this, &ForumTopicMessagesModel::handleForumTopicUpdated);
+    connect(tdLibWrapper, &TDLibWrapper::forumTopicInfoUpdated, this, &ForumTopicMessagesModel::handleForumTopicInfoUpdated);
+
     connect(tdLibWrapper, &TDLibWrapper::forumTopicMessagesReceived, this, &ForumTopicMessagesModel::handleForumTopicMessagesReceived);
-    connect(this->tdLibWrapper, &TDLibWrapper::newMessageReceived, this, &ForumTopicMessagesModel::handleNewMessageReceived);
+    connect(tdLibWrapper, &TDLibWrapper::newMessageReceived, this, &ForumTopicMessagesModel::handleNewMessageReceived);
 }
 
-void ForumTopicMessagesModel::setForumTopicsModel(QObject *obj) {
-    ForumTopicsModel *model = qobject_cast<ForumTopicsModel*>(obj);
-    if (forumTopicsModel != model) {
-        LOG("ForumTopicsModel set" << model);
-        forumTopicsModel = model;
-        emit forumTopicsModelChanged();
+void ForumTopicMessagesModel::handleRolesUpdated(const QVector<int> &roles) {
+    if (roles.contains(ForumTopic::RoleName))
+        emit forumTopicNameChanged();
+}
 
-        if (forumTopicsModel) {
-            connect(forumTopicsModel, &ForumTopicsModel::forumTopicUpdated, this, &ForumTopicMessagesModel::handleForumTopicUpdated);
-
-            initialize();
-        }
+void ForumTopicMessagesModel::handleForumTopicUpdated(qlonglong chatId, int forumTopicId, const QVariantMap &update) {
+    if (this->chatId == chatId && this->forumTopic && this->forumTopic->id == forumTopicId) {
+        LOG("Forum topic updated");
+        handleRolesUpdated(forumTopic->updateFromForumTopicUpdate(update));
     }
 }
 
-void ForumTopicMessagesModel::handleForumTopicUpdated(int forumTopicId, const QVector<int> changedRoles) {
-    if (this->forumTopicId == forumTopicId) {
-        LOG("Forum topic info updated" << forumTopicId);
-
-        if (changedRoles.contains(ForumTopic::RoleName))
-            emit forumTopicNameChanged();
+void ForumTopicMessagesModel::handleForumTopicInfoUpdated(qlonglong chatId, int forumTopicId, const QVariantMap &info) {
+    if (this->chatId == chatId && this->forumTopic && this->forumTopic->id == forumTopicId) {
+        LOG("Forum topic info updated");
+        handleRolesUpdated(forumTopic->updateForumTopicInfo(info));
     }
 }
 
@@ -77,30 +67,36 @@ void ForumTopicMessagesModel::setChatId(qlonglong chatId) {
     }
 }
 
-void ForumTopicMessagesModel::setForumTopicId(int forumTopicId) {
-    if (this->forumTopicId != forumTopicId) {
-        LOG("Forum topic ID set" << forumTopicId);
-        this->forumTopicId = forumTopicId;
-        emit forumTopicIdChanged();
+QVariantMap ForumTopicMessagesModel::forumTopicData() const {
+    return forumTopic ? forumTopic->data : pendingForumTopicData;
+}
 
+void ForumTopicMessagesModel::setForumTopicData(const QVariantMap &data) {
+    if (forumTopic) { // this will probably be never used, so can be removed later if that will be true
+        handleRolesUpdated(forumTopic->updateForumTopicData(data));
+        LOG("Forum topic data updated" << forumTopic->id);
+    } else {
+        LOG("Pending forum topic data set" << data.value(INFO).toMap().value(FORUM_TOPIC_ID).toInt());
+        pendingForumTopicData = data;
         initialize();
     }
+
+    emit forumTopicDataChanged();
 }
 
 void ForumTopicMessagesModel::initialize() {
-    if (!initialized && tdLibWrapper && forumTopicsModel && chatId && forumTopicId) {
+    if (!initialized && tdLibWrapper && chatId && !pendingForumTopicData.isEmpty()) {
         LOG("Initializing");
         initialized = true;
 
-        // todo...
+        this->forumTopic = new ForumTopic(tdLibWrapper, tdLibWrapper->getUtilities(), pendingForumTopicData);
         this->loadMessages(UpdateInitial, lastReadInboxMessageId());
     }
 }
 
 
 QString ForumTopicMessagesModel::forumTopicName() const {
-    const ForumTopic *topic = getTopic();
-    return topic ? topic->info().value(NAME).toString() : QString();
+    return forumTopic ? forumTopic->info().value(NAME).toString() : QString();
 }
 
 bool ForumTopicMessagesModel::clear() {
@@ -110,15 +106,18 @@ bool ForumTopicMessagesModel::clear() {
 }
 
 void ForumTopicMessagesModel::loadMessages(int extra, qlonglong fromMessageId, int offset) {
+    if (!forumTopic)
+        return;
+
     if (searchQuery.isEmpty())
-        this->tdLibWrapper->getForumTopicHistory(chatId, forumTopicId, extra, fromMessageId, offset);
+        this->tdLibWrapper->getForumTopicHistory(chatId, forumTopic->id, extra, fromMessageId, offset);
     // TODO: support search
     //else
         // ignore offset for now
         //this->tdLibWrapper->searchChatMessages(chatId, searchQuery, extra, fromMessageId);
 }
 
-void ForumTopicMessagesModel::setSearchQuery(const QString newSearchQuery) {
+void ForumTopicMessagesModel::setSearchQuery(const QString &newSearchQuery) {
     if (this->searchQuery != newSearchQuery) {
         this->clear();
         this->searchQuery = newSearchQuery;
@@ -126,31 +125,24 @@ void ForumTopicMessagesModel::setSearchQuery(const QString newSearchQuery) {
     }
 }
 
-inline ForumTopic *ForumTopicMessagesModel::getTopic() const {
-    return forumTopicsModel ? forumTopicsModel->getTopic(forumTopicId) : nullptr;
-}
-
 qlonglong ForumTopicMessagesModel::lastReadInboxMessageId() const {
-    ForumTopic *topic = getTopic();
-    return topic ? topic->lastReadInboxMessageId() : 0;
+    return forumTopic ? forumTopic->lastReadInboxMessageId() : 0;
 }
 qlonglong ForumTopicMessagesModel::lastReadOutboxMessageId() const {
-    ForumTopic *topic = getTopic();
-    return topic ? topic->lastReadOutboxMessageId() : 0;
+    return forumTopic ? forumTopic->lastReadOutboxMessageId() : 0;
 }
 qlonglong ForumTopicMessagesModel::lastMessageId() const {
-    ForumTopic *topic = getTopic();
-    return topic ? topic->lastMessage().value(ID).toLongLong() : 0;
+    return forumTopic ? forumTopic->lastMessage().value(ID).toLongLong() : 0;
 }
 
 void ForumTopicMessagesModel::handleForumTopicMessagesReceived(qlonglong chatId, int forumTopicId, int extra, const QVariantList &messages, int totalCount) {
-    if (this->chatId == chatId && this->forumTopicId == forumTopicId) {
+    if (this->chatId == chatId && this->forumTopic && this->forumTopic->id == forumTopicId) {
         LOG("Messages received");
         handleMessagesReceived(extra, messages, totalCount);
     }
 }
 
 void ForumTopicMessagesModel::handleNewMessageReceived(qlonglong chatId, const QVariantMap &message) {
-    if (this->chatId == chatId && this->forumTopicId == message.value(TOPIC_ID).toMap().value(FORUM_TOPIC_ID).toInt())
+    if (this->chatId == chatId && this->forumTopic && this->forumTopic->id == message.value(TOPIC_ID).toMap().value(FORUM_TOPIC_ID).toInt())
         ReadableMessagesModel::handleNewMessageReceived(message);
 }

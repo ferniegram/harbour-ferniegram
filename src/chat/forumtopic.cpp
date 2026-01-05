@@ -162,7 +162,7 @@ const QVector<int> ForumTopic::updateDraftMessage(const QVariantMap &value) {
     return {RoleDraftMessageDate, RoleDraftMessageText};
 }
 
-const QVector<int> ForumTopic::updateForumTopic(const QVariantMap &update) {
+const QVector<int> ForumTopic::updateFromForumTopicUpdate(const QVariantMap &update) {
     return QVector<int>()
             << updateIsPinned(update.value(IS_PINNED).toBool())
             << updateLastReadInboxMessageId(update.value(LAST_READ_INBOX_MESSAGE_ID).toLongLong())
@@ -199,4 +199,12 @@ const QVector<int> ForumTopic::updateForumTopicInfo(const QVariantMap &newInfo) 
         data.insert(INFO, newInfo);
 
     return changedRoles;
+}
+
+const QVector<int> ForumTopic::updateForumTopicData(const QVariantMap &topic) {
+    // TODO: possibly update order
+    return QVector<int>()
+            << updateFromForumTopicUpdate(topic)
+            << updateForumTopicInfo(topic.value(INFO).toMap())
+            << updateLastMessage(topic.value(LAST_MESSAGE).toMap());
 }

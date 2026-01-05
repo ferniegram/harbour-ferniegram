@@ -7,30 +7,29 @@
 class ForumTopicMessagesModel : public ReadableMessagesModel {
     Q_OBJECT
     Q_PROPERTY(QObject* tdlib MEMBER tdLibWrapper WRITE setTDLibWrapper NOTIFY tdlibChanged)
-    Q_PROPERTY(QObject* forumTopicsModel MEMBER forumTopicsModel WRITE setForumTopicsModel NOTIFY forumTopicsModelChanged)
     Q_PROPERTY(qlonglong chatId MEMBER chatId WRITE setChatId NOTIFY chatIdChanged)
-    Q_PROPERTY(int forumTopicId MEMBER forumTopicId WRITE setForumTopicId NOTIFY forumTopicIdChanged)
+    Q_PROPERTY(QVariantMap forumTopicData READ forumTopicData WRITE setForumTopicData NOTIFY forumTopicDataChanged)
     Q_PROPERTY(QString forumTopicName READ forumTopicName NOTIFY forumTopicNameChanged)
 
 public:
     ForumTopicMessagesModel(QObject *parent = nullptr);
-    ForumTopicMessagesModel(TDLibWrapper *tdLibWrapper, qlonglong chatId, int forumTopicId, QObject *parent = nullptr);
 
     void setTDLibWrapper(QObject* obj);
-    void setForumTopicsModel(QObject* obj);
     void setChatId(qlonglong chatId);
-    void setForumTopicId(int forumTopicId);
+
+    QVariantMap forumTopicData() const;
+    void setForumTopicData(const QVariantMap &data);
 
     QString forumTopicName() const;
 
     Q_INVOKABLE virtual bool clear() override;
-    Q_INVOKABLE void setSearchQuery(const QString newSearchQuery);
+    Q_INVOKABLE void setSearchQuery(const QString &newSearchQuery);
 
 signals:
     void tdlibChanged();
     void forumTopicsModelChanged();
     void chatIdChanged();
-    void forumTopicIdChanged();
+    void forumTopicDataChanged();
     void forumTopicNameChanged();
 
 protected:
@@ -44,19 +43,20 @@ protected:
     virtual qlonglong lastMessageId() const override;
 
 private:
-    ForumTopic *getTopic() const;
+    void handleRolesUpdated(const QVector<int> &roles);
     void initialize();
 
 private slots:
-    void handleForumTopicUpdated(int forumTopicId, const QVector<int> changedRoles);
+    void handleForumTopicUpdated(qlonglong chatId, int forumTopicId, const QVariantMap &update);
+    void handleForumTopicInfoUpdated(qlonglong chatId, int forumTopicId, const QVariantMap &info);
+
     void handleForumTopicMessagesReceived(qlonglong chatId, int forumTopicId, int extra, const QVariantList &messages, int totalCount);
     void handleNewMessageReceived(qlonglong chatId, const QVariantMap &message);
 
 private:
-    ForumTopicsModel *forumTopicsModel;
-
-    bool initialized;
-    int forumTopicId;
+    bool initialized = false;
+    ForumTopic *forumTopic = nullptr;
+    QVariantMap pendingForumTopicData;
     QString searchQuery;
 };
 

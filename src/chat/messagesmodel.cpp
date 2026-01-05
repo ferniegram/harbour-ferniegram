@@ -33,7 +33,7 @@ namespace {
     const QString MEDIA_ALBUM_ID("media_album_id");
 }
 
-MessagesModel::MessagesModel(QObject *parent) : QAbstractListModel(parent), chatId(0) {
+MessagesModel::MessagesModel(QObject *parent) : QAbstractListModel(parent), tdLibWrapper(nullptr), chatId(0) {
 }
 
 MessagesModel::MessagesModel(TDLibWrapper *tdLibWrapper, QObject *parent) : MessagesModel(parent) {

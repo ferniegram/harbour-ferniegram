@@ -46,6 +46,7 @@ ForumTopicsModel::ForumTopicsModel(TDLibWrapper *tdLibWrapper, Utilities *utilit
 
 QHash<int,QByteArray> ForumTopicsModel::roleNames() const {
     return QHash<int,QByteArray>{
+        {ForumTopic::RoleDisplay, "display"},
         {ForumTopic::RoleId, "forum_topic_id"},
         {ForumTopic::RoleName, "name"},
         {ForumTopic::RoleIconColor, "icon_color"},
@@ -84,32 +85,34 @@ QVariant ForumTopicsModel::data(const QModelIndex &index, int role) const {
     if (row >= 0 && row < topics.size()) {
         const ForumTopic *topic = topics.at(row);
         switch (role) {
+        case ForumTopic::RoleDisplay:
+            return topic->data;
         case ForumTopic::RoleId:
             return topic->id;
         case ForumTopic::RoleName:
-            return topic->info().value(NAME).toString();
+            return topic->info(NAME).toString();
         case ForumTopic::RoleIconColor:
-            return topic->info().value(ICON).toMap().value(COLOR).toInt();
+            return topic->info(ICON).toMap().value(COLOR).toInt();
         case ForumTopic::RoleIconCustomEmojiId:
-            return topic->info().value(ICON).toMap().value(CUSTOM_EMOJI_ID).toLongLong();
+            return topic->info(ICON).toMap().value(CUSTOM_EMOJI_ID).toLongLong();
         case ForumTopic::RoleCreationDate:
-            return topic->info().value("creation_date").toInt();
+            return topic->info("creation_date").toInt();
         case ForumTopic::RoleCreatorIsChat:
-            return topic->info().value(CREATOR_ID).toMap().value(_TYPE).toString() == "messageSenderChat";
+            return topic->info(CREATOR_ID).toMap().value(_TYPE).toString() == "messageSenderChat";
         case ForumTopic::RoleCreatorUserId:
-            return topic->info().value(CREATOR_ID).toMap().value("user_id");
+            return topic->info(CREATOR_ID).toMap().value("user_id");
         case ForumTopic::RoleCreatorChatId:
-            return topic->info().value(CREATOR_ID).toMap().value("chat_id");
+            return topic->info(CREATOR_ID).toMap().value("chat_id");
         case ForumTopic::RoleIsGeneral:
-            return topic->info().value("is_general").toBool();
+            return topic->info("is_general").toBool();
         case ForumTopic::RoleIsOutgoing:
-            return topic->info().value("is_outgoing").toBool();
+            return topic->info("is_outgoing").toBool();
         case ForumTopic::RoleIsClosed:
-            return topic->info().value("is_closed").toBool();
+            return topic->info("is_closed").toBool();
         case ForumTopic::RoleIsHidden:
-            return topic->info().value("is_hidden").toBool();
+            return topic->info("is_hidden").toBool();
         case ForumTopic::RoleIsNameImplicit:
-            return topic->info().value("is_name_implicit").toBool();
+            return topic->info("is_name_implicit").toBool();
 
         case ForumTopic::RoleLastMessageSenderId: return topic->lastMessageSenderUserId();
         case ForumTopic::RoleLastMessageText: return topic->lastMessageText();
@@ -184,7 +187,7 @@ void ForumTopicsModel::handleForumTopicUpdated(qlonglong chatId, int forumTopicI
 
         const int topicIndex = topicIndexMap.value(forumTopicId);
         ForumTopic *topic = this->topics.value(topicIndex);
-        const QVector<int> changedRoles = topic->updateForumTopic(update);
+        const QVector<int> changedRoles = topic->updateFromForumTopicUpdate(update);
 
         if (!changedRoles.isEmpty()) {
             const QModelIndex modelIndex = index(topicIndex);

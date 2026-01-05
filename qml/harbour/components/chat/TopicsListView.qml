@@ -62,7 +62,7 @@ Item {
             isPinned: is_pinned
             muted: notification_settings.mute_for > 0
 
-            onClicked: pageStack.push(topicMessagesPage, {chatId: chatInformation.id, forumTopicId: forum_topic_id})
+            onClicked: pageStack.push(topicMessagesPage, {chatId: chatInformation.id, forumTopicData: display})
         }
 
         onContentYChanged: {
@@ -80,7 +80,7 @@ Item {
             id: topicMessagesPage
             Page {
                 property alias chatId: topicMessagesModel.chatId
-                property alias forumTopicId: topicMessagesModel.forumTopicId
+                property alias forumTopicData: topicMessagesModel.forumTopicData
 
                 MessagesView {
                     anchors.fill: parent
@@ -91,7 +91,6 @@ Item {
                     ForumTopicMessagesModel {
                         id: topicMessagesModel
                         tdlib: tdLibWrapper
-                        forumTopicsModel: chatManager.topicsModel
                     }
                 }
             }

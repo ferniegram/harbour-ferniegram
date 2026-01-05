@@ -6,6 +6,7 @@
 
 struct ForumTopic : public BaseMessagableData {
     enum Role {
+        RoleDisplay = Qt::DisplayRole,
         RoleId,
         RoleName,
         RoleIconColor,
@@ -39,6 +40,9 @@ struct ForumTopic : public BaseMessagableData {
     ForumTopic(TDLibWrapper *tdLibWrapper, Utilities *utilities, const QVariantMap &forumTopic);
 
     QVariantMap info() const;
+    inline QVariant info(const QString &key) const {
+        return info().value(key);
+    }
 
     bool isPinned() const;
     int unreadCount() const;
@@ -61,8 +65,9 @@ struct ForumTopic : public BaseMessagableData {
     const QVector<int> updateNotificationSettings(const QVariantMap &value);
     const QVector<int> updateDraftMessage(const QVariantMap &value);
 
-    const QVector<int> updateForumTopic(const QVariantMap &update);
+    const QVector<int> updateFromForumTopicUpdate(const QVariantMap &update);
     const QVector<int> updateForumTopicInfo(const QVariantMap &newInfo);
+    const QVector<int> updateForumTopicData(const QVariantMap &topic);
 
     QVariantMap data;
     int id;
