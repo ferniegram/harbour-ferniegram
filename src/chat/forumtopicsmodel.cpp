@@ -45,6 +45,12 @@ ForumTopicsModel::ForumTopicsModel(TDLibWrapper *tdLibWrapper, Utilities *utilit
     connect(tdLibWrapper, &TDLibWrapper::newMessageReceived, this, &ForumTopicsModel::handleNewMessageReceived);
     connect(tdLibWrapper, &TDLibWrapper::forumTopicReceived, this, &ForumTopicsModel::handleForumTopicReceived);
 
+    // Don't start the timer until we have at least one forum topic
+    relativeTimeRefreshTimer = new QTimer(this);
+    relativeTimeRefreshTimer->setSingleShot(false);
+    relativeTimeRefreshTimer->setInterval(30000);
+    connect(relativeTimeRefreshTimer, &QTimer::timeout, this, &ForumTopicsModel::handleRelativeTimeRefreshTimer);
+
     this->chatId = chatId;
     this->tdLibWrapper->getForumTopics(chatId);
 }
@@ -191,6 +197,7 @@ void ForumTopicsModel::handleForumTopicsReceived(qlonglong chatId, int totalCoun
         this->nextOffsetForumTopicId = nextOffsetForumTopicId;
 
         emit forumTopicsReceived();
+        enableRefreshTimer();
     }
 }
 
@@ -231,7 +238,7 @@ void ForumTopicsModel::insertNewTopic(const QVariantMap &topic) {
         topicIndexMap.insert(topics.at(i)->id, i);
     endInsertRows();
 
-    //enableRefreshTimer(); // TODO: add refresh timer here as well
+    enableRefreshTimer();
 }
 
 int ForumTopicsModel::updateForumTopicOrder(const int index) {
@@ -312,4 +319,20 @@ void ForumTopicsModel::handleForumTopicReceived(qlonglong chatId, int forumTopic
         handleForumTopicRolesChanged(forumTopicIndex, forumTopic->updateForumTopicData(topic));
     } else
         insertNewTopic(topic);
+}
+
+void ForumTopicsModel::enableRefreshTimer() {
+    // Start timestamp refresh timer if not yet active (usually when the first visible chat is discovered)
+    if (!relativeTimeRefreshTimer->isActive()) {
+        LOG("Enabling refresh timer");
+        relativeTimeRefreshTimer->start();
+    }
+}
+
+void ForumTopicsModel::handleRelativeTimeRefreshTimer() {
+    LOG("Refreshing timestamps");
+    emit dataChanged(index(0), index(topics.size() - 1), {
+                         ForumTopic::RoleLastMessageDate,
+                         ForumTopic::RoleLastMessageStatus // FIXME: why was this added here?
+                     });
 }

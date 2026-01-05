@@ -392,13 +392,12 @@ void ChatListModel::handleMessageSendSucceeded(qlonglong messageId, qlonglong ol
     }
 }
 
-void ChatListModel::handleRelativeTimeRefreshTimer()
-{
+void ChatListModel::handleRelativeTimeRefreshTimer() {
     LOG("Refreshing timestamps");
-    QVector<int> roles;
-    roles.append(ChatData::RoleLastMessageDate);
-    roles.append(ChatData::RoleLastMessageStatus);
-    emit dataChanged(index(0), index(chatList.size() - 1), roles);
+    emit dataChanged(index(0), index(chatList.size() - 1), {
+                         ChatData::RoleLastMessageDate,
+                         ChatData::RoleLastMessageStatus // FIXME: why was this added here?
+                     });
 }
 
 

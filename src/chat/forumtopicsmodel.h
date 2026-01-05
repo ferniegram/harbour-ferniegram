@@ -33,15 +33,20 @@ private slots:
     void handleNewMessageReceived(qlonglong chatId, const QVariantMap &message);
     void handleForumTopicReceived(qlonglong chatId, int forumTopicId, const QVariantMap &topic);
 
+    void handleRelativeTimeRefreshTimer();
+
 private:
     void insertNewTopic(const QVariantMap &topic);
     int updateForumTopicOrder(const int index);
     void handleForumTopicRolesChanged(int forumTopicIndex, const QVector<int> changedRoles);
 
+    void enableRefreshTimer();
+
 private:
     TDLibWrapper *tdLibWrapper;
     Utilities *utilities;
 
+    QTimer *relativeTimeRefreshTimer;
     QList<ForumTopic*> topics;
     QHash<int, int> topicIndexMap;
 
