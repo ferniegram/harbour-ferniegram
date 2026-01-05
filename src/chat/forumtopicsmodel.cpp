@@ -200,13 +200,7 @@ void ForumTopicsModel::handleForumTopicUpdated(qlonglong chatId, int forumTopicI
 
         const int topicIndex = topicIndexMap.value(forumTopicId);
         ForumTopic *topic = this->topics.value(topicIndex);
-        const QVector<int> changedRoles = topic->updateFromForumTopicUpdate(update);
-
-        if (!changedRoles.isEmpty()) {
-            const QModelIndex modelIndex = index(topicIndex);
-            emit dataChanged(modelIndex, modelIndex, changedRoles);
-            emit forumTopicUpdated(forumTopicId, changedRoles);
-        }
+        handleForumTopicRolesChanged(topicIndex, topic->updateFromForumTopicUpdate(update));
     }
 }
 
@@ -216,13 +210,7 @@ void ForumTopicsModel::handleForumTopicInfoUpdated(qlonglong chatId, int forumTo
 
         const int topicIndex = topicIndexMap.value(forumTopicId);
         ForumTopic *topic = this->topics.value(topicIndex);
-        const QVector<int> changedRoles = topic->updateForumTopicInfo(info);
-
-        if (!changedRoles.isEmpty()) {
-            const QModelIndex modelIndex = index(topicIndex);
-            emit dataChanged(modelIndex, modelIndex, changedRoles);
-            emit forumTopicUpdated(forumTopicId, changedRoles);
-        }
+        handleForumTopicRolesChanged(topicIndex, topic->updateForumTopicInfo(info));
     }
 }
 
@@ -294,11 +282,15 @@ void ForumTopicsModel::handleNewMessageReceived(qlonglong chatId, const QVariant
         ForumTopic *topic = topics.at(forumTopicIndex);
         handleForumTopicRolesChanged(forumTopicIndex, topic->updateLastMessage(message));
     } else
-        // Load the topic in case it's not yet loaded but a new message is received, or if it was just created
+        // Load the topic in case it's not yet loaded but a new message is received (which puts it on the top of the list),
+        // or if it was just created
         tdLibWrapper->getForumTopic(chatId, forumTopicId);
 }
 
 void ForumTopicsModel::handleForumTopicRolesChanged(int forumTopicIndex, const QVector<int> changedRoles) {
+    if (changedRoles.isEmpty())
+        return;
+
     // RoleId never changes
     if (changedRoles.contains(ForumTopic::RoleIsPinned)
             || changedRoles.contains(ForumTopic::RoleLastMessageDate)

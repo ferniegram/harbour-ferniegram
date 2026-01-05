@@ -24,7 +24,6 @@ public:
 
 signals:
     void chatIdChanged();
-    void forumTopicUpdated(int forumTopicId, const QVector<int> changedRoles);
     void forumTopicsReceived();
 
 private slots:
