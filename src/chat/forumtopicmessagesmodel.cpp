@@ -90,10 +90,16 @@ void ForumTopicMessagesModel::initialize() {
         initialized = true;
 
         this->forumTopic = new ForumTopic(tdLibWrapper, tdLibWrapper->getUtilities(), pendingForumTopicData);
+        emit forumTopicIdChanged();
+        emit forumTopicNameChanged();
         this->loadMessages(UpdateInitial, lastReadInboxMessageId());
     }
 }
 
+
+int ForumTopicMessagesModel::forumTopicId() const {
+    return forumTopic ? forumTopic->id : 0;
+}
 
 QString ForumTopicMessagesModel::forumTopicName() const {
     return forumTopic ? forumTopic->info().value(NAME).toString() : QString();

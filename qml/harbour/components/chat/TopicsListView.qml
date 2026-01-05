@@ -85,7 +85,7 @@ Item {
                 MessagesView {
                     anchors.fill: parent
                     messagesModel: topicMessagesModel
-                    topicId: {'@type': 'messageTopicForum', 'forum_topic_id': forumTopicId}
+                    topicId: {'@type': 'messageTopicForum', 'forum_topic_id': topicMessagesModel.forumTopicId}
                     forumTopicName: topicMessagesModel.forumTopicName
 
                     ForumTopicMessagesModel {

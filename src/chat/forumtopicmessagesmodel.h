@@ -9,6 +9,7 @@ class ForumTopicMessagesModel : public ReadableMessagesModel {
     Q_PROPERTY(QObject* tdlib MEMBER tdLibWrapper WRITE setTDLibWrapper NOTIFY tdlibChanged)
     Q_PROPERTY(qlonglong chatId MEMBER chatId WRITE setChatId NOTIFY chatIdChanged)
     Q_PROPERTY(QVariantMap forumTopicData READ forumTopicData WRITE setForumTopicData NOTIFY forumTopicDataChanged)
+    Q_PROPERTY(int forumTopicId READ forumTopicId NOTIFY forumTopicIdChanged)
     Q_PROPERTY(QString forumTopicName READ forumTopicName NOTIFY forumTopicNameChanged)
 
 public:
@@ -20,6 +21,7 @@ public:
     QVariantMap forumTopicData() const;
     void setForumTopicData(const QVariantMap &data);
 
+    int forumTopicId() const;
     QString forumTopicName() const;
 
     Q_INVOKABLE virtual bool clear() override;
@@ -30,6 +32,7 @@ signals:
     void forumTopicsModelChanged();
     void chatIdChanged();
     void forumTopicDataChanged();
+    void forumTopicIdChanged();
     void forumTopicNameChanged();
 
 protected:
