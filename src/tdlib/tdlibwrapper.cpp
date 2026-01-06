@@ -1112,13 +1112,15 @@ void TDLibWrapper::toggleChatIsPinnedForFolder(qlonglong chatId, bool isPinned, 
     });
 }
 
-void TDLibWrapper::setChatDraftMessage(qlonglong chatId, qlonglong threadId, qlonglong replyToMessageId, const QString &draft) {
+void TDLibWrapper::setChatDraftMessage(qlonglong chatId, qlonglong replyToMessageId, const QString &draft, const QVariantMap &topicId) {
     LOG("Set Draft Message" << chatId);
     QVariantMap requestObject{
         {_TYPE, "setChatDraftMessage"},
-        {CHAT_ID, chatId},
-        {THREAD_ID, threadId}
+        {CHAT_ID, chatId}
     };
+    if (!topicId.isEmpty())
+        requestObject.insert(TOPIC_ID, topicId);
+
     QVariantMap draftMessage{
         {_TYPE, "draftMessage"},
         {"input_message_text", QVariantMap{

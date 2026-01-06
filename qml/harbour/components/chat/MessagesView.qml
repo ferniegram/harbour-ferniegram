@@ -33,6 +33,7 @@ Column {
     property var topicId
     property string forumTopicName
     property int messageSource: TDLibAPI.MessageSourceAuto
+    property var draftMessage: chatInformation.draft_message
 
     property var selectedMessages: []
     readonly property bool isSelecting: selectedMessages.length > 0
@@ -186,13 +187,10 @@ Column {
         if (isPrepared) return
         isPrepared = true
 
-        if (chatInformation.draft_message) {
-            if(chatInformation.draft_message && chatInformation.draft_message.input_message_text) {
-                newMessageTextField.text = chatInformation.draft_message.input_message_text.text.text
-                if(chatInformation.draft_message.reply_to_message_id) {
-                    tdLibWrapper.getMessage(chatInformation.id, chatInformation.draft_message.reply_to_message_id)
-                }
-            }
+        if (draftMessage && draftMessage.input_message_text) {
+            newMessageTextField.text = draftMessage.input_message_text.text.text
+            if(draftMessage.reply_to_message_id)
+                tdLibWrapper.getMessage(chatInformation.id, draftMessage.reply_to_message_id)
         }
     }
 
@@ -357,7 +355,7 @@ Column {
                 log("Received pinned message")
                 pinnedMessageItem.pinnedMessage = message
             }
-            if (chatInformation.draft_message && messageId === chatInformation.draft_message.reply_to_message_id) {
+            if (draftMessage && messageId === draftMessage.reply_to_message_id) {
                 newMessageInReplyToRow.inReplyToMessage = message
             }
             log("Received message ID: " + messageId)
@@ -372,8 +370,7 @@ Column {
 
     Component.onDestruction: {
         if (chatPage.canSendMessages && !chatPage.isDeletedUser)
-            tdLibWrapper.setChatDraftMessage(chatInformation.id, 0, messagesView.newMessageColumn.replyToMessageId, newMessageTextField.text,
-                newMessageInReplyToRow.inReplyToMessage ? newMessageInReplyToRow.inReplyToMessage.id : 0)
+            tdLibWrapper.setChatDraftMessage(chatInformation.id, messagesView.newMessageColumn.replyToMessageId, newMessageTextField.text, topicId)
         chatActionTimer.stop()
         utilities.stopGeoLocationUpdates()
     }

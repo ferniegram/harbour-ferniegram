@@ -87,11 +87,14 @@ Item {
                     messagesModel: topicMessagesModel
                     topicId: {'@type': 'messageTopicForum', 'forum_topic_id': topicMessagesModel.forumTopicId}
                     forumTopicName: topicMessagesModel.forumTopicName
+                    draftMessage: forumTopicData.draft_message
 
                     ForumTopicMessagesModel {
                         id: topicMessagesModel
                         tdlib: tdLibWrapper
                     }
+
+                    Component.onCompleted: prepareView()
                 }
             }
         }

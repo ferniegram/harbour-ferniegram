@@ -309,7 +309,7 @@ public:
     Q_INVOKABLE void toggleChatIsMarkedAsUnread(qlonglong chatId, bool isMarkedAsUnread);
     Q_INVOKABLE void toggleChatIsPinned(qlonglong chatId, bool isPinned, bool archive = false);
     Q_INVOKABLE void toggleChatIsPinnedForFolder(qlonglong chatId, bool isPinned, int folderId);
-    Q_INVOKABLE void setChatDraftMessage(qlonglong chatId, qlonglong threadId, qlonglong replyToMessageId, const QString &draft);
+    Q_INVOKABLE void setChatDraftMessage(qlonglong chatId, qlonglong replyToMessageId, const QString &draft, const QVariantMap &topicId = QVariantMap());
     Q_INVOKABLE void getInlineQueryResults(qlonglong botUserId, qlonglong chatId, const QVariantMap &userLocation, const QString &query, const QString &offset, const QString &extra);
     Q_INVOKABLE void sendInlineQueryResultMessage(qlonglong chatId, qlonglong threadId, qlonglong replyToMessageId, const QString &queryId, const QString &resultId);
     Q_INVOKABLE void sendBotStartMessage(qlonglong botUserId, qlonglong chatId, const QString &parameter, const QString &extra);
