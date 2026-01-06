@@ -478,7 +478,7 @@ void TDLibReceiver::processMessageSendSucceeded(const QVariantMap &receivedInfor
     const qlonglong chatId = message.value(CHAT_ID).toLongLong();
     const qlonglong messageId = message.value(ID).toLongLong();
     LOG("Message send succeeded" << messageId << oldMessageId);
-    emit messageSendSucceeded(chatId, messageId, oldMessageId, cleanupMap(message));
+    emit messageSendSucceeded(chatId, oldMessageId, messageId, cleanupMap(message));
 }
 
 void TDLibReceiver::processUpdateActiveNotifications(const QVariantMap &receivedInformation)
