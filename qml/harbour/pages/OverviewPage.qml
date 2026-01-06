@@ -312,6 +312,8 @@ Page {
                             id: chatsView
                             anchors.fill: parent
                             model: chat_list_model
+                            chatListType: type
+                            folderId: folder_id
 
                             function readChatList() {
                                 if (type == ChatFoldersModel.FolderFolder)

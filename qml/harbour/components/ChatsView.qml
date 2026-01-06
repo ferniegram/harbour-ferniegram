@@ -33,7 +33,8 @@ SilicaListView {
     Behavior on opacity { FadeAnimation {} }
 
     //property bool replacePage
-    property bool inArchive
+    property int chatListType: ChatFoldersModel.FolderMain
+    property int folderId
 
     function resetFocus() {
         if (chatSearchField.text === "") {
@@ -52,7 +53,8 @@ SilicaListView {
     delegate: ChatListViewItem {
         ownUserId: overviewPage.ownUserId
         verificationStatus: verification_status
-        inArchive: chatListView.inArchive
+        chatListType: chatListView.chatListType
+        folderId: chatListView.folderId
         onClicked: {
             pageStack.push(Qt.resolvedUrl("../pages/ChatPage.qml"), {
                 chatInformation : display,
