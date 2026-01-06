@@ -41,6 +41,8 @@ void ForumTopicMessagesModel::setupTDLibWrapper() {
 void ForumTopicMessagesModel::handleRolesUpdated(const QVector<int> &roles) {
     if (roles.contains(ForumTopic::RoleName))
         emit forumTopicNameChanged();
+
+    emit forumTopicDataChanged();
 }
 
 void ForumTopicMessagesModel::handleForumTopicUpdated(qlonglong chatId, int forumTopicId, const QVariantMap &update) {
@@ -91,6 +93,7 @@ void ForumTopicMessagesModel::initialize() {
 
         this->forumTopic = new ForumTopic(tdLibWrapper, tdLibWrapper->getUtilities(), pendingForumTopicData);
         emit forumTopicIdChanged();
+        emit forumTopicDataChanged();
         emit forumTopicNameChanged();
         this->loadMessages(UpdateInitial, lastReadInboxMessageId());
     }

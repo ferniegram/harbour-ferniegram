@@ -404,13 +404,13 @@ Column {
 
         onTriggered: {
             log("scroll position changed, message index: ", lastQueuedIndex)
-            log("unread count: ", chatInformation.unread_count)
+            log("unread count: ", unreadCount)
             var modelIndex = chatProxyModel.mapRowToSource(lastQueuedIndex)
             var messageToRead = messagesModel.getMessage(modelIndex)
             if (messageToRead['@type'] === "sponsoredMessage") {
                 log("sponsored message to read: ", messageToRead.id)
                 tdLibWrapper.viewMessage(chatInformation.id, messageToRead.message_id, false, messageSource)
-            } else if (chatInformation.unread_count > 0 && lastQueuedIndex > -1) {
+            } else if (unreadCount > 0 && lastQueuedIndex > -1) {
                 if (messageToRead) {
                     log("message to read: ", messageToRead.id)
                     var messageId = messageToRead.id
@@ -427,7 +427,7 @@ Column {
                 }
                 lastQueuedIndex = -1
             }
-            if (chatInformation.unread_count === 0) {
+            if (unreadCount === 0) {
                 tdLibWrapper.readAllChatMentions(chatInformation.id)
                 tdLibWrapper.readAllChatReactions(chatInformation.id)
             }
@@ -541,7 +541,7 @@ Column {
             function handleScrollPositionChanged() {
                 log("Current position: ", chatView.contentY)
                 log("Contains sponsored messages?", containsSponsoredMessages)
-                if (chatHeader.visible && ( chatInformation.unread_count > 0 || containsSponsoredMessages ) ) {
+                if (chatHeader.visible && ( unreadCount > 0 || containsSponsoredMessages ) ) {
                     var bottomIndex = chatView.indexAt(chatView.contentX, ( chatView.contentY + chatView.height - Theme.horizontalPageMargin ))
                     if (bottomIndex > -1)
                         viewMessageTimer.queueViewMessage(bottomIndex)

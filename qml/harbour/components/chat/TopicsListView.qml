@@ -103,6 +103,7 @@ Item {
                         forumTopicName: topicMessagesModel.forumTopicName
                         messageSource: TDLibAPI.MessageSourceForumTopicHistory
                         draftMessage: forumTopicData.draft_message
+                        unreadCount: forumTopicData.unread_count
 
                         ForumTopicMessagesModel {
                             id: topicMessagesModel
