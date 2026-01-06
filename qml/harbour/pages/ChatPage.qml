@@ -145,7 +145,7 @@ Page {
 
     function resetFocus() {
         if (searchInChatField.text === "")
-            chatHeader.visible = true
+            searchInChatItem.visible = false
         searchInChatField.focus = false
         chatPage.focus = true
     }
@@ -373,10 +373,10 @@ Page {
 
             MenuItem {
                 id: searchInChatMenuItem
-                visible: !chatPage.isSecretChat && !chatPage.viewAsTopics && chatHeader.visible
+                visible: !chatPage.isSecretChat && !chatPage.viewAsTopics && !searchInChatItem.visible
                 onClicked: {
                     // This automatically shows the search field as well
-                    chatHeader.visible = false
+                    searchInChatItem.visible = true
                     searchInChatField.focus = true
                 }
                 text: qsTr("Search in Chat")
@@ -388,70 +388,106 @@ Page {
             width: parent.width
             height: parent.height
 
-            ChatHeader {
-                id: chatHeader
+            Item {
+                width: parent.width
+                height: chatHeader.height
 
-                isSecret: chatPage.isSecretChat
-                chatNameText.text: chatPage.isDeletedUser ? qsTr("Deleted User") :
-                                                       chatInformation.title !== "" ?
-                                                           Emoji.emojify(utilities.fixReservedHtmlCharacters(chatInformation.title), chatNameText.font.pixelSize)
-                                                         : qsTr("Unknown")
-                chatBadges.verificationStatus: chatGroupInformation ? chatGroupInformation.verification_status : null
+                ChatHeader {
+                    id: chatHeader
 
-                property bool _reloadStatus
-                function updateStatusText() { _reloadStatus = !_reloadStatus }
-                chatStatusText.text: {
-                    // https://stackoverflow.com/questions/48325115/qml-programmatically-update-binding
-                    if (_reloadStatus && !_reloadStatus) return ''
+                    isSecret: chatPage.isSecretChat
+                    chatNameText.text: chatPage.isDeletedUser ? qsTr("Deleted User") :
+                                                           chatInformation.title !== "" ?
+                                                               Emoji.emojify(utilities.fixReservedHtmlCharacters(chatInformation.title), chatNameText.font.pixelSize)
+                                                             : qsTr("Unknown")
+                    chatBadges.verificationStatus: chatGroupInformation ? chatGroupInformation.verification_status : null
 
-                    var status = Functions.getChatActionsText(chatManager.chatActionsByChats, chatManager.chatActionsByUsers, isPrivateChat || isSecretChat)
-                    if (status) return status
+                    property bool _reloadStatus
+                    function updateStatusText() { _reloadStatus = !_reloadStatus }
+                    chatStatusText.text: {
+                        // https://stackoverflow.com/questions/48325115/qml-programmatically-update-binding
+                        if (_reloadStatus && !_reloadStatus) return ''
 
-                    if (isBasicGroup || isSuperGroup)
-                        return Functions.getGroupStatusText(chatGroupInformation.member_count, chatOnlineMemberCount, isChannel)
+                        var status = Functions.getChatActionsText(chatManager.chatActionsByChats, chatManager.chatActionsByUsers, isPrivateChat || isSecretChat)
+                        if (status) return status
+
+                        if (isBasicGroup || isSuperGroup)
+                            return Functions.getGroupStatusText(chatGroupInformation.member_count, chatOnlineMemberCount, isChannel)
 
 
-                    status = Functions.getChatPartnerStatusText(chatPartnerInformation.status['@type'], chatPartnerInformation.status.was_online, chatPartnerInformation.is_support, chatInformation.id, timepointStatus)
-                    if (chatPage.secretChatDetails) {
-                        var secretChatStatus = Functions.getSecretChatStatus(chatPage.secretChatDetails)
-                        if (status && secretChatStatus)
-                            status += " - "
-                        if (secretChatStatus)
-                            status += secretChatStatus
+                        status = Functions.getChatPartnerStatusText(chatPartnerInformation.status['@type'], chatPartnerInformation.status.was_online, chatPartnerInformation.is_support, chatInformation.id, timepointStatus)
+                        if (chatPage.secretChatDetails) {
+                            var secretChatStatus = Functions.getSecretChatStatus(chatPage.secretChatDetails)
+                            if (status && secretChatStatus)
+                                status += " - "
+                            if (secretChatStatus)
+                                status += secretChatStatus
+                        }
+                        return status
                     }
-                    return status
-                }
 
-                ProfileThumbnail {
-                    id: chatPictureThumbnail
-                    parent: chatHeader.chatPictureContainer
-                    replacementStringHint: chatNameText.text
-                    width: parent.height
-                    height: parent.height
+                    ProfileThumbnail {
+                        id: chatPictureThumbnail
+                        parent: chatHeader.chatPictureContainer
+                        replacementStringHint: chatNameText.text
+                        width: parent.height
+                        height: parent.height
 
-                    // Setting it directly may cause an stale state for the thumbnail in case the chat page
-                    // was previously loaded with a picture and now it doesn't have one. Instead setting it
-                    // when the ChatModel indicates a change. This also avoids flickering when the page is loaded...
-                    Connections {
-                        target: chatManager
-                        ignoreUnknownSignals: true
-                        onSmallPhotoChanged:
-                            chatPictureThumbnail.photoData = chatManager.smallPhoto
+                        // Setting it directly may cause an stale state for the thumbnail in case the chat page
+                        // was previously loaded with a picture and now it doesn't have one. Instead setting it
+                        // when the ChatModel indicates a change. This also avoids flickering when the page is loaded...
+                        Connections {
+                            target: chatManager
+                            ignoreUnknownSignals: true
+                            onSmallPhotoChanged:
+                                chatPictureThumbnail.photoData = chatManager.smallPhoto
+                        }
+                        // UPD 2025 from roundedrectangle:
+                        // for some reason when pushing the page without animation (e.g. from notification)
+                        // it doesn't show the picture now, with this line it works: (Connections is still needed for some reason)
+                        photoData: chatManager.smallPhoto
                     }
-                    // UPD 2025 from roundedrectangle:
-                    // for some reason when pushing the page without animation (e.g. from notification)
-                    // it doesn't show the picture now, with this line it works: (Connections is still needed for some reason)
-                    photoData: chatManager.smallPhoto
+
+                    onClicked: {
+                        if (messagesView && messagesView.isSelecting)
+                            messagesView.selectedMessages = []
+                        else pageStack.navigateForward()
+                    }
+                    onPressAndHold:
+                        if (isPrivateChat || isSecretChat)
+                            timepointStatus = !timepointStatus
+
+                    textContainer.visible: !searchInChatField.visible
                 }
 
-                onClicked: {
-                    if (messagesView && messagesView.isSelecting)
-                        messagesView.selectedMessages = []
-                    else pageStack.navigateForward()
+                Item {
+                    id: searchInChatItem
+                    parent: chatHeader.container
+                    width: chatHeader.textContainer.width
+                    anchors {
+                        bottom: parent.bottom
+                        //bottomMargin: chatHeader.textContainer.anchors.bottomMargin
+                    }
+                    height: searchInChatField.height
+                    visible: false
+                    opacity: visible ? 1 : 0
+                    Behavior on opacity { FadeAnimation {} }
+
+                    SearchField {
+                        id: searchInChatField
+                        visible: false
+                        width: visible ? parent.width : 0
+                        placeholderText: qsTr("Search in chat...")
+                        active: searchInChatItem.visible
+                        canHide: text === ""
+
+                        onTextChanged: searchInChatTimer.restart()
+                        onHideClicked: resetFocus()
+
+                        EnterKey.iconSource: "image://theme/icon-m-enter-close"
+                        EnterKey.onClicked: resetFocus()
+                    }
                 }
-                onPressAndHold:
-                    if (isPrivateChat || isSecretChat)
-                        timepointStatus = !timepointStatus
             }
 
             ChatBotSponsoredMessageItem {

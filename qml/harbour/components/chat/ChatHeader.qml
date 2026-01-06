@@ -13,11 +13,13 @@ BackgroundItem {
     property alias chatStatusText: chatStatusText
     property alias chatBadges: chatBadges
     property alias chatPictureContainer: chatPictureContainer
+    property alias textContainer: textContainer
+    property alias container: row
 
     Row {
         id: row
         width: parent.width - (3 * Theme.horizontalPageMargin)
-        height: chatOverviewItem.height +
+        height: textContainer.height +
                 ( isPortrait ?
                         ( Theme.paddingMedium + (!Screen.hasCutouts ? Theme.paddingMedium : Screen.topCutout.height) )
                     : Theme.paddingSmall * 2
@@ -27,8 +29,8 @@ BackgroundItem {
 
         Item {
             id: chatPictureContainer
-            width: chatOverviewItem.height
-            height: chatOverviewItem.height
+            width: textContainer.height
+            height: textContainer.height
             anchors.bottom: parent.bottom
             anchors.bottomMargin: isPortrait ? Theme.paddingMedium : Theme.paddingSmall
 
@@ -52,7 +54,7 @@ BackgroundItem {
         }
 
         Item {
-            id: chatOverviewItem
+            id: textContainer
             opacity: visible ? 1 : 0
             Behavior on opacity { FadeAnimation {} }
             width: parent.width - chatPictureContainer.width - Theme.paddingMedium
@@ -68,7 +70,7 @@ BackgroundItem {
                 Label {
                     id: chatNameText
                     anchors.verticalCenter: parent.verticalCenter
-                    width: Math.min(implicitWidth, chatOverviewItem.width - chatBadges.width - parent.spacing)
+                    width: Math.min(implicitWidth, textContainer.width - chatBadges.width - parent.spacing)
                     textFormat: Text.StyledText
                     font.pixelSize: isPortrait ? Theme.fontSizeLarge : Theme.fontSizeMedium
                     font.family: Theme.fontFamilyHeading
@@ -99,32 +101,6 @@ BackgroundItem {
                 color: header.pressed ? Theme.secondaryHighlightColor : Theme.secondaryColor
                 truncationMode: TruncationMode.Fade
                 maximumLineCount: 1
-            }
-        }
-
-        Item {
-            id: searchInChatItem
-            visible: !chatOverviewItem.visible
-            opacity: visible ? 1 : 0
-            Behavior on opacity { FadeAnimation {} }
-            width: parent.width - chatPictureContainer.width - Theme.paddingMedium
-            height: searchInChatField.height
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: isPortrait ? Theme.paddingSmall : 0
-
-            SearchField {
-                id: searchInChatField
-                visible: false
-                width: visible ? parent.width : 0
-                placeholderText: qsTr("Search in chat...")
-                active: searchInChatItem.visible
-                canHide: text === ""
-
-                onTextChanged: searchInChatTimer.restart()
-                onHideClicked: resetFocus()
-
-                EnterKey.iconSource: "image://theme/icon-m-enter-close"
-                EnterKey.onClicked: resetFocus()
             }
         }
     }
