@@ -13,6 +13,12 @@ QtObject {
             appNotification.show(utilities.getMessageContentText(text, Utilities.MessageTextSimple))
     }
 
+    property Connections c2: Connections {
+        target: Qt.application
+        onStateChanged:
+            tdLibWrapper.options.online = Qt.application.state === Qt.ApplicationActive
+    }
+
     Component.onCompleted: {
         Functions.setGlobals({
             tdLibWrapper: tdLibWrapper,

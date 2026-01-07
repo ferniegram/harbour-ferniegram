@@ -130,6 +130,8 @@ namespace {
     const QString SOURCE("source");
     const QString FORUM_TOPIC_ID("forum_topic_id");
     const QString TYPE_GET_FORUM_TOPC("getForumTopic");
+    const QString NAME("name");
+    const QString TYPE_SET_OPTION("setOption");
 
     const QStringList ALL_FILE_TYPES(QStringList()
                                      << "fileTypeAnimation"
@@ -221,11 +223,14 @@ TDLibWrapper::TDLibWrapper(int argc, char **argv, AppSettings *settings, MceInte
 
     connect(networkConfigurationManager, &QNetworkConfigurationManager::configurationChanged, this, &TDLibWrapper::handleNetworkConfigurationChanged);
 
+    connect(options, &QQmlPropertyMap::valueChanged, this, &TDLibWrapper::handleOptionsValueChanged);
+
     this->setLogVerbosityLevel();
     this->setOptionInteger("notification_group_count_max", 5);
     // set initial option states
     this->handleStorageOptimizerChanged();
     this->handleSendMarkdownChanged();
+    this->setOptionBoolean("online", true);
 }
 
 TDLibWrapper::~TDLibWrapper() {
@@ -668,7 +673,15 @@ void TDLibWrapper::getChatSponsoredMessages(qlonglong chatId) {
     });
 }
 
-void TDLibWrapper::setOptionInteger(const QString &optionName, int optionValue) {
+void TDLibWrapper::setOption(const QString &name, const QString &type, const QVariant &value) {
+    sendRequest({
+        {_TYPE, TYPE_SET_OPTION},
+        {NAME, name},
+        {VALUE, QVariantMap{{_TYPE, type}, {VALUE, value}}}
+    });
+}
+
+void TDLibWrapper::setOptionInteger(const QString &optionName, qlonglong optionValue) {
     LOG("Setting integer option" << optionName << optionValue);
     setOption(optionName, "optionValueInteger", optionValue);
 }
@@ -678,12 +691,37 @@ void TDLibWrapper::setOptionBoolean(const QString &optionName, bool optionValue)
     setOption(optionName, "optionValueBoolean", optionValue);
 }
 
-void TDLibWrapper::setOption(const QString &name, const QString &type, const QVariant &value) {
-    sendRequest(QVariantMap{
-        {_TYPE, "setOption"},
-        {"name", name},
-        {VALUE, QVariantMap{{_TYPE, type}, {VALUE, value}}}
+void TDLibWrapper::setOptionString(const QString &optionName, const QString &optionValue) {
+    LOG("Setting string option" << optionName << optionValue);
+    setOption(optionName, "optionValueString", optionValue);
+}
+
+void TDLibWrapper::resetOption(const QString &optionName) {
+    LOG("Resetting option" << optionName);
+    sendRequest({
+        {_TYPE, TYPE_SET_OPTION},
+        {NAME, optionName},
+        {VALUE, QVariantMap{{_TYPE, "optionValueEmpty"}}}
     });
+}
+
+void TDLibWrapper::handleOptionsValueChanged(const QString &name, const QVariant &value) {
+    switch (value.userType()) {
+    case QMetaType::Bool:
+        setOptionBoolean(name, value.toBool());
+        break;
+    case QMetaType::Int:
+    case QMetaType::Long:
+    case QMetaType::LongLong:
+        setOptionInteger(name, value.toLongLong());
+        break;
+    case QMetaType::UnknownType:
+        resetOption(name);
+        break;
+    default:
+        setOptionString(name, value.toString());
+        break;
+    }
 }
 
 void TDLibWrapper::setChatNotificationSettings(const QString &chatId, const QVariantMap &notificationSettings) {

@@ -261,8 +261,10 @@ public:
     Q_INVOKABLE void getCallbackQueryAnswer(const QString &chatId, const QString &messageId, const QVariantMap &payload);
     Q_INVOKABLE void getChatPinnedMessage(qlonglong chatId);
     Q_INVOKABLE void getChatSponsoredMessages(qlonglong chatId);
-    Q_INVOKABLE void setOptionInteger(const QString &optionName, int optionValue);
+    Q_INVOKABLE void setOptionInteger(const QString &optionName, qlonglong optionValue);
     Q_INVOKABLE void setOptionBoolean(const QString &optionName, bool optionValue);
+    Q_INVOKABLE void setOptionString(const QString &optionName, const QString &optionValue);
+    Q_INVOKABLE void resetOption(const QString &optionName);
     Q_INVOKABLE void setChatNotificationSettings(const QString &chatId, const QVariantMap &notificationSettings);
     Q_INVOKABLE void editMessageText(const QString &chatId, const QString &messageId, const QString &message);
     Q_INVOKABLE void editMessageCaption(const QString &chatId, const QString &messageId, const QString &caption);
@@ -512,6 +514,9 @@ public slots:
     void handleOpenWithChanged();
     void handleStorageOptimizerChanged();
     void handleSendMarkdownChanged();
+
+    // options QQmlPropertyMap
+    void handleOptionsValueChanged(const QString &name, const QVariant &value);
 
     void handleAuthorizationStateChanged(const QString &authorizationState, const QVariantMap authorizationStateData);
     void handleOptionUpdated(const QString &optionName, const QVariant &optionValue);
