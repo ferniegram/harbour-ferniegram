@@ -301,6 +301,14 @@ AccordionItem {
                 onClicked: appSettings.forceQtAudioRecorder = !checked
                 visible: NO_HARBOUR_COMPLIANCE
             }
+
+            TextSwitch {
+                width: parent.columnWidth
+                checked: appSettings.forceAllowAISummary
+                text: qsTr("Forcefully allow AI summary")
+                automaticCheck: false
+                onClicked: appSettings.forceAllowAISummary = !checked
+            }
         }
     }
 }

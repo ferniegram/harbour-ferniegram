@@ -80,6 +80,7 @@ public:
     BOOL_SETTING_DEFINE(chatFoldersTabBarShowIcons)
     BOOL_SETTING_DEFINE(forceQtAudioRecorder)
     BOOL_SETTING_DEFINE(downscaleAnimatedStickers)
+    BOOL_SETTING_DEFINE(forceAllowAISummary)
 
 // FIXME: macros should handle signals too
 signals:
@@ -119,6 +120,7 @@ signals:
     void chatFoldersTabBarShowIconsChanged();
     void forceQtAudioRecorderChanged();
     void downscaleAnimatedStickersChanged();
+    void forceAllowAISummaryChanged();
 
 private:
     QSettings settings;

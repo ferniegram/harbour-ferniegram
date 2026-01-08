@@ -81,6 +81,7 @@ namespace {
     const QString CHAT_FOLDERS_TAB_BAR_SHOW_ICONS("chatFoldersTabBarShowIcons");
     const QString FORCE_QT_AUDIO_RECORDER("forceQtAudioRecorder");
     const QString DOWNSCALE_ANIMATED_STICKERS("downscaleAnimatedStickers");
+    const QString FORCE_ALLOW_AI_SUMMARY("forceAllowAISummary");
 }
 
 AppSettings::AppSettings(QObject *parent) :
@@ -139,3 +140,4 @@ BOOL_SETTING(chatFoldersTabBarOnBottom, CHAT_FOLDERS_TAB_BAR_ON_BOTTOM)
 BOOL_SETTING(chatFoldersTabBarShowIcons, CHAT_FOLDERS_TAB_BAR_SHOW_ICONS)
 BOOL_SETTING(forceQtAudioRecorder, FORCE_QT_AUDIO_RECORDER)
 BOOL_SETTING(downscaleAnimatedStickers, DOWNSCALE_ANIMATED_STICKERS)
+BOOL_SETTING(forceAllowAISummary, FORCE_ALLOW_AI_SUMMARY)
