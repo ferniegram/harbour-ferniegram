@@ -780,7 +780,7 @@ ListItem {
                         Flow {
                             width: parent.width
                             spacing: Theme.paddingSmall
-                            layoutDirection: Qt.RightToLeft
+                            layoutDirection: isOwnMessage ? Qt.RightToLeft : Qt.LeftToRight
                             Repeater {
                                 model: reactions
                                 Rectangle {
