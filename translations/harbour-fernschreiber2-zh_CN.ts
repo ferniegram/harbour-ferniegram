@@ -257,13 +257,6 @@
     </message>
 </context>
 <context>
-    <name>ChatHeader</name>
-    <message>
-        <source>Search in chat...</source>
-        <translation type="unfinished">搜索对话内容…</translation>
-    </message>
-</context>
-<context>
     <name>ChatInformationPageContent</name>
     <message>
         <source>Leave Chat</source>
@@ -626,6 +619,10 @@
         <source>View as Topics</source>
         <comment>view a forum chat as topics</comment>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search in chat...</source>
+        <translation type="unfinished">搜索对话内容…</translation>
     </message>
 </context>
 <context>
@@ -1049,6 +1046,22 @@
         <comment>Short version for &quot;Edit Message&quot;</comment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Message deleted only for yourself</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete for me and %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete for everyone</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete just for me</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MessageListViewItemSimple</name>
@@ -1112,6 +1125,17 @@
         <translation>
             <numerusform>总计 %Ln 次投票</numerusform>
         </translation>
+    </message>
+</context>
+<context>
+    <name>MessageSticker</name>
+    <message>
+        <source>Remove from Favorites</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to Favorites</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1959,6 +1983,10 @@
         <source>Force QtMultimedia-based audio recorder</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Forcefully allow AI summary</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SettingsPage</name>
@@ -2284,27 +2312,29 @@
 <context>
     <name>StickerPicker</name>
     <message>
-        <source>Recently used</source>
-        <translation>最近使用</translation>
-    </message>
-    <message>
         <source>Removing sticker set</source>
         <translation>正在移除表情包</translation>
     </message>
     <message>
-        <source>Sticker set successfully removed!</source>
-        <translation>表情包已成功移除！</translation>
+        <source>Recently used</source>
+        <comment>stickers</comment>
+        <translation type="unfinished">最近使用</translation>
+    </message>
+    <message>
+        <source>Favorite</source>
+        <comment>stickers</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>StickerSetOverlay</name>
     <message>
-        <source>Sticker set successfully installed!</source>
-        <translation>表情包已成功安装！</translation>
+        <source>Sticker set installed</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Sticker set successfully removed!</source>
-        <translation>表情包已成功移除！</translation>
+        <source>Sticker set removed</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2405,6 +2435,27 @@
     </message>
     <message>
         <source>Device Language</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Summarize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Translate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AI Summary (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AI Summary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default</source>
+        <comment>Default language for AI summary</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>

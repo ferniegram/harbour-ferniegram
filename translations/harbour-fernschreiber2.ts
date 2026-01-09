@@ -258,13 +258,6 @@
     </message>
 </context>
 <context>
-    <name>ChatHeader</name>
-    <message>
-        <source>Search in chat...</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>ChatInformationPageContent</name>
     <message>
         <source>Leave Chat</source>
@@ -629,6 +622,10 @@
     <message>
         <source>View as Topics</source>
         <comment>view a forum chat as topics</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search in chat...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1056,6 +1053,22 @@
         <comment>Short version for &quot;Edit Message&quot;</comment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Message deleted only for yourself</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete for me and %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete for everyone</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete just for me</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MessageListViewItemSimple</name>
@@ -1123,6 +1136,17 @@
             <numerusform>%Ln vote total</numerusform>
             <numerusform>%Ln votes total</numerusform>
         </translation>
+    </message>
+</context>
+<context>
+    <name>MessageSticker</name>
+    <message>
+        <source>Remove from Favorites</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to Favorites</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1982,6 +2006,10 @@
         <source>Force QtMultimedia-based audio recorder</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Forcefully allow AI summary</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SettingsPage</name>
@@ -2309,26 +2337,28 @@
 <context>
     <name>StickerPicker</name>
     <message>
-        <source>Recently used</source>
-        <translation>Recently used</translation>
-    </message>
-    <message>
         <source>Removing sticker set</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Sticker set successfully removed!</source>
+        <source>Recently used</source>
+        <comment>stickers</comment>
+        <translation type="unfinished">Recently used</translation>
+    </message>
+    <message>
+        <source>Favorite</source>
+        <comment>stickers</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>StickerSetOverlay</name>
     <message>
-        <source>Sticker set successfully installed!</source>
+        <source>Sticker set installed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Sticker set successfully removed!</source>
+        <source>Sticker set removed</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2432,6 +2462,27 @@
     </message>
     <message>
         <source>Device Language</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Summarize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Translate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AI Summary (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AI Summary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default</source>
+        <comment>Default language for AI summary</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
