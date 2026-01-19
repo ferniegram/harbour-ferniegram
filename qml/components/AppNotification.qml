@@ -28,7 +28,7 @@ Rectangle {
 
     property var clickedAction // using signals would be harder
 
-    function show(message, onClicked, buttonText, asteroidMessage, asteroidIcon) {
+    function show(message, onClicked, buttonText) {
         Debug.log("In-app notification", message)
         postAnimationResetTimer.stop()
         text.text = Emoji.emojify(message, Theme.fontSizeExtraSmall)
