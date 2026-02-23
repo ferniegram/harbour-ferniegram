@@ -635,7 +635,7 @@ ListItem {
                     Text {
                         id: messageText
                         width: parent.width
-                        text: Emoji.emojify(Functions.getMessageText(myMessage, false, page.myUserId, false, Theme.fontSizeSmall), Theme.fontSizeSmall)
+                        text: Emoji.emojify(utilities.getMessageText(myMessage, Utilities.MessageTextDefault), Theme.fontSizeSmall)
                         font.pixelSize: Theme.fontSizeSmall
                         color: messageListItem.textColor
                         wrapMode: Text.Wrap
