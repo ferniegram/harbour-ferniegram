@@ -953,13 +953,6 @@
     </message>
 </context>
 <context>
-    <name>MainShared</name>
-    <message>
-        <source>Link unsupported: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>MessageDice</name>
     <message>
         <source>Send a %1 emoji to any chat to try your luck.</source>
@@ -3268,6 +3261,13 @@
     <message>
         <source>Request to join sent</source>
         <comment>group</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>harbour-fernschreiber2</name>
+    <message>
+        <source>Link unsupported: %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

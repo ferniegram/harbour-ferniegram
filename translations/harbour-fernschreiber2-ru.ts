@@ -971,13 +971,6 @@
     </message>
 </context>
 <context>
-    <name>MainShared</name>
-    <message>
-        <source>Link unsupported: %1</source>
-        <translation>Ссылка не поддерживается: %1</translation>
-    </message>
-</context>
-<context>
     <name>MessageDice</name>
     <message>
         <source>Send a %1 emoji to any chat to try your luck.</source>
@@ -3341,6 +3334,13 @@
         <source>Request to join sent</source>
         <comment>group</comment>
         <translation>Запрос на принятие в группу отправлен</translation>
+    </message>
+</context>
+<context>
+    <name>harbour-fernschreiber2</name>
+    <message>
+        <source>Link unsupported: %1</source>
+        <translation type="unfinished">Ссылка не поддерживается: %1</translation>
     </message>
 </context>
 </TS>

@@ -36,7 +36,21 @@ ApplicationWindow {
         onPleaseOpenUrl: appWindow.activate()
     }
 
-    MainShared {}
+    Connections {
+        target: tdLibWrapper
+        onOpenFileExternally: Qt.openUrlExternally(filePath)
+        onErrorReceived: Functions.handleErrorMessage(code, message, extra)
+        onServiceNotificationReceived: appNotification.show(utilities.getMessageContentText(content, Utilities.MessageTextSimple))
+        onLinkUnsupportedByApp: appNotification.show(qsTr("Link unsupported: %1").arg(type))
+        onDeepLinkInfoReceived:
+            appNotification.show(utilities.getMessageContentText(text, Utilities.MessageTextSimple))
+    }
+
+    Connections {
+        target: Qt.application
+        onStateChanged:
+            tdLibWrapper.options.online = Qt.application.state === Qt.ApplicationActive
+    }
 
     AppNotification {
         id: appNotification
@@ -49,5 +63,13 @@ ApplicationWindow {
                   case Orientation.PortraitInverted: return 180
                   case Orientation.LandscapeInverted: return 270
                   }
+    }
+
+    Component.onCompleted: {
+        Functions.setGlobals({
+            tdLibWrapper: tdLibWrapper,
+            appNotification: appNotification,
+            utilities: utilities,
+        })
     }
 }
