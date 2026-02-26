@@ -173,14 +173,14 @@ MessageContentBase {
                     onClicked: pageStack.push(Qt.resolvedUrl("../../pages/MediaAlbumPage.qml"), {
                         chatManager: chatManager,
                         message: rawMessage,
-                        model: function() {
+                        searchMessagesFilter: function() {
                             switch (rawMessage.content['@type']) {
                             case 'messageVideoNote':
-                                return chatManager.videoNoteMessagesModel
+                                return TDLibAPI.SearchMessagesFilterVideoNote
                             case 'messageAnimation':
-                                return chatManager.animationMessagesModel
+                                return TDLibAPI.SearchMessagesFilterAnimation
                             default:
-                                return chatManager.photoAndVideoMessagesModel
+                                return TDLibAPI.SearchMessagesFilterPhotoAndVideo
                             }
                         }(),
                         singleElement: isSponsored

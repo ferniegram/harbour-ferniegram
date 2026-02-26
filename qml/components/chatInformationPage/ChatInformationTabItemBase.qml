@@ -29,8 +29,7 @@ TabItem {
     property alias loadingVisible: busyLabel.running
     property alias loadingText: busyLabel.text
 
-    property int tabIndex: index
-    property bool tabActive: index === tabView.currentIndex
+    property bool tabActive: tabIndex === tabView.currentIndex
     property bool active: Qt.application.active && chatInformationPage.status === PageStatus.Active && tabActive
 
     BusyLabel {

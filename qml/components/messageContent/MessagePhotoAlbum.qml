@@ -18,6 +18,7 @@
 */
 import QtQuick 2.6
 import Sailfish.Silica 1.0
+import App.Logic 1.0
 import "../"
 
 AlbumMessageContentBase {
@@ -30,8 +31,9 @@ AlbumMessageContentBase {
     function openDetail(index) {
         pageStack.push(Qt.resolvedUrl("../../pages/MediaAlbumPage.qml"), {
                             chatManager: chatManager,
-                            message: albumMessages[index || 0]
-                       })
+                            message: albumMessages[index || 0],
+                            searchMessagesFilter: TDLibAPI.SearchMessagesFilterPhotoAndVideo
+                        })
     }
     onClicked: openDetail(-1)
 

@@ -35,8 +35,22 @@ TabView {
 
     wrapMode: PagedView.NoWrap
 
-    // Use a custom model to make it easy to add tabs dynamically with model.append()
+    // Use a custom model to make it easy to add tabs dynamically
     model: ListModel {}
+
+    tabComponent: Component {
+        ChatInformationTabItemMediaBase {
+            model:
+                switch (tabModel.tabData.filter) {
+                case TDLibAPI.SearchMessagesFilterPhotoAndVideo:
+                    return photoAndVideoModel
+                case TDLibAPI.SearchMessagesFilterAnimation:
+                    return animationModel
+                case TDLibAPI.SearchMessagesFilterVideoNote:
+                    return videoNoteModel
+                }
+        }
+    }
 
     Binding {
         target: tabView.tabBarItem
@@ -44,7 +58,7 @@ TabView {
         value: Theme.primaryColor
     }
 
-    function insertTab(name, title, icon) {
+    function insertTab(name, title, icon, data) {
         var insertIndex = 0
         var tabOrder = [
                     'MembersGroups',
@@ -65,12 +79,19 @@ TabView {
             }
         }
 
-        model.insert(insertIndex, {
+        var tab = {
             name: name,
-            source: Qt.resolvedUrl('ChatInformationTabItem' + name + '.qml'),
             title: title,
-            icon: icon
-        })
+            icon: icon,
+            source: '',
+            tabData: {filter: -1}
+        }
+        if (data)
+            tab.tabData = data
+        else
+            tab.source = Qt.resolvedUrl('ChatInformationTabItem' + name + '.qml')
+
+        model.insert(insertIndex, tab)
 
         return insertIndex
     }
@@ -81,22 +102,28 @@ TabView {
                 model.remove(i)
     }
 
-    Connections {
-        target: chatManager.photoAndVideoMessagesModel
+    InvertedMediaMessagesModel {
+        id: photoAndVideoModel
+        tdlib: tdLibWrapper
+        filter: TDLibAPI.SearchMessagesFilterPhotoAndVideo
         onNotEmptyDetected: {
-            var i = insertTab('Media', qsTr("Media", "Button: Chat media (photos and videos)"), 'image://theme/icon-m-image')
+            var i = insertTab('Media', qsTr("Media", "Button: Chat media (photos and videos)"), 'image://theme/icon-m-image', {filter: TDLibAPI.SearchMessagesFilterPhotoAndVideo})
             //if (i > -1) tabView.currentIndex = i
         }
     }
 
-    // don't use dynamic connections here, otherwise it won't be disconnected so memory will leak
-    Connections {
-        target: chatManager.animationMessagesModel
-        onNotEmptyDetected: insertTab('Gifs', qsTr("GIFs", "Button: Chat GIFs"), 'image://theme/icon-m-image')
+    InvertedMediaMessagesModel {
+        id: animationModel
+        tdlib: tdLibWrapper
+        filter: TDLibAPI.SearchMessagesFilterAnimation
+        onNotEmptyDetected: insertTab('Gifs', qsTr("GIFs", "Button: Chat GIFs"), 'image://theme/icon-m-image', {filter: TDLibAPI.SearchMessagesFilterAnimation})
     }
-    Connections {
-        target: chatManager.videoNoteMessagesModel
-        onNotEmptyDetected: insertTab('VideoNotes', qsTr("Video Messages", "Button: Chat video messages"), 'image://theme/icon-m-file-video')
+
+    InvertedMediaMessagesModel {
+        id: videoNoteModel
+        tdlib: tdLibWrapper
+        filter: TDLibAPI.SearchMessagesFilterVideoNote
+        onNotEmptyDetected: insertTab('VideoNotes', qsTr("Video Messages", "Button: Chat video messages"), 'image://theme/icon-m-file-video', {filter: TDLibAPI.SearchMessagesFilterVideoNote})
     }
 
     // FIXME: this works for now (required because groupFullInformation is not yet initialized when Component.onCompleted is called), but this is too clunky
@@ -124,6 +151,8 @@ TabView {
         if (DebugLog.enabled)
             insertTab('Debug', "Debug", 'image://theme/icon-m-diagnostic')
 
-        chatManager.initializeMediaMessagesModels()
+        photoAndVideoModel.init(chatManager.chatId)
+        animationModel.init(chatManager.chatId)
+        videoNoteModel.init(chatManager.chatId)
     }
 }

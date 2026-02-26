@@ -18,6 +18,7 @@
 */
 import QtQuick 2.6
 import Sailfish.Silica 1.0
+import App.Logic 1.0
 import "../"
 
 MessageContentBase {
@@ -28,7 +29,8 @@ MessageContentBase {
         pageStack.push(Qt.resolvedUrl("../../pages/MediaAlbumPage.qml"), {
             chatManager: chatManager,
             message: rawMessage,
-            singleElement: isSponsored
+            singleElement: isSponsored,
+            searchMessagesFilter: TDLibAPI.SearchMessagesFilterPhotoAndVideo
         })
     }
     function getAspectRatio() {

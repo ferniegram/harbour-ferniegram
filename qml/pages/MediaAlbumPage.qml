@@ -40,6 +40,8 @@ Page {
     property alias delegate: pagedView.delegate
     property bool singleElement: false
     property bool modelIsMedia: !singleElement
+    property alias initializeMediaModel: mediaMessagesModelLoader.active
+    property int searchMessagesFilter
     property alias model: pagedView.model
     // message.content.caption.text
     palette.colorScheme: Theme.LightOnDark
@@ -47,16 +49,6 @@ Page {
     navigationStyle: PageNavigation.Vertical
     backgroundColor: 'black'
     allowedOrientations: Orientation.All
-
-    Component.onCompleted: {
-        if (modelIsMedia)
-            chatManager.initializeMediaMessagesModel(model, messageId)
-    }
-    Component.onDestruction: {
-        // if end is reached model could be re-used in the media chat information tab
-        if (modelIsMedia && !model.endReached)
-            model.clear()
-    }
 
     function goToScrollPosition() {
         // only called when model is media model
@@ -80,8 +72,24 @@ Page {
     PagedView {
         id: pagedView
         anchors.fill: parent
-        model: singleElement ? [message] : chatManager.photoAndVideoMessagesModel
+        model: singleElement ? [message] : mediaMessagesModelLoader.item
         wrapMode: PagedView.NoWrap
+        direction: PagedView.RightToLeft
+
+        // don't move this out of the pagedView data, otherwise will crash when closing the page due to a bug in PagedView
+        Loader {
+            id: mediaMessagesModelLoader
+            active: modelIsMedia && searchMessagesFilter
+            asynchronous: true
+            sourceComponent: Component {
+                InvertedMediaMessagesModel {
+                    tdlib: tdLibWrapper
+                    filter: searchMessagesFilter
+                    Component.onCompleted: init(chatManager.chatId, messageId)
+                }
+            }
+        }
+
         delegate: Component {
             Loader {
                 id: loader
@@ -114,9 +122,9 @@ Page {
             if (!modelIsMedia) return
             
             if (currentIndex <= 10)
-                model.loadMoreHistory()
-            else if (currentIndex >= count - 1 - 10)
                 model.loadMoreFuture()
+            else if (currentIndex >= count - 1 - 10)
+                model.loadMoreHistory()
         }
     }
 
