@@ -21,6 +21,8 @@ property bool hasFooter:footer
 property alias tabBarLoader:tabBarLoader
 property alias tabBarItem:tabBarLoader.item
 property real tabBarHeight:tabBarItem&&tabBarVisible?tabBarItem.height:0
+property Component tabComponent
+property url tabSource
 property real yOffset:currentItem&&currentItem._yOffset||0
 property bool _headerBackgroundVisible:true
 property Item _page:Util.findPage(root)
@@ -58,8 +60,11 @@ property int _ctxBottomMargin:_tabBarIsTop?0:tabBarHeight
 readonly property bool isCurrentItem:PagedView.isCurrentItem
 readonly property real _yOffset:item&&item._yOffset||0
 property bool loading:Qt.application.active&&isCurrentItem&&status===Loader.Loading
-sourceComponent:model.modelData?model.modelData.body:model.body
-source:model.modelData?model.modelData.source:model.source
+property var tabModel:model.modelData||model
+property int tabIndex:index
+property bool _haveSource:tabModel.body||tabModel.source
+sourceComponent:_haveSource?tabModel.body:tabComponent
+source:_haveSource?tabModel.source:tabSource
 asynchronous:true
 width:item?item.implicitWidth:root.contentItem.width
 height:item?item.implicitHeight:root.contentItem.height
