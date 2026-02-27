@@ -70,12 +70,4 @@ SilicaListView {
     }
 
     VerticalScrollDecorator {}
-
-    BusyLabel {
-        id: loadingBusyIndicator
-        anchors.verticalCenter: parent.verticalCenter
-        y: undefined
-        text: overviewPage.loadingText
-        running: !overviewPage.chatListCreated || overviewPage.logoutLoading
-    }
 }

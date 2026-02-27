@@ -178,15 +178,15 @@ Page {
                 pageStack.push(Qt.resolvedUrl("../pages/InitializationPage.qml"))
             break;
         case TDLibAPI.AuthorizationReady:
-            loadingText = qsTr("Loading chat list...")
+            loadingText = qsTr("Loading")
             overviewPage.loading = false
             overviewPage.initializationCompleted = true
             overviewPage.updateContent()
             break;
         case TDLibAPI.LoggingOut:
             if (logoutLoading) {
-                Debug.log("Resources cleared already");
-                return;
+                Debug.log("Resources cleared already")
+                return
             }
             Debug.log("Logging out")
             overviewPage.initializationCompleted = false
@@ -301,10 +301,11 @@ Page {
                 topMargin: (parent._ctxTopMargin || _ctxTopMargin || 0) + header.height
                 alterFlickablePulleyMenu: false
 
+                property bool isEmpty: true
                 Binding {
                     target: tabItem.parent
                     property: 'loading'
-                    value: false
+                    value: Qt.application.active && isCurrentItem && chatsViewLoader.status == Loader.Loading && isEmpty
                 }
 
                 //opacity: 1
@@ -313,6 +314,13 @@ Page {
                     id: chatsFlickable
                     parent: tabItem
                     anchors.fill: parent
+
+                    function readChatList() {
+                        if (tabModel.type === ChatFoldersModel.FolderFolder)
+                            tdLibWrapper.readFolderChatList(tabModel.id)
+                        else
+                            tdLibWrapper.readChatList(tabModel.type === ChatFoldersModel.FolderArchive)
+                    }
 
                     Loader {
                         asynchronous: true
@@ -366,8 +374,8 @@ Page {
                                 }
                                 MenuItem {
                                     text: qsTr("Mark as read")
-                                    visible: count > 0
-                                    onClicked: chatsView.readChatList()
+                                    visible: tabModel.count > 0
+                                    onClicked: readChatList()
                                 }
                             }
                         }
@@ -379,14 +387,15 @@ Page {
                                 visible: active || tabModel.count > 0
                                 MenuItem {
                                     text: qsTr("Mark as read")
-                                    onClicked: chatsView.readChatList()
+                                    onClicked: readChatList()
                                 }
                             }
                         }
                     }
 
-                    ChatsView {
-                        id: chatsView
+                    // FIXME: is loading the chats list separately from the actual tab correct?
+                    Loader {
+                        id: chatsViewLoader
                         anchors {
                             top: parent.top
                             topMargin: tabItem.topMargin
@@ -394,20 +403,33 @@ Page {
                         width: parent.width
                         height: parent.height - anchors.topMargin - tabItem.bottomMargin
 
-                        model: tabModel.chat_list_model
-                        chatListType: tabModel.type
-                        folderId: tabModel.folder_id
+                        asynchronous: true
+                        sourceComponent: Component {
+                            ChatsView {
+                                id: chatsView
+                                anchors.fill: parent
+                                model: tabModel.chat_list_model
+                                chatListType: tabModel.type
+                                folderId: tabModel.folder_id
 
-                        function readChatList() {
-                            if (tabModel.type === ChatFoldersModel.FolderFolder)
-                                tdLibWrapper.readFolderChatList(tabModel.id)
-                            else
-                                tdLibWrapper.readChatList(tabModel.type === ChatFoldersModel.FolderArchive)
+                                Binding {
+                                    target: tabItem
+                                    property: 'isEmpty'
+                                    value: chatsView.count == 0
+                                }
+                            }
                         }
                     }
                 }
             }
         }
+    }
+
+    BusyLabel {
+        anchors.verticalCenter: parent.verticalCenter
+        y: undefined
+        text: overviewPage.loadingText
+        running: !overviewPage.chatListCreated || overviewPage.logoutLoading
     }
 
     InteractionHintLabel {
@@ -426,5 +448,4 @@ Page {
         interval: 4000
         onTriggered: titleInteractionHintActive = false
     }
-
 }
