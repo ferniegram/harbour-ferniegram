@@ -428,7 +428,7 @@ Page {
                     ProfileThumbnail {
                         id: chatPictureThumbnail
                         parent: chatHeader.chatPictureContainer
-                        replacementStringHint: chatNameText.text
+                        replacementStringHint: chatHeader.chatNameText.text
                         width: parent.height
                         height: parent.height
 
