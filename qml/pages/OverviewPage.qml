@@ -279,154 +279,112 @@ Page {
         tabBarVisible: count > 1
         tabBarPosition: appSettings.chatFoldersTabBarOnBottom ? Qt.AlignBottom : Qt.AlignTop
 
-        delegate: Loader { // BIG HACK
-            id: tabLoader
-            asynchronous: true
+        tabComponent: Component {
+            TabItem {
+                id: tabItem
+                allowDeletion: tabIndex !== 0 // always keep first tab in cache
 
-            readonly property real _yOffset: item && item._yOffset || 0
+                topMargin: (parent._ctxTopMargin || _ctxTopMargin || 0) + header.height
 
-            // Loader's status is Loader.Loading when the component is partially loaded. We don't want the busy indicator in this state since the view is already usable in it, so for now we disable loading indicator completely.
-            //readonly property bool loading: Qt.application.active && PagedView.isCurrentItem && status === Loader.Loading
+                Binding {
+                    target: tabItem.parent
+                    property: 'loading'
+                    value: false
+                }
 
-            width: item ? item.implicitWidth : PagedView.contentWidth
-            height: item ? item.implicitHeight : PagedView.contentHeight
+                //opacity: 1
+                flickable: chatsFlickable
+                SilicaFlickable {
+                    id: chatsFlickable
+                    anchors.fill: parent
 
-            sourceComponent: Component {
-                TabItem {
-                    // this might break with Opal.Tabs updates:
-                    _page: tabView._page
-                    _tabContainer: tabLoader
-                    topMargin: (tabView._tabBarIsTop ? tabView.tabBarHeight : 0) + header.height
-                    bottomMargin: tabView._tabBarIsTop ? 0 : tabView.tabBarHeight
-
-                    allowDeletion: index != 0 // always keep first tab in cache
-
-                    //opacity: 1
-                    flickable: chatsFlickable
-                    SilicaFlickable {
-                        id: chatsFlickable
+                    ChatsView {
+                        id: chatsView
                         anchors.fill: parent
+                        model: tabModel.chat_list_model
+                        chatListType: tabModel.type
+                        folderId: tabModel.folder_id
 
-                        ChatsView {
-                            id: chatsView
-                            anchors.fill: parent
-                            model: chat_list_model
-                            chatListType: type
-                            folderId: folder_id
+                        function readChatList() {
+                            if (tabModel.type === ChatFoldersModel.FolderFolder)
+                                tdLibWrapper.readFolderChatList(tabModel.id)
+                            else
+                                tdLibWrapper.readChatList(tabModel.type === ChatFoldersModel.FolderArchive)
+                        }
+                    }
 
-                            function readChatList() {
-                                if (type == ChatFoldersModel.FolderFolder)
-                                    tdLibWrapper.readFolderChatList(id)
-                                else
-                                    tdLibWrapper.readChatList(type == ChatFoldersModel.FolderArchive)
+                    Loader {
+                        asynchronous: true
+                        // even if the first tab is not main chat list, still use the pulley menu
+                        sourceComponent: tabIndex === 0 ? mainPullDownMenu : folderPullDownMenu
+
+                        Component {
+                            id: mainPullDownMenu
+                            PullDownMenu {
+                                MenuItem {
+                                    text: "Debug"
+                                    visible: DebugLog.enabled
+                                    onClicked: pageStack.push(Qt.resolvedUrl("../pages/DebugPage.qml"), {overviewPage: overviewPage})
+                                }
+                                MenuItem {
+                                    text: qsTr("Settings")
+                                    onClicked: pageStack.push(Qt.resolvedUrl("../pages/SettingsPage.qml"))
+                                }
+                                MenuItem {
+                                    text: qsTr("Search", "pulley menu option for opening search page")
+                                    onClicked: pageStack.push(Qt.resolvedUrl("../pages/SearchChatsPage.qml"))
+                                }
+                                MenuItem {
+                                    text: qsTr("New Chat")
+                                    onClicked: pageStack.push(Qt.resolvedUrl("../pages/NewChatPage.qml"))
+                                }
+                                MenuItem {
+                                    text: qsTr("Archive")
+                                    visible: archiveChatListModel.count > 0
+
+                                    rightPadding: archiveChatListModel.unreadChatCount > 0 ? archiveUnreadCount.width + Theme.paddingLarge : 0
+                                    Rectangle {
+                                        id: archiveUnreadCount
+                                        visible: archiveChatListModel.unreadChatCount > 0
+                                        color: Theme.rgba(Theme.highlightBackgroundColor, Theme.highlightBackgroundOpacity)
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        x: (parent.width + parent.contentWidth - width)/2
+                                        width: Theme.fontSizeExtraLarge
+                                        height: Theme.fontSizeExtraLarge
+                                        radius: width/2
+                                        Text {
+                                            anchors.centerIn: parent
+                                            font.pixelSize: Theme.fontSizeSmall
+                                            font.bold: true
+                                            color: Theme.primaryColor
+                                            text: Functions.formatUnreadCount(archiveChatListModel.unreadChatCount)
+                                        }
+                                    }
+
+                                    onClicked: pageStack.push(Qt.resolvedUrl("../pages/ArchivedChatsPage.qml"), {overviewPage: overviewPage})
+                                }
+                                MenuItem {
+                                    text: qsTr("Mark as read")
+                                    visible: count > 0
+                                    onClicked: chatsView.readChatList()
+                                }
                             }
                         }
 
-                        Loader {
-                            asynchronous: true
-                            sourceComponent: index == 0 ? mainPullDownMenu : folderPullDownMenu
-
-                            Component {
-                                id: mainPullDownMenu
-                                PullDownMenu {
-                                    MenuItem {
-                                        text: "Debug"
-                                        visible: DebugLog.enabled
-                                        onClicked: pageStack.push(Qt.resolvedUrl("../pages/DebugPage.qml"), {overviewPage: overviewPage})
-                                    }
-                                    MenuItem {
-                                        text: qsTr("Settings")
-                                        onClicked: pageStack.push(Qt.resolvedUrl("../pages/SettingsPage.qml"))
-                                    }
-                                    MenuItem {
-                                        text: qsTr("Search", "pulley menu option for opening search page")
-                                        onClicked: pageStack.push(Qt.resolvedUrl("../pages/SearchChatsPage.qml"))
-                                    }
-                                    MenuItem {
-                                        text: qsTr("New Chat")
-                                        onClicked: pageStack.push(Qt.resolvedUrl("../pages/NewChatPage.qml"))
-                                    }
-                                    MenuItem {
-                                        text: qsTr("Archive")
-                                        visible: archiveChatListModel.count > 0
-
-                                        rightPadding: archiveChatListModel.unreadChatCount > 0 ? archiveUnreadCount.width + Theme.paddingLarge : 0
-                                        Rectangle {
-                                            id: archiveUnreadCount
-                                            visible: archiveChatListModel.unreadChatCount > 0
-                                            color: Theme.rgba(Theme.highlightBackgroundColor, Theme.highlightBackgroundOpacity)
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            x: (parent.width + parent.contentWidth - width)/2
-                                            width: Theme.fontSizeExtraLarge
-                                            height: Theme.fontSizeExtraLarge
-                                            radius: width/2
-                                            Text {
-                                                anchors.centerIn: parent
-                                                font.pixelSize: Theme.fontSizeSmall
-                                                font.bold: true
-                                                color: Theme.primaryColor
-                                                text: Functions.formatUnreadCount(archiveChatListModel.unreadChatCount)
-                                            }
-                                        }
-
-                                        onClicked: pageStack.push(Qt.resolvedUrl("../pages/ArchivedChatsPage.qml"), {overviewPage: overviewPage})
-                                    }
-                                    MenuItem {
-                                        text: qsTr("Mark as read")
-                                        visible: count > 0
-                                        onClicked: chatsView.readChatList()
-                                    }
-                                }
-                            }
-
-                            Component {
-                                id: folderPullDownMenu
-                                PullDownMenu {
-                                    // this will be hidden if muted chats won't be included in folder counters (by settings) and only muted chats will be unread, which might not be ideal:
-                                    visible: active || count > 0
-                                    MenuItem {
-                                        text: qsTr("Mark as read")
-                                        onClicked: chatsView.readChatList()
-                                    }
+                        Component {
+                            id: folderPullDownMenu
+                            PullDownMenu {
+                                // this will be hidden if muted chats won't be included in folder counters (by settings) and only muted chats will be unread, which might not be ideal:
+                                visible: active || count > 0
+                                MenuItem {
+                                    text: qsTr("Mark as read")
+                                    onClicked: chatsView.readChatList()
                                 }
                             }
                         }
                     }
-
                 }
             }
-
-            onItemChanged: {
-                if (!item) return
-                //itemLoaded = true
-                tabFadeAnimation.target = null
-                item.focus = true
-                item.opacity = 0
-                tabFadeAnimation.target = item
-                tabFadeAnimation.from = 0
-                tabFadeAnimation.to = 1
-                tabFadeAnimation.restart()
-            }
-
-            FadeAnimation {
-                id: tabFadeAnimation
-            }
-
-            /*BusyIndicator {
-                running: !delayBusy.running && loading
-
-                // Avoid flicker when tab container gets repositioned
-                parent: tabLoader.parent
-                x: (tabLoader.width - width) / 2 + tabLoader.x
-                y: root.height/3 - height/2 - tabView.tabBarLoader.height
-                size: BusyIndicatorSize.Large
-
-                Timer {
-                    id: delayBusy
-                    interval: 800
-                    running: tabLoader.loading
-                }
-            }*/
         }
     }
 
