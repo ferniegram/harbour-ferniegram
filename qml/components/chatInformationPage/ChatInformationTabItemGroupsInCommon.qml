@@ -3,6 +3,8 @@ import '..'
 
 ChatInformationTabItemChatsBase {
     loading: false // initial request is already sent from the tab view
+    loadInitial: false
+    fullyLoaded: groupsInCommonList.totalCount <= view.count
     loadingText: qsTr("Loading groups in common", "groups you have in common with a user")
     placeholderText: qsTr("No groups in common")
     model: groupsInCommonList
@@ -11,10 +13,8 @@ ChatInformationTabItemChatsBase {
         prologSecondaryText.text: ''
     }
 
-    loadInitial: false
     onLoadMore:
-        if (groupsInCommonList.totalCount > view.count)
-            tdLibWrapper.getGroupsInCommon(chatUserOrGroupId, 200, groupsInCommonList.get(groupsInCommonList.count - 1).chatId)
+        tdLibWrapper.getGroupsInCommon(chatUserOrGroupId, 200, groupsInCommonList.get(groupsInCommonList.count - 1).chatId)
 
     Connections {
         target: tdLibWrapper

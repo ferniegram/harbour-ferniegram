@@ -30,6 +30,8 @@ ChatInformationTabItemBase {
     loading: loadInitial
     loadingVisible: loading && listView.count === 0
 
+    property bool fullyLoaded
+
     scrollableView: listView
     property alias view: listView
     property alias model: listView.model
@@ -47,14 +49,13 @@ ChatInformationTabItemBase {
         clip: true
         height: tabBase.height
         width: tabBase.width
-        opacity: tabBase.loading ? (count > 0 ? 0.5 : 0.0) : 1.0
+        opacity: loading && !fullyLoaded ? (count > 0 ? 0.5 : 0.0) : 1.0
         Behavior on opacity { FadeAnimation {} }
         onContentYChanged: {
-            if (active && !loading && listView.indexAt(listView.contentX, listView.contentY) > Math.max(0, listView.count - 20)) {
+            if (active && !loading && !fullyLoaded && listView.indexAt(listView.contentX, listView.contentY) > Math.max(0, listView.count - 20)) {
                 Debug.log("[ChatInformationTabItemChatsBase] Trying to get more items...")
                 loading = true
                 loadMore(false)
-                // keep loading as true forever if there's nothing more to load
             }
         }
         ViewPlaceholder {

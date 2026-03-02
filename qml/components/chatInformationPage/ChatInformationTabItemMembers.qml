@@ -2,6 +2,8 @@ import QtQuick 2.0
 import '..'
 
 ChatInformationTabItemChatsBase {
+    loadInitial: !isBasicGroup
+    fullyLoaded: isBasicGroup || groupInformation.member_count <= view.count
     loadingText: isChannel ? qsTr("Loading subscribers", "channel") : qsTr("Loading members", "group")
     placeholderText: isChannel
                         ? (canGetMembers ? qsTr("This channel is empty") : qsTr("Channel members are anonymous"))
@@ -14,8 +16,7 @@ ChatInformationTabItemChatsBase {
     }
 
     onLoadMore:
-        if (groupInformation.member_count > view.count)
-            tdLibWrapper.getSupergroupMembers(chatUserOrGroupId, initial ? 50 : 200, membersList.count)
+        tdLibWrapper.getSupergroupMembers(chatUserOrGroupId, initial ? 50 : 200, membersList.count)
 
     Connections {
         target: tdLibWrapper

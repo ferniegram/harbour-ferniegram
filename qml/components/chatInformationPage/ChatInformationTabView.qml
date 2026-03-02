@@ -173,7 +173,8 @@ TabView {
         if (i > -1)
             currentIndex = i
     }
-    property bool showMembersTab: canGetMembers
+    // if is a basic group and has no members (same for supergroups), still show the tab
+    property bool showMembersTab: isBasicGroup ? groupFullInformation.members : canGetMembers
     onShowMembersTabChanged:
         if (showMembersTab)
             insertMembersTab()
