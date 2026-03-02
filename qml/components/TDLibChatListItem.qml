@@ -18,6 +18,18 @@ PhotoTextsListItem {
     property bool isSupergroup
     property bool isSecret
 
+    property string chatTypeName: {
+        if (isPrivateChat)
+            return qsTr("Private Chat")
+        if (isSecret)
+            qsTr("Secret Chat")
+        if (isSupergroup)
+            return relatedInformation.is_channel ? qsTr("Channel") : qsTr("Group")
+        if (isBasicGroup)
+            return qsTr("Group")
+        return '' // Loading
+    }
+
     function handleUser() {
         relatedInformation = tdLibWrapper.getUserInformation(userId)
         secondaryText.text = "@" + (relatedInformation.usernames && relatedInformation.usernames.editable_username !== "" ? relatedInformation.usernames.editable_username : relatedInformation.id)
@@ -27,13 +39,11 @@ PhotoTextsListItem {
     }
     function handleSupergroup() {
         relatedInformation = tdLibWrapper.getSuperGroup(chatInformation.type.supergroup_id)
-        prologSecondaryText.text = relatedInformation.is_channel ? qsTr("Channel") : qsTr("Group")
     }
 
     function detectChatType() {
         if (!chatId && userId) {
             isPrivateChat = true
-            prologSecondaryText.text = qsTr("Private Chat")
             handleUser()
             tdLibWrapper.getUserFullInfo(userId)
             return
@@ -45,12 +55,10 @@ PhotoTextsListItem {
             if (chatInformation.type["@type"] === 'chatTypeSecret')
                 isSecret = true
             else isPrivateChat = true
-            prologSecondaryText.text = isSecret ? qsTr("Secret Chat") : qsTr("Private Chat")
             handleUser()
             tdLibWrapper.getUserFullInfo(userId)
             break
         case "chatTypeBasicGroup":
-            prologSecondaryText.text = qsTr("Group")
             isBasicGroup = true
             handleBasicGroup()
             tdLibWrapper.getGroupFullInfo(chatInformation.type.basic_group_id, false)
@@ -118,6 +126,8 @@ PhotoTextsListItem {
                                 : (isPrivateChat && relatedInformation && relatedInformation.profile_photo ? relatedInformation.profile_photo.small : {})
 
     primaryText.text: Emoji.emojify(chatInformation.title || (isPrivateChat ? Functions.getUserName(relatedInformation) : qsTr("Unknown")), primaryText.font.pixelSize)
+    prologSecondaryText.text: chatTypeName
+
     tertiaryText.maximumLineCount: 1
 
     onClicked:

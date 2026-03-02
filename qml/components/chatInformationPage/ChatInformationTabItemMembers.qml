@@ -10,6 +10,7 @@ ChatInformationTabItemChatsBase {
     delegate: TDLibChatListItem {
         chatId: model.member_id['@type'] === 'messageSenderChat' ? model.member_id.chat_id : null
         userId: model.member_id['@type'] === 'messageSenderUser' ? model.member_id.user_id : chatInformation.type.user_id
+        prologSecondaryText.text: model.member_id['@type'] === 'messageSenderUser' ? '' : chatTypeName
     }
 
     onLoadMore:

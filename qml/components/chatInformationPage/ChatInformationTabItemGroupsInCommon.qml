@@ -8,6 +8,7 @@ ChatInformationTabItemChatsBase {
     model: groupsInCommonList
     delegate: TDLibChatListItem {
         chatId: model.chatId
+        prologSecondaryText.text: ''
     }
 
     loadInitial: false
