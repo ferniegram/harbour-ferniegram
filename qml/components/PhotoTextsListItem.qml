@@ -140,6 +140,7 @@ ListItem {
             width: parent.width
             font.pixelSize: Theme.fontSizeTiny
             color: Theme.secondaryColor
+            linkColor: Theme.highlightColor
             truncationMode: TruncationMode.Fade
         }
     }
