@@ -42,7 +42,7 @@ Page {
     property bool isSecretChat: chatManager.chatType === TDLibAPI.ChatTypeSecret
     property bool isSecretChatReady: false
     property bool isBasicGroup: chatManager.chatType === TDLibAPI.ChatTypeBasicGroup
-    property bool isSuperGroup: chatManager.chatType === TDLibAPI.ChatTypeSupergroup
+    property bool isSupergroup: chatManager.chatType === TDLibAPI.ChatTypeSupergroup
     property bool isChannel: chatManager.isChannel
     property bool isBot: chatManager.isBot
     property bool viewAsTopics: chatManager.viewAsTopics
@@ -56,7 +56,7 @@ Page {
     readonly property bool userIsMember: ((isPrivateChat || isSecretChat) &&
                                           chatInformation["@type"] &&
                                           !isSavedMessages) || // should be optimized
-                                (isBasicGroup || isSuperGroup) && (
+                                (isBasicGroup || isSupergroup) && (
                                     (chatGroupInformation.status["@type"] === "chatMemberStatusMember")
                                     || (chatGroupInformation.status["@type"] === "chatMemberStatusAdministrator")
                                     || (chatGroupInformation.status["@type"] === "chatMemberStatusRestricted" && chatGroupInformation.status.is_member)
@@ -240,8 +240,8 @@ Page {
     Connections {
         target: tdLibWrapper
         onChatOnlineMemberCountUpdated: {
-            Debug.log(isSuperGroup, "/", isBasicGroup, "/", chatInformation.id.toString(), "/", chatId);
-            if ((isSuperGroup || isBasicGroup) && chatInformation.id.toString() === chatId) {
+            Debug.log(isSupergroup, "/", isBasicGroup, "/", chatInformation.id.toString(), "/", chatId);
+            if ((isSupergroup || isBasicGroup) && chatInformation.id.toString() === chatId) {
                 chatOnlineMemberCount = onlineMemberCount
             }
         }
@@ -320,7 +320,7 @@ Page {
 
             MenuItem {
                 // TODO: saved messages topics
-                visible: /*isSavedMessages ||*/ (isSuperGroup && chatGroupInformation.is_forum)
+                visible: /*isSavedMessages ||*/ (isSupergroup && chatGroupInformation.is_forum)
                 text: viewAsTopics ? qsTr("View as Messages", "view a forum chat in full chat mode") : qsTr("View as Topics", "view a forum chat as topics")
                 onClicked:
                     tdLibWrapper.toggleChatViewAsTopics(chatInformation.id, !viewAsTopics)
@@ -348,7 +348,7 @@ Page {
 
             MenuItem {
                 id: joinLeaveChatMenuItem
-                visible: (chatPage.isSuperGroup || chatPage.isBasicGroup) && chatGroupInformation && chatGroupInformation.status["@type"] !== "chatMemberStatusBanned"
+                visible: (chatPage.isSupergroup || chatPage.isBasicGroup) && chatGroupInformation && chatGroupInformation.status["@type"] !== "chatMemberStatusBanned"
                 onClicked: {
                     if (chatPage.userIsMember) {
                         var chatId = chatInformation.id
@@ -410,7 +410,7 @@ Page {
                         var status = Functions.getChatActionsText(chatManager.chatActionsByChats, chatManager.chatActionsByUsers, isPrivateChat || isSecretChat)
                         if (status) return status
 
-                        if (isBasicGroup || isSuperGroup)
+                        if (isBasicGroup || isSupergroup)
                             return Functions.getGroupStatusText(chatGroupInformation.member_count, isChannel, chatOnlineMemberCount)
 
 

@@ -605,14 +605,14 @@ Column {
                             ? qsTr("Silent Broadcast", "placeholder for broadcasting a message to a channel silently")
                             : qsTr("Broadcast", "placeholder for broadcasting a message to a channel")
 
-                if (isSuperGroup && chatGroupInformation && chatGroupInformation.status &&
+                if (isSupergroup && chatGroupInformation && chatGroupInformation.status &&
                         ((chatGroupInformation.status["@type"] === "chatMemberStatusCreator" && chatGroupInformation.status.is_anonymous)
                          || (chatGroupInformation.status["@type"] === "chatMemberStatusAdministrator" && chatGroupInformation.status.rights.is_anonymous)))
                     return qsTr("Send anonymously", "placeholder for sending an anonymous message in a supergroup")
 
-                if ((isSuperGroup && chatGroupInformation.paid_message_star_count > 0) || (isPrivateChat && chatPartnerInformation.paid_message_star_count > 0))
+                if ((isSupergroup && chatGroupInformation.paid_message_star_count > 0) || (isPrivateChat && chatPartnerInformation.paid_message_star_count > 0))
                     // fixme: format the number somehow and maybe use ⭐️ emoji
-                    return qsTr("Message for %1 Stars", "placeholder for sending a message for %1 stars").arg(isSuperGroup ? chatGroupInformation.paid_message_star_count : chatPartnerInformation.paid_message_star_count)
+                    return qsTr("Message for %1 Stars", "placeholder for sending a message for %1 stars").arg(isSupergroup ? chatGroupInformation.paid_message_star_count : chatPartnerInformation.paid_message_star_count)
 
                 return qsTr("Message", "placeholder for sending a message")
             }

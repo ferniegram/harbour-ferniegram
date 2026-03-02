@@ -38,7 +38,7 @@ Page {
     property bool isPrivateChat: false
     property bool isSecretChat: false
     property bool isBasicGroup: false
-    property bool isSuperGroup: false
+    property bool isSupergroup: false
     property bool isChannel: false
 
     property var chatUserOrGroupId
@@ -46,7 +46,7 @@ Page {
     property bool isInitialized: false
 
     readonly property bool isPrivateOrSecretChat: isPrivateChat || isSecretChat
-    readonly property bool isGroup: isBasicGroup || isSuperGroup
+    readonly property bool isGroup: isBasicGroup || isSupergroup
 
     readonly property bool isSavedMessages: isPrivateOrSecretChat && chatUserOrGroupId === myUserId
 

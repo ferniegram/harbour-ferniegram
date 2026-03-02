@@ -131,7 +131,7 @@ Column {
             width: parent.width
             height: active ? implicitHeight : 0
             Behavior on height { NumberAnimation { duration: 200 } }
-            active: chatInformationPage.isSuperGroup && !!chatInformationPage.groupInformation.is_forum
+            active: chatInformationPage.isSupergroup && !!chatInformationPage.groupInformation.is_forum
             readonly property var modelData: ['can_create_topics', qsTr("Create topics", "member permission")]
             sourceComponent: permissionSwitch
         }

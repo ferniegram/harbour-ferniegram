@@ -527,7 +527,7 @@ Column {
             property QtObject precalculatedValues: QtObject {
                 readonly property var page: chatPage
                 readonly property alias view: messagesView
-                readonly property bool showUserInfo: page.isBasicGroup || (page.isSuperGroup && (!page.isChannel || chatGroupInformation.show_message_sender))
+                readonly property bool showUserInfo: page.isBasicGroup || (page.isSupergroup && (!page.isChannel || chatGroupInformation.show_message_sender))
                 readonly property int profileThumbnailDimensions: showUserInfo ? Theme.itemSizeSmall : 0
                 readonly property int pageMarginDouble: 2 * Theme.horizontalPageMargin
                 readonly property int paddingMediumDouble: 2 * Theme.paddingMedium

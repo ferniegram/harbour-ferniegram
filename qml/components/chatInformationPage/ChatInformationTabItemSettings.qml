@@ -53,7 +53,7 @@ ChatInformationTabItemBase {
             //   - transferChatOwnership
 
             Loader {
-                active: (chatInformationPage.isBasicGroup || chatInformationPage.isSuperGroup)
+                active: (chatInformationPage.isBasicGroup || chatInformationPage.isSupergroup)
                         && !chatInformationPage.isChannel && chatInformationPage.groupInformation
 
                         && (chatInformationPage.groupInformation.status.can_restrict_members || chatInformationPage.isGroupCreator)
@@ -63,7 +63,7 @@ ChatInformationTabItemBase {
             }
 
             Loader {
-                active: chatInformationPage.isSuperGroup
+                active: chatInformationPage.isSupergroup
                         && (chatInformationPage.groupInformation.status.can_change_info || chatInformationPage.isGroupCreator)
                 // todo: only show this for private groups
                 sourceComponent: Component {
@@ -87,7 +87,7 @@ ChatInformationTabItemBase {
             }
 
             Loader {
-                active: chatInformationPage.isSuperGroup && chatInformationPage.isGroupCreator
+                active: chatInformationPage.isSupergroup && chatInformationPage.isGroupCreator
                 width: parent.width
                 // todo: only show this for private groups
                 sourceComponent: Component {
@@ -112,7 +112,7 @@ ChatInformationTabItemBase {
             }
 
             Loader {
-                active: chatInformationPage.isSuperGroup && chatInformationPage.groupInformation
+                active: chatInformationPage.isSupergroup && chatInformationPage.groupInformation
                         && (chatInformationPage.groupInformation.status.can_restrict_members
                             || chatInformationPage.isGroupCreator)
                 asynchronous: true

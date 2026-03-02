@@ -72,8 +72,8 @@ SilicaFlickable {
 
     function handleSupergroupFullInfo(groupId, groupFullInfo, updated) {
         Debug.log(updated ? "onSupergroupFullInfoUpdated" : "onSupergroupFullInfoReceived",
-                  chatInformationPage.isSuperGroup, chatInformationPage.chatUserOrGroupId, groupId)
-        if(chatInformationPage.isSuperGroup && chatInformationPage.chatUserOrGroupId === groupId) {
+                  chatInformationPage.isSupergroup, chatInformationPage.chatUserOrGroupId, groupId)
+        if(chatInformationPage.isSupergroup && chatInformationPage.chatUserOrGroupId === groupId) {
             chatInformationPage.groupFullInformation = groupFullInfo
             fullInfoReady = true
         }
@@ -96,7 +96,7 @@ SilicaFlickable {
             if (chatInformationPage.isBasicGroup && chatInformationPage.groupInformation.id === groupId)
                 chatInformationPage.groupInformation = tdLibWrapper.getBasicGroup(groupId)
         onSupergroupUpdated:
-            if (chatInformationPage.isSuperGroup && chatInformationPage.groupInformation.id === groupId)
+            if (chatInformationPage.isSupergroup && chatInformationPage.groupInformation.id === groupId)
                 chatInformationPage.groupInformation = tdLibWrapper.getSuperGroup(groupId)
 
         onChatOnlineMemberCountUpdated:
@@ -167,7 +167,7 @@ SilicaFlickable {
             tdLibWrapper.getGroupFullInfo(chatInformationPage.chatUserOrGroupId, false)
             break;
         case 'chatTypeSupergroup':
-            chatInformationPage.isSuperGroup = true
+            chatInformationPage.isSupergroup = true
             chatInformationPage.chatUserOrGroupId = chatInformation.type.supergroup_id
             if (!chatInformationPage.groupInformation.id)
                 chatInformationPage.groupInformation = tdLibWrapper.getSuperGroup(chatInformationPage.chatUserOrGroupId)
@@ -175,7 +175,7 @@ SilicaFlickable {
             chatInformationPage.isChannel = chatInformationPage.groupInformation.is_channel
             break;
         }
-        Debug.log("is set up", chatInformationPage.isPrivateChat, chatInformationPage.isSecretChat, chatInformationPage.isBasicGroup, chatInformationPage.isSuperGroup, chatInformationPage.chatUserOrGroupId)
+        Debug.log("is set up", chatInformationPage.isPrivateChat, chatInformationPage.isSecretChat, chatInformationPage.isBasicGroup, chatInformationPage.isSupergroup, chatInformationPage.chatUserOrGroupId)
 
         isInitialized = true
     }
@@ -188,7 +188,7 @@ SilicaFlickable {
 
     PullDownMenu {
         MenuItem {
-            visible: (chatInformationPage.isSuperGroup || chatInformationPage.isBasicGroup) && chatInformationPage.groupInformation && chatInformationPage.groupInformation.status["@type"] !== "chatMemberStatusBanned"
+            visible: (chatInformationPage.isSupergroup || chatInformationPage.isBasicGroup) && chatInformationPage.groupInformation && chatInformationPage.groupInformation.status["@type"] !== "chatMemberStatusBanned"
             text: chatInformationPage.userIsMember ? qsTr("Leave Chat") : qsTr("Join Chat")
             onClicked: {
                 // ensure it's done even if the page is closed:
@@ -222,7 +222,7 @@ SilicaFlickable {
             text: qsTr("New Secret Chat")
         }
         MenuItem {
-            visible: isSuperGroup && groupFullInformation.linked_chat_id !== 0
+            visible: isSupergroup && groupFullInformation.linked_chat_id !== 0
             text: isChannel ? qsTr("View discussion") : qsTr("View linked channel")
             onClicked: pageStack.replace(Qt.resolvedUrl("../../pages/ChatPage.qml"), {
                                           chatInformation: tdLibWrapper.getChat(groupFullInformation.linked_chat_id)
@@ -414,7 +414,7 @@ SilicaFlickable {
                     }
                 }
                 InformationEditArea {
-                    canEdit: (chatInformationPage.isPrivateOrSecretChat && chatInformationPage.privateChatUserInformation.id === chatInformationPage.myUserId) || ((chatInformationPage.isBasicGroup || chatInformationPage.isSuperGroup) && chatInformationPage.groupInformation && (chatInformationPage.groupInformation.status.can_change_info || chatInformationPage.groupInformation.status["@type"] === "chatMemberStatusCreator"))
+                    canEdit: (chatInformationPage.isPrivateOrSecretChat && chatInformationPage.privateChatUserInformation.id === chatInformationPage.myUserId) || ((chatInformationPage.isBasicGroup || chatInformationPage.isSupergroup) && chatInformationPage.groupInformation && (chatInformationPage.groupInformation.status.can_change_info || chatInformationPage.groupInformation.status["@type"] === "chatMemberStatusCreator"))
                     emptyPlaceholderText: qsTr("There is no information text available, yet.")
                     headerText: qsTr("Info", "group or user infotext header")
                     multiLine: true
