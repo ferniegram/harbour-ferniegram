@@ -23,7 +23,7 @@ ChatInformationTabItemChatsBase {
         onChatMembersReceived:
             if (chatId === chatUserOrGroupId) {
                 handleGroupMembers(members, false)
-                loadedTimer.start()
+                loading = false
             }
     }
 }

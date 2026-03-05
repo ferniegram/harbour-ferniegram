@@ -25,6 +25,7 @@ import "../../modules/Opal/Tabs"
 TabItem {
     id: tabItem
     property bool loading
+    property bool _loading: true
     //overrideable:
     property alias loadingVisible: busyLabel.running
     property alias loadingText: busyLabel.text
@@ -34,8 +35,24 @@ TabItem {
 
     property Item scrollableView
 
+    // FIXME: ideally we should rely on something more stable than timers with guessed intervals
+    Timer {
+        id: loadingTimer
+        interval: 150
+        running: true // Run at startup
+        onTriggered:
+            _loading = loading
+    }
+    onLoadingChanged: {
+        if (loading) {
+            _loading = true
+            loadingTimer.stop()
+        } else
+            loadingTimer.restart()
+    }
+
     function handleScrollIntoView(force) {
-        if(!loading && !scrollableView.dragging && !scrollableView.quickScrollAnimating) {
+        if (!_loading && !scrollableView.dragging && !scrollableView.quickScrollAnimating) {
             if (!scrollableView.atYBeginning)
                 pageContent.scrollDown()
             else

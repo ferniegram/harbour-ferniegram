@@ -42,8 +42,6 @@ ChatInformationTabItemBase {
 
     signal loadMore(bool initial)
 
-    property alias loadedTimer: loadedTimer
-
     SilicaListView {
         id: listView
         clip: true
@@ -65,14 +63,6 @@ ChatInformationTabItemBase {
         }
 
         VerticalScrollDecorator {}
-    }
-
-    Timer {
-        id: loadedTimer
-        // if we set it directly, the views start scrolling
-        interval: 50
-        onTriggered:
-            tabBase.loading = false
     }
 
     Component.onCompleted:

@@ -21,7 +21,7 @@ ChatInformationTabItemChatsBase {
         onChatsReceived:
             if (extra == "getGroupsInCommon:"+chatUserOrGroupId) {
                 handleGroupsInCommon(chatIds, totalCount)
-                loadedTimer.start()
+                loading = false
             }
     }
 }
