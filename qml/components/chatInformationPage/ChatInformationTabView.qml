@@ -98,6 +98,8 @@ TabView {
                     'VideoNotes',
                     'GroupsInCommon',
                     'Settings',
+                    'SimilarBots',
+                    'SimilarChats',
                     'Debug'
                 ]
         var targetOrderIndex = tabOrder.indexOf(name)
@@ -194,6 +196,30 @@ TabView {
             }
     }
 
+
+    property var chatSimilarChats
+    property int chatSimilarChatsCount
+    property var botSimilarBots
+    property var botSimilarBotsCount
+
+    Connections {
+        target: tdLibWrapper
+        onChatsReceived:
+            if (isChannel && extra === "getChatSimilarChats:"+chatInformation.id && totalCount > 0) {
+                chatSimilarChats = chatIds
+                chatSimilarChatsCount = totalCount
+                // TODO: once we'll have a proper channel icon, put it here
+                insertTab('SimilarChats', qsTr("Similar channels", "Profile tab"), 'image://theme/icon-m-speaker')
+            }
+        onUsersReceived:
+            if (isPrivateOrSecretChat && extra === "getBotSimilarBots:"+chatUserOrGroupId && totalCount > 0) {
+                botSimilarBots = userIds
+                botSimilarBotsCount = totalCount
+                // TODO: once we'll have a proper bot icon, put it here
+                insertTab('SimilarBots', qsTr("Similar bots", "Profile tab"), 'image://theme/icon-m-contact')
+            }
+    }
+
     Component.onCompleted: {
         if (showMembersTab)
             insertMembersTab()
@@ -207,6 +233,11 @@ TabView {
 
         if (DebugLog.enabled)
             insertTab('Debug', "Debug", 'image://theme/icon-m-diagnostic')
+
+        if (isChannel)
+            tdLibWrapper.getChatSimilarChats(chatInformation.id)
+        if (isPrivateOrSecretChat && privateChatUserInformation.type['@type'] === 'userTypeBot')
+            tdLibWrapper.getBotSimilarBots(chatUserOrGroupId)
 
         photoAndVideoModel.init(chatManager.chatId)
         animationModel.init(chatManager.chatId)
