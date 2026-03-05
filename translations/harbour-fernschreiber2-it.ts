@@ -1494,10 +1494,6 @@
         <translation>Impostazioni</translation>
     </message>
     <message>
-        <source>Loading chat list...</source>
-        <translation>Carica lista chat...</translation>
-    </message>
-    <message>
         <source>New Chat</source>
         <translation>Nuova chat</translation>
     </message>
@@ -1541,6 +1537,10 @@
     <message>
         <source>Tap on the title bar to quickly open search</source>
         <translation>Premi sulla barra del titoli per aprire velocemente la ricerca</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

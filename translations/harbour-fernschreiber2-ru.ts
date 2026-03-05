@@ -1511,10 +1511,6 @@
 <context>
     <name>OverviewPage</name>
     <message>
-        <source>Loading chat list...</source>
-        <translation>Загрузка чатов...</translation>
-    </message>
-    <message>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
@@ -1562,6 +1558,10 @@
     <message>
         <source>Tap on the title bar to quickly open search</source>
         <translation>Нажмите на заголовок чтобы открыть поиск</translation>
+    </message>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

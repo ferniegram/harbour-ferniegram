@@ -1473,10 +1473,6 @@
 <context>
     <name>OverviewPage</name>
     <message>
-        <source>Loading chat list...</source>
-        <translation>正在加载对话列表…</translation>
-    </message>
-    <message>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
@@ -1523,6 +1519,10 @@
     </message>
     <message>
         <source>Tap on the title bar to quickly open search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
