@@ -35,6 +35,7 @@ Page {
     property var chatManager
     property var message
     property var messageId: message ? message.id : 0
+    property alias overlay: overlay
     property alias overlayActive: overlay.active
     property alias pagedView: pagedView
     property alias index: pagedView.currentIndex

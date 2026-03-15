@@ -7,6 +7,7 @@ ZoomArea {
     // id
     id: zoomArea
     property var photoData //albumMessages[index].content.photo
+    property var photoSize: photoData ? utilities.findBiggestPhotoSize(photoData.sizes) : null
     property bool active: true
     property alias image: image
     property bool highlighted
@@ -24,17 +25,6 @@ ZoomArea {
             zoomOut()
         }
     }
-
-    Component.onCompleted: {
-        if (photoData) {
-            var size = utilities.findBiggestPhotoSize(photoData.sizes)
-            if (size) {
-                image.sourceSize.width = size.width
-                image.sourceSize.height = size.height
-                image.fileInformation = size.photo
-            }
-        }
-    }
     TDLibImage {
         id: image
 
@@ -43,10 +33,15 @@ ZoomArea {
         source: file.isDownloadingCompleted ? file.path : ""
         anchors.centerIn: parent
 
+        sourceSize {
+            width: photoSize.width
+            height: photoSize.height
+        }
+        fileInformation: photoSize.photo
+
         fillMode: Image.PreserveAspectFit
         asynchronous: true
         smooth: !(movingVertically || movingHorizontally)
-
 
         Behavior on opacity { FadeAnimator{} }
     }

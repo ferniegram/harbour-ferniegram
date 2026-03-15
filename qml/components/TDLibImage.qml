@@ -33,7 +33,7 @@ Image {
     fillMode: Image.PreserveAspectCrop
     clip: true
     opacity: status === Image.Ready ? 1.0 : 0.0
-    source: enabled && file.isDownloadingCompleted ? file.path : ""
+    source: enabled && file.isDownloadingCompleted ? file.path : ''
     visible: opacity > 0
     sourceSize {
         width: width

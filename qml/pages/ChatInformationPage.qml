@@ -64,8 +64,6 @@ Page {
     property var chatInformation: chatManager.chatInformation
     property var privateChatUserInformation: chatManager.userInfo
     property var chatPartnerFullInformation:({})
-    property var chatPartnerProfilePhotos:([])
-    property bool chatPartnerProfilePhotosRequested
     property var groupInformation: chatManager.groupInfo
     property var groupFullInformation: ({})
 

@@ -37,6 +37,48 @@ Item {
     readonly property color gradientColor: '#bb000000'
     readonly property int gradientPadding: Theme.itemSizeMedium
 
+    property Component previewComponent: Component {
+        Loader {
+            id: singlePreviewLoader
+
+            readonly property bool current: message.id === message_id
+            readonly property bool isVideo: content_type === 'messageVideo'
+            readonly property var minithumbnail: (isVideo ? (display.content.cover || display.content.video) : display.content.photo).minithumbnail
+
+            height: parent.height
+            width: current ? height : (height / 2)
+
+            Behavior on width { NumberAnimation { duration: 150 } }
+
+            sourceComponent: isVideo && !display.content.cover ? thumbnailComponent : photoComponent
+
+            Component {
+                id: thumbnailComponent
+                TDLibThumbnail {
+                    anchors.fill: parent
+                    thumbnail: display.content.video.thumbnail
+                    minithumbnail: singlePreviewLoader.minithumbnail
+                    highlighted: singlePreviewMouseArea.containsPress
+                }
+            }
+
+            Component {
+                id: photoComponent
+                TDLibPhoto {
+                    fileInformation: utilities.findSmallestPhotoSize((isVideo ? display.content.cover : display.content.photo).sizes).photo || {}
+                    minithumbnail: singlePreviewLoader.minithumbnail
+                    highlighted: singlePreviewMouseArea.containsPress
+                }
+            }
+
+            MouseArea {
+                id: singlePreviewMouseArea
+                anchors.fill: parent
+                onClicked: jumpedToIndex(previewModel.mapToSource(index))
+            }
+        }
+    }
+
     signal jumpedToIndex(int index)
 
     anchors.fill: parent
@@ -202,46 +244,7 @@ Item {
 
                 Repeater {
                     model: previewModel
-
-                    Loader {
-                        id: singlePreviewLoader
-
-                        readonly property bool current: message.id === message_id
-                        readonly property bool isVideo: content_type === 'messageVideo'
-                        readonly property var minithumbnail: (isVideo ? (display.content.cover || display.content.video) : display.content.photo).minithumbnail
-
-                        height: parent.height
-                        width: current ? height : (height / 2)
-
-                        Behavior on width { NumberAnimation { duration: 150 } }
-
-                        sourceComponent: isVideo && !display.content.cover ? thumbnailComponent : photoComponent
-
-                        Component {
-                            id: thumbnailComponent
-                            TDLibThumbnail {
-                                anchors.fill: parent
-                                thumbnail: display.content.video.thumbnail
-                                minithumbnail: singlePreviewLoader.minithumbnail
-                                highlighted: singlePreviewMouseArea.containsPress
-                            }
-                        }
-
-                        Component {
-                            id: photoComponent
-                            TDLibPhoto {
-                                fileInformation: utilities.findSmallestPhotoSize((isVideo ? display.content.cover : display.content.photo).sizes).photo || {}
-                                minithumbnail: singlePreviewLoader.minithumbnail
-                                highlighted: singlePreviewMouseArea.containsPress
-                            }
-                        }
-
-                        MouseArea {
-                            id: singlePreviewMouseArea
-                            anchors.fill: parent
-                            onClicked: jumpedToIndex(previewModel.mapToSource(index))
-                        }
-                    }
+                    delegate: previewComponent
                 }
             }
         }
@@ -272,6 +275,7 @@ Item {
     MessagePropertiesLoader {
         id: propertiesLoader
         message: overlay.message
+        autoLoad: !!message
     }
 
     Row {
@@ -308,7 +312,7 @@ Item {
         }
 
         IconButton {
-            enabled: propertiesLoader.properties.can_be_forwarded
+            enabled: !!propertiesLoader.properties.can_be_forwarded
             opacity: enabled ? 1.0 : 0.2
             icon.source: "image://theme/icon-m-share?" + (pressed
                       ? Theme.highlightColor

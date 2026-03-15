@@ -89,16 +89,6 @@ SilicaFlickable {
     Connections {
         target: tdLibWrapper
 
-        onUserUpdated:
-            if (chatInformationPage.isPrivateOrSecretChat && chatInformationPage.privateChatUserInformation.id === userId)
-                chatInformationPage.privateChatUserInformation = userInformation
-        onBasicGroupUpdated:
-            if (chatInformationPage.isBasicGroup && chatInformationPage.groupInformation.id === groupId)
-                chatInformationPage.groupInformation = tdLibWrapper.getBasicGroup(groupId)
-        onSupergroupUpdated:
-            if (chatInformationPage.isSupergroup && chatInformationPage.groupInformation.id === groupId)
-                chatInformationPage.groupInformation = tdLibWrapper.getSuperGroup(groupId)
-
         onChatOnlineMemberCountUpdated:
             if (chatInformationPage.isGroup && chatInformationPage.chatInformation.id === chatId)
                 chatInformationPage.chatOnlineMemberCount = onlineMemberCount
@@ -111,9 +101,6 @@ SilicaFlickable {
         onUserFullInfoReceived: handleUserFullInfo(userId, userFullInfo)
         onUserFullInfoUpdated: handleUserFullInfo(userId, userFullInfo)
 
-        onUserProfilePhotosReceived:
-            if (chatInformationPage.isPrivateOrSecretChat && extra === chatInformationPage.chatUserOrGroupId)
-                chatInformationPage.chatPartnerProfilePhotos = chatInformationPage.chatPartnerProfilePhotos.concat(photos)
         onChatPermissionsUpdated: {
             if (chatInformationPage.chatInformation.id === chatId) {
                 chatInformationPage.chatInformation.permissions = permissions
@@ -157,7 +144,6 @@ SilicaFlickable {
             if (!chatInformationPage.privateChatUserInformation.id)
                 chatInformationPage.privateChatUserInformation = tdLibWrapper.getUserInformation(chatInformationPage.chatUserOrGroupId)
             tdLibWrapper.getUserFullInfo(chatInformationPage.chatUserOrGroupId)
-            tdLibWrapper.getUserProfilePhotos(chatInformationPage.chatUserOrGroupId, 100, 0) // TODO FIXME
             break
         case 'chatTypeBasicGroup':
             chatInformationPage.isBasicGroup = true
@@ -248,10 +234,8 @@ SilicaFlickable {
                 }
                 return 1 - Math.max(0, Math.min(1, contentFlickable.contentY / maxDimension))
             }
-            property bool thumbnailVisible: imageContainer.tweenFactor > 0.8
-            property bool thumbnailActive: imageContainer.tweenFactor === 1.0
-            property var thumbnailModel: chatInformationPage.chatPartnerProfilePhotos
-            property int thumbnailRadius: imageContainer.minDimension / 2
+
+            property real thumbnailRadius: imageContainer.minDimension / 2
 
             function getEased(min,max,factor) {
                 return min + (max-min)*factor
@@ -263,7 +247,7 @@ SilicaFlickable {
 
             ProfileThumbnail {
                 id: chatPictureThumbnail
-                photoData: imageContainer.hasImage ? chatInformationPage.chatInformation.photo.small : ""
+                photoData: imageContainer.hasImage ? chatInformation.photo.small : null
                 replacementStringHint: headerItem.title
                 width: parent.width
                 height: width
@@ -277,9 +261,28 @@ SilicaFlickable {
                 active: imageContainer.hasImage
                 asynchronous: true
                 anchors.fill: chatPictureThumbnail
-                source: chatInformationPage.isPrivateOrSecretChat
-                        ? "../ProfilePictureList.qml"
-                        : "ChatInformationProfilePicture.qml"
+                sourceComponent: Component {
+                    ProfileThumbnail {
+                        id: chatPictureDetail
+                        anchors.fill: parent
+                        photoData: chatInformation.photo ? chatInformation.photo.big : null
+                        replacementStringHint: ""
+                        radius: imageContainer.thumbnailRadius
+                        optimizeImageSize: false
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if (isPrivateOrSecretChat)
+                                    pageStack.push(Qt.resolvedUrl("../../pages/ProfilePicturesPage.qml"), {userId: chatUserOrGroupId})
+                                else {
+                                    // TODO (use MediaAlbumPage)
+                                    //var preparedPhotoData = {sizes:[{width:640,height: 640,photo:chatPictureDetail.photoData}]};
+                                    //pageStack.push(Qt.resolvedUrl("../../pages/ImagePage.qml"), { "photoData" : preparedPhotoData });
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
         leftMargin: imageContainer.getEased((imageContainer.minDimension + Theme.paddingMedium), 0, imageContainer.tweenFactor) + Theme.horizontalPageMargin

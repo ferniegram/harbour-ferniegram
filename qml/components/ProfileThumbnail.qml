@@ -24,7 +24,8 @@ import App.Logic 1.0
 Item {
     id: profileThumbnail
 
-    property alias photoData: file.fileInformation
+    property var photoData
+    property var minithumbnail
     property string replacementStringHint: "X"
     property int radius: width / 2
     property int imageStatus: -1
@@ -50,62 +51,56 @@ Item {
         return replacementStringHint;
     }
 
-    TDLibFile {
-        id: file
-        tdlib: tdLibWrapper
-        autoLoad: true
-        clearWithInvalidFileInfo: true
-    }
-
-    Component {
-        id: profileImageComponent
-        Item {
-            width: parent.width
-            height: width
-            visible: opacity > 0
-            opacity: singleImage.status === Image.Ready ? 1 : 0
-            Behavior on opacity { FadeAnimation {} }
-
-            Image {
-                id: singleImage
-                width: parent.width - Theme.paddingSmall
-                height: width
-                anchors.centerIn: parent
-                source: file.path
-                sourceSize.width: optimizeImageSize ? width : undefined
-                sourceSize.height: optimizeImageSize ? height : undefined
-                fillMode: Image.PreserveAspectCrop
-                autoTransform: true
-                asynchronous: true
-                visible: false
-                onStatusChanged:
-                    profileThumbnail.imageStatus = status
-            }
-
-            Rectangle {
-                id: profileThumbnailMask
-                width: parent.width - Theme.paddingSmall
-                height: parent.height - Theme.paddingSmall
-                color: Theme.primaryColor
-                radius: profileThumbnail.radius
-                anchors.centerIn: singleImage
-                visible: false
-            }
-
-            OpacityMask {
-                source: singleImage
-                maskSource: profileThumbnailMask
-                anchors.fill: singleImage
-            }
-        }
-    }
-
     Loader {
         id: profileImageLoader
-        active: file.isDownloadingCompleted
+        active: !!photoData
         asynchronous: true
         width: parent.width
-        sourceComponent: profileImageComponent
+        sourceComponent: Component {
+            Item {
+                width: parent.width
+                height: width
+                visible: opacity > 0
+                opacity: (photo.minithumbnailReady || photo.image.status === Image.Ready) ? 1 : 0
+                Behavior on opacity { FadeAnimation {} }
+
+                // if this will have bad performance, we can put Image and TDLibThumbnail here manually
+                TDLibPhoto {
+                    id: photo
+                    width: parent.width - Theme.paddingSmall
+                    height: width
+                    anchors.centerIn: parent
+                    image.sourceSize {
+                        width: optimizeImageSize ? width : undefined
+                        height: optimizeImageSize ? height : undefined
+                    }
+                    image.autoTransform: true
+                    visible: false
+                    image.onStatusChanged:
+                        profileThumbnail.imageStatus = status
+
+                    fileInformation: photoData
+                    minithumbnail: profileThumbnail.minithumbnail
+                    loadBackgroundImage: false
+                }
+
+                Rectangle {
+                    id: profileThumbnailMask
+                    width: parent.width - Theme.paddingSmall
+                    height: parent.height - Theme.paddingSmall
+                    color: Theme.primaryColor
+                    radius: profileThumbnail.radius
+                    anchors.centerIn: photo
+                    visible: false
+                }
+
+                OpacityMask {
+                    source: photo.image || photo.minithumbnailItem
+                    maskSource: profileThumbnailMask
+                    anchors.fill: photo
+                }
+            }
+        }
     }
 
     Item {

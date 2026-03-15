@@ -27,7 +27,11 @@ Item {
     property bool highlighted
     property alias fileInformation: tdLibImage.fileInformation
     readonly property alias image: tdLibImage
+    property bool minithumbnailReady: minithumbnailLoader.item && minithumbnailLoader.item.visible
+    property alias minithumbnailItem: minithumbnailLoader.item
     property alias minithumbnail: minithumbnailLoader.minithumbnail
+    property bool loadBackgroundImage: !tdLibImage.visible && !minithumbnailReady
+    property bool showEmpty
 
     onWidthChanged: setImageFile()
     onPhotoChanged: setImageFile()
@@ -48,8 +52,9 @@ Item {
         fillMode: tdLibImage.fillMode
     }
 
-    BackgroundImage {
-        visible: !tdLibImage.visible && !(minithumbnailLoader.item && minithumbnailLoader.item.visible)
+    Loader {
+        active: loadBackgroundImage
+        source: Qt.resolvedUrl("BackgroundImage.qml")
     }
 
     TDLibImage {
@@ -58,6 +63,7 @@ Item {
         height: parent.height
         cache: false
         highlighted: parent.highlighted
+        file.clearWithInvalidFileInfo: showEmpty
     }
 
     Component.onCompleted: setImageFile()

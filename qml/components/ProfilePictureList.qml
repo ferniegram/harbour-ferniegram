@@ -18,28 +18,58 @@
 */
 import QtQuick 2.6
 import Sailfish.Silica 1.0
+import App.Logic 1.0
 
 Item {
-    id: profilePictureListItem
-    visible: imageContainer.thumbnailVisible && bigProfilePictureList.count > 0
-    property bool isActive: imageContainer.thumbnailActive
-    readonly property int currentPictureIndex: bigProfilePictureList.currentIndex
+    id: profilePictureList
 
-    opacity: isActive ? 1.0 : 0.0
+    property bool hidden: false
+    visible: !hidden && bigProfilePictureList.count > 0
+
+    property bool isUser
+    property var chatId
+    property bool active: true
+    readonly property int currentPictureIndex: bigProfilePictureList.currentIndex
+    property real thumbnailRadius
+
+    opacity: active ? 1.0 : 0.0
     Behavior on opacity { FadeAnimation {} }
 
     PagedView {
         id: bigProfilePictureList
         anchors.fill: parent
         clip: true
-        interactive: parent.isActive
-        model: imageContainer.thumbnailModel
+        interactive: parent.active
+        model: modelLoader.item
+
+        Loader {
+            id: modelLoader
+            sourceComponent: isUser ? userModelComponent : chatModelComponent
+
+            Component {
+                id: chatModelComponent
+                MediaMessagesModel {
+                    tdlib: tdLibWrapper
+                    filter: TDLibAPI.SearchMessagesFilterChatPhoto
+                    Component.onCompleted: init(profilePictureList.chatId) // TODO: initialize from the currently set profile picture message id
+                }
+            }
+
+            Component {
+                id: userModelComponent
+                UserProfilePicturesModel {
+                    tdlib: tdLibWrapper
+                    userId: profilePictureList.chatId
+                }
+            }
+        }
+
         delegate: ProfileThumbnail {
             width: PagedView.contentWidth
             height: PagedView.contentHeight
-            photoData: utilities.findBiggestPhotoSize(modelData.sizes).photo
+            photoData: isUser ? big_photo : utilities.findBiggestPhotoSize(modelData.sizes).photo
             replacementStringHint: ''
-            radius: imageContainer.thumbnailRadius
+            radius: thumbnailRadius
 
             MouseArea {
                 anchors.fill: parent

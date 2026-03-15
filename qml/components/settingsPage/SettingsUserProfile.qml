@@ -39,10 +39,8 @@ AccordionItem {
             property bool uploadInProgress: false
             property bool contactSyncEnabled: false
 
-            Component.onCompleted: {
-                tdLibWrapper.getUserProfilePhotos(userInformation.id, 100, 0);
+            Component.onCompleted:
                 tdLibWrapper.getUserFullInfo(userInformation.id)
-            }
 
             Connections {
                 target: tdLibWrapper
@@ -51,8 +49,8 @@ AccordionItem {
                     lastNameEditArea.text = userInformation.last_name;
                     userNameEditArea.text = userInformation.username;
                 }
-                onUserProfilePhotosReceived: {
-                    if (extra === userInformation.id.toString()) {
+                onChatPhotosReceived: {
+                    if (chatId === userInformation.id) {
                         imageContainer.thumbnailModel = photos;
                     }
                 }
@@ -60,6 +58,7 @@ AccordionItem {
                     accordionContent.fullUserInformation = userFullInfo
                 onUserFullInfoUpdated:
                     accordionContent.fullUserInformation = userFullInfo
+                // TODO: fix all of this by moving to UserProfilePicturesModel
                 onFileUpdated: {
                     if (uploadInProgress) {
                         profilePictureButtonColumn.visible = !fileInformation.remote.is_uploading_active;
@@ -244,19 +243,21 @@ AccordionItem {
                     anchors.verticalCenter: parent.verticalCenter
                     width: parent.width / 2
                     height: profilePictureLoader.height
-                    property var thumbnailModel: ({})
-                    property bool thumbnailVisible: true
-                    property bool thumbnailActive: thumbnailModel.length > 0
-                    property int thumbnailRadius: imageContainer.width / 2
 
                     Loader {
                         id: profilePictureLoader
-                        active: imageContainer.thumbnailActive
+                        active: true
                         asynchronous: true
                         width: Theme.itemSizeExtraLarge
                         height: Theme.itemSizeExtraLarge
                         anchors.horizontalCenter: parent.horizontalCenter
-                        source: "../ProfilePictureList.qml"
+                        sourceComponent: Component {
+                            ProfilePictureList {
+                                thumbnailRadius: imageContainer.width / 2
+                                isUser: true
+                                chatId: tdLibWrapper.myUserId
+                            }
+                        }
                     }
 
                     ProfileThumbnail {

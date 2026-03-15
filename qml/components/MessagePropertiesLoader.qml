@@ -2,10 +2,10 @@ import QtQuick 2.0
 
 QtObject {
     id: loader
-    property var message: ({})
+    property var message
     // we use var in MessageListViewItem instead of int, so
-    property var chatId: message.chat_id
-    property var messageId: message.id
+    property var chatId: message ? message.chat_id : null
+    property var messageId: message ? message.id : null
     property bool autoLoad: true
 
     property var properties: ({stub: true})
