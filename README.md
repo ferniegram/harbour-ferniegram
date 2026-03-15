@@ -72,7 +72,7 @@ Moreover, you need to have a compiled version of [TDLib 1.8.56](https://github.c
 
 You may just want to download the [tdlib.zip from our fork](https://github.com/roundedrectangle/td/releases) to just use the exact version of the latest official Fernschreiber release. To use it, you need to extract it into your local `tdlib/` folder as described above. If so, you're done and can compile Fernschreiber using the Sailfish SDK. If you want to build TDLib for yourself, please keep on reading.
 
-In case you want to use the same codebase which was used to compile the library that is shipped with Fernschreiber, please [check out the fork](https://github.com/roundedrectangle/td):
+In case you want to use the same codebase which was used to compile the library that is shipped with Ferniegram, please [check out the fork](https://github.com/roundedrectangle/td):
 
 - `alias sfdk=~/SailfishOS/bin/sfdk`
 - `sfdk config target=SailfishOS-5.0.0.62-aarch64` (this compiles the sources on SFOS 5.0 and ARM64 - the target needs to be adjusted according to the running SDK engine and the platform)
