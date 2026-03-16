@@ -44,12 +44,12 @@ MessageContentBase {
             function processProperties(properties) { canEdit = !!properties.can_be_edited }
             IconTextRowMenuItem {
                 visible: !pollData.is_closed && canEdit
-                text: qsTr("Close Poll")
+                text: qsTr("Stop poll")
                 onClicked: tdLibWrapper.stopPoll(pollMessageComponent.chatId, pollMessageComponent.messageId)
             }
             IconTextRowMenuItem {
                 visible: !pollData.is_closed && !pollMessageComponent.isQuiz && pollMessageComponent.hasAnswered
-                text: qsTr("Reset Answer")
+                text: qsTr("Retract vote")
                 onClicked: {
                     chosenIndexes = []
                     sendResponse()
