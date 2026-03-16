@@ -21,6 +21,7 @@ import QtQuick 2.6
 import Sailfish.Silica 1.0
 import App.Logic 1.0
 import "../../modules/Opal/FancyMenus"
+import '../../pages'
 
 import "../../js/functions.js" as Functions
 import "../../js/twemoji.js" as Emoji
@@ -29,15 +30,14 @@ MessageContentBase {
     id: pollMessageComponent
     height: pollColumn.height
 
-    readonly property string chatId: rawMessage.chat_id
-    readonly property bool isOwnMessage: messageListItem ? messageListItem.isOwnMessage : overlayFlickable.isOwnMessage
-    readonly property string messageId: rawMessage.id
+    readonly property var chatId: rawMessage.chat_id
+    readonly property var messageId: rawMessage.id
     readonly property var pollData: rawMessage.content.poll
-    property var chosenPollData:({})
+    property var chosenPollData: ({})
     property var chosenIndexes: []
     readonly property bool hasAnswered: pollData.options.filter(function(option){ return option.is_chosen }).length > 0
     readonly property bool canAnswer: !hasAnswered && !pollData.is_closed
-    readonly property bool isQuiz: pollData.type['@type'] === "pollTypeQuiz"
+    readonly property bool isQuiz: pollData.type['@type'] === 'pollTypeQuiz'
     property list<Item> extraContextMenuItems: [
         FancyMenuRow {
             property bool canEdit
@@ -50,32 +50,39 @@ MessageContentBase {
             IconTextRowMenuItem {
                 visible: !pollData.is_closed && !pollMessageComponent.isQuiz && pollMessageComponent.hasAnswered
                 text: qsTr("Reset Answer")
-                onClicked: pollMessageComponent.resetChosen()
+                onClicked: {
+                    chosenIndexes = []
+                    sendResponse()
+                }
             }
         }
     ]
 
-    function handleChoose(index) {
-        if(!pollData.type.allow_multiple_answers) {
-            chosenIndexes = [index];
-            sendResponse();
-            return;
-        }
-        var indexes = chosenIndexes;
-        var found = indexes.indexOf(index);
-        if(found > -1) { // uncheck
-            indexes.splice(found, 1);
-        } else {
-            indexes.push(index)
-        }
-        chosenIndexes = indexes;
-    }
-    function resetChosen() {
-        chosenIndexes = [];
-        sendResponse();
-    }
     function sendResponse() {
-        tdLibWrapper.setPollAnswer(chatId, messageId, chosenIndexes);
+        tdLibWrapper.setPollAnswer(chatId, messageId, chosenIndexes)
+    }
+    function handleChoose(index) {
+        if (!pollData.type.allow_multiple_answers) {
+            chosenIndexes = [index]
+            sendResponse()
+            return
+        }
+
+        var found = chosenIndexes.indexOf(index)
+        if (found > -1) // uncheck
+            chosenIndexes.splice(found, 1)
+        else
+            chosenIndexes.push(index)
+        chosenIndexesChanged()
+    }
+
+    Component {
+        id: pollResultsPageComponent
+        PollResultsPage {
+            // don't pass theses as properties to pageStack.push so if rawMessage is updated, it would be updated here too
+            chatId: pollMessageComponent.chatId
+            message: pollMessageComponent.rawMessage
+        }
     }
 
     Column {
@@ -83,29 +90,70 @@ MessageContentBase {
         width: parent.width
         spacing: Theme.paddingSmall
 
-        Label {
-            font.pixelSize: Theme.fontSizeSmall
-            width: parent.width
-            visible: text !== ""
-            text: Emoji.emojify(Functions.enhanceMessageText(pollData.question), Theme.fontSizeSmall)
-            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-            textFormat: Text.StyledText
-            color: pollMessageComponent.isOwnMessage || pollMessageComponent.highlighted ? Theme.highlightColor : Theme.primaryColor
-        }
+        // Poll type (<Anynymous> Poll/Quiz) is placed in the message text by Utilities.
 
-        Label {
-            font.pixelSize: Theme.fontSizeTiny
+        Row {
             width: parent.width
-            visible: text !== ""
-            text: pollData.is_closed ? qsTr("Final Result:") : (pollData.type.allow_multiple_answers ? qsTr("Multiple Answers are allowed.") : "")
-            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-            color: pollMessageComponent.isOwnMessage || pollMessageComponent.highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
-        }
+            layoutDirection: isOwnMessage ? Qt.RightToLeft : Qt.LeftToRight
 
-        Item {
-            visible: !pollMessageComponent.canAnswer
-            width: 1
-            height: Theme.paddingSmall
+            Column {
+                width: parent.width - pollDurationRow.width
+                Label {
+                    font.pixelSize: Theme.fontSizeSmall
+                    width: parent.width
+                    visible: !!text
+                    text: Emoji.emojify(Functions.enhanceMessageText(pollData.question), Theme.fontSizeSmall)
+                    wrapMode: Text.Wrap
+                    textFormat: Text.StyledText
+                    color: pollMessageComponent.isOwnMessage || pollMessageComponent.highlighted ? Theme.highlightColor : Theme.primaryColor
+                }
+
+                Label {
+                    font.pixelSize: Theme.fontSizeTiny
+                    width: parent.width
+                    visible: !!text
+                    text: pollData.is_closed ? qsTr("Final results") : (pollData.type.allow_multiple_answers ? qsTr("Multiple answers are allowed") : '')
+                    wrapMode: Text.Wrap
+                    color: pollMessageComponent.isOwnMessage || pollMessageComponent.highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
+                }
+
+                Item {
+                    visible: !pollMessageComponent.canAnswer
+                    width: 1
+                    height: Theme.paddingSmall
+                }
+            }
+
+            Row {
+                id: pollDurationRow
+                opacity: pollData.close_date && !!pollDurationLabel.text ? 1 : 0
+                Behavior on opacity { FadeAnimator {} }
+                width: opacity == 1 ? childrenRect.width : 0
+                Behavior on width { NumberAnimation { duration: 200 } }
+                layoutDirection: parent.layoutDirection
+                spacing: Theme.paddingSmall
+
+                Label {
+                    id: pollDurationLabel
+                    font.pixelSize: Theme.fontSizeMedium
+                    text: Functions.getDurationToFuture(pollData.close_date)
+                    color: pollMessageComponent.isOwnMessage || pollMessageComponent.highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    Timer {
+                        interval: 1000
+                        running: pollDurationRow.visible
+                        repeat: true
+                        onTriggered:
+                            pollDurationLabel.text = Functions.getDurationToFuture(pollData.close_date)
+                    }
+                }
+
+                Icon {
+                    source: "image://theme/icon-m-timer"
+                    color: pollMessageComponent.isOwnMessage || pollMessageComponent.highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
+                }
+            }
         }
 
         Component {
@@ -117,9 +165,7 @@ MessageContentBase {
                 text: Emoji.emojify(Functions.enhanceMessageText(modelData.text), Theme.fontSizeMedium)
                 checked: pollMessageComponent.chosenIndexes.indexOf(index) > -1
                 highlighted: pollMessageComponent.highlighted || down
-                onClicked: {
-                    pollMessageComponent.handleChoose(index);
-                }
+                onClicked: handleChoose(index)
             }
         }
 
@@ -178,7 +224,7 @@ MessageContentBase {
                             width: parent.width
                             text: Emoji.emojify(Functions.enhanceMessageText(modelData.text), Theme.fontSizeMedium)
                             textFormat: Text.StyledText
-                            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                            wrapMode: Text.Wrap
                             color: pollMessageComponent.isOwnMessage || pollMessageComponent.highlighted ? Theme.highlightColor : Theme.primaryColor
                             onTextChanged: lastLineWidth = 0
                             onLineLaidOut: {
@@ -264,21 +310,15 @@ MessageContentBase {
                 }
 
                 IconButton {
-                    visible: !pollData.is_closed && pollMessageComponent.chosenIndexes.length > 0 && pollData.type.allow_multiple_answers  && !pollMessageComponent.hasAnswered
-                    opacity: visible ? 1.0 : 0.0
-                    Behavior on opacity { FadeAnimation {}}
+                    visible: !!pollData.type.allow_multiple_answers && !pollData.is_closed && pollMessageComponent.chosenIndexes.length > 0 && !pollMessageComponent.hasAnswered ? 1.0 : 0.0
                     icon.source: "image://theme/icon-m-send"
-                    onClicked: {
-                        pollMessageComponent.sendResponse()
-                    }
+                    onClicked: sendResponse()
                 }
 
                 IconButton {
                     visible: !pollMessageComponent.canAnswer && !pollData.is_anonymous && pollData.total_voter_count > 0
                     icon.source: "image://theme/icon-m-media-artists"
-                    onClicked: {
-                        pageStack.push(Qt.resolvedUrl("../../pages/PollResultsPage.qml"), { chatId:chatId, message:pollMessageComponent.rawMessage});
-                    }
+                    onClicked: pageStack.push(pollResultsPageComponent)
                     Icon {
                         opacity: 0.8
                         source: "image://theme/icon-s-maybe"
