@@ -26,6 +26,9 @@ ListItem {
     property var minithumbnail
     property int minithumbnailRadius: Theme.paddingSmall / 2
 
+    property real leftMargin: Theme.horizontalPageMargin
+    property real rightMargin: Theme.horizontalPageMargin
+
     contentHeight: Theme.itemSizeExtraLarge
     contentWidth: parent.width
 
@@ -33,7 +36,7 @@ ListItem {
         id: pictureItem
         anchors {
             left: parent.left
-            leftMargin: Theme.horizontalPageMargin
+            leftMargin: chatItem.leftMargin
             verticalCenter: parent.verticalCenter
         }
 
@@ -54,7 +57,7 @@ ListItem {
             left: pictureItem.right
             leftMargin: Theme.paddingSmall
             right: parent.right
-            rightMargin: Theme.horizontalPageMargin
+            rightMargin: chatItem.rightMargin
         }
         spacing: Theme.paddingSmall / 2
 
