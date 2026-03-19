@@ -7,9 +7,12 @@ PhotoTextsListItem {
     id: chatItem
     width: parent.width
 
-    property var chatId
-    property var userId: chatInformation.type.user_id
+    property var messageSender
+    property var chatId: messageSender && messageSender['@type'] === 'messageSenderChat' ? messageSender.chat_id : undefined
+    property var userId: messageSender && messageSender['@type'] === 'messageSenderUser' ? messageSender.user_id : chatInformation.type.user_id
     property bool doReplace
+
+    property bool showFullInfo: true
 
     property var chatInformation: tdLibWrapper.getChat(chatId)
     property var relatedInformation
@@ -32,7 +35,8 @@ PhotoTextsListItem {
 
     function handleUser() {
         relatedInformation = tdLibWrapper.getUserInformation(userId)
-        secondaryText.text = "@" + (relatedInformation.usernames && relatedInformation.usernames.editable_username !== "" ? relatedInformation.usernames.editable_username : relatedInformation.id)
+        if (showFullInfo)
+            secondaryText.text = "@" + (relatedInformation.usernames && relatedInformation.usernames.editable_username !== "" ? relatedInformation.usernames.editable_username : relatedInformation.id)
     }
     function handleBasicGroup() {
         relatedInformation = tdLibWrapper.getBasicGroup(chatInformation.type.basic_group_id)
@@ -45,7 +49,8 @@ PhotoTextsListItem {
         if (!chatId && userId) {
             isPrivateChat = true
             handleUser()
-            tdLibWrapper.getUserFullInfo(userId)
+            if (showFullInfo)
+                tdLibWrapper.getUserFullInfo(userId)
             return
         }
 
@@ -56,17 +61,20 @@ PhotoTextsListItem {
                 isSecret = true
             else isPrivateChat = true
             handleUser()
-            tdLibWrapper.getUserFullInfo(userId)
+            if (showFullInfo)
+                tdLibWrapper.getUserFullInfo(userId)
             break
         case "chatTypeBasicGroup":
             isBasicGroup = true
             handleBasicGroup()
-            tdLibWrapper.getGroupFullInfo(chatInformation.type.basic_group_id, false)
+            if (showFullInfo)
+                tdLibWrapper.getGroupFullInfo(chatInformation.type.basic_group_id, false)
             break
         case "chatTypeSupergroup":
             isSupergroup = true
             handleSupergroup()
-            tdLibWrapper.getGroupFullInfo(chatInformation.type.supergroup_id, true)
+            if (showFullInfo)
+                tdLibWrapper.getGroupFullInfo(chatInformation.type.supergroup_id, true)
             break;
         }
     }
@@ -75,19 +83,19 @@ PhotoTextsListItem {
     onChatInformationChanged: detectChatType()
 
     function handleUserFullInfo(userId, userFullInfo) {
-        if ((isPrivateChat || isSecret) && userId === chatItem.userId)
+        if (showFullInfo && (isPrivateChat || isSecret) && userId === chatItem.userId)
             tertiaryText.text = Emoji.emojify(Functions.enhanceMessageText(userFullInfo.bio), tertiaryText.font.pixelSize)
     }
 
     function handleBasicGroupFullInfo(groupId, groupFullInfo) {
-        if (isBasicGroup && groupId === chatInformation.type.basic_group_id) {
+        if (showFullInfo && isBasicGroup && groupId === chatInformation.type.basic_group_id) {
             secondaryText.text = qsTr("%1 members", "", groupFullInfo.members.length).arg(Number(groupFullInfo.members.length).toLocaleString(Qt.locale(), "f", 0))
             tertiaryText.text = Emoji.emojify(groupFullInfo.description, tertiaryText.font.pixelSize)
         }
     }
 
     function handleSupergroupFullInfo(groupId, groupFullInfo) {
-        if (isSupergroup && groupId === chatInformation.type.supergroup_id) {
+        if (showFullInfo && isSupergroup && groupId === chatInformation.type.supergroup_id) {
             secondaryText.text = Functions.getGroupStatusText(groupFullInfo.member_count, relatedInformation.is_channel, 0, true)
             tertiaryText.text = Emoji.emojify(groupFullInfo.description, tertiaryText.font.pixelSize)
         }
