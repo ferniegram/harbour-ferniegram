@@ -283,6 +283,7 @@ MessageContentBase {
             text: Emoji.emojify(Functions.enhanceMessageText(pollData.type.explanation) || "", font.pixelSize)
             textFormat: Text.StyledText
             color: pollMessageComponent.isOwnMessage || pollMessageComponent.highlighted ? Theme.highlightColor : Theme.primaryColor
+            linkColor: Theme.highlightColor
             font.pixelSize: Theme.fontSizeExtraSmall
             leftPadding: Theme.iconSizeSmall
             bottomPadding: Theme.paddingSmall
