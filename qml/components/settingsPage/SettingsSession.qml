@@ -47,7 +47,7 @@ AccordionItem {
                     activeSessionsItem.inactiveSessionsTtlDays = inactive_session_ttl_days
                 }
                 onOkReceived: {
-                    if (request === "terminateSession") {
+                    if (extra === "terminateSession") {
                         appNotification.show(qsTr("Session was terminated"));
                         tdLibWrapper.getActiveSessions();
                     }

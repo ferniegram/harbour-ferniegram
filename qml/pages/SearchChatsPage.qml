@@ -78,7 +78,7 @@ Page {
         onErrorReceived:
             searchChatsPage.publicLoading = false
         onOkReceived: {
-            if (request == 'recentlyFound')
+            if (extra == 'recentlyFound')
                 tdLibWrapper.searchRecentlyFoundChats(searchField.text)
         }
     }
@@ -236,7 +236,7 @@ Page {
                                                     if (extra == 'topChatCategoryUsers')
                                                         topChatUsersView.model = chatIds
                                                 onOkReceived:
-                                                    if (request == 'topChatCategoryUsers')
+                                                    if (extra == 'topChatCategoryUsers')
                                                         update()
                                             }
 

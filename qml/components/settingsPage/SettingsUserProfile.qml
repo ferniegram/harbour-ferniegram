@@ -70,10 +70,9 @@ AccordionItem {
                     }
                 }
                 onOkReceived: {
-                    if (request === "deleteProfilePhoto") {
+                    if (extra === "deleteProfilePhoto") {
                         tdLibWrapper.getUserProfilePhotos(userInformation.id, 100, 0);
-                    }
-                    if (request === "setProfilePhoto") {
+                    } else if (extra === "setProfilePhoto") {
                         tdLibWrapper.getUserProfilePhotos(userInformation.id, 100, 0);
                         profilePictureButtonColumn.visible = true;
                         uploadInProgress = false;
