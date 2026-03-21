@@ -38,7 +38,6 @@ ApplicationWindow {
 
     Connections {
         target: tdLibWrapper
-        onOpenFileExternally: Qt.openUrlExternally(filePath)
         onErrorReceived: Functions.handleErrorMessage(code, message, extra)
         onServiceNotificationReceived: appNotification.show(utilities.getMessageContentText(content, Utilities.MessageTextSimple))
         onLinkUnsupportedByApp: appNotification.show(qsTr("Link unsupported: %1").arg(type))

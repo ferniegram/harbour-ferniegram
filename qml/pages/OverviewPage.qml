@@ -235,7 +235,7 @@ Page {
         }
         onCopyToDownloadsSuccessful: {
             appNotification.show(qsTr("Download of %1 successful.", "in-app notification text").arg(fileName),
-                                 function() { tdLibWrapper.openFileOnDevice(filePath) },
+                                 function() { Qt.openUrlExternally(filePath) },
                                  qsTr("Open", "in-app notification button: open downloaded file"));
         }
 
