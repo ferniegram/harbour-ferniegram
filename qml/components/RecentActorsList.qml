@@ -2,7 +2,7 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 
 Item {
-    width: childrenRect.width
+    implicitWidth: height + paddingDifference * (count - 1)
 
     property real paddingDifference: Theme.paddingMedium
     property bool inverted
@@ -10,14 +10,17 @@ Item {
     property alias count: repeater.count
     property bool userIds // specifies if the model contains user ids instead of messageSender objects
 
+    property bool highlighted
+
     Repeater {
         id: repeater
         ProfileThumbnail {
             id: profileThumbnail
-
             height: parent.height
             width: height
             x: paddingDifference * (inverted ? repeater.count - index - 1 : index)
+
+            highlighted: parent.highlighted
 
             photoData: isChat
                        ? tdLibWrapper.getChat(modelData.chat_id).photo.small

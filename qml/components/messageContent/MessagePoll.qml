@@ -22,6 +22,7 @@ import Sailfish.Silica 1.0
 import App.Logic 1.0
 import "../../modules/Opal/FancyMenus"
 import '../../pages'
+import '..'
 
 import "../../js/functions.js" as Functions
 import "../../js/twemoji.js" as Emoji
@@ -119,6 +120,43 @@ MessageContentBase {
                     text: pollData.is_closed ? qsTr("Final results") : (pollData.type.allow_multiple_answers ? qsTr("Multiple answers are allowed") : '')
                     wrapMode: Text.Wrap
                     color: pollMessageComponent.isOwnMessage || pollMessageComponent.highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
+                }
+
+                RecentActorsList {
+                    width: implicitWidth + (recentVotersButton.visible ? recentVotersButton.width : 0)
+                    model: pollData.recent_voter_ids.reverse()
+                    inverted: true
+                    visible: model && model.length > 0
+                    height: Theme.iconSizeSmallPlus
+                    paddingDifference: Theme.iconSizeSmall
+                    highlighted: recentVotersMouseArea.containsPress
+
+                    Icon {
+                        id: recentVotersButton
+                        anchors.right: parent.right
+                        width: parent.height
+                        height: width
+                        visible: !pollMessageComponent.canAnswer && !pollData.is_anonymous && pollData.total_voter_count > 0
+                        source: "image://theme/icon-m-media-artists"
+                        highlighted: parent.highlighted
+                        Icon {
+                            width: Theme.iconSizeExtraSmall
+                            height: width
+                            anchors {
+                                right: parent.right
+                                top: parent.top
+                            }
+                            opacity: 0.8
+                            source: "image://theme/icon-s-maybe"
+                            highlighted: parent.highlighted
+                        }
+                    }
+
+                    MouseArea {
+                        id: recentVotersMouseArea
+                        anchors.fill: parent
+                        onClicked: pageStack.push(pollResultsPageComponent)
+                    }
                 }
 
                 Item {
@@ -319,20 +357,6 @@ MessageContentBase {
                     visible: !!pollData.type.allow_multiple_answers && !pollData.is_closed && pollMessageComponent.chosenIndexes.length > 0 && !pollMessageComponent.hasAnswered ? 1.0 : 0.0
                     icon.source: "image://theme/icon-m-send"
                     onClicked: sendResponse()
-                }
-
-                IconButton {
-                    visible: !pollMessageComponent.canAnswer && !pollData.is_anonymous && pollData.total_voter_count > 0
-                    icon.source: "image://theme/icon-m-media-artists"
-                    onClicked: pageStack.push(pollResultsPageComponent)
-                    Icon {
-                        opacity: 0.8
-                        source: "image://theme/icon-s-maybe"
-                        anchors {
-                            right: parent.right
-                            top: parent.top
-                        }
-                    }
                 }
             }
 
