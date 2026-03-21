@@ -17,22 +17,16 @@ AnimatedLoader {
 
             onClicked: pageStack.push(Qt.resolvedUrl('../../pages/ChatPendingJoinRequestsPage.qml'), {chatId: chatId})
 
-            Repeater {
-                model: pendingJoinRequests.user_ids
-
-                ProfileThumbnail {
-                    x: Theme.horizontalPageMargin + (index * Theme.iconSizeSmall)
-                    width: Theme.iconSizeMedium
-                    height: width
-                    anchors.verticalCenter: parent.verticalCenter
-
-                    photoData: user.userInformation.profile_photo.small
-                    replacementStringHint: utilities.getUserName(user.userInformation)
-                    TDLibUser {
-                        id: user
-                        userId: modelData
-                    }
+            RecentActorsList {
+                anchors {
+                    left: parent.left
+                    leftMargin: Theme.horizontalPageMargin
+                    verticalCenter: parent.verticalCenter
                 }
+                height: Theme.iconSizeMedium
+                paddingDifference: Theme.iconSizeSmall
+                model: pendingJoinRequests.user_ids
+                userIds: true
             }
 
             Label {

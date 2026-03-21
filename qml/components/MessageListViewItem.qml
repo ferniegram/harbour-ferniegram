@@ -827,52 +827,23 @@ ListItem {
                                         }
                                     }
 
-                                    Repeater {
-                                        id: reactorsRepeater
-                                        model: modelData.recent_sender_ids.reverse()
-                                        ProfileThumbnail {
-                                            id: reactorProfileThumbnail
-
-                                            height: parent.height
-                                            width: height
-                                            anchors {
-                                                left: reactionLoader.right
-                                                leftMargin: (Theme.paddingSmall/2) + Theme.paddingMedium * (reactorsRepeater.count - index - 1)
-                                            }
-
-                                            photoData: isChat
-                                                       ? tdLibWrapper.getChat(modelData.chat_id).photo.small
-                                                       : reactorUserInfoLoader.info.profile_photo.small
-                                            replacementStringHint: isChat
-                                                                   ? tdLibWrapper.getChat(modelData.chat_id).title
-                                                                   : utilities.getUserName(reactorUserInfoLoader.info)
-
-                                            property bool isChat: modelData['@type'] === 'messageSenderChat'
-
-                                            TDLibUser {
-                                                id: reactorUserInfoLoader
-                                                userId: isChat ? 0 : modelData.user_id
-                                            }
-
-                                            Connections {
-                                                // FIXME: this can be improved (maybe use QQmlPropertyMaps for storing chat info?):
-                                                target: isChat ? tdLibWrapper : null
-                                                onChatTitleUpdated:
-                                                    if (chatId === modelData.chat_id)
-                                                        reactorProfileThumbnail.replacementStringHint = title
-                                                onChatPhotoUpdated:
-                                                    if (chatId === modelData.chat_id)
-                                                        reactorProfileThumbnail.photoData = photo.small
-                                            }
+                                    RecentActorsList {
+                                        id: recentReactors
+                                        height: parent.height
+                                        anchors {
+                                            left: reactionLoader.right
+                                            leftMargin: Theme.paddingSmall/2
                                         }
+                                        inverted: true
+                                        model: modelData.recent_sender_ids.reverse()
                                     }
 
                                     Text {
                                         anchors {
                                             left: reactionLoader.right
-                                            leftMargin: visible ? (reactorsRepeater.count > 0 ? (Theme.paddingSmall + parent.height + Math.max(0, Theme.paddingMedium*(reactorsRepeater.count - 1))) : Theme.paddingSmall/2) : 0
+                                            leftMargin: visible ? (recentReactors.count > 0 ? (Theme.paddingSmall + parent.height + Math.max(0, Theme.paddingMedium*(recentReactors.count - 1))) : Theme.paddingSmall/2) : 0
                                         }
-                                        visible: (modelData.total_count - reactorsRepeater.count) > 0
+                                        visible: (modelData.total_count - recentReactors.count) > 0
                                         width: visible ? implicitWidth : 0
                                         text: Functions.getShortenedCount(modelData.total_count)
                                         font.pixelSize: Theme.fontSizeExtraSmall
