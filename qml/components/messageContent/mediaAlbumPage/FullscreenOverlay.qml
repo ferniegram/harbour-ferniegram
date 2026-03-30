@@ -36,6 +36,7 @@ Item {
     property var previewModel
     property alias propertiesLoader: propertiesLoader
     property alias buttonsRow: buttons
+    property alias file: file
     readonly property color gradientColor: '#bb000000'
     readonly property int gradientPadding: Theme.itemSizeMedium
 
@@ -271,7 +272,7 @@ Item {
                                                 : message.content.video_note)
 
         fileInformation: {
-            if(isPhoto) {
+            if (isPhoto) {
                 return utilities.findBiggestPhotoSize(message.content.photo.sizes).photo || {}
             }
             return videoData[message.content['@type'] === 'messageVideoNote' ? "video" : videoData['@type']]

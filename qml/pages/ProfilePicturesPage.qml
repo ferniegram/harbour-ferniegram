@@ -29,8 +29,7 @@ MediaAlbumPage {
         if (index >= count - 1 - 10)
             profilePicturesModel.loadMore()
 
-    // TODO: fix downloading pictures
-    // also deleting own picture seems to be broken (deletes, but the model isn't affected)
+    // TODO: deleting own picture seems to be broken (deletes, but the model isn't affected)
     // and ideally the viewer should open the current photo if it's not the first one when possible
 
     // TODO: make photos preview a ListView so only currently needed items would be loaded (see also ChatPhotosPage)
@@ -54,6 +53,8 @@ MediaAlbumPage {
             }
         }
     }
+
+    overlay.file.fileInformation: pagedView.currentItem.photoSize.photo
 
     overlay.forwardButtonVisible: false
     overlay.deleteButtonVisible: isMyself
