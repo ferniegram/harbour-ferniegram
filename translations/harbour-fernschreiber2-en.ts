@@ -33,23 +33,23 @@
     </message>
     <message>
         <source>Translations</source>
-        <translation type="unfinished">Translations</translation>
+        <translation>Translations</translation>
     </message>
     <message>
         <source>Fernschreiber translations</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Chinese</source>
-        <translation type="unfinished">Chinese</translation>
+        <translation>Chinese</translation>
     </message>
     <message>
         <source>Finnish</source>
-        <translation type="unfinished">Finnish</translation>
+        <translation>Finnish</translation>
     </message>
     <message>
         <source>French</source>
-        <translation type="unfinished">French</translation>
+        <translation>French</translation>
     </message>
     <message>
         <source>Hungarian</source>
@@ -151,6 +151,70 @@
     </message>
     <message>
         <source>Last name length must be less than 256</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AddProxyDialog</name>
+    <message>
+        <source>Check status</source>
+        <comment>Check proxy status when adding</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Port</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TCP/UDP port number must be within the 0-65535 range</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>MTPROTO</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SOCKS5</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HTTP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Secret</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transparent TCP connection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Credentials (optional)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Username</source>
+        <translation type="unfinished">Username</translation>
+    </message>
+    <message>
+        <source>Password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add proxy</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -353,6 +417,18 @@
     </message>
 </context>
 <context>
+    <name>ChatInformationTabItemGroupsInCommon</name>
+    <message>
+        <source>Loading groups in common</source>
+        <comment>groups you have in common with a user</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No groups in common</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ChatInformationTabItemMediaGrid</name>
     <message>
         <source>Jump to message</source>
@@ -360,31 +436,28 @@
     </message>
 </context>
 <context>
-    <name>ChatInformationTabItemMembersGroups</name>
+    <name>ChatInformationTabItemMembers</name>
     <message>
-        <source>Loading common chats…</source>
-        <comment>chats you have in common with a user</comment>
-        <translation>Loading common chats…</translation>
+        <source>Loading subscribers</source>
+        <comment>channel</comment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Loading group members…</source>
-        <translation>Loading group members…</translation>
+        <source>Loading members</source>
+        <comment>group</comment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You</source>
-        <translation>You</translation>
+        <source>This channel is empty</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You don&apos;t have any groups in common with this user.</source>
-        <translation>You don&apos;t have any groups in common with this user.</translation>
+        <source>Channel members are anonymous</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This group is empty.</source>
-        <translation>This group is empty.</translation>
-    </message>
-    <message>
-        <source>Channel members are anonymous.</source>
-        <translation>Channel members are anonymous.</translation>
+        <source>This group is empty</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -412,6 +485,28 @@
     <message>
         <source>The group chat will be divided into topics created by admins or users.</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ChatInformationTabItemSimilarBots</name>
+    <message numerus="yes">
+        <source>Subscribe to Telegram Premium to unlock up to %Ln similar bots.</source>
+        <comment>Info label suggesting the user to get Telegram Premium to access more similar bots</comment>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>ChatInformationTabItemSimilarChats</name>
+    <message numerus="yes">
+        <source>Subscribe to Telegram Premium to unlock up to %Ln similar channels.</source>
+        <comment>Info label suggesting the user to get Telegram Premium to access more similar channels</comment>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -451,6 +546,21 @@
         <comment>Button: Chat files</comment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Subscribers</source>
+        <comment>Button: channel subscribers</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Similar channels</source>
+        <comment>Profile tab</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Similar bots</source>
+        <comment>Profile tab</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChatJoinDialog</name>
@@ -473,20 +583,6 @@
         <source>Join group</source>
         <comment>group</comment>
         <translation type="unfinished"></translation>
-    </message>
-    <message numerus="yes">
-        <source>%Ln subscribers</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
-        <source>%Ln members</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
     </message>
     <message>
         <source>This channel accepts new subscribers only after they are approved by its admins.</source>
@@ -1112,22 +1208,6 @@ messages</numerusform>
 </context>
 <context>
     <name>MessagePoll</name>
-    <message>
-        <source>Close Poll</source>
-        <translation>Close Poll</translation>
-    </message>
-    <message>
-        <source>Reset Answer</source>
-        <translation>Reset Answer</translation>
-    </message>
-    <message>
-        <source>Final Result:</source>
-        <translation>Final Result:</translation>
-    </message>
-    <message>
-        <source>Multiple Answers are allowed.</source>
-        <translation>Multiple Answers are allowed.</translation>
-    </message>
     <message numerus="yes">
         <source>%Ln%</source>
         <comment>% of votes for option</comment>
@@ -1143,6 +1223,22 @@ messages</numerusform>
             <numerusform>%Ln vote total</numerusform>
             <numerusform>%Ln votes total</numerusform>
         </translation>
+    </message>
+    <message>
+        <source>Stop poll</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Retract vote</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Final results</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Multiple answers are allowed</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1683,11 +1779,6 @@ messages</numerusform>
         </translation>
     </message>
     <message>
-        <source>Question</source>
-        <comment>section header</comment>
-        <translation>Question</translation>
-    </message>
-    <message>
         <source>Results</source>
         <comment>section header</comment>
         <translation>Results</translation>
@@ -1708,11 +1799,6 @@ messages</numerusform>
             <numerusform>%Ln%</numerusform>
         </translation>
     </message>
-    <message>
-        <source>Chosen by:</source>
-        <comment>This answer has been chosen by the following users</comment>
-        <translation>Chosen by:</translation>
-    </message>
     <message numerus="yes">
         <source>%Ln vote(s) including yours</source>
         <comment>number of votes for option</comment>
@@ -1720,6 +1806,67 @@ messages</numerusform>
             <numerusform>%Ln vote including yours</numerusform>
             <numerusform>%Ln votes including yours</numerusform>
         </translation>
+    </message>
+    <message numerus="yes">
+        <source>Show %Ln more</source>
+        <comment>Button to show %Ln more poll voters</comment>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>ProxiesPage</name>
+    <message>
+        <source>MTPROTO</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SOCKS5</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HTTP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add proxy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Proxy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Proxy servers may be helpful in accessing Telegram if there is no connection in a specific region.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connections</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Without Proxy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <comment>proxy</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <comment>proxy</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No proxies</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pull down to add a new proxy server</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2211,10 +2358,6 @@ messages</numerusform>
 <context>
     <name>SettingsStorage</name>
     <message>
-        <source>Storage</source>
-        <translation>Storage</translation>
-    </message>
-    <message>
         <source>Enable online-only mode</source>
         <translation>Enable online-only mode</translation>
     </message>
@@ -2257,6 +2400,14 @@ messages</numerusform>
         <source>TDLib language pack database size: &lt;b&gt;%1&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Data and Storage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Proxy settings</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SettingsUserProfile</name>
@@ -2294,14 +2445,6 @@ messages</numerusform>
     <message>
         <source>Add Picture</source>
         <translation>Add Picture</translation>
-    </message>
-    <message>
-        <source>Delete Picture</source>
-        <translation>Delete Picture</translation>
-    </message>
-    <message>
-        <source>Deleting profile picture</source>
-        <translation>Deleting profile picture</translation>
     </message>
     <message>
         <source>Uploading...</source>
@@ -2390,12 +2533,9 @@ messages</numerusform>
             <numerusform>%1 members</numerusform>
         </translation>
     </message>
-    <message numerus="yes">
-        <source>%1 subscribers</source>
-        <translation type="unfinished">
-            <numerusform>%1 subscriber</numerusform>
-            <numerusform>%1 subscribers</numerusform>
-        </translation>
+    <message>
+        <source>Unknown</source>
+        <translation type="unfinished">Unknown</translation>
     </message>
 </context>
 <context>
@@ -2992,6 +3132,15 @@ messages</numerusform>
         <source>unhid the general topic</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Deleted Account</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <comment>A user without a known name</comment>
+        <translation type="unfinished">Unknown</translation>
+    </message>
 </context>
 <context>
     <name>VoiceNoteOverlay</name>
@@ -3309,6 +3458,32 @@ messages</numerusform>
     <message>
         <source>Request to join sent</source>
         <comment>group</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Channel</source>
+        <translation type="unfinished">Channel</translation>
+    </message>
+    <message>
+        <source>Group</source>
+        <translation type="unfinished">Group</translation>
+    </message>
+    <message>
+        <source>Unavailable</source>
+        <comment>Indicates that the proxy is unavailable</comment>
+        <translation type="unfinished">Unavailable</translation>
+    </message>
+    <message numerus="yes">
+        <source>Available (ping: %Ln ms)</source>
+        <comment>Indicates that the proxy is available</comment>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Available</source>
+        <comment>Indicates that the proxy is available</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>

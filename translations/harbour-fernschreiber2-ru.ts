@@ -156,6 +156,70 @@
     </message>
 </context>
 <context>
+    <name>AddProxyDialog</name>
+    <message>
+        <source>Check status</source>
+        <comment>Check proxy status when adding</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation type="unfinished">Добавить день рождения</translation>
+    </message>
+    <message>
+        <source>Server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Port</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TCP/UDP port number must be within the 0-65535 range</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>MTPROTO</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SOCKS5</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HTTP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Secret</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transparent TCP connection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Credentials (optional)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Username</source>
+        <translation type="unfinished">Ник</translation>
+    </message>
+    <message>
+        <source>Password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add proxy</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ArchiveChatListTutorialDialog</name>
     <message>
         <source>Got it</source>
@@ -354,6 +418,18 @@
     </message>
 </context>
 <context>
+    <name>ChatInformationTabItemGroupsInCommon</name>
+    <message>
+        <source>Loading groups in common</source>
+        <comment>groups you have in common with a user</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No groups in common</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ChatInformationTabItemMediaGrid</name>
     <message>
         <source>Jump to message</source>
@@ -361,31 +437,28 @@
     </message>
 </context>
 <context>
-    <name>ChatInformationTabItemMembersGroups</name>
+    <name>ChatInformationTabItemMembers</name>
     <message>
-        <source>Loading common chats…</source>
-        <comment>chats you have in common with a user</comment>
-        <translation>Загрузка общих чатов…</translation>
+        <source>Loading subscribers</source>
+        <comment>channel</comment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Loading group members…</source>
-        <translation>Загрузка списка участников…</translation>
+        <source>Loading members</source>
+        <comment>group</comment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You</source>
-        <translation>Вы</translation>
+        <source>This channel is empty</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You don&apos;t have any groups in common with this user.</source>
-        <translation>У вас нет общих групп с этим пользователем.</translation>
+        <source>Channel members are anonymous</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This group is empty.</source>
-        <translation>В этой группе никого нет.</translation>
-    </message>
-    <message>
-        <source>Channel members are anonymous.</source>
-        <translation>Участники группы анонимны.</translation>
+        <source>This group is empty</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -413,6 +486,30 @@
     <message>
         <source>The group chat will be divided into topics created by admins or users.</source>
         <translation>Группа будет поделена на темы, созданные администраторами или участниками.</translation>
+    </message>
+</context>
+<context>
+    <name>ChatInformationTabItemSimilarBots</name>
+    <message numerus="yes">
+        <source>Subscribe to Telegram Premium to unlock up to %Ln similar bots.</source>
+        <comment>Info label suggesting the user to get Telegram Premium to access more similar bots</comment>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>ChatInformationTabItemSimilarChats</name>
+    <message numerus="yes">
+        <source>Subscribe to Telegram Premium to unlock up to %Ln similar channels.</source>
+        <comment>Info label suggesting the user to get Telegram Premium to access more similar channels</comment>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -452,6 +549,21 @@
         <comment>Button: Chat files</comment>
         <translation type="unfinished">Файлы</translation>
     </message>
+    <message>
+        <source>Subscribers</source>
+        <comment>Button: channel subscribers</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Similar channels</source>
+        <comment>Profile tab</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Similar bots</source>
+        <comment>Profile tab</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChatJoinDialog</name>
@@ -474,22 +586,6 @@
         <source>Join group</source>
         <comment>group</comment>
         <translation>Зайти в группу</translation>
-    </message>
-    <message numerus="yes">
-        <source>%Ln subscribers</source>
-        <translation>
-            <numerusform>%Ln подписчик</numerusform>
-            <numerusform>%Ln подписчика</numerusform>
-            <numerusform>%Ln подписчиков</numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
-        <source>%Ln members</source>
-        <translation>
-            <numerusform>%Ln участник</numerusform>
-            <numerusform>%Ln участника</numerusform>
-            <numerusform>%Ln участников</numerusform>
-        </translation>
     </message>
     <message>
         <source>This channel accepts new subscribers only after they are approved by its admins.</source>
@@ -1123,22 +1219,6 @@
 </context>
 <context>
     <name>MessagePoll</name>
-    <message>
-        <source>Close Poll</source>
-        <translation>Завершить опрос</translation>
-    </message>
-    <message>
-        <source>Reset Answer</source>
-        <translation>Отозвать ответ</translation>
-    </message>
-    <message>
-        <source>Final Result:</source>
-        <translation>Окончательный результат:</translation>
-    </message>
-    <message>
-        <source>Multiple Answers are allowed.</source>
-        <translation>Можно выбрать несколько вариантов ответа.</translation>
-    </message>
     <message numerus="yes">
         <source>%Ln%</source>
         <comment>% of votes for option</comment>
@@ -1156,6 +1236,22 @@
             <numerusform>%Ln голоса</numerusform>
             <numerusform>%Ln голосов</numerusform>
         </translation>
+    </message>
+    <message>
+        <source>Stop poll</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Retract vote</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Final results</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Multiple answers are allowed</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1705,11 +1801,6 @@
         </translation>
     </message>
     <message>
-        <source>Question</source>
-        <comment>section header</comment>
-        <translation>Вопрос</translation>
-    </message>
-    <message>
         <source>Results</source>
         <comment>section header</comment>
         <translation>Результаты</translation>
@@ -1732,11 +1823,6 @@
             <numerusform>%Ln%</numerusform>
         </translation>
     </message>
-    <message>
-        <source>Chosen by:</source>
-        <comment>This answer has been chosen by the following users</comment>
-        <translation>Выбрано ими:</translation>
-    </message>
     <message numerus="yes">
         <source>%Ln vote(s) including yours</source>
         <comment>number of votes for option</comment>
@@ -1745,6 +1831,68 @@
             <numerusform>%Ln голоса, включая ваш</numerusform>
             <numerusform>%Ln голосов, включая ваш</numerusform>
         </translation>
+    </message>
+    <message numerus="yes">
+        <source>Show %Ln more</source>
+        <comment>Button to show %Ln more poll voters</comment>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>ProxiesPage</name>
+    <message>
+        <source>MTPROTO</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SOCKS5</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>HTTP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add proxy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Proxy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Proxy servers may be helpful in accessing Telegram if there is no connection in a specific region.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connections</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Without Proxy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <comment>proxy</comment>
+        <translation type="unfinished">Удалить</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <comment>proxy</comment>
+        <translation type="unfinished">Редактировать</translation>
+    </message>
+    <message>
+        <source>No proxies</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pull down to add a new proxy server</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2237,10 +2385,6 @@
 <context>
     <name>SettingsStorage</name>
     <message>
-        <source>Storage</source>
-        <translation>Хранилище</translation>
-    </message>
-    <message>
         <source>Enable online-only mode</source>
         <translation>Включить режим &quot;только онлайн&quot;</translation>
     </message>
@@ -2284,6 +2428,14 @@
         <source>TDLib language pack database size: &lt;b&gt;%1&lt;/b&gt;</source>
         <translation>Размер базы данных языковых пакетов TDLib: &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
+    <message>
+        <source>Data and Storage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Proxy settings</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SettingsUserProfile</name>
@@ -2321,14 +2473,6 @@
     <message>
         <source>Add Picture</source>
         <translation>Добавить</translation>
-    </message>
-    <message>
-        <source>Delete Picture</source>
-        <translation>Удалить</translation>
-    </message>
-    <message>
-        <source>Deleting profile picture</source>
-        <translation>Удаление картинки из профиля</translation>
     </message>
     <message>
         <source>Uploading...</source>
@@ -2418,13 +2562,9 @@
             <numerusform>%1 участников</numerusform>
         </translation>
     </message>
-    <message numerus="yes">
-        <source>%1 subscribers</source>
-        <translation>
-            <numerusform>%1 подписчик</numerusform>
-            <numerusform>%1 подписчика</numerusform>
-            <numerusform>%1 подписчиков</numerusform>
-        </translation>
+    <message>
+        <source>Unknown</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3025,6 +3165,15 @@
         <source>unhid the general topic</source>
         <translation>показал(а) основную тему</translation>
     </message>
+    <message>
+        <source>Deleted Account</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <comment>A user without a known name</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>VoiceNoteOverlay</name>
@@ -3346,6 +3495,33 @@
         <source>Request to join sent</source>
         <comment>group</comment>
         <translation>Запрос на принятие в группу отправлен</translation>
+    </message>
+    <message>
+        <source>Channel</source>
+        <translation type="unfinished">Канал</translation>
+    </message>
+    <message>
+        <source>Group</source>
+        <translation type="unfinished">Группа</translation>
+    </message>
+    <message>
+        <source>Unavailable</source>
+        <comment>Indicates that the proxy is unavailable</comment>
+        <translation type="unfinished">Недоступно</translation>
+    </message>
+    <message numerus="yes">
+        <source>Available (ping: %Ln ms)</source>
+        <comment>Indicates that the proxy is available</comment>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Available</source>
+        <comment>Indicates that the proxy is available</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
