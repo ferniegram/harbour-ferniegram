@@ -28,6 +28,7 @@ import "../modules/Opal/Tabs"
 
 Page {
     id: overviewPage
+    objectName: 'overviewPage'
     allowedOrientations: Orientation.All
 
     property bool initializationCompleted: false;

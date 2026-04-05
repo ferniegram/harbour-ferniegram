@@ -105,6 +105,15 @@ Page {
                 text: qsTr("About Ferniegram")
                 onClicked: pageStack.push(Qt.resolvedUrl("AboutPage.qml"))
             }
+            MenuItem {
+                text: qsTr("Proxy settings")
+                onClicked: pageStack.push(Qt.resolvedUrl("ProxiesPage.qml"))
+            }
+            MenuItem {
+                text: "Debug"
+                visible: DebugLog.enabled
+                onClicked: pageStack.push(Qt.resolvedUrl("../pages/DebugPage.qml"), {overviewPage: pageStack.find(function (page) { return page.objectName === 'overviewPage' })})
+            }
         }
 
         Column {
