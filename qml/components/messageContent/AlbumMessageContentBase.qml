@@ -24,15 +24,7 @@ MessageContentBase {
     id: messageContent
     property string chatId
     readonly property var albumId: rawMessage.media_album_id
-    property var albumMessageIds: messageListItem ? messageListItem.messageAlbumMessageIds : []
-    onAlbumMessageIdsChanged: albumMessages = getMessages()
-    property var albumMessages: getMessages()
+    property var albumMessages: messageListItem ? messageListItem.messageAlbumMessages : []
 
     height: defaultExtraContentHeight
-
-    // TODO: handle updating message album messages
-    // we could use SortFilterProxyModel and filter by media_album_id, but that might not be the best method
-    function getMessages() {
-        return chatManager.model.getMessagesForAlbum(messageContent.albumId)
-    }
 }

@@ -35,6 +35,7 @@ ListItem {
     property int messageViewCount
     property var myMessage
     property var messageAlbumMessageIds
+    property var messageAlbumMessages
     property var reactions
     readonly property bool isAnonymous: myMessage.sender_id["@type"] === "messageSenderChat"
     readonly property var userInformation: tdLibWrapper.getUserInformation(myMessage.sender_id.user_id)
@@ -51,6 +52,7 @@ ListItem {
     property bool isSponsored: myMessage['@type'] === 'sponsoredMessage'
     property bool generatedContentUnread
     readonly property bool isUnread: messageIndex > messagesModel.lastReadMessageIndexInBounds && !isSponsored
+    readonly property bool isAlbum: myMessage.media_album_id && myMessage.media_album_id !== '0'
 
     readonly property bool isOwnMessage: tdLibWrapper.myUserId === myMessage.sender_id.user_id
     property bool hasContentComponent
@@ -421,7 +423,7 @@ ListItem {
         onTriggered: {
             if (messageListItem.hasContentComponent) {
                 var type = myMessage.content["@type"]
-                var albumComponentPart = (myMessage.media_album_id && myMessage.media_album_id !== '0' && chatView.albumMessages.indexOf(type) !== -1) ? 'Album' : ''
+                var albumComponentPart = (isAlbum && chatView.albumMessages.indexOf(type) !== -1) ? 'Album' : ''
                 extraContentLoader.setSource(
                             "../components/messageContent/" + type.charAt(0).toUpperCase() + type.substring(1) + albumComponentPart + ".qml",
                             {messageListItem: messageListItem})
@@ -635,7 +637,7 @@ ListItem {
                     Text {
                         id: messageText
                         width: parent.width
-                        text: Emoji.emojify(utilities.getMessageText(myMessage), Theme.fontSizeSmall)
+                        text: Emoji.emojify(isAlbum ? utilities.getAlbumMessagesText(messageAlbumMessages) : utilities.getMessageText(myMessage), Theme.fontSizeSmall)
                         font.pixelSize: Theme.fontSizeSmall
                         color: messageListItem.textColor
                         wrapMode: Text.Wrap

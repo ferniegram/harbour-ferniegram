@@ -706,6 +706,7 @@ Column {
                         myMessage: model.display
                         messageId: model.message_id
                         messageAlbumMessageIds: model.album_message_ids
+                        messageAlbumMessages: model.album_messages
                         messageViewCount: model.view_count
                         reactions: model.reactions
                         chatReactions: availableReactions
