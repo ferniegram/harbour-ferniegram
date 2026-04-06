@@ -524,7 +524,8 @@ Column {
                                     replacementStringHint: title
                                     width: parent.width
                                     height: parent.width
-                                    photoData: photo_small
+                                    photoData: photo_data.small
+                                    minithumbnail: photo_data.minithumbnail
                                 }
                             }
 

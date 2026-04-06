@@ -58,7 +58,7 @@ SilicaListView {
         onClicked: {
             pageStack.push(Qt.resolvedUrl("../pages/ChatPage.qml"), {
                 chatInformation : display,
-                chatPicture: photo_small
+                chatPicture: photo_data.small
             })
         }
     }

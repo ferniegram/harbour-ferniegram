@@ -438,13 +438,13 @@ Page {
                         Connections {
                             target: chatManager
                             ignoreUnknownSignals: true
-                            onSmallPhotoChanged:
-                                chatPictureThumbnail.photoData = chatManager.smallPhoto
+                            onPhotoChanged:
+                                chatPictureThumbnail.photoData = chatManager.photo.small
                         }
                         // UPD 2025 from roundedrectangle:
                         // for some reason when pushing the page without animation (e.g. from notification)
                         // it doesn't show the picture now, with this line it works: (Connections is still needed for some reason)
-                        photoData: chatManager.smallPhoto
+                        photoData: chatManager.photo.small
                     }
 
                     onClicked: {

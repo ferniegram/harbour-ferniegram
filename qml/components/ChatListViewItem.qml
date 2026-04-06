@@ -8,7 +8,8 @@ import "../js/functions.js" as Functions
 PhotoTextsListItem {
     id: listItem
     pictureThumbnail {
-        photoData: photo_small || ({})
+        photoData: photo_data.small || ({})
+        minithumbnail: photo_data.minithumbnail
         highlighted: listItem.highlighted && !listItem.menuOpen
     }
     property int ownUserId

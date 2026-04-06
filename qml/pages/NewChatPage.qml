@@ -116,7 +116,10 @@ Page {
                     opacity: visible ? 1 : 0
                     Behavior on opacity { FadeAnimation {} }
 
-                    pictureThumbnail.photoData: typeof photo_small !== "undefined" ? photo_small : {}
+                    pictureThumbnail {
+                        photoData: photo_data ? (photo_data.small || {}) : {}
+                        minithumbnail: photo_data.minithumbnail
+                    }
                     width: parent.width
 
                     primaryText.text: Emoji.emojify(title, primaryText.font.pixelSize, "../js/emoji/")
