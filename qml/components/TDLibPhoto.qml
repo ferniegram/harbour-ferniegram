@@ -27,7 +27,7 @@ Item {
     property bool highlighted
     property alias fileInformation: tdLibImage.fileInformation
     readonly property alias image: tdLibImage
-    property bool minithumbnailReady: minithumbnailLoader.item && minithumbnailLoader.item.visible
+    property bool minithumbnailReady: minithumbnailLoader.ready
     property alias minithumbnailItem: minithumbnailLoader.item
     property alias minithumbnail: minithumbnailLoader.minithumbnail
     property bool loadBackgroundImage: !tdLibImage.visible && !minithumbnailReady

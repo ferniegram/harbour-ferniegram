@@ -53,7 +53,7 @@ Item {
 
     Loader {
         id: profileImageLoader
-        active: !!photoData
+        active: !!(photoData || minithumbnail)
         asynchronous: true
         width: parent.width
         sourceComponent: Component {
@@ -95,7 +95,7 @@ Item {
                 }
 
                 OpacityMask {
-                    source: photo.image || photo.minithumbnailItem
+                    source: photo.minithumbnailReady ? photo.minithumbnailItem : photo.image
                     maskSource: profileThumbnailMask
                     anchors.fill: photo
                 }

@@ -27,8 +27,13 @@ Loader {
     property bool highlighted
     property int fillMode: Image.PreserveAspectCrop
     property var image: item ? item.image : null
+    // don't rely on visible here (loader itself can be invisible, and invisibility is propogated to children)
+    property bool ready: !!image && image.status === Image.Ready
+
     anchors.fill: parent
     active: !!minithumbnailData
+    asynchronous: true
+
     sourceComponent: Component {
         Item {
             property alias image: minithumbnailImage
@@ -39,8 +44,7 @@ Loader {
                 fillMode: loader.fillMode
                 opacity: status === Image.Ready ? 1.0 : 0.0
                 cache: false
-                visible: opacity > 0
-                Behavior on opacity { FadeAnimation {} }
+                Behavior on opacity { FadeAnimator {} }
 
                 layer {
                     enabled: loader.highlighted
