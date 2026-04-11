@@ -31,24 +31,21 @@ Page {
     objectName: 'overviewPage'
     allowedOrientations: Orientation.All
 
-    property bool initializationCompleted: false;
-    property bool loading: true;
-    property bool logoutLoading: false;
+    property bool loading: tdLibWrapper.authorizationState == TDLibAPI.AuthorizationUnknown
+    property bool logoutLoading: tdLibWrapper.authorizationState == TDLibAPI.LoggingOut
     property bool chatListCreated: false;
 
     property bool titleInteractionHintActive
-    property string loadingText
+
     signal scrollToTopRequired
 
     // link handler:
     property string urlToOpen;
     property var chatToOpen: null; //null or [chatId, messageId]
 
-    onStatusChanged: {
-        if (status === PageStatus.Active && initializationCompleted && !chatListCreated && !logoutLoading) {
-            updateContent();
-        }
-    }
+    onStatusChanged:
+        if (status === PageStatus.Active && tdLibWrapper.authorizationState == TDLibAPI.AuthorizationReady && !chatListCreated)
+            updateContent()
 
     Connections {
         target: dBusAdaptor
@@ -88,8 +85,11 @@ Page {
     Timer {
         id: openInitializationPageTimer
         interval: 0
-        onTriggered:
+        onTriggered: {
+            pageStack.completeAnimation()
+            pageStack.pop(overviewPage, PageStackAction.Immediate)
             pageStack.push(Qt.resolvedUrl("../pages/InitializationPage.qml"))
+        }
     }
     Timer {
         id: updateSecondaryContentTimer
@@ -154,9 +154,8 @@ Page {
     }
 
     function openUrl(url) {
-        if(url && url.length > 0) {
-            urlToOpen = url;
-        }
+        if (url && url.length > 0)
+            urlToOpen = url
         processUrlToOpen()
     }
 
@@ -165,38 +164,24 @@ Page {
         tdLibWrapper.loadChats(true)
     }
 
-    function handleAuthorizationState(isOnInitialization) {
+    function handleAuthorizationState() {
         switch (tdLibWrapper.authorizationState) {
+        case TDLibAPI.WaitTdlibParameters:
         case TDLibAPI.WaitPhoneNumber:
+        case TDLibAPI.WaitPremiumPurchase:
+        case TDLibAPI.WaitEmailAddress:
+        case TDLibAPI.WaitEmailCode:
         case TDLibAPI.WaitCode:
-        case TDLibAPI.WaitPassword:
+        case TDLibAPI.WaitOtherDeviceConfirmation:
         case TDLibAPI.WaitRegistration:
-            overviewPage.loading = false;
-            overviewPage.logoutLoading = false;
-            if(isOnInitialization) // pageStack isn't ready on Component.onCompleted
-                openInitializationPageTimer.start()
-            else
-                pageStack.push(Qt.resolvedUrl("../pages/InitializationPage.qml"))
+            openInitializationPageTimer.start() // pageStack isn't ready on start
             break;
         case TDLibAPI.AuthorizationReady:
-            loadingText = qsTr("Loading")
-            overviewPage.loading = false
-            overviewPage.initializationCompleted = true
             overviewPage.updateContent()
             break;
         case TDLibAPI.LoggingOut:
-            if (logoutLoading) {
-                Debug.log("Resources cleared already")
-                return
-            }
-            Debug.log("Logging out")
-            overviewPage.initializationCompleted = false
-            overviewPage.loading = false
             chatListCreatedTimer.stop()
             updateSecondaryContentTimer.stop()
-            loadingText = qsTr("Logging out")
-            overviewPage.logoutLoading = true
-            tdLibWrapper.chatListsReset()
             break
         default:
             // Nothing ;)
@@ -206,17 +191,11 @@ Page {
     Connections {
         target: tdLibWrapper
         onAuthorizationStateChanged:
-            handleAuthorizationState(false)
-        onSomeChatListUpdated: {
+            handleAuthorizationState()
+        onSomeChatListUpdated:
             if (!overviewPage.chatListCreated)
                 chatListCreatedTimer.restart()
             else tdLibWrapper.chatListsCalculateUnreadState()
-        }
-        onChatsReceived: {
-            if(chatIds && chatIds.length === 0) {
-                chatListCreatedTimer.restart();
-            }
-        }
         onChatReceived: {
             var openAndSendStartToBot = chat["@extra"].toString().indexOf("openAndSendStartToBot:") === 0
             if (chat['@extra'] === 'openDirectly' || chat['@extra'].openDirectly || openAndSendStartToBot && chat.type["@type"] === "chatTypePrivate") {
@@ -224,30 +203,27 @@ Page {
                 // it doesn't seem to be true, TGX and Unigram don't do additional
                 // createPrivateChat/createBasicGroupChat/createSupergroupChat calls after searchPublicChat...
                 var options = {}
-                if(openAndSendStartToBot) {
+                if (openAndSendStartToBot) {
                     options.doSendBotStartMessage = true
                     options.sendBotStartMessageParameter = chat["@extra"].substring(22)
                 }
                 openChat(chat.id, options)
             }
         }
-        onCopyToDownloadsSuccessful: {
+        onCopyToDownloadsSuccessful:
             appNotification.show(qsTr("Download of %1 successful.", "in-app notification text").arg(fileName),
                                  function() { Qt.openUrlExternally(filePath) },
-                                 qsTr("Open", "in-app notification button: open downloaded file"));
-        }
+                                 qsTr("Open", "in-app notification button: open downloaded file"))
 
-        onCopyToDownloadsError: {
-            appNotification.show(qsTr("Download failed.", "in-app notification text"));
-        }
-        onMessageLinkInfoReceived: {
+        onCopyToDownloadsError:
+            appNotification.show(qsTr("Download failed.", "in-app notification text"))
+        onMessageLinkInfoReceived:
             if (chatId === 0)
                 appNotification.show(qsTr("Unable to open link.", "in-app notification text"))
             else if (messageId != 0)
                 openChatWithMessageId(chatId, messageId)
             else
                 openChat(chatId)
-        }
         onChatInviteLinkInfoReceived: {
             if (tdLibWrapper.canSkipChatJoinDialog(info.chat_id))
                 openChat(info.chat_id)
@@ -260,12 +236,13 @@ Page {
             if (extra == 'open')
                 openProxySettings()
         onAddedProxiesReceived:
+            // FIXME: we could use options.enabled_proxy_id instead, but then button would not show up when a proxy is added but not currently enabled
             if (proxies.length > 0)
                 proxySettingsButton.visible = true
     }
 
     Component.onCompleted:
-        overviewPage.handleAuthorizationState(true)
+        overviewPage.handleAuthorizationState()
 
     function openSearch() {
         pageStack.push(Qt.resolvedUrl("SearchChatsPage.qml"), {fromTitleBar: true}, PageStackAction.Immediate)
@@ -485,7 +462,7 @@ Page {
     BusyLabel {
         anchors.verticalCenter: parent.verticalCenter
         y: undefined
-        text: overviewPage.loadingText
+        text: overviewPage.logoutLoading ? qsTr("Logging out") : qsTr("Loading")
         running: !overviewPage.chatListCreated || overviewPage.logoutLoading
     }
 
