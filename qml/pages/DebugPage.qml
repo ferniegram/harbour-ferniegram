@@ -126,11 +126,10 @@ Page {
             Button {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: "Execute"
-                onClicked: {
+                onClicked:
                     tdLibWrapper.sendRequestWithId(JSON.parse(customRequestArea.text)).finished.connect(function(response) {
                         customRequestResponseLabel.text = JSON.stringify(response, null, '\t')
                     })
-                }
             }
 
             Label {
@@ -146,6 +145,28 @@ Page {
                         appNotification.show("Copied")
                     }
                 }
+            }
+
+
+            SectionHeader { text: "Custom request (no response)" }
+            Label {
+                x: Theme.horizontalPageMargin
+                width: parent.width - 2*x
+                wrapMode: Text.Wrap
+                text: "You can still check the response in this mode by building the app in debug mode and checking the logs from the console"
+                color: Theme.secondaryHighlightColor
+            }
+
+            TextArea {
+                id: customRequestNoResponseArea
+                width: parent.width
+                label: "JSON-encoded request"
+            }
+            Button {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: "Execute"
+                onClicked:
+                    tdLibWrapper.sendRequest(JSON.parse(customRequestNoResponseArea.text))
             }
 
 
