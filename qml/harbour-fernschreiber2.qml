@@ -39,7 +39,14 @@ ApplicationWindow {
     Connections {
         target: tdLibWrapper
         onErrorReceived: Functions.handleErrorMessage(code, message, extra)
-        onServiceNotificationReceived: appNotification.show(utilities.getMessageContentText(content, Utilities.MessageTextSimple))
+        onServiceNotificationReceived: {
+            var text = utilities.getMessageContentText(content, Utilities.MessageTextSimple)
+            if (type.indexOf('AUTH_KEY_DROP_') === 0) {
+                pageStack.completeAnimation()
+                pageStack.push(Qt.resolvedUrl('dialogs/AuthKeyDropDialog.qml'), {text: text})
+            } else
+                appNotification.show(text)
+        }
         onLinkUnsupportedByApp: appNotification.show(qsTr("Link unsupported: %1").arg(type))
         onDeepLinkInfoReceived:
             appNotification.show(utilities.getMessageContentText(text, Utilities.MessageTextSimple))
