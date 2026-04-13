@@ -337,6 +337,14 @@
     </message>
 </context>
 <context>
+    <name>AuthKeyDropDialog</name>
+    <message>
+        <location filename="../qml/dialogs/AuthKeyDropDialog.qml" line="13"/>
+        <source>Log out</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>BackgroundProgressIndicator</name>
     <message>
         <location filename="../qml/components/BackgroundProgressIndicator.qml" line="52"/>
@@ -738,57 +746,57 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/ChatListViewItem.qml" line="81"/>
+        <location filename="../qml/components/ChatListViewItem.qml" line="80"/>
         <source>Mark all messages as read</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/ChatListViewItem.qml" line="89"/>
+        <location filename="../qml/components/ChatListViewItem.qml" line="88"/>
         <source>Mark chat as read</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/ChatListViewItem.qml" line="89"/>
+        <location filename="../qml/components/ChatListViewItem.qml" line="88"/>
         <source>Mark chat as unread</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/ChatListViewItem.qml" line="93"/>
+        <location filename="../qml/components/ChatListViewItem.qml" line="92"/>
         <source>Unpin chat</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/ChatListViewItem.qml" line="93"/>
+        <location filename="../qml/components/ChatListViewItem.qml" line="92"/>
         <source>Pin chat</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/ChatListViewItem.qml" line="105"/>
+        <location filename="../qml/components/ChatListViewItem.qml" line="104"/>
         <source>Archive</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/ChatListViewItem.qml" line="105"/>
+        <location filename="../qml/components/ChatListViewItem.qml" line="104"/>
         <source>Unarchive</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/ChatListViewItem.qml" line="120"/>
+        <location filename="../qml/components/ChatListViewItem.qml" line="119"/>
         <source>Unmute chat</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/ChatListViewItem.qml" line="120"/>
+        <location filename="../qml/components/ChatListViewItem.qml" line="119"/>
         <source>Mute chat</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/ChatListViewItem.qml" line="131"/>
+        <location filename="../qml/components/ChatListViewItem.qml" line="130"/>
         <source>User Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/ChatListViewItem.qml" line="131"/>
+        <location filename="../qml/components/ChatListViewItem.qml" line="130"/>
         <source>Group Info</source>
         <translation type="unfinished"></translation>
     </message>
@@ -977,12 +985,12 @@
 <context>
     <name>ChatSelectionPage</name>
     <message>
-        <location filename="../qml/pages/ChatSelectionPage.qml" line="64"/>
+        <location filename="../qml/pages/ChatSelectionPage.qml" line="63"/>
         <source>Select Chat</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ChatSelectionPage.qml" line="104"/>
+        <location filename="../qml/pages/ChatSelectionPage.qml" line="102"/>
         <source>You don&apos;t have any chats yet.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -990,12 +998,12 @@
 <context>
     <name>ChatsView</name>
     <message>
-        <location filename="../qml/components/ChatsView.qml" line="68"/>
+        <location filename="../qml/components/ChatsView.qml" line="67"/>
         <source>You don&apos;t have any chats yet.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/ChatsView.qml" line="69"/>
+        <location filename="../qml/components/ChatsView.qml" line="68"/>
         <source>Pull down to search public chats or create a new chat</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1202,75 +1210,80 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/InitializationPage.qml" line="117"/>
+        <location filename="../qml/pages/InitializationPage.qml" line="109"/>
+        <source>Proxy settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/InitializationPage.qml" line="126"/>
         <source>Welcome to Ferniegram!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/InitializationPage.qml" line="136"/>
+        <location filename="../qml/pages/InitializationPage.qml" line="145"/>
         <source>Loading...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/InitializationPage.qml" line="151"/>
+        <location filename="../qml/pages/InitializationPage.qml" line="160"/>
         <source>Please enter your phone number to continue.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/InitializationPage.qml" line="156"/>
+        <location filename="../qml/pages/InitializationPage.qml" line="165"/>
         <source>Use the international format, e.g. %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/InitializationPage.qml" line="174"/>
+        <location filename="../qml/pages/InitializationPage.qml" line="183"/>
         <source>Continue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/InitializationPage.qml" line="204"/>
-        <location filename="../qml/pages/InitializationPage.qml" line="240"/>
-        <location filename="../qml/pages/InitializationPage.qml" line="282"/>
-        <location filename="../qml/pages/InitializationPage.qml" line="372"/>
+        <location filename="../qml/pages/InitializationPage.qml" line="213"/>
+        <location filename="../qml/pages/InitializationPage.qml" line="249"/>
+        <location filename="../qml/pages/InitializationPage.qml" line="291"/>
+        <location filename="../qml/pages/InitializationPage.qml" line="381"/>
         <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/InitializationPage.qml" line="226"/>
+        <location filename="../qml/pages/InitializationPage.qml" line="235"/>
         <source>Please enter your password:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/InitializationPage.qml" line="263"/>
+        <location filename="../qml/pages/InitializationPage.qml" line="272"/>
         <source>Please enter the code that you received:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/InitializationPage.qml" line="306"/>
+        <location filename="../qml/pages/InitializationPage.qml" line="315"/>
         <source>Unable to authenticate you with the entered code.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/InitializationPage.qml" line="310"/>
+        <location filename="../qml/pages/InitializationPage.qml" line="319"/>
         <source>Enter code again</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/InitializationPage.qml" line="321"/>
+        <location filename="../qml/pages/InitializationPage.qml" line="330"/>
         <source>Restart authentication</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/InitializationPage.qml" line="390"/>
+        <location filename="../qml/pages/InitializationPage.qml" line="399"/>
         <source>Enter your First Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/InitializationPage.qml" line="404"/>
+        <location filename="../qml/pages/InitializationPage.qml" line="413"/>
         <source>Enter your Last Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/InitializationPage.qml" line="418"/>
+        <location filename="../qml/pages/InitializationPage.qml" line="427"/>
         <source>Register User</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1301,111 +1314,111 @@
 <context>
     <name>MessageListViewItem</name>
     <message>
-        <location filename="../qml/components/MessageListViewItem.qml" line="76"/>
+        <location filename="../qml/components/MessageListViewItem.qml" line="78"/>
         <source>Message deleted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/MessageListViewItem.qml" line="76"/>
+        <location filename="../qml/components/MessageListViewItem.qml" line="78"/>
         <source>Message deleted only for yourself</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/MessageListViewItem.qml" line="94"/>
+        <location filename="../qml/components/MessageListViewItem.qml" line="96"/>
         <source>Message unpinned</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/MessageListViewItem.qml" line="246"/>
+        <location filename="../qml/components/MessageListViewItem.qml" line="248"/>
         <source>Forward</source>
         <comment>Short version for &quot;Forward Message&quot;</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/MessageListViewItem.qml" line="247"/>
+        <location filename="../qml/components/MessageListViewItem.qml" line="249"/>
         <source>Forward Message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/MessageListViewItem.qml" line="253"/>
+        <location filename="../qml/components/MessageListViewItem.qml" line="255"/>
         <source>Reply</source>
         <comment>Short version for &quot;Reply to Message&quot;</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/MessageListViewItem.qml" line="254"/>
+        <location filename="../qml/components/MessageListViewItem.qml" line="256"/>
         <source>Reply to Message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/MessageListViewItem.qml" line="264"/>
+        <location filename="../qml/components/MessageListViewItem.qml" line="266"/>
         <source>Delete</source>
         <comment>Short version for &quot;Delete Message&quot;</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/MessageListViewItem.qml" line="265"/>
+        <location filename="../qml/components/MessageListViewItem.qml" line="267"/>
         <source>Delete Message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/MessageListViewItem.qml" line="276"/>
+        <location filename="../qml/components/MessageListViewItem.qml" line="278"/>
         <source>Edit</source>
         <comment>Short version for &quot;Edit Message&quot;</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/MessageListViewItem.qml" line="277"/>
+        <location filename="../qml/components/MessageListViewItem.qml" line="279"/>
         <source>Edit Message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/MessageListViewItem.qml" line="314"/>
+        <location filename="../qml/components/MessageListViewItem.qml" line="316"/>
         <source>Delete for me and %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/MessageListViewItem.qml" line="314"/>
+        <location filename="../qml/components/MessageListViewItem.qml" line="316"/>
         <source>Delete for everyone</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/MessageListViewItem.qml" line="318"/>
+        <location filename="../qml/components/MessageListViewItem.qml" line="320"/>
         <source>Delete just for me</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/MessageListViewItem.qml" line="326"/>
+        <location filename="../qml/components/MessageListViewItem.qml" line="328"/>
         <source>Copy Message to Clipboard</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/MessageListViewItem.qml" line="326"/>
+        <location filename="../qml/components/MessageListViewItem.qml" line="328"/>
         <source>Select Message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/MessageListViewItem.qml" line="326"/>
+        <location filename="../qml/components/MessageListViewItem.qml" line="328"/>
         <source>More Options...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/MessageListViewItem.qml" line="326"/>
+        <location filename="../qml/components/MessageListViewItem.qml" line="328"/>
         <source>Unpin Message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/MessageListViewItem.qml" line="326"/>
+        <location filename="../qml/components/MessageListViewItem.qml" line="328"/>
         <source>Pin Message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/MessageListViewItem.qml" line="503"/>
+        <location filename="../qml/components/MessageListViewItem.qml" line="505"/>
         <source>You</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/MessageListViewItem.qml" line="615"/>
+        <location filename="../qml/components/MessageListViewItem.qml" line="617"/>
         <source>Forwarded Message</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1554,35 +1567,35 @@
         </translation>
     </message>
     <message>
-        <location filename="../qml/components/chat/MessagesView.qml" line="766"/>
+        <location filename="../qml/components/chat/MessagesView.qml" line="769"/>
         <source>This secret chat is not yet ready. Your chat partner needs to go online first.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/chat/MessagesView.qml" line="767"/>
+        <location filename="../qml/components/chat/MessagesView.qml" line="770"/>
         <source>No results</source>
         <comment>No messages search results found</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/chat/MessagesView.qml" line="767"/>
+        <location filename="../qml/components/chat/MessagesView.qml" line="770"/>
         <source>This chat is empty.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/chat/MessagesView.qml" line="775"/>
+        <location filename="../qml/components/chat/MessagesView.qml" line="778"/>
         <source>Loading messages...</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../qml/components/chat/MessagesView.qml" line="978"/>
+        <location filename="../qml/components/chat/MessagesView.qml" line="981"/>
         <source>%Ln messages have been copied</source>
         <translation type="unfinished">
             <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../qml/components/chat/MessagesView.qml" line="1003"/>
+        <location filename="../qml/components/chat/MessagesView.qml" line="1006"/>
         <source>%Ln Messages deleted</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -1632,37 +1645,37 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/NewChatPage.qml" line="131"/>
+        <location filename="../qml/pages/NewChatPage.qml" line="134"/>
         <source>Contact removed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/NewChatPage.qml" line="136"/>
+        <location filename="../qml/pages/NewChatPage.qml" line="139"/>
         <source>Secret Chat</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/NewChatPage.qml" line="140"/>
+        <location filename="../qml/pages/NewChatPage.qml" line="143"/>
         <source>Remove</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/NewChatPage.qml" line="146"/>
+        <location filename="../qml/pages/NewChatPage.qml" line="149"/>
         <source>Private Chat</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/NewChatPage.qml" line="146"/>
+        <location filename="../qml/pages/NewChatPage.qml" line="149"/>
         <source>Transport-encrypted, uses Telegram Cloud, sharable across devices</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/NewChatPage.qml" line="146"/>
+        <location filename="../qml/pages/NewChatPage.qml" line="149"/>
         <source>End-to-end-encrypted, accessible on this device only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/NewChatPage.qml" line="155"/>
+        <location filename="../qml/pages/NewChatPage.qml" line="158"/>
         <source>Loading contacts...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1695,36 +1708,36 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/chat/NewMessageColumn.qml" line="576"/>
+        <location filename="../qml/components/chat/NewMessageColumn.qml" line="577"/>
         <source>Edit Message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/chat/NewMessageColumn.qml" line="605"/>
+        <location filename="../qml/components/chat/NewMessageColumn.qml" line="606"/>
         <source>Silent Broadcast</source>
         <comment>placeholder for broadcasting a message to a channel silently</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/chat/NewMessageColumn.qml" line="606"/>
+        <location filename="../qml/components/chat/NewMessageColumn.qml" line="607"/>
         <source>Broadcast</source>
         <comment>placeholder for broadcasting a message to a channel</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/chat/NewMessageColumn.qml" line="611"/>
+        <location filename="../qml/components/chat/NewMessageColumn.qml" line="612"/>
         <source>Send anonymously</source>
         <comment>placeholder for sending an anonymous message in a supergroup</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/chat/NewMessageColumn.qml" line="615"/>
+        <location filename="../qml/components/chat/NewMessageColumn.qml" line="616"/>
         <source>Message for %1 Stars</source>
         <comment>placeholder for sending a message for %1 stars</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/chat/NewMessageColumn.qml" line="617"/>
+        <location filename="../qml/components/chat/NewMessageColumn.qml" line="618"/>
         <source>Message</source>
         <comment>placeholder for sending a message</comment>
         <translation type="unfinished"></translation>
@@ -1909,68 +1922,68 @@
 <context>
     <name>OverviewPage</name>
     <message>
-        <location filename="../qml/pages/OverviewPage.qml" line="182"/>
+        <location filename="../qml/pages/OverviewPage.qml" line="421"/>
         <source>Loading</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/OverviewPage.qml" line="197"/>
+        <location filename="../qml/pages/OverviewPage.qml" line="421"/>
         <source>Logging out</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/OverviewPage.qml" line="237"/>
+        <location filename="../qml/pages/OverviewPage.qml" line="170"/>
         <source>Download of %1 successful.</source>
         <comment>in-app notification text</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/OverviewPage.qml" line="239"/>
+        <location filename="../qml/pages/OverviewPage.qml" line="172"/>
         <source>Open</source>
         <comment>in-app notification button: open downloaded file</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/OverviewPage.qml" line="243"/>
+        <location filename="../qml/pages/OverviewPage.qml" line="175"/>
         <source>Download failed.</source>
         <comment>in-app notification text</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/OverviewPage.qml" line="247"/>
+        <location filename="../qml/pages/OverviewPage.qml" line="178"/>
         <source>Unable to open link.</source>
         <comment>in-app notification text</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/OverviewPage.qml" line="398"/>
+        <location filename="../qml/pages/OverviewPage.qml" line="329"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/OverviewPage.qml" line="402"/>
+        <location filename="../qml/pages/OverviewPage.qml" line="333"/>
         <source>Search</source>
         <comment>pulley menu option for opening search page</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/OverviewPage.qml" line="406"/>
+        <location filename="../qml/pages/OverviewPage.qml" line="337"/>
         <source>New Chat</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/OverviewPage.qml" line="410"/>
+        <location filename="../qml/pages/OverviewPage.qml" line="341"/>
         <source>Archive</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/OverviewPage.qml" line="435"/>
-        <location filename="../qml/pages/OverviewPage.qml" line="448"/>
+        <location filename="../qml/pages/OverviewPage.qml" line="366"/>
+        <location filename="../qml/pages/OverviewPage.qml" line="379"/>
         <source>Mark as read</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/OverviewPage.qml" line="496"/>
+        <location filename="../qml/pages/OverviewPage.qml" line="427"/>
         <source>Tap on the title bar to quickly open search</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2219,23 +2232,23 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ProxiesPage.qml" line="73"/>
+        <location filename="../qml/pages/ProxiesPage.qml" line="74"/>
         <source>Connections</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ProxiesPage.qml" line="79"/>
+        <location filename="../qml/pages/ProxiesPage.qml" line="80"/>
         <source>Without Proxy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ProxiesPage.qml" line="173"/>
+        <location filename="../qml/pages/ProxiesPage.qml" line="174"/>
         <source>Remove</source>
         <comment>proxy</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ProxiesPage.qml" line="177"/>
+        <location filename="../qml/pages/ProxiesPage.qml" line="178"/>
         <source>Edit</source>
         <comment>proxy</comment>
         <translation type="unfinished"></translation>
@@ -3076,22 +3089,22 @@
 <context>
     <name>TDLibWrapper</name>
     <message>
-        <location filename="../libfernie/src/tdlib/tdlibwrapper.cpp" line="2916"/>
+        <location filename="../libfernie/src/tdlib/tdlibwrapper.cpp" line="2933"/>
         <source>Waiting for network...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../libfernie/src/tdlib/tdlibwrapper.cpp" line="2918"/>
+        <location filename="../libfernie/src/tdlib/tdlibwrapper.cpp" line="2935"/>
         <source>Connecting to network...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../libfernie/src/tdlib/tdlibwrapper.cpp" line="2920"/>
+        <location filename="../libfernie/src/tdlib/tdlibwrapper.cpp" line="2937"/>
         <source>Connecting to proxy...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../libfernie/src/tdlib/tdlibwrapper.cpp" line="2922"/>
+        <location filename="../libfernie/src/tdlib/tdlibwrapper.cpp" line="2939"/>
         <source>Updating content...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3795,12 +3808,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../libfernie/src/utilities.cpp" line="723"/>
+        <location filename="../libfernie/src/utilities.cpp" line="740"/>
         <source>Deleted Account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../libfernie/src/utilities.cpp" line="723"/>
+        <location filename="../libfernie/src/utilities.cpp" line="740"/>
         <source>Unknown</source>
         <comment>A user without a known name</comment>
         <translation type="unfinished"></translation>
@@ -4230,7 +4243,7 @@
 <context>
     <name>harbour-fernschreiber2</name>
     <message>
-        <location filename="../qml/harbour-fernschreiber2.qml" line="43"/>
+        <location filename="../qml/harbour-fernschreiber2.qml" line="51"/>
         <source>Link unsupported: %1</source>
         <translation type="unfinished"></translation>
     </message>

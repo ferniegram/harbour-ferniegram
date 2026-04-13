@@ -273,6 +273,13 @@
     </message>
 </context>
 <context>
+    <name>AuthKeyDropDialog</name>
+    <message>
+        <source>Log out</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>BackgroundProgressIndicator</name>
     <message>
         <source>%1 %</source>
@@ -1060,6 +1067,10 @@ messages</numerusform>
     <message>
         <source>About Ferniegram</source>
         <translation>About Ferniegram</translation>
+    </message>
+    <message>
+        <source>Proxy settings</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
