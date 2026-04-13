@@ -33,19 +33,11 @@ Page {
 
     property bool loading: tdLibWrapper.authorizationState == TDLibAPI.AuthorizationUnknown
     property bool logoutLoading: tdLibWrapper.authorizationState == TDLibAPI.LoggingOut
-    property bool chatListCreated: false;
+    property bool chatListCreated: false
 
     property bool titleInteractionHintActive
 
     signal scrollToTopRequired
-
-    // link handler:
-    property string urlToOpen;
-    property var chatToOpen: null; //null or [chatId, messageId]
-
-    onStatusChanged:
-        if (status === PageStatus.Active && tdLibWrapper.authorizationState == TDLibAPI.AuthorizationReady && !chatListCreated)
-            updateContent()
 
     Connections {
         target: dBusAdaptor
@@ -54,11 +46,11 @@ Page {
             // We open the chat only for now - as it's automatically positioned at the last read message
             // this also doesn't highlight the message which isn't really needed
             openChat(chatId, {}, true)
-            //openChatWithMessageId(chatId, messageId, true)
         }
         onPleaseOpenUrl: {
-            Debug.log("[OverviewPage] Opening URL requested: ", url)
-            openUrl(url)
+            Debug.log("[OverviewPage] Opening URL", url)
+            if (url)
+                tdLibWrapper.getInternalLinkType(url)
         }
     }
 
@@ -78,7 +70,6 @@ Page {
                 titleInteractionHintActive = true
                 appSettings.remainingInteractionHints = remainingInteractionHints - 1
             }
-            processUrlToOpen()
         }
     }
 
@@ -110,8 +101,8 @@ Page {
     }
 
     function openChat(chatId, options, doPop) {
-        if(chatListCreated && chatId) {
-            Debug.log("[OverviewPage] Opening chat:", chatId)
+        if (chatId && tdLibWrapper.hasChatData(chatId)) {
+            Debug.log("[OverviewPage] Opening chat", chatId, "options:", JSON.stringify(options))
             pageStack.completeAnimation()
 
             if (doPop)
@@ -129,39 +120,8 @@ Page {
 
             options = options || {}
             options.chatInformation = tdLibWrapper.getChat(chatId)
-            pageStack.push(Qt.resolvedUrl("../pages/ChatPage.qml"), {chatInformation: tdLibWrapper.getChat(chatId) }, doPop ? PageStackAction.Immediate : PageStackAction.Animated)
-
-            chatToOpen = null
+            pageStack.push(Qt.resolvedUrl("../pages/ChatPage.qml"), {chatInformation: tdLibWrapper.getChat(chatId)}, doPop ? PageStackAction.Immediate : PageStackAction.Animated)
         }
-    }
-
-    function openChatWithMessageId(chatId, messageId, doPop) {
-        if(chatId && messageId) {
-            chatToOpen = [chatId, messageId]
-        }
-        if(chatListCreated && chatToOpen && chatToOpen.length === 2) {
-            Debug.log("[OverviewPage] Opening chat:", chatToOpen[0], "message ID:" + chatToOpen[1])
-            openChat(chatToOpen[0], {messageIdToShow: chatToOpen[1]}, doPop)
-        }
-    }
-
-    function processUrlToOpen() {
-        if(chatListCreated && urlToOpen && urlToOpen.length > 1) {
-            Debug.log("[OverviewPage] Opening URL: ", urlToOpen);
-            utilities.handleLink(urlToOpen);
-            urlToOpen = "";
-        }
-    }
-
-    function openUrl(url) {
-        if (url && url.length > 0)
-            urlToOpen = url
-        processUrlToOpen()
-    }
-
-    function updateContent() {
-        tdLibWrapper.loadChats()
-        tdLibWrapper.loadChats(true)
     }
 
     function handleAuthorizationState() {
@@ -174,9 +134,6 @@ Page {
         case TDLibAPI.WaitOtherDeviceConfirmation:
         case TDLibAPI.WaitRegistration:
             openInitializationPageTimer.start() // pageStack isn't ready on start
-            break;
-        case TDLibAPI.AuthorizationReady:
-            overviewPage.updateContent()
             break;
         case TDLibAPI.LoggingOut:
             chatListCreatedTimer.stop()
@@ -197,7 +154,7 @@ Page {
             else tdLibWrapper.chatListsCalculateUnreadState()
         onChatReceived: {
             var openAndSendStartToBot = chat["@extra"].toString().indexOf("openAndSendStartToBot:") === 0
-            if (chat['@extra'] === 'openDirectly' || chat['@extra'].openDirectly || openAndSendStartToBot && chat.type["@type"] === "chatTypePrivate") {
+            if (chat['@extra'] === 'openDirectly' || chat['@extra'].openDirectly || (openAndSendStartToBot && chat.type["@type"] === "chatTypePrivate")) {
                 // why was this here: "if we get a new chat (no messages?), we can not use the provided data"?
                 // it doesn't seem to be true, TGX and Unigram don't do additional
                 // createPrivateChat/createBasicGroupChat/createSupergroupChat calls after searchPublicChat...
@@ -220,7 +177,7 @@ Page {
             if (chatId === 0)
                 appNotification.show(qsTr("Unable to open link.", "in-app notification text"))
             else if (messageId != 0)
-                openChatWithMessageId(chatId, messageId)
+                openChat(chatId, {messageIdToShow: messageId})
             else
                 openChat(chatId)
         onChatInviteLinkInfoReceived: {

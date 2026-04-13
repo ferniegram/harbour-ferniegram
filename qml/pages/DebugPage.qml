@@ -88,7 +88,7 @@ Page {
                     labelVisible: false
                     EnterKey.iconSource: "image://theme/icon-m-enter-accept"
                     EnterKey.enabled: text.length > 0
-                    EnterKey.onClicked: overviewPage.openChatWithMessageId(chatIdWithMessage.text, messageId.text, popSwitch.checked)
+                    EnterKey.onClicked: overviewPage.openChat(chatIdWithMessage.text, {messageIdToShow: messageId.text}, popSwitch.checked)
                 }
             }
             TextSwitch {
@@ -98,7 +98,7 @@ Page {
             Button {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: "Open"
-                onClicked: overviewPage.openChatWithMessageId(chatIdWithMessage.text, messageId.text, popSwitch.checked)
+                onClicked: overviewPage.openChat(chatIdWithMessage.text, {messageIdToShow: messageId.text}, popSwitch.checked)
             }
 
             SectionHeader { text: "Translating" }
