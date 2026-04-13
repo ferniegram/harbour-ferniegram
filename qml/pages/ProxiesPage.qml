@@ -66,6 +66,7 @@ Page {
             PageHeader {
                 title: qsTr("Proxy")
                 description: qsTr("Proxy servers may be helpful in accessing Telegram if there is no connection in a specific region.")
+                descriptionWrapMode: Text.Wrap
             }
 
             SectionHeader {
