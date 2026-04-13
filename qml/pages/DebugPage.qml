@@ -41,7 +41,11 @@ Page {
             spacing: Theme.paddingLarge
             PageHeader {
                 title: "Debug Page"
-                description: "description"
+                description: tdLibWrapper.authorizationState == TDLibAPI.AuthorizationReady
+                             ? "description"
+                             : ('<font color="%1">Warning</color>: '.arg(Theme.highlightColor)
+                                + "You are not currently unauthorized. Certain feautres, including but not limited to opening chats and translating, are unlikely to work in this state.")
+                descriptionWrapMode: Text.Wrap
             }
 
             SectionHeader {
@@ -195,21 +199,19 @@ Page {
         property bool hasRun
         property var cases: []
         onTriggered: {
-            if(cases.length === 0) {
-                return;
-            }
+            if (!cases.length)
+                return
 
-            if(!hasRun) {
-                hasRun = true;
-                Debug.profile();
+            if (!hasRun) {
+                hasRun = true
+                Debug.profile()
             }
-            cases.pop()();
+            cases.pop()()
 
-            if(cases.length > 0) {
-                restart();
-            } else {
-                Debug.profileEnd();
-            }
+            if (cases.length)
+                restart()
+            else
+                Debug.profileEnd()
         }
     }
 
@@ -231,8 +233,8 @@ Page {
 //                            ],
 //                            800
 //                            )
-//            });
-//            profileTimer.start();
+//            })
+//            profileTimer.start()
         }
     }
 }
