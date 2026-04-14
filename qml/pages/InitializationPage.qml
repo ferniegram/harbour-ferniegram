@@ -127,7 +127,7 @@ Page {
             }
 
             Image {
-                source: "../../images/fernschreiber2.svg"
+                source: "../../images/ferniegram.svg"
                 anchors {
                     horizontalCenter: parent.horizontalCenter
                 }

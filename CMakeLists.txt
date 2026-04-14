@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.13)
-project(harbour-fernschreiber2 CXX ASM)
+project(harbour-ferniegram CXX ASM)
 
 message(STATUS "Building ${CMAKE_PROJECT_NAME} for ${EDITION}")
 

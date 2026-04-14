@@ -4241,9 +4241,9 @@
     </message>
 </context>
 <context>
-    <name>harbour-fernschreiber2</name>
+    <name>harbour-ferniegram</name>
     <message>
-        <location filename="../qml/harbour-fernschreiber2.qml" line="51"/>
+        <location filename="../qml/harbour-ferniegram.qml" line="51"/>
         <source>Link unsupported: %1</source>
         <translation type="unfinished"></translation>
     </message>

@@ -40,11 +40,11 @@ void migrateSettings() {
     int sailfishOSMinorVersion = sailfishOSVersion.value(1).toInt();
     if ((sailfishOSMajorVersion == 4 && sailfishOSMinorVersion >= 4) || sailfishOSMajorVersion > 4) {
         LOG("Checking if we need to migrate settings...");
-        QSettings settings(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/io.github.roundedrectangle/fernschreiber2/settings.conf", QSettings::NativeFormat);
+        QSettings settings(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/io.ferniegram/ferniegram/settings.conf", QSettings::NativeFormat);
         if (settings.contains("migrated")) {
             return;
         }
-        QSettings oldSettings(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/harbour-fernschreiber2/settings.conf", QSettings::NativeFormat);
+        QSettings oldSettings(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/harbour-ferniegram/settings.conf", QSettings::NativeFormat);
         const QStringList oldKeys = oldSettings.allKeys();
         if (oldKeys.isEmpty()) {
             return;
@@ -54,7 +54,7 @@ void migrateSettings() {
             settings.setValue(key, oldSettings.value(key));
         }
 
-        QDir oldDataLocation(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/harbour-fernschreiber2/harbour-fernschreiber2");
+        QDir oldDataLocation(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/harbour-ferniegram/harbour-ferniegram");
         LOG("Old data directory: " + oldDataLocation.path());
         if (oldDataLocation.exists()) {
             LOG("Old data files detected, migrating files to new location...");
@@ -105,7 +105,7 @@ int main(int argc, char *argv[]) {
     context->setContextProperty("NO_HARBOUR_COMPLIANCE", false);
 #endif
 
-    view->setSource(SailfishApp::pathTo("qml/harbour-fernschreiber2.qml"));
+    view->setSource(SailfishApp::pathTo("qml/harbour-ferniegram.qml"));
     view->show();
     return app->exec();
 }

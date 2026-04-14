@@ -203,5 +203,5 @@ qlonglong VoiceNoteRecorder::getVoiceNoteDuration() const {
 }
 
 QString VoiceNoteRecorder::getTemporaryDirectoryPath() {
-    return QStandardPaths::writableLocation(QStandardPaths::TempLocation) +  + "/harbour-fernschreiber2";
+    return QStandardPaths::writableLocation(QStandardPaths::TempLocation) +  + "/harbour-ferniegram";
 }

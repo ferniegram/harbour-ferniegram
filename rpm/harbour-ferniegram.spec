@@ -1,17 +1,17 @@
-Name:       harbour-fernschreiber2
+Name:       harbour-ferniegram
 
 %define __provides_exclude_from ^%{_datadir}/.*$
 %define __requires_exclude ^libtdjson|libgstreamer.*$
 %define _binary_payload w6.xzdio
 
 Summary:    Ferniegram is a Telegram client for Sailfish OS
-Version:    0.0.1a51
+Version:    0.0.1a52
 Release:    1
 Group:      Qt/Qt
 License:    LICENSE
 URL:        http://werkwolf.eu/
 Source0:    %{name}-%{version}.tar.bz2
-Source100:  harbour-fernschreiber2.yaml
+Source100:  harbour-ferniegram.yaml
 Requires:   sailfishsilica-qt5 >= 0.10.9
 Requires:   qml(org.nemomobile.contacts)
 BuildRequires:  cmake

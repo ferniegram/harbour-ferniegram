@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="sv">
+<TS version="2.1" language="es">
 <context>
     <name>AboutPage</name>
     <message>
         <source>A Telegram client for Sailfish OS</source>
-        <translation>En Telegram-klient för Sailfish OS</translation>
+        <translation>Cliente de Telegrama para Sailfish SO</translation>
     </message>
     <message>
         <source>Terms of Service</source>
-        <translation>Tjänstevillkor</translation>
+        <translation>Condiciones de servicio</translation>
     </message>
     <message>
         <source>Privacy Policy</source>
-        <translation>Sekretesspolicy</translation>
+        <translation>Política de privacidad</translation>
     </message>
     <message>
         <source>About Telegram</source>
-        <translation>Om Telegram</translation>
+        <translation>Telegrama</translation>
     </message>
     <message>
         <source>This product uses the Telegram API but is not endorsed or certified by Telegram.</source>
-        <translation>Denna produkt använder Telegrams API men är inte godkänt eller certifierat av Telegram.</translation>
+        <translation>Este programa usa API de Telegrama, pero no está respaldado ni certificado por Telegrama.</translation>
     </message>
     <message>
         <source>This project uses OpenStreetMap Nominatim for reverse geocoding of location attachments. Thanks for making it available as web service!</source>
-        <translation>Detta projekt använder OpenStreetMap Nominatim för omvänd geokodning av platsbilagor. Tack för att ni gjorde den tillgänglig som webbtjänst!</translation>
+        <translation>Este proyecto usa librería OpenStreetMap Nominatim para la codificación geográfica inversa de archivos adjuntos de ubicación. ¡Gracias por estar disponible como servicio web!</translation>
     </message>
     <message>
         <source>About Ferniegram</source>
-        <translation>Om Ferniegram</translation>
+        <translation>Acerca de</translation>
     </message>
     <message>
         <source>Translations</source>
-        <translation type="unfinished">Översättningar</translation>
+        <translation type="unfinished">Traducciones</translation>
     </message>
     <message>
         <source>Fernschreiber translations</source>
@@ -41,43 +41,43 @@
     </message>
     <message>
         <source>Chinese</source>
-        <translation type="unfinished">Kinesiska</translation>
+        <translation type="unfinished">Chino</translation>
     </message>
     <message>
         <source>Finnish</source>
-        <translation type="unfinished">Finska</translation>
+        <translation type="unfinished">Finlandés</translation>
     </message>
     <message>
         <source>French</source>
-        <translation type="unfinished">Franska</translation>
+        <translation type="unfinished">Francés</translation>
     </message>
     <message>
         <source>Hungarian</source>
-        <translation type="unfinished">Ungerska</translation>
+        <translation type="unfinished">Húngaro</translation>
     </message>
     <message>
         <source>Italian</source>
-        <translation type="unfinished">Italienska</translation>
+        <translation type="unfinished">Italiano</translation>
     </message>
     <message>
         <source>Polish</source>
-        <translation type="unfinished">Polska</translation>
+        <translation type="unfinished">Polaco</translation>
     </message>
     <message>
         <source>Russian</source>
-        <translation type="unfinished">Ryska</translation>
+        <translation type="unfinished">Ruso</translation>
     </message>
     <message>
         <source>Slovak</source>
-        <translation type="unfinished">Slovakiska</translation>
+        <translation type="unfinished">Eslovaco</translation>
     </message>
     <message>
         <source>Spanish</source>
-        <translation type="unfinished">Spanska</translation>
+        <translation type="unfinished">Español</translation>
     </message>
     <message>
         <source>Swedish</source>
-        <translation type="unfinished">Svenska</translation>
+        <translation type="unfinished">Sueco</translation>
     </message>
     <message>
         <source>This application is a fork of Fernschreiber, and wouldn&apos;t be possible without it. Thanks to everyone who developed and contributed to it!</source>
@@ -143,7 +143,7 @@
     </message>
     <message>
         <source>Use the international format, e.g. %1</source>
-        <translation type="unfinished">Använd internationellt format, t.ex. %1</translation>
+        <translation type="unfinished">%1</translation>
     </message>
     <message>
         <source>Phone number</source>
@@ -207,7 +207,7 @@
     </message>
     <message>
         <source>Username</source>
-        <translation type="unfinished">Användarnamn</translation>
+        <translation type="unfinished">Usuario</translation>
     </message>
     <message>
         <source>Password</source>
@@ -312,7 +312,7 @@
     <name>ChatBotSponsoredMessageItem</name>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished">Okänd</translation>
+        <translation type="unfinished">Desconocido</translation>
     </message>
 </context>
 <context>
@@ -332,63 +332,63 @@
     <name>ChatInformationPageContent</name>
     <message>
         <source>Leave Chat</source>
-        <translation>Lämna chatten</translation>
+        <translation>Salir del grupo</translation>
     </message>
     <message>
         <source>Join Chat</source>
-        <translation>Anslut till chatten</translation>
+        <translation>Unirse al grupo</translation>
     </message>
     <message>
         <source>Unknown</source>
-        <translation>Okänd</translation>
+        <translation>Desconocido</translation>
     </message>
     <message>
         <source>Chat Title</source>
         <comment>group title header</comment>
-        <translation>Chattnamn</translation>
+        <translation>Título del grupo</translation>
     </message>
     <message>
         <source>Enter 1-128 characters</source>
-        <translation>Ange 1-128 tecken</translation>
+        <translation>Marcar caracteres 1-128</translation>
     </message>
     <message>
         <source>There is no information text available, yet.</source>
-        <translation>Det finns ingen informationstext än.</translation>
+        <translation>Aún no hay texto de información disponible.</translation>
     </message>
     <message>
         <source>Info</source>
         <comment>group or user infotext header</comment>
-        <translation>Info</translation>
+        <translation>Biografía</translation>
     </message>
     <message>
         <source>Phone Number</source>
         <comment>user phone number header</comment>
-        <translation>Telefonnummer</translation>
+        <translation>Número telefónico</translation>
     </message>
     <message>
         <source>Invite Link</source>
         <comment>header</comment>
-        <translation>Inbjudningslänk</translation>
+        <translation>Enlace de invitación</translation>
     </message>
     <message>
         <source>The Invite Link has been copied to the clipboard.</source>
-        <translation>Inbjudningslänken har kopierats till urklipp.</translation>
+        <translation>Enlace invitación se ha copiado a portapapeles.</translation>
     </message>
     <message>
         <source>New Secret Chat</source>
-        <translation>Ny hemlig chatt</translation>
+        <translation>Crear Charla Secreta</translation>
     </message>
     <message>
         <source>Unmute Chat</source>
-        <translation>Slå på chatten</translation>
+        <translation>Notificar</translation>
     </message>
     <message>
         <source>Mute Chat</source>
-        <translation>Stäng av chatten</translation>
+        <translation>No notificar</translation>
     </message>
     <message>
         <source>ID has been copied to the clipboard.</source>
-        <translation>ID har kopierats till urklipp.</translation>
+        <translation>ID copiado a portapapeles.</translation>
     </message>
     <message>
         <source>Username has been copied to the clipboard</source>
@@ -397,7 +397,7 @@
     <message>
         <source>Username</source>
         <comment>header</comment>
-        <translation type="unfinished">Användarnamn</translation>
+        <translation type="unfinished">Usuario</translation>
     </message>
     <message>
         <source>View discussion</source>
@@ -472,12 +472,12 @@
     <message>
         <source>New Members</source>
         <comment>what can new group members do</comment>
-        <translation type="unfinished">Nya medlemmar</translation>
+        <translation type="unfinished">Nuevos miembros</translation>
     </message>
     <message>
         <source>New members can see older messages</source>
         <comment>member permission</comment>
-        <translation type="unfinished">Nya medlemmar kan se gamla meddelanden</translation>
+        <translation type="unfinished">Miembros nuevos pueden ver mensajes antiguos</translation>
     </message>
     <message>
         <source>Topics</source>
@@ -521,17 +521,17 @@
     <message>
         <source>Groups</source>
         <comment>Button: groups in common (short)</comment>
-        <translation>Grupper</translation>
+        <translation>Grupos</translation>
     </message>
     <message>
         <source>Members</source>
         <comment>Button: Group Members</comment>
-        <translation>Medlemmar</translation>
+        <translation>Miembros</translation>
     </message>
     <message>
         <source>Settings</source>
         <comment>Button: Chat Settings</comment>
-        <translation>Inställningar</translation>
+        <translation>Ajustes</translation>
     </message>
     <message>
         <source>Media</source>
@@ -604,55 +604,55 @@
     <name>ChatListViewItem</name>
     <message>
         <source>Unknown</source>
-        <translation>Okänd</translation>
+        <translation>Desconocido</translation>
     </message>
     <message>
         <source>You</source>
-        <translation>Du</translation>
+        <translation>Usted</translation>
     </message>
     <message>
         <source>User Info</source>
-        <translation>Användarinfo</translation>
+        <translation>Usuario</translation>
     </message>
     <message>
         <source>Group Info</source>
-        <translation>Gruppinfo</translation>
+        <translation>Información</translation>
     </message>
     <message>
         <source>Mark all messages as read</source>
-        <translation>Markera alla meddelanden som lästa</translation>
+        <translation>Marcar todos como leídos</translation>
     </message>
     <message>
         <source>No message in this chat.</source>
-        <translation>Inget meddelande i den här chatten.</translation>
+        <translation>No hay mensaje.</translation>
     </message>
     <message>
         <source>Mark chat as unread</source>
-        <translation>Markera chatten som oläst</translation>
+        <translation>Marcar como no leído</translation>
     </message>
     <message>
         <source>Draft</source>
-        <translation>Utkast</translation>
+        <translation>Borrador</translation>
     </message>
     <message>
         <source>Mark chat as read</source>
-        <translation>Markera chatten som läst</translation>
+        <translation>Marcar como leído</translation>
     </message>
     <message>
         <source>Unpin chat</source>
-        <translation>Frigör chatten</translation>
+        <translation>Desanclar charla</translation>
     </message>
     <message>
         <source>Pin chat</source>
-        <translation>Fäst chatten</translation>
+        <translation>Anclar charla</translation>
     </message>
     <message>
         <source>Unmute chat</source>
-        <translation>Slå på chatten</translation>
+        <translation>Notificar</translation>
     </message>
     <message>
         <source>Mute chat</source>
-        <translation>Stäng av chatten</translation>
+        <translation>No notificar</translation>
     </message>
     <message>
         <source>Archive</source>
@@ -667,59 +667,59 @@
     <name>ChatPage</name>
     <message>
         <source>Unknown</source>
-        <translation>Okänd</translation>
+        <translation>Desconocido</translation>
     </message>
     <message>
         <source>Unmute Chat</source>
-        <translation>Slå på chatten</translation>
+        <translation>Notificar</translation>
     </message>
     <message>
         <source>Mute Chat</source>
-        <translation>Stäng av chatten</translation>
+        <translation>No notificar</translation>
     </message>
     <message>
         <source>Leave Chat</source>
-        <translation>Lämna chatten</translation>
+        <translation>Salir del grupo</translation>
     </message>
     <message>
         <source>Join Chat</source>
-        <translation>Anslut till chatten</translation>
+        <translation>Unirse al grupo</translation>
     </message>
     <message>
         <source>You joined the chat %1</source>
-        <translation>Du anslöt till chatten %1</translation>
+        <translation>Unido al grupo</translation>
     </message>
     <message numerus="yes">
         <source>Forward %Ln messages</source>
         <comment>dialog header</comment>
         <translation>
-            <numerusform>Vidarebefordra %Ln meddelande</numerusform>
-            <numerusform>Vidarebefordra %Ln meddelanden</numerusform>
+            <numerusform>Reenviar %Ln mensaje</numerusform>
+            <numerusform>Reenviar %Ln mensajes</numerusform>
         </translation>
     </message>
     <message>
         <source>Closing chat</source>
-        <translation>Stänger chatten</translation>
+        <translation>Cerrando charla</translation>
     </message>
     <message>
         <source>Close Chat</source>
-        <translation>Stäng chatten</translation>
+        <translation>Cerrar charla</translation>
     </message>
     <message>
         <source>Search in Chat</source>
-        <translation>Sök i chatten</translation>
+        <translation>Buscar palabras</translation>
     </message>
     <message>
         <source>Delete Chat</source>
-        <translation>Ta bort chatt</translation>
+        <translation>Borrar Charla</translation>
     </message>
     <message>
         <source>Deleted User</source>
-        <translation>Tog bort användare</translation>
+        <translation>Usuario borrado</translation>
     </message>
     <message>
         <source>Double-tap on a message to choose a reaction</source>
-        <translation>Dubbeltryck på ett meddelande för att välja en reaktion</translation>
+        <translation>Pulsar doble a mensaje y elegir reacción</translation>
     </message>
     <message>
         <source>Chat deleted</source>
@@ -741,7 +741,7 @@
     </message>
     <message>
         <source>Search in chat...</source>
-        <translation type="unfinished">Sök i chatten...</translation>
+        <translation type="unfinished">A b c</translation>
     </message>
 </context>
 <context>
@@ -819,18 +819,18 @@
     <name>ChatSelectionPage</name>
     <message>
         <source>Select Chat</source>
-        <translation>Välj chatt</translation>
+        <translation>Seleccionar Charla</translation>
     </message>
     <message>
         <source>You don&apos;t have any chats yet.</source>
-        <translation>Du har inga chattar än.</translation>
+        <translation>No hay charlas.</translation>
     </message>
 </context>
 <context>
     <name>ChatsView</name>
     <message>
         <source>You don&apos;t have any chats yet.</source>
-        <translation type="unfinished">Du har inga chattar än.</translation>
+        <translation type="unfinished">No hay charlas.</translation>
     </message>
     <message>
         <source>Pull down to search public chats or create a new chat</source>
@@ -841,31 +841,31 @@
     <name>ContactSync</name>
     <message>
         <source>Could not synchronize your contacts with Telegram.</source>
-        <translation>Kunde inte synkronisera dina kontakter med Telegram.</translation>
+        <translation>No se puede sincronizar los contactos con Telegrama.</translation>
     </message>
 </context>
 <context>
     <name>CoverPage</name>
     <message>
         <source>in</source>
-        <translation>i</translation>
+        <translation>en</translation>
     </message>
     <message>
         <source>Connected</source>
-        <translation>Ansluten</translation>
+        <translation>Conectado</translation>
     </message>
     <message numerus="yes">
         <source>chats</source>
         <translation>
-            <numerusform>chatt</numerusform>
-            <numerusform>chattar</numerusform>
+            <numerusform>conversación</numerusform>
+            <numerusform>charlas</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>unread messages</source>
         <translation>
-            <numerusform>oläst meddelande</numerusform>
-            <numerusform>olästa meddelanden</numerusform>
+            <numerusform>mensaje no leído</numerusform>
+            <numerusform>mensajes no leídos</numerusform>
         </translation>
     </message>
 </context>
@@ -956,15 +956,15 @@
     <name>EditSuperGroupSlowModeColumn</name>
     <message>
         <source>Slow Mode</source>
-        <translation>Långsamt läge</translation>
+        <translation>Modo lento</translation>
     </message>
     <message>
         <source>Off</source>
-        <translation>Av</translation>
+        <translation>apagado</translation>
     </message>
     <message>
         <source>Set how long every chat member has to wait between Messages</source>
-        <translation>Ange hur länge varje chatmedlem måste vänta mellan meddelanden</translation>
+        <translation>Establecer cuánto tiempo debe esperar cada miembro de charla entre Mensajes</translation>
     </message>
 </context>
 <context>
@@ -973,8 +973,8 @@
         <source>Forward %Ln messages</source>
         <comment>dialog header</comment>
         <translation>
-            <numerusform>Vidarebefordra %Ln meddelande</numerusform>
-            <numerusform>Vidarebefordra %Ln meddelanden</numerusform>
+            <numerusform>Reenviar %Ln mensaje</numerusform>
+            <numerusform>Reenviar %Ln mensajes</numerusform>
         </translation>
     </message>
 </context>
@@ -982,89 +982,89 @@
     <name>ImagePage</name>
     <message>
         <source>Download Picture</source>
-        <translation>Ladda ner bild</translation>
+        <translation>Bajar imagen</translation>
     </message>
 </context>
 <context>
     <name>InReplyToRow</name>
     <message>
         <source>You</source>
-        <translation>Du</translation>
+        <translation>Usted</translation>
     </message>
     <message>
         <source>Unknown</source>
-        <translation>Okänd</translation>
+        <translation>Desconocido</translation>
     </message>
     <message>
         <source>This message was deleted</source>
-        <translation>Meddelandet togs bort</translation>
+        <translation>Este mensaje fue borrado</translation>
     </message>
 </context>
 <context>
     <name>InitializationPage</name>
     <message>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>Aceptar</translation>
     </message>
     <message>
         <source>Welcome to Ferniegram!</source>
-        <translation>Välkommen till Ferniegram!</translation>
+        <translation>Bienvenidos a Ferni!</translation>
     </message>
     <message>
         <source>Please enter your phone number to continue.</source>
-        <translation>Ange ditt telefonnummer för att fortsätta.</translation>
+        <translation>Marcar número telefónico.</translation>
     </message>
     <message>
         <source>Continue</source>
-        <translation>Fortsätt</translation>
+        <translation>Continuar</translation>
     </message>
     <message>
         <source>Please enter the code that you received:</source>
-        <translation>Ange koden du mottog:</translation>
+        <translation>Marcar código recibido.</translation>
     </message>
     <message>
         <source>Loading...</source>
-        <translation>Läser in...</translation>
+        <translation>cargando...</translation>
     </message>
     <message>
         <source>Unable to authenticate you with the entered code.</source>
-        <translation>Det gick inte att autentisera dig med angiven kod.</translation>
+        <translation>No se pudo autenticar con código marcado.</translation>
     </message>
     <message>
         <source>Enter code again</source>
-        <translation>Ange koden igen</translation>
+        <translation>Remarcar código</translation>
     </message>
     <message>
         <source>Restart authentication</source>
-        <translation>Starta om autentisering</translation>
+        <translation>Reiniciar autenticación</translation>
     </message>
     <message>
         <source>Please enter your password:</source>
-        <translation>Ange ditt lösenord:</translation>
-    </message>
-    <message>
-        <source>User Registration</source>
-        <translation>Användarregistrering</translation>
-    </message>
-    <message>
-        <source>Enter your First Name</source>
-        <translation>Ange ditt förnamn</translation>
-    </message>
-    <message>
-        <source>Enter your Last Name</source>
-        <translation>Ange ditt efternamn</translation>
+        <translation>Por favor, marcar código:</translation>
     </message>
     <message>
         <source>Register User</source>
-        <translation>Registrera användaren</translation>
+        <translation>Registrar usuario</translation>
+    </message>
+    <message>
+        <source>Enter your First Name</source>
+        <translation>Marcar nombre</translation>
+    </message>
+    <message>
+        <source>Enter your Last Name</source>
+        <translation>Marcar apellido</translation>
+    </message>
+    <message>
+        <source>User Registration</source>
+        <translation>Registrar usuario</translation>
     </message>
     <message>
         <source>Use the international format, e.g. %1</source>
-        <translation>Använd internationellt format, t.ex. %1</translation>
+        <translation>%1</translation>
     </message>
     <message>
         <source>About Ferniegram</source>
-        <translation>Om Ferniegram</translation>
+        <translation>Acerca de</translation>
     </message>
     <message>
         <source>Proxy settings</source>
@@ -1075,7 +1075,7 @@
     <name>LicenseListPart</name>
     <message>
         <source>License text</source>
-        <translation>Licenstext</translation>
+        <translation>Texto de la licencia</translation>
     </message>
 </context>
 <context>
@@ -1095,55 +1095,55 @@
     <name>MessageListViewItem</name>
     <message>
         <source>Reply to Message</source>
-        <translation>Svara på meddelandet</translation>
+        <translation>Responder</translation>
     </message>
     <message>
         <source>Edit Message</source>
-        <translation>Redigera meddelandet</translation>
+        <translation>Editar</translation>
     </message>
     <message>
         <source>You</source>
-        <translation>Du</translation>
+        <translation>Usted</translation>
     </message>
     <message>
         <source>Forwarded Message</source>
-        <translation>Vidarebefordrat meddelande</translation>
+        <translation>Mensaje reenviado</translation>
     </message>
     <message>
         <source>Select Message</source>
-        <translation>Markera meddelanden</translation>
+        <translation>Seleccionar</translation>
     </message>
     <message>
         <source>More Options...</source>
-        <translation>Fler alternativ...</translation>
+        <translation>Más opciones</translation>
     </message>
     <message>
         <source>Message deleted</source>
-        <translation>Mededelande borttaget</translation>
+        <translation>Mensaje borrado</translation>
     </message>
     <message>
         <source>Copy Message to Clipboard</source>
-        <translation>Kopiera meddelandet till urklipp</translation>
+        <translation>Copiar</translation>
     </message>
     <message>
         <source>Forward Message</source>
-        <translation>Vidarebefordra meddelande</translation>
+        <translation>Reenviar mensaje</translation>
     </message>
     <message>
         <source>Delete Message</source>
-        <translation>Ta bort meddelandet</translation>
+        <translation>Borrar</translation>
     </message>
     <message>
         <source>Message unpinned</source>
-        <translation type="unfinished">Meddelandet lösgjort</translation>
+        <translation type="unfinished">Mensaje desanclado</translation>
     </message>
     <message>
         <source>Unpin Message</source>
-        <translation type="unfinished">Lösgör meddelandet</translation>
+        <translation type="unfinished">Desanclar mensaje</translation>
     </message>
     <message>
         <source>Pin Message</source>
-        <translation type="unfinished">Fäst meddelandet</translation>
+        <translation type="unfinished">Anclar mensaje</translation>
     </message>
     <message>
         <source>Forward</source>
@@ -1186,21 +1186,21 @@
     <name>MessageListViewItemSimple</name>
     <message>
         <source>You</source>
-        <translation>Du</translation>
+        <translation>Usted</translation>
     </message>
     <message numerus="yes">
         <source>scored %Ln points in %2</source>
         <comment>myself</comment>
         <translation>
-            <numerusform>kom upp i %Ln poäng i %2</numerusform>
-            <numerusform>kom upp i %Ln poäng i %2</numerusform>
+            <numerusform>punto %Ln anotado en %2</numerusform>
+            <numerusform>puntos %Ln anotados en %2</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>scored %Ln points in %2</source>
         <translation>
-            <numerusform>kom upp i %Ln poäng i %2</numerusform>
-            <numerusform>kom upp i %Ln poäng i %2</numerusform>
+            <numerusform>punto %Ln anotado en %2</numerusform>
+            <numerusform>puntos %Ln anotados en %2</numerusform>
         </translation>
     </message>
 </context>
@@ -1208,11 +1208,11 @@
     <name>MessageOverlayFlickable</name>
     <message>
         <source>You</source>
-        <translation>Du</translation>
+        <translation>Usted</translation>
     </message>
     <message>
         <source>This message was forwarded. Original author: %1</source>
-        <translation>Detta meddelande är vidarebefordrat. Ursprunglig avsändare: %1</translation>
+        <translation>Este mensaje fue reenviado. Autor original: %1</translation>
     </message>
 </context>
 <context>
@@ -1229,8 +1229,8 @@
         <source>%Ln vote(s) total</source>
         <comment>number of total votes</comment>
         <translation>
-            <numerusform>%Ln röst sammanlagt</numerusform>
-            <numerusform>%Ln röster sammanlagt</numerusform>
+            <numerusform>%Ln total de voto</numerusform>
+            <numerusform>%Ln total de votos</numerusform>
         </translation>
     </message>
     <message>
@@ -1280,7 +1280,7 @@
     <name>MessageVoiceNote</name>
     <message>
         <source>Voice Note</source>
-        <translation>Röstmeddelande</translation>
+        <translation>Nota de voz</translation>
     </message>
 </context>
 <context>
@@ -1291,27 +1291,27 @@
     </message>
     <message>
         <source>Sponsored Message</source>
-        <translation type="unfinished">Reklammeddelande</translation>
+        <translation type="unfinished">Mensaje patrocinado</translation>
     </message>
     <message>
         <source>edited</source>
-        <translation type="unfinished">redigerade</translation>
+        <translation type="unfinished">editado</translation>
     </message>
     <message>
         <source>Select Messages</source>
-        <translation type="unfinished">Markera meddelanden</translation>
+        <translation type="unfinished">Seleccionar mensajes</translation>
     </message>
     <message numerus="yes">
         <source>%Ln messages selected</source>
         <comment>number of messages selected</comment>
         <translation type="unfinished">
-            <numerusform>%Ln meddelande markerat</numerusform>
-            <numerusform>%Ln meddelanden markerade</numerusform>
+            <numerusform>%Ln mensaje seleccionado</numerusform>
+            <numerusform>%Ln mensajes seleccionados</numerusform>
         </translation>
     </message>
     <message>
         <source>This secret chat is not yet ready. Your chat partner needs to go online first.</source>
-        <translation type="unfinished">Den hemliga chatten är inte klar än. Din chattpartner måste gå online först.</translation>
+        <translation type="unfinished">Esta charla secreta no está lista. El contacto no está conectado.</translation>
     </message>
     <message>
         <source>No results</source>
@@ -1320,24 +1320,24 @@
     </message>
     <message>
         <source>This chat is empty.</source>
-        <translation type="unfinished">Denna chatt är tom.</translation>
+        <translation type="unfinished">Esta charla está vacía.</translation>
     </message>
     <message>
         <source>Loading messages...</source>
-        <translation type="unfinished">Läser in meddelanden...</translation>
+        <translation type="unfinished">Cargando mensajes...</translation>
     </message>
     <message numerus="yes">
         <source>%Ln messages have been copied</source>
         <translation type="unfinished">
-            <numerusform>%Ln meddelande har kopierats</numerusform>
-            <numerusform>%Ln meddelanden har kopierats</numerusform>
+            <numerusform>%Ln se han copiado los mensaje</numerusform>
+            <numerusform>%Ln se han copiado los mensajes</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>%Ln Messages deleted</source>
         <translation type="unfinished">
-            <numerusform>%Ln meddelande borttaget</numerusform>
-            <numerusform>%Ln meddelanden borttagna</numerusform>
+            <numerusform>%Ln Mensajes borrado</numerusform>
+            <numerusform>%Ln Mensajes borrados</numerusform>
         </translation>
     </message>
 </context>
@@ -1345,47 +1345,47 @@
     <name>NewChatPage</name>
     <message>
         <source>Your Contacts</source>
-        <translation>Dina kontakter</translation>
+        <translation>Contactos</translation>
     </message>
     <message>
         <source>You don&apos;t have any contacts.</source>
-        <translation>Du har inga kontakter</translation>
+        <translation>No hay contactos.</translation>
     </message>
     <message>
         <source>Private Chat</source>
-        <translation>Privat chatt</translation>
+        <translation>Privado</translation>
     </message>
     <message>
         <source>Secret Chat</source>
-        <translation>Hemlig chatt</translation>
+        <translation>Secreto</translation>
     </message>
     <message>
         <source>End-to-end-encrypted, accessible on this device only</source>
-        <translation>Slutpunkt till slutpunktskrypterad, åtkomlig endast på denna enhet.</translation>
+        <translation>Encriptado fin-a-fin, accesible solo a este dispositivo</translation>
     </message>
     <message>
         <source>Loading contacts...</source>
-        <translation>Läser in kontakter...</translation>
+        <translation>Cargando contactos...</translation>
     </message>
     <message>
         <source>Transport-encrypted, uses Telegram Cloud, sharable across devices</source>
-        <translation>Transportkrypterad, använder Telegram Cloud, kan delas mellan enheter.</translation>
+        <translation>Transporte-encriptado, usa nube de Telegrama, compartible entre dispositivos</translation>
     </message>
     <message>
         <source>Search a contact...</source>
-        <translation>Sök en kontakt</translation>
+        <translation>A b c</translation>
     </message>
     <message>
         <source>Synchronize Contacts with Telegram</source>
-        <translation>Synkronisera kontakter med Telegram</translation>
+        <translation>Sincronizar con Telegrama</translation>
     </message>
     <message>
         <source>Contacts successfully synchronized with Telegram.</source>
-        <translation>Kontakter synkroniserade med Telegram.</translation>
+        <translation>Contactos sincronizados con éxito con Telegrama.</translation>
     </message>
     <message>
         <source>No contacts found.</source>
-        <translation>Inga kontakter hittades.</translation>
+        <translation>No contactos encontrados.</translation>
     </message>
     <message>
         <source>Add contact</source>
@@ -1408,27 +1408,27 @@
     <name>NewMessageColumn</name>
     <message>
         <source>Location: Obtaining position...</source>
-        <translation type="unfinished">Plats: Hämtar position...</translation>
+        <translation type="unfinished">Ubicación: Recibiendo posición...</translation>
     </message>
     <message>
         <source>Unknown address</source>
-        <translation type="unfinished">Okänd adress</translation>
+        <translation type="unfinished">Dirección desconocida</translation>
     </message>
     <message>
         <source>Location (%1/%2)</source>
-        <translation type="unfinished">Plats (%1/%2)</translation>
+        <translation type="unfinished">Ubicación: (%1/%2)</translation>
     </message>
     <message>
         <source>Accuracy: %1m</source>
-        <translation type="unfinished">Noggrannhet: %1m</translation>
+        <translation type="unfinished">Exactitud: %1m</translation>
     </message>
     <message>
         <source>Uploading...</source>
-        <translation type="unfinished">Ladda upp...</translation>
+        <translation type="unfinished">Subiendo...</translation>
     </message>
     <message>
         <source>Edit Message</source>
-        <translation type="unfinished">Redigera meddelandet</translation>
+        <translation type="unfinished">Editar</translation>
     </message>
     <message>
         <source>Silent Broadcast</source>
@@ -1461,8 +1461,8 @@
     <message numerus="yes">
         <source>%Ln unread messages</source>
         <translation>
-            <numerusform>%Ln oläst meddelande</numerusform>
-            <numerusform>%Ln olästa meddelanden</numerusform>
+            <numerusform>%Ln mensaje no leído</numerusform>
+            <numerusform>%Ln mensajes no leídos</numerusform>
         </translation>
     </message>
 </context>
@@ -1470,148 +1470,148 @@
     <name>Opal.About</name>
     <message>
         <source>About</source>
-        <translation>Om</translation>
+        <translation>Acerca de</translation>
     </message>
     <message>
         <source>Version %1</source>
-        <translation>Version %1</translation>
+        <translation>Versión %1</translation>
     </message>
     <message>
         <source>Development</source>
-        <translation>Utveckling</translation>
+        <translation>Desarrollo</translation>
     </message>
     <message>
         <source>show contributors</source>
-        <translation>visa medverkande</translation>
+        <translation>Mostrar contribuidores</translation>
     </message>
     <message>
         <source>Homepage</source>
-        <translation>Hemsida</translation>
+        <translation>Página web</translation>
     </message>
     <message>
         <source>Changelog</source>
-        <translation>Ändringslogg</translation>
+        <translation>Registro de cambios</translation>
     </message>
     <message>
         <source>Translations</source>
-        <translation>Översättningar</translation>
+        <translation>Traducciones</translation>
     </message>
     <message>
         <source>Source Code</source>
-        <translation>Källkod</translation>
+        <translation>Código Fuente</translation>
     </message>
     <message>
         <source>Donations</source>
-        <translation>Donationer</translation>
+        <translation>Donaciones</translation>
     </message>
     <message>
         <source>License</source>
-        <translation>Licens</translation>
+        <translation>Licencia</translation>
     </message>
     <message numerus="yes">
         <source>show license(s)</source>
         <translation>
-            <numerusform>visa licens</numerusform>
-            <numerusform>visa licenser</numerusform>
+            <numerusform>Mostrar licencia</numerusform>
+            <numerusform>Mostrar licencias</numerusform>
         </translation>
     </message>
     <message>
         <source>News</source>
-        <translation>Nyheter</translation>
+        <translation>Novedades</translation>
     </message>
     <message>
         <source>Changes since version %1</source>
-        <translation>Ändrat sedan version %1</translation>
+        <translation>Cambios desde la versión %1</translation>
     </message>
     <message>
         <source>show details</source>
-        <translation>visa detaljerat</translation>
+        <translation>Mostrar detalles</translation>
     </message>
     <message>
         <source>Thank you!</source>
-        <translation>Tack!</translation>
+        <translation>¡Gracias!</translation>
     </message>
     <message>
         <source>Details</source>
-        <translation>Detaljerat</translation>
+        <translation>Detalles</translation>
     </message>
     <message>
         <source>Contributors</source>
-        <translation>Medverkande</translation>
+        <translation>Colaboradores</translation>
     </message>
     <message>
         <source>Acknowledgements</source>
-        <translation>Bekräftelser</translation>
+        <translation>Reconocimientos</translation>
     </message>
     <message>
         <source>External Link</source>
-        <translation>Extern länk</translation>
+        <translation>Enlace externo</translation>
     </message>
     <message>
         <source>Open in browser</source>
-        <translation>Öppna i webbläsare</translation>
+        <translation>Abrir en el navegador</translation>
     </message>
     <message>
         <source>Copied to clipboard: %1</source>
-        <translation>Kopierat till urklipp: %1</translation>
+        <translation>Copiado al portapapeles: %1</translation>
     </message>
     <message>
         <source>Copy to clipboard</source>
-        <translation>Kopiera till urklipp</translation>
+        <translation>Copiar al portapapeles</translation>
     </message>
     <message>
         <source>Please refer to &lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt;</source>
-        <translation>Se &lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt;</translation>
+        <translation>Vea &lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt;</translation>
     </message>
     <message>
         <source>Download license texts</source>
-        <translation>Ladda ner licenstexter</translation>
+        <translation>Descargar los textos de las licencias</translation>
     </message>
     <message numerus="yes">
         <source>License(s)</source>
         <translation>
-            <numerusform>Licens</numerusform>
-            <numerusform>Licenser</numerusform>
+            <numerusform>Licencia</numerusform>
+            <numerusform>Licencias</numerusform>
         </translation>
     </message>
     <message>
         <source>Note: please check the source code for most accurate information.</source>
-        <translation>Notis: Kontrollera källkoden för mest korrekt information.</translation>
+        <translation>Nota: compruebe el código fuente para la información más precisa.</translation>
     </message>
 </context>
 <context>
     <name>Opal.About.Common</name>
     <message>
         <source>If you want to support my work, you can buy me a cup of coffee.</source>
-        <translation>Om du vill stödja mitt arbete, kan du bjuda mig på en kopp kaffe.</translation>
+        <translation>Si quieres apoyar mi trabajo, puedes comprarme un café.</translation>
     </message>
     <message>
         <source>You can support this project by contributing, or by donating using any of these services.</source>
-        <translation>Du kan stödja projektet genom kodbidrag eller donation med hjälp av dessa tjänster.</translation>
+        <translation>Puedes apoyar este proyecto contribuyendo o donando por cualquiera de estos servicios.</translation>
     </message>
     <message>
         <source>Your contributions to translations or code would be most welcome.</source>
-        <translation>Kodbidrag eller översättningar är väldigt välkommet.</translation>
+        <translation>Tus contribuciones a traducir o escribir código serán bien recibidas.</translation>
     </message>
 </context>
 <context>
     <name>OverviewPage</name>
     <message>
         <source>Settings</source>
-        <translation>Inställningar</translation>
+        <translation>Ajustes</translation>
     </message>
     <message>
         <source>New Chat</source>
-        <translation>Ny chatt</translation>
+        <translation>Crear Charla</translation>
     </message>
     <message>
         <source>Logging out</source>
-        <translation>Loggar ut</translation>
+        <translation>Saliendo de cuenta</translation>
     </message>
     <message>
         <source>Download of %1 successful.</source>
         <comment>in-app notification text</comment>
-        <translation type="unfinished">Nerladdning av %1 slutförd.</translation>
+        <translation type="unfinished">Bajada %1 exitosa.</translation>
     </message>
     <message>
         <source>Open</source>
@@ -1621,12 +1621,12 @@
     <message>
         <source>Download failed.</source>
         <comment>in-app notification text</comment>
-        <translation type="unfinished">Nerladdning misslyckades.</translation>
+        <translation type="unfinished">Error a bajar</translation>
     </message>
     <message>
         <source>Unable to open link.</source>
         <comment>in-app notification text</comment>
-        <translation type="unfinished">Kan inte öppna länk.</translation>
+        <translation type="unfinished">No se pudo abrir enlace.</translation>
     </message>
     <message>
         <source>Archive</source>
@@ -1661,151 +1661,143 @@
     <name>PinnedMessageItem</name>
     <message>
         <source>You</source>
-        <translation>Du</translation>
+        <translation>Usted</translation>
     </message>
     <message>
         <source>Pinned Message</source>
-        <translation>Fäst meddelande</translation>
+        <translation>Mensaje anclado</translation>
     </message>
     <message>
         <source>Message unpinned</source>
-        <translation>Meddelandet lösgjort</translation>
+        <translation>Mensaje desanclado</translation>
     </message>
 </context>
 <context>
     <name>PollCreationPage</name>
     <message>
-        <source>You have to enter a question.</source>
-        <translation>Du måste ange en fråga.</translation>
-    </message>
-    <message>
-        <source>The question has to be shorter than 256 characters.</source>
-        <translation>Frågan måste vara kortare än 256 tecken.</translation>
-    </message>
-    <message>
-        <source>A poll requires 2-10 answers.</source>
-        <translation>En omröstning kräver 2-10 svarsalternativ.</translation>
-    </message>
-    <message>
         <source>All answers have to contain 1-100 characters.</source>
-        <translation>Alla svarsalternativ måste innehålla 1-100 tecken.</translation>
+        <translation>Todas respuestas deben contener de 1 a 100 caracteres.</translation>
     </message>
     <message>
         <source>To send a quiz, you have to specify the right answer.</source>
-        <translation>För att skicka en frågesport, måste du ange rätt svar.</translation>
+        <translation>Para enviar una cuestión, debe especificar respuesta correcta.</translation>
+    </message>
+    <message>
+        <source>You have to enter a question.</source>
+        <translation>Una pregunta.</translation>
+    </message>
+    <message>
+        <source>The question has to be shorter than 256 characters.</source>
+        <translation>La pregunta debe tener menos de 256 caracteres.</translation>
+    </message>
+    <message>
+        <source>A poll requires 2-10 answers.</source>
+        <translation>Encuesta requiere 2 a 10 respuestas.</translation>
     </message>
     <message>
         <source>Create a Poll</source>
         <comment>Dialog Header</comment>
-        <translation>Skapa en omröstning</translation>
+        <translation>Encuesta</translation>
     </message>
     <message>
         <source>in %1</source>
         <comment>After dialog header… Create a Poll in [group name]</comment>
-        <translation>i %1</translation>
+        <translation>en %1</translation>
     </message>
     <message>
         <source>Enter your question here</source>
-        <translation>Ange din fråga här</translation>
+        <translation>Hacer pregunta</translation>
     </message>
     <message numerus="yes">
         <source>Question (%Ln characters left)</source>
         <translation>
-            <numerusform>Fråga (%Ln tecken kvar)</numerusform>
-            <numerusform>Fråga (%Ln tecken kvar)</numerusform>
+            <numerusform>Pregunta (quedan %Ln caracter)</numerusform>
+            <numerusform>Pregunta (quedan %Ln caracteres)</numerusform>
         </translation>
     </message>
     <message>
         <source>Answers</source>
         <comment>Section header</comment>
-        <translation>Svar</translation>
+        <translation>Respuestas</translation>
     </message>
     <message>
         <source>Enter an answer here</source>
-        <translation>Ange svaret här</translation>
+        <translation>Hacer respuesta</translation>
     </message>
     <message numerus="yes">
         <source>Answer (%Ln characters left)</source>
         <translation>
-            <numerusform>Svar (%Ln tecken kvar)</numerusform>
-            <numerusform>Svar (%Ln tecken kvar)</numerusform>
+            <numerusform>Respuesta (quedan %Ln caracter)</numerusform>
+            <numerusform>Respuesta (quedan %Ln caracteres)</numerusform>
         </translation>
     </message>
     <message>
         <source>Add an answer</source>
-        <translation>Lägg till ett svar</translation>
+        <translation>Agregar respuesta</translation>
     </message>
     <message>
         <source>Poll Options</source>
         <comment>Section header</comment>
-        <translation>Omröstningsalternativ</translation>
+        <translation>Opciones</translation>
     </message>
     <message>
         <source>Anonymous answers</source>
-        <translation>Anonyma svar</translation>
+        <translation>Respuestas anónimas</translation>
     </message>
     <message>
         <source>Multiple answers allowed</source>
-        <translation>Flera svarsalternativ tillåtna</translation>
+        <translation>Múltiples respuestas</translation>
     </message>
     <message>
         <source>Quiz Mode</source>
-        <translation>Frågesportläge</translation>
+        <translation>Modo interrogar</translation>
     </message>
     <message>
         <source>Quizzes have one correct answer. Participants can&apos;t revoke their responses.</source>
-        <translation>Frågor har ett (1) korrekt svar. Deltagarna kan inte återkalla sina svar.</translation>
+        <translation>Cuestionarios tienen respuesta correcta. Participantes no pueden revocar las respuestas.</translation>
     </message>
     <message>
         <source>Enter an optional explanation</source>
-        <translation>Ange en valfri förklaring</translation>
+        <translation>Introducir explicación opcional</translation>
     </message>
     <message>
         <source>Shown when the user selects a wrong answer.</source>
-        <translation>Visas när användaren väljer fel svar.</translation>
+        <translation>Muestra cuando usuario selecciona respuesta incorrecta.</translation>
     </message>
     <message>
         <source>An explanation can be up to 200 characters long.</source>
-        <translation>En förklaring kan vara upp till 200 tecken lång.</translation>
+        <translation>Explicación debe hasta 200 caracteres.</translation>
     </message>
 </context>
 <context>
     <name>PollResultsPage</name>
     <message>
         <source>Quiz Results</source>
-        <translation>Frågesportresultat</translation>
+        <translation>Resultados cuestionario</translation>
     </message>
     <message>
         <source>Poll Results</source>
-        <translation>Omröstningsresultat</translation>
+        <translation>Resultados encuesta</translation>
     </message>
     <message numerus="yes">
         <source>%Ln vote(s) total</source>
         <comment>number of total votes</comment>
         <translation>
-            <numerusform>%Ln röst sammanlagt</numerusform>
-            <numerusform>%Ln röster sammanlagt</numerusform>
+            <numerusform>%Ln total de voto</numerusform>
+            <numerusform>%Ln total de votos</numerusform>
         </translation>
     </message>
     <message>
         <source>Results</source>
         <comment>section header</comment>
-        <translation>Resultat</translation>
-    </message>
-    <message numerus="yes">
-        <source>%Ln vote(s) including yours</source>
-        <comment>number of votes for option</comment>
-        <translation>
-            <numerusform>%Ln röst inklusive din</numerusform>
-            <numerusform>%Ln röster inklusive din</numerusform>
-        </translation>
+        <translation>Resultados</translation>
     </message>
     <message numerus="yes">
         <source>%Ln vote(s)</source>
         <comment>number of votes for option</comment>
         <translation>
-            <numerusform>%Ln röst</numerusform>
-            <numerusform>%Ln röster</numerusform>
+            <numerusform>%Ln voto</numerusform>
+            <numerusform>%Ln votos</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -1814,6 +1806,14 @@
         <translation>
             <numerusform>%Ln%</numerusform>
             <numerusform>%Ln%</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <source>%Ln vote(s) including yours</source>
+        <comment>number of votes for option</comment>
+        <translation>
+            <numerusform>%Ln voto incluyendo el suyo</numerusform>
+            <numerusform>%Ln votos incluyendo el suyo</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -1882,15 +1882,15 @@
     <name>SearchChatsPage</name>
     <message>
         <source>No chats found.</source>
-        <translation>Inga chattar hittades.</translation>
+        <translation>No se encontrado grupos.</translation>
     </message>
     <message>
         <source>Searching chats...</source>
-        <translation>Söker chattar...</translation>
+        <translation>Buscando grupos...</translation>
     </message>
     <message>
         <source>Enter your query to start searching (at least 5 characters needed)</source>
-        <translation>Ange din söksträng för att starta sökning (minst 5 tecken behövs)</translation>
+        <translation>Iniciar búsqueda con al menos 5 caracteres</translation>
     </message>
     <message>
         <source>Search</source>
@@ -1945,27 +1945,27 @@
     <name>SettingsAppearance</name>
     <message>
         <source>Appearance</source>
-        <translation>Utseende</translation>
+        <translation>Apariencia</translation>
     </message>
     <message>
         <source>Show stickers as emojis</source>
-        <translation>Visa dekaler som emoji</translation>
+        <translation>Mostrar pegatinas como Emoticonos</translation>
     </message>
     <message>
         <source>Only display emojis instead of the actual stickers</source>
-        <translation>Visa bara emoji istället för de faktiska dekalerna</translation>
+        <translation>Muestra emoticonos en lugar de pegatinas reales</translation>
     </message>
     <message>
         <source>Show stickers as images</source>
-        <translation>Visa dekaler som bilder</translation>
+        <translation>Mostrar pegatinas como Imágenes</translation>
     </message>
     <message>
         <source>Show background for stickers and align them centrally like images</source>
-        <translation>Visa bakgrund för dekaler och justera dem centralt som bilder</translation>
+        <translation>Muestra un fondo para pegatinas y alinea como imágenes</translation>
     </message>
     <message>
         <source>Animate stickers</source>
-        <translation>Animera dekaler</translation>
+        <translation>Mostrar pegatinas Animadas</translation>
     </message>
     <message>
         <source>Video stickers</source>
@@ -2023,103 +2023,103 @@
     <name>SettingsBehavior</name>
     <message>
         <source>Behavior</source>
-        <translation>Beteende</translation>
+        <translation>Comportamiento</translation>
     </message>
     <message>
         <source>Send message by enter</source>
-        <translation>Skicka meddelanden med retur</translation>
+        <translation>Enviar mensaje tecla Entrar</translation>
     </message>
     <message>
         <source>Send your message by pressing the enter key</source>
-        <translation>Skicka meddelanden genom att trycka på returtangenten</translation>
+        <translation>Envía mensajes pulsando tecla Entrar</translation>
     </message>
     <message>
         <source>Focus text input on chat open</source>
-        <translation>Fokusera textinmatningen vid chatt-öppning</translation>
+        <translation>Enfocar entrada de texto de Charla</translation>
     </message>
     <message>
         <source>Focus the text input area when entering a chat</source>
-        <translation>Fokusera textinmatningsområdet vid anslutning till en chatt</translation>
+        <translation>Enfoca área de entrada de texto al ingresar a charla</translation>
     </message>
     <message>
         <source>Focus text input area after send</source>
-        <translation>Fokusera textinmatningsfältet efter sändning</translation>
+        <translation>Enfocar área de entrada de Texto</translation>
     </message>
     <message>
         <source>Focus the text input area after sending a message</source>
-        <translation>Fokusera textinmatningsfältet efter att ett meddelande skickats</translation>
+        <translation>Enfoca área de entrada de texto después de enviar mensaje</translation>
     </message>
     <message>
         <source>Delay before marking messages as read</source>
-        <translation>Fördröjning innan meddelanden markeras som lästa</translation>
+        <translation>Marcar mensajes como Leídos</translation>
     </message>
     <message>
         <source>Ferniegram will wait a bit before messages are marked as read</source>
-        <translation>Ferniegram väntar en stund innan meddelanden markeras som lästa</translation>
+        <translation>Si esta habilitado, Apl espera un segundo hasta que mensaje que está en monitor se marque como leído. Si deshabilita esta función,  mensajes se marcarán inmediatamente como leído una vez que esté en monitor sin desplazarse a mensaje</translation>
     </message>
     <message>
         <source>Open-with menu integration</source>
-        <translation>Integrering av menyn &quot;Öppna med&quot;</translation>
+        <translation>Integrar opción Abrir-Con</translation>
     </message>
     <message>
         <source>Notification feedback</source>
-        <translation>Aviseringsåterkoppling</translation>
+        <translation>Notificar en</translation>
     </message>
     <message>
         <source>Use non-graphical feedback (sound, vibration) for notifications</source>
-        <translation>Använd icke-grafisk återkoppling (ljud, vibration) för avisering</translation>
+        <translation>Usa comentarios no gráficos (sonido, vibración) para notificaciones</translation>
     </message>
     <message>
         <source>All events</source>
-        <translation>Alla händelser</translation>
+        <translation>Eventos</translation>
     </message>
     <message>
         <source>Only new events</source>
-        <translation>Endast nya händelser</translation>
+        <translation>Nuevos eventos</translation>
     </message>
     <message>
         <source>None</source>
-        <translation>Inget</translation>
+        <translation>Ninguno</translation>
     </message>
     <message>
         <source>Notification turns on the display</source>
-        <translation>Avisering tänder skärmen</translation>
+        <translation>Mostrar notificación por Monitor</translation>
     </message>
     <message>
         <source>Enable notification sounds</source>
-        <translation>Aktivera aviseringsljud</translation>
+        <translation>Habilitar sonidos de Notificación</translation>
     </message>
     <message>
         <source>When sounds are enabled, Ferniegram will use the current Sailfish OS notification sound for chats, which can be configured in the system settings.</source>
-        <translation>När ljud är aktiverat, använder Ferniegram aktuell Sailfish-signal för chatt-avisering, vilken kan ställas in i systemets ljudinställningar.</translation>
+        <translation>Cuando los sonidos están habilitados, Ferni utilizará sonido de notificación actual de Sailfish OS para los grupos, que se puede ajustar a configuración del sistema.</translation>
     </message>
     <message>
         <source>Always append message preview to notifications</source>
-        <translation>Visa alltid förhandsgranskning av meddelanden i aviseringar</translation>
+        <translation>Vista previa de mensaje en Notificaciones</translation>
     </message>
     <message>
         <source>In addition to showing the number of unread messages, the latest message will also be appended to notifications.</source>
-        <translation>Förutom att visa antalet olästa meddelanden kommer det senaste meddelandet också att visas i aviseringarna.</translation>
+        <translation>Mostrará cantidad mensajes no leídos, el último mensaje se agregará a notificaciones.</translation>
     </message>
     <message>
         <source>Highlight unread messages</source>
-        <translation>Färgmarkera olästa meddelanden</translation>
+        <translation>Resaltar mensajes no Leídos</translation>
     </message>
     <message>
         <source>Highlight Conversations with unread messages</source>
-        <translation>Färgmarkera konversationer med olästa meddelanden</translation>
+        <translation>Resalta la charla en mensajes no leídos</translation>
     </message>
     <message>
         <source>Hide content in notifications</source>
-        <translation>Dölj innehåll i aviseringar</translation>
+        <translation>Ocultar contenido de notificaciones</translation>
     </message>
     <message>
         <source>Go to quoted message</source>
-        <translation>Gå till citerat meddelande</translation>
+        <translation>Ir a mensaje citado</translation>
     </message>
     <message>
         <source>When tapping a quoted message, open it in chat instead of showing it in an overlay.</source>
-        <translation>Vid tryck på ett citerat meddelande öppnas det i chatten istället för att visas i ett överlägg.</translation>
+        <translation>Al Pulsar mensaje citado, abrirá en Charla en lugar de mostrarlo en una superposición.</translation>
     </message>
     <message>
         <source>Send attachments by enter</source>
@@ -2127,7 +2127,7 @@
     </message>
     <message>
         <source>Integrate Ferniegram into open-with menu of Sailfish OS</source>
-        <translation>Integrera Ferniegram med menyn &quot;Öppna med&quot;, i Sailfish OS</translation>
+        <translation>Ferniegram usa opción Abrir-Con de Sailfish SO</translation>
     </message>
     <message>
         <source>Show translate option for messages</source>
@@ -2174,11 +2174,11 @@
     <name>SettingsPage</name>
     <message>
         <source>Settings</source>
-        <translation>Inställningar</translation>
+        <translation>Ajustes</translation>
     </message>
     <message>
         <source>About Ferniegram</source>
-        <translation type="unfinished">Om Ferniegram</translation>
+        <translation type="unfinished">Acerca de</translation>
     </message>
     <message>
         <source>Is %1 still your number?</source>
@@ -2231,152 +2231,152 @@
     <name>SettingsPrivacy</name>
     <message>
         <source>Privacy</source>
-        <translation>Sekretess</translation>
+        <translation>Privacidad</translation>
     </message>
     <message>
         <source>Allow chat invites</source>
-        <translation>Tillåt chattinbjudningar</translation>
+        <translation>Permitir invitaciones de Grupo</translation>
     </message>
     <message>
         <source>Privacy setting for managing whether you can be invited to chats.</source>
-        <translation>Sekretessinställning för att hantera om du kan bjudas in till chattar.</translation>
+        <translation>Ajustes de privacidad administrar si puede ser invitado a grupos.</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation>Ja</translation>
+        <translation>Si</translation>
     </message>
     <message>
         <source>Your contacts only</source>
-        <translation>Endast mina kontakter</translation>
+        <translation>Solo contactos</translation>
     </message>
     <message>
         <source>No</source>
-        <translation>Nej</translation>
+        <translation>No</translation>
     </message>
     <message>
         <source>Allow finding by phone number</source>
-        <translation>Tillåt att jag hittas via telefonnummer</translation>
+        <translation>Permitir buscarme por Número</translation>
     </message>
     <message>
         <source>Privacy setting for managing whether you can be found by your phone number.</source>
-        <translation>Sekretessinställning för att hantera om du kan hittas via ditt telefonnummer.</translation>
+        <translation>Ajustes de privacidad  administrar si puede ser encontrado por su número de teléfono.</translation>
     </message>
     <message>
         <source>Show link in forwarded messages</source>
-        <translation>Visa länk i vidarebefordrade meddelanden</translation>
+        <translation>Mostrar enlace a mensajes Reenviados</translation>
     </message>
     <message>
         <source>Privacy setting for managing whether a link to your account is included in forwarded messages.</source>
-        <translation>Sekretessinställning för att hantera om en länk till ditt konto inkluderas i vidarebefordrade meddelanden.</translation>
+        <translation>Ajustes de privacidad administrar si un enlace de cuenta está incluido en mensajes reenviados.</translation>
     </message>
     <message>
         <source>Show phone number</source>
-        <translation>Visa telefonnummer</translation>
+        <translation>Mostrar número Telefónico</translation>
     </message>
     <message>
         <source>Privacy setting for managing whether your phone number is visible.</source>
-        <translation>Sekretessinställning för att hantera om ditt telefonnummer är synligt.</translation>
+        <translation>Ajustes de privacidad administrar si su número de teléfono es visible.</translation>
     </message>
     <message>
         <source>Show profile photo</source>
-        <translation>Visa profilbild</translation>
+        <translation>Mostrar foto de Perfil</translation>
     </message>
     <message>
         <source>Privacy setting for managing whether your profile photo is visible.</source>
-        <translation>Sekretessinställning för att hantera om din profilbild är synlig.</translation>
+        <translation>Ajustes de privacidad administrar si la foto de perfil es visible.</translation>
     </message>
     <message>
         <source>Show status</source>
-        <translation>Visa status</translation>
+        <translation>Mostrar Estado</translation>
     </message>
     <message>
         <source>Privacy setting for managing whether your online status is visible.</source>
-        <translation>Sekretessinställning för att hantera om din online-status är synlig.</translation>
+        <translation>Ajustes de privacidad administrar si el estado en línea es visible.</translation>
     </message>
     <message>
         <source>Allow sending Location to inline bots</source>
-        <translation>Tillåt att skicka plats till infogade robotar</translation>
+        <translation>Enviar ubicación de Robot Enlínea</translation>
     </message>
     <message>
         <source>Some inline bots request location data when using them</source>
-        <translation>Vissa infogade robotar begär platsdata när de används</translation>
+        <translation>Algunos Robot en línea solicitan datos de ubicación al usarlos</translation>
     </message>
 </context>
 <context>
     <name>SettingsSession</name>
     <message>
         <source>Sessions</source>
-        <translation>Sessioner</translation>
+        <translation>Sesiones</translation>
     </message>
     <message>
         <source>Session was terminated</source>
-        <translation>Sessionen avbröts</translation>
+        <translation>Se terminó sesión </translation>
     </message>
     <message>
         <source>Terminating session</source>
-        <translation>Avbryter session</translation>
+        <translation>Terminando sesión</translation>
     </message>
     <message>
         <source>Terminate Session</source>
-        <translation>Avbryt sessionen</translation>
+        <translation>Terminar sesión </translation>
     </message>
     <message>
         <source>This app</source>
-        <translation>Denna app</translation>
+        <translation>Esta apl</translation>
     </message>
     <message>
         <source>Active since: %1, last online: %2</source>
-        <translation>Aktiv sedan: %1, senast online: %2</translation>
+        <translation>Activo desde: %1, último en línea: %2</translation>
     </message>
     <message numerus="yes">
         <source>%1 day(s)</source>
         <translation>
-            <numerusform>%1 dag</numerusform>
-            <numerusform>%1 dagar</numerusform>
+            <numerusform>%1 dia</numerusform>
+            <numerusform>%1 dias</numerusform>
         </translation>
     </message>
     <message>
         <source>1 week</source>
-        <translation>1 vecka</translation>
+        <translation> 1 semana</translation>
     </message>
     <message>
         <source>1 month</source>
-        <translation>1 månad</translation>
+        <translation>1 mes</translation>
     </message>
     <message>
         <source>3 months</source>
-        <translation>3 månader</translation>
+        <translation>3 meses</translation>
     </message>
     <message>
         <source>6 months</source>
-        <translation>6 månader</translation>
+        <translation>6 meses</translation>
     </message>
     <message>
         <source>1 year</source>
-        <translation>1 år</translation>
+        <translation>1 año</translation>
     </message>
     <message>
         <source>Session Timeout</source>
-        <translation>Tidsgräns för session</translation>
+        <translation>Sesión caducada</translation>
     </message>
     <message>
         <source>Inactive sessions will be terminated after this timeframe</source>
-        <translation>Inaktiva sessioner avslutas efter den här tidsramen</translation>
+        <translation>Sesiones inactivas finalizarán después de período de tiempo.</translation>
     </message>
 </context>
 <context>
     <name>SettingsStorage</name>
     <message>
         <source>Enable online-only mode</source>
-        <translation>Aktivera endast-online-läge</translation>
+        <translation>Modo solo Enlínea</translation>
     </message>
     <message>
         <source>Disables offline caching. Certain features may be limited or missing in this mode. Changes require a restart of Ferniegram to take effect.</source>
-        <translation>Inaktiverar cachelagring offline. Vissa funktioner kan vara begränsade eller saknas helt i det här läget. Ändringar kräver omstart av Ferniegram för att träda i kraft.</translation>
+        <translation>Deshabilita el almacenamiento en caché sin conexión. Algunas funciones pueden estar limitadas o ausentes en este modo. Se requiere reiniciar Ferni para efecto.</translation>
     </message>
     <message>
         <source>Enable storage optimizer</source>
-        <translation>Aktivera lagringsoptimering</translation>
+        <translation>Optimizar Almacenamiento</translation>
     </message>
     <message>
         <source>Optimize storage</source>
@@ -2422,62 +2422,62 @@
     <name>SettingsUserProfile</name>
     <message>
         <source>User Profile</source>
-        <translation>Användarprofil</translation>
+        <translation>Perfil usuario</translation>
     </message>
     <message>
         <source>First Name</source>
         <comment>first name of the logged-in profile - header</comment>
-        <translation>Förnamn</translation>
+        <translation>Nombre</translation>
     </message>
     <message>
         <source>Enter 1-64 characters</source>
-        <translation>Ange 1-64 tecken</translation>
+        <translation>Marcar caracteres 1-128 {1-64 ?}</translation>
     </message>
     <message>
         <source>Last Name</source>
         <comment>last name of the logged-in profile - header</comment>
-        <translation>Efternamn</translation>
+        <translation>Apellido</translation>
     </message>
     <message>
         <source>Enter 0-64 characters</source>
-        <translation>Ange 1-64 tecken</translation>
+        <translation>Marcar caracteres 1-128 {0-64 ?}</translation>
     </message>
     <message>
         <source>Username</source>
         <comment>user name of the logged-in profile - header</comment>
-        <translation>Användarnamn</translation>
+        <translation>Usuario</translation>
     </message>
     <message>
         <source>Profile Pictures</source>
-        <translation>Profilbilder</translation>
+        <translation>Imagen perfil</translation>
     </message>
     <message>
         <source>Add Picture</source>
-        <translation>Lägg till bild</translation>
+        <translation>Agregar imagen</translation>
     </message>
     <message>
         <source>Uploading...</source>
-        <translation>Ladda upp...</translation>
+        <translation>Subiendo...</translation>
     </message>
     <message>
         <source>Log Out</source>
-        <translation>Logga ut</translation>
+        <translation>Cerrar sesión</translation>
     </message>
     <message>
         <source>Logged out</source>
-        <translation>Utloggad</translation>
+        <translation>Desconectado</translation>
     </message>
     <message>
         <source>Phone number: +%1</source>
-        <translation>Telefonnummer: +%1</translation>
+        <translation>Número telefónico: +%1</translation>
     </message>
     <message>
         <source>Contacts successfully synchronized with Telegram.</source>
-        <translation>Kontakter synkroniserade med Telegram.</translation>
+        <translation>Contactos sincronizados con éxito Telegrama.</translation>
     </message>
     <message>
         <source>Synchronize Contacts with Telegram</source>
-        <translation>Synkronisera kontakter med Telegram</translation>
+        <translation>Sincronizar Telegrama</translation>
     </message>
     <message>
         <source>Birthday</source>
@@ -2493,12 +2493,12 @@
     <name>StickerPicker</name>
     <message>
         <source>Removing sticker set</source>
-        <translation>Tar bort dekaluppsättning</translation>
+        <translation>Quitando álbum pegatinas</translation>
     </message>
     <message>
         <source>Recently used</source>
         <comment>stickers</comment>
-        <translation type="unfinished">Nyligen använt</translation>
+        <translation type="unfinished">Usado recientemente</translation>
     </message>
     <message>
         <source>Favorite</source>
@@ -2521,49 +2521,49 @@
     <name>TDLibChatListItem</name>
     <message>
         <source>Secret Chat</source>
-        <translation type="unfinished">Hemlig chatt</translation>
+        <translation type="unfinished">Secreto</translation>
     </message>
     <message>
         <source>Private Chat</source>
-        <translation type="unfinished">Privat chatt</translation>
+        <translation type="unfinished">Privado</translation>
     </message>
     <message>
         <source>Group</source>
-        <translation type="unfinished">Grupp</translation>
+        <translation type="unfinished">Grupo</translation>
     </message>
     <message>
         <source>Channel</source>
-        <translation type="unfinished">Kanal</translation>
+        <translation type="unfinished">Canal</translation>
     </message>
     <message numerus="yes">
         <source>%1 members</source>
         <translation type="unfinished">
-            <numerusform>%1 medlem</numerusform>
-            <numerusform>%1 medlemmar</numerusform>
+            <numerusform>%1 miembro</numerusform>
+            <numerusform>%1 miembros</numerusform>
         </translation>
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished">Okänd</translation>
+        <translation type="unfinished">Desconocido</translation>
     </message>
 </context>
 <context>
     <name>TDLibWrapper</name>
     <message>
         <source>Waiting for network...</source>
-        <translation type="unfinished">Väntar på nätverket...</translation>
+        <translation type="unfinished">Esperando red...</translation>
     </message>
     <message>
         <source>Connecting to network...</source>
-        <translation type="unfinished">Ansluter till nätverket...</translation>
+        <translation type="unfinished">Conectando a servidor...</translation>
     </message>
     <message>
         <source>Connecting to proxy...</source>
-        <translation type="unfinished">Ansluter till proxy...</translation>
+        <translation type="unfinished">Conectando a proxy...</translation>
     </message>
     <message>
         <source>Updating content...</source>
-        <translation type="unfinished">Uppdaterar innehåll...</translation>
+        <translation type="unfinished">Actualizando contenido...</translation>
     </message>
 </context>
 <context>
@@ -2578,11 +2578,11 @@
     </message>
     <message>
         <source>Draft</source>
-        <translation type="unfinished">Utkast</translation>
+        <translation type="unfinished">Borrador</translation>
     </message>
     <message>
         <source>You</source>
-        <translation type="unfinished">Du</translation>
+        <translation type="unfinished">Usted</translation>
     </message>
     <message>
         <source>This topic was created</source>
@@ -2651,136 +2651,136 @@
     <message>
         <source>sent a location</source>
         <comment>myself</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">envió una ubicación</translation>
     </message>
     <message>
         <source>sent a location</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">envió una ubicación</translation>
     </message>
     <message>
         <source>joined this chat</source>
         <comment>myself</comment>
-        <translation type="unfinished">anslöt till denna chat</translation>
+        <translation type="unfinished">unido a grupo</translation>
     </message>
     <message>
         <source>joined this chat</source>
-        <translation type="unfinished">anslöt till denna chat</translation>
+        <translation type="unfinished">unido a grupo</translation>
     </message>
     <message>
         <source>were added to this chat</source>
         <comment>myself</comment>
-        <translation type="unfinished">lades till i denna chatt</translation>
+        <translation type="unfinished">unido a grupo</translation>
     </message>
     <message>
         <source>was added to this chat</source>
-        <translation type="unfinished">lades till i denna chatt</translation>
+        <translation type="unfinished">unido a grupo</translation>
     </message>
     <message>
         <source>have added %1 to the chat</source>
         <comment>myself</comment>
-        <translation type="unfinished">har lagt till %1 i chatten</translation>
+        <translation type="unfinished">ha añadido %1 a charla</translation>
     </message>
     <message>
         <source>has added %1 to the chat</source>
-        <translation type="unfinished">har lagt till %1 i chatten</translation>
+        <translation type="unfinished">ha añadido %1 a charla</translation>
     </message>
     <message>
         <source>left this chat</source>
         <comment>myself</comment>
-        <translation type="unfinished">lämnade denna chatt</translation>
+        <translation type="unfinished">dejó esta charla</translation>
     </message>
     <message>
         <source>left this chat</source>
-        <translation type="unfinished">lämnade denna chatt</translation>
+        <translation type="unfinished">dejó esta charla</translation>
     </message>
     <message>
         <source>have removed %1 from the chat</source>
         <comment>myself</comment>
-        <translation type="unfinished">har tagit bort %1 från chatten</translation>
+        <translation type="unfinished">ha quitado %1 de charla</translation>
     </message>
     <message>
         <source>has removed %1 from the chat</source>
-        <translation type="unfinished">har tagit bort %1 från chatten</translation>
+        <translation type="unfinished">ha quitado %1 de charla</translation>
     </message>
     <message>
         <source>changed the chat title to %1</source>
         <comment>myself</comment>
-        <translation type="unfinished">ändrade chattnamnet till %1</translation>
+        <translation type="unfinished">cambió título de grupo a %1</translation>
     </message>
     <message>
         <source>changed the chat title to %1</source>
-        <translation type="unfinished">ändrade chattnamnet till %1</translation>
+        <translation type="unfinished">cambió título de grupo a %1</translation>
     </message>
     <message>
         <source>sent an anonymous quiz</source>
         <comment>myself</comment>
-        <translation type="unfinished">skickade en anonym frågesport</translation>
+        <translation type="unfinished">envió cuestionario anónimo</translation>
     </message>
     <message>
         <source>sent an anonymous quiz</source>
-        <translation type="unfinished">skickade en anonym frågesport</translation>
+        <translation type="unfinished">envió cuestionario anónimo</translation>
     </message>
     <message>
         <source>Anonymous Quiz</source>
-        <translation type="unfinished">Anonym frågesport</translation>
+        <translation type="unfinished">Cuestionar anónimo</translation>
     </message>
     <message>
         <source>Quiz</source>
-        <translation type="unfinished">Frågesport</translation>
+        <translation type="unfinished">Cuestionar</translation>
     </message>
     <message>
         <source>Anonymous Poll</source>
-        <translation type="unfinished">Anonym omröstning</translation>
+        <translation type="unfinished">Encuestar anónimo</translation>
     </message>
     <message>
         <source>Poll</source>
-        <translation type="unfinished">Omröstning</translation>
+        <translation type="unfinished">Encuesta</translation>
     </message>
     <message>
         <source>created this group</source>
         <comment>myself</comment>
-        <translation type="unfinished">skapade denna grupp</translation>
+        <translation type="unfinished">creó este grupo</translation>
     </message>
     <message>
         <source>created this group</source>
-        <translation type="unfinished">skapade denna grupp</translation>
+        <translation type="unfinished">creó este grupo</translation>
     </message>
     <message>
         <source>changed the chat photo</source>
         <comment>myself</comment>
-        <translation type="unfinished">bytte chattfoto</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>changed the chat photo</source>
-        <translation type="unfinished">bytte chattfoto</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>deleted the chat photo</source>
         <comment>myself</comment>
-        <translation type="unfinished">tog bort chattfoto</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>deleted the chat photo</source>
-        <translation type="unfinished">tog bort chattfoto</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>changed the secret chat TTL setting</source>
         <comment>myself; TTL = Time To Live</comment>
-        <translation type="unfinished">ändrade den hemliga chattens livstidsinställning</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>changed the secret chat TTL setting</source>
         <comment>TTL = Time To Live</comment>
-        <translation type="unfinished">ändrade den hemliga chattens livstidsinställning</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>upgraded this group to a supergroup</source>
         <comment>myself</comment>
-        <translation type="unfinished">uppgraderade denna grupp till en supergrupp</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>upgraded this group to a supergroup</source>
-        <translation type="unfinished">uppgraderade denna grupp till en supergrupp</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>pinned a message</source>
@@ -2794,20 +2794,20 @@
     <message>
         <source>sent a self-destructing photo that is expired</source>
         <comment>myself</comment>
-        <translation type="unfinished">skickade ett självförstörande foto som är utgånget</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>sent a self-destructing photo that is expired</source>
-        <translation type="unfinished">skickade ett självförstörande foto som är utgånget</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>sent a self-destructing video that is expired</source>
         <comment>myself</comment>
-        <translation type="unfinished">skickade en självförstörande video som är utgången</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>sent a self-destructing video that is expired</source>
-        <translation type="unfinished">skickade en självförstörande video som är utgången</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>sent a self-destructing voice message that is expired</source>
@@ -2830,25 +2830,25 @@
     <message>
         <source>created a screenshot in this chat</source>
         <comment>myself</comment>
-        <translation type="unfinished">skapade ett skärmklipp i denna chatt</translation>
+        <translation type="unfinished">creó pantallazo a esta charla</translation>
     </message>
     <message>
         <source>created a screenshot in this chat</source>
-        <translation type="unfinished">skapade ett skärmklipp i denna chatt</translation>
+        <translation type="unfinished">creó pantallazo a esta charla</translation>
     </message>
     <message numerus="yes">
         <source>scored %Ln points</source>
         <comment>myself</comment>
         <translation type="unfinished">
-            <numerusform>kom upp i %Ln poäng</numerusform>
-            <numerusform>kom upp i %Ln poäng</numerusform>
+            <numerusform>punto %Ln anotado</numerusform>
+            <numerusform>puntos %Ln anotados</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>scored %Ln points</source>
         <translation type="unfinished">
-            <numerusform>kom upp i %Ln poäng</numerusform>
-            <numerusform>kom upp i %Ln poäng</numerusform>
+            <numerusform>punto %Ln anotado</numerusform>
+            <numerusform>puntos %Ln anotados</numerusform>
         </translation>
     </message>
     <message>
@@ -2912,21 +2912,21 @@
     <message>
         <source>sent an unsupported message</source>
         <comment>myself</comment>
-        <translation type="unfinished">skickade ett meddelande som inte stöds</translation>
+        <translation type="unfinished">envió mensaje no admitido</translation>
     </message>
     <message>
         <source>sent an unsupported message</source>
-        <translation type="unfinished">skickade ett meddelande som inte stöds</translation>
+        <translation type="unfinished">envió mensaje no admitido</translation>
     </message>
     <message>
         <source>sent an unsupported message: %1</source>
         <comment>myself; %1 is message type</comment>
-        <translation type="unfinished">skickade ett meddelande som inte stöds: %1</translation>
+        <translation type="unfinished">envió mensaje no admitido: %1</translation>
     </message>
     <message>
         <source>sent an unsupported message: %1</source>
         <comment>%1 is message type</comment>
-        <translation type="unfinished">skickade ett meddelande som inte stöds: %1</translation>
+        <translation type="unfinished">envió mensaje no admitido: %1</translation>
     </message>
     <message>
         <source>Photo: %1</source>
@@ -3148,53 +3148,53 @@
     <message>
         <source>Unknown</source>
         <comment>A user without a known name</comment>
-        <translation type="unfinished">Okänd</translation>
+        <translation type="unfinished">Desconocido</translation>
     </message>
 </context>
 <context>
     <name>VoiceNoteOverlay</name>
     <message>
         <source>Record a Voice Note</source>
-        <translation>Spela in ett röstmeddelande</translation>
+        <translation>Nota de voz</translation>
     </message>
     <message>
         <source>Press the button to start recording</source>
-        <translation>Tryck på knappen för att starta inspelning</translation>
+        <translation>Presionar botón para grabar</translation>
     </message>
     <message>
         <source>Unavailable</source>
-        <translation>Ej tillgänglig</translation>
+        <translation>No diponible</translation>
     </message>
     <message>
         <source>Starting</source>
-        <translation>Startar</translation>
+        <translation>Iniciando</translation>
     </message>
     <message>
         <source>Recording</source>
-        <translation>Spelar in</translation>
+        <translation>Grabando</translation>
     </message>
     <message>
         <source>Stopping</source>
-        <translation>Stoppar</translation>
+        <translation>Deteniendo</translation>
     </message>
     <message>
         <source>Use recording</source>
-        <translation>Använd inspelning</translation>
+        <translation>Usar grabación</translation>
     </message>
     <message>
         <source>Voice Note (%1)</source>
-        <translation>Röstmeddelande (%1)</translation>
+        <translation>Nota de voz (%1)</translation>
     </message>
     <message>
         <source>Ready</source>
-        <translation>Klar</translation>
+        <translation>Listo</translation>
     </message>
 </context>
 <context>
     <name>WebPagePreview</name>
     <message>
         <source>Preview not supported for this link...</source>
-        <translation>Stöd för förhandsvisning av denna länk saknas...</translation>
+        <translation>Vista previa compatible con enlace ...</translation>
     </message>
 </context>
 <context>
@@ -3209,58 +3209,58 @@
     </message>
     <message>
         <source>was never online</source>
-        <translation>var aldrig inloggad</translation>
+        <translation>nunca en línea</translation>
     </message>
     <message>
         <source>last online: last month</source>
-        <translation>inloggad senast: Förra månaden</translation>
+        <translation>hace 1 mes</translation>
     </message>
     <message>
         <source>last online: last week</source>
-        <translation>inloggad senast: Förra veckan</translation>
+        <translation>hace 1 semana</translation>
     </message>
     <message>
         <source>last online: %1</source>
-        <translation>inloggad senast: %1</translation>
+        <translation>%1</translation>
     </message>
     <message>
         <source>online</source>
-        <translation>inloggad</translation>
+        <translation>enlínea</translation>
     </message>
     <message>
         <source>was recently online</source>
-        <translation>var nyligen inloggad</translation>
+        <translation>hace instantes</translation>
     </message>
     <message>
         <source>Admin</source>
         <comment>channel user role</comment>
-        <translation>Admin</translation>
+        <translation>Administrador</translation>
     </message>
     <message>
         <source>Banned</source>
         <comment>channel user role</comment>
-        <translation>Bannlyst</translation>
+        <translation>Prohibido</translation>
     </message>
     <message>
         <source>Restricted</source>
         <comment>channel user role</comment>
-        <translation>Begränsad</translation>
+        <translation>Restringido</translation>
     </message>
     <message>
         <source>Unable to find user %1</source>
-        <translation>Kan inte hitta användare %1</translation>
+        <translation>Error buscar %1</translation>
     </message>
     <message>
         <source>You are already a member of this chat.</source>
-        <translation>Du är redan medlem i den här chatten.</translation>
+        <translation>Ya miembro de grupo.</translation>
     </message>
     <message>
         <source>Closed!</source>
-        <translation>Stängd!</translation>
+        <translation>Cerrado!</translation>
     </message>
     <message>
         <source>Pending acknowledgement</source>
-        <translation>Väntar på bekräftelse</translation>
+        <translation>Pendiente de reconocimiento</translation>
     </message>
     <message>
         <source>Owner</source>
@@ -3431,22 +3431,22 @@
     <message numerus="yes">
         <source>%1 members</source>
         <translation type="unfinished">
-            <numerusform>%1 medlem</numerusform>
-            <numerusform>%1 medlemmar</numerusform>
+            <numerusform>%1 miembro</numerusform>
+            <numerusform>%1 miembros</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>%1 online</source>
         <translation type="unfinished">
-            <numerusform>%1 online</numerusform>
-            <numerusform>%1 online</numerusform>
+            <numerusform>%1 en línea</numerusform>
+            <numerusform>%1 en líneas</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>%1 subscribers</source>
         <translation type="unfinished">
-            <numerusform>%1 prenumerant</numerusform>
-            <numerusform>%1 prenumeranter</numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -3471,16 +3471,16 @@
     </message>
     <message>
         <source>Channel</source>
-        <translation type="unfinished">Kanal</translation>
+        <translation type="unfinished">Canal</translation>
     </message>
     <message>
         <source>Group</source>
-        <translation type="unfinished">Grupp</translation>
+        <translation type="unfinished">Grupo</translation>
     </message>
     <message>
         <source>Unavailable</source>
         <comment>Indicates that the proxy is unavailable</comment>
-        <translation type="unfinished">Ej tillgänglig</translation>
+        <translation type="unfinished">No diponible</translation>
     </message>
     <message numerus="yes">
         <source>Available (ping: %Ln ms)</source>
@@ -3497,7 +3497,7 @@
     </message>
 </context>
 <context>
-    <name>harbour-fernschreiber2</name>
+    <name>harbour-ferniegram</name>
     <message>
         <source>Link unsupported: %1</source>
         <translation type="unfinished"></translation>
