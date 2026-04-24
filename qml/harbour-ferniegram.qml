@@ -32,8 +32,8 @@ ApplicationWindow {
 
     Connections {
         target: dBusAdaptor
-        onPleaseOpenMessage: appWindow.activate()
-        onPleaseOpenUrl: appWindow.activate()
+        onDoOpenMessage: appWindow.activate()
+        onDoOpenUrl: appWindow.activate()
     }
 
     Connections {

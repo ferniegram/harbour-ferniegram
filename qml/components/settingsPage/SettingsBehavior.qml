@@ -91,17 +91,6 @@ AccordionItem {
 
             TextSwitch {
                 width: parent.columnWidth
-                checked: appSettings.useOpenWith
-                text: qsTr("Open-with menu integration")
-                description: qsTr("Integrate Ferniegram into open-with menu of Sailfish OS")
-                automaticCheck: false
-                onClicked: {
-                    appSettings.useOpenWith = !checked
-                }
-            }
-
-            TextSwitch {
-                width: parent.columnWidth
                 checked: appSettings.notificationAlwaysShowPreview
                 text: qsTr("Always append message preview to notifications")
                 description: qsTr("In addition to showing the number of unread messages, the latest message will also be appended to notifications.")

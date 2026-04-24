@@ -93,7 +93,13 @@ int main(int argc, char *argv[]) {
 
     migrateSettings();
 
-    QScopedPointer<FernieMain::AppContext> appContext(FernieMain::registerTypes(argc, argv, view));
+    const QString dbusPath = "/io/ferniegram/ferniegram";
+    const QString dbusServiceName = "io.ferniegram.ferniegram";
+
+    QScopedPointer<FernieMain::AppContext> appContext(FernieMain::registerTypes(argc, argv, view, dbusPath, dbusServiceName));
+
+    QScopedPointer<DBusAdaptor> dBusAdaptor(FernieMain::registerDBusAdaptor(view, appContext->tdLibWrapper));
+    FernieMain::registerDBusService(view, dbusPath, dbusServiceName);
 
     VoiceNoteRecorder *voiceNoteRecorder = new VoiceNoteRecorder(argc, argv, appContext->appSettings, view.data());
     context->setContextProperty("voiceNoteRecorder", voiceNoteRecorder);

@@ -4,6 +4,8 @@ import "../js/functions.js" as Functions
 
 Dialog {
     id: dialog
+    objectName: 'addProxyDialog'
+
     property int editProxyId: -1
     property bool openAfterAdding
 

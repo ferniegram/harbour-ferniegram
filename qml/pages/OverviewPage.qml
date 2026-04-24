@@ -41,16 +41,11 @@ Page {
 
     Connections {
         target: dBusAdaptor
-        onPleaseOpenMessage: {
+        onDoOpenMessage: {
             Debug.log("[OverviewPage] Opening chat from external requested: ", chatId, messageId)
             // We open the chat only for now - as it's automatically positioned at the last read message
             // this also doesn't highlight the message which isn't really needed
             openChat(chatId, {}, true)
-        }
-        onPleaseOpenUrl: {
-            Debug.log("[OverviewPage] Opening URL", url)
-            if (url)
-                tdLibWrapper.getInternalLinkType(url)
         }
     }
 
@@ -78,8 +73,20 @@ Page {
         interval: 0
         onTriggered: {
             pageStack.completeAnimation()
-            pageStack.pop(overviewPage, PageStackAction.Immediate)
-            pageStack.push(Qt.resolvedUrl("../pages/InitializationPage.qml"))
+
+            // Proxy links are the only deep links with a separate page which can be viewed from login page (as of now)
+            var page = pageStack.pop(overviewPage, PageStackAction.Immediate)
+            var proxyPageData
+            console.log(page, page ? page.objectName : '??')
+            if (page && page.objectName === 'addProxyDialog')
+                proxyPageData = {server: page.server, port: page.port, proxyType: page.getTypeObject(), openAfterAdding: true}
+
+            pageStack.push(Qt.resolvedUrl("../pages/InitializationPage.qml"), PageStackAction.Immediate)
+
+            if (proxyPageData) {
+                pageStack.completeAnimation()
+                pageStack.push(Qt.resolvedUrl("../dialogs/AddProxyDialog.qml"), proxyPageData)
+            }
         }
     }
     Timer {
