@@ -11,11 +11,15 @@ QUrl PlatformApp::pathTo(const QString &filename) {
     return SailfishApp::pathTo(filename);
 }
 
-inline QUrl pathToIcon(const QString &name) {
-    return PlatformApp::pathTo(FOLDER_ICON_PATH_PREFIX + name + SVG_EXTENSION_SUFFIX);
+QUrl PlatformApp::pathToAppIcon() {
+    return SailfishApp::pathTo("images/ferniegram-notification.png");
 }
 
 QUrl PlatformApp::pathToChatFolderIcon(ChatFoldersModel::Icon icon) {
+    auto pathToIcon = [](const QString &name) {
+        return PlatformApp::pathTo(FOLDER_ICON_PATH_PREFIX + name + SVG_EXTENSION_SUFFIX);
+    };
+
     switch (icon) {
     case ChatFoldersModel::Icon::IconAll:
         return THEME_ICON_PREFIX + "chat"; // FIXME: should this be outline-chat?
