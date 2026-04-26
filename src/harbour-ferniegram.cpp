@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
     const QString dbusPath = "/io/ferniegram/ferniegram";
     const QString dbusServiceName = "io.ferniegram.ferniegram";
 
-    QScopedPointer<FernieMain::AppContext> appContext(FernieMain::registerTypes(argc, argv, view, dbusPath, dbusServiceName));
+    QScopedPointer<FernieMain::AppContext> appContext(FernieMain::registerTypes(argc, argv, view, "Ferniegram", dbusPath, dbusServiceName));
 
     FernieMain::registerDBusService(view, dbusPath, dbusServiceName);
     // FIXME: there's a short period of time when the application closes (waiting for tdlib to close),
