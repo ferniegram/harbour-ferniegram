@@ -23,7 +23,7 @@
 #include <QObject>
 #include <QAudioRecorder>
 
-#include "appsettings.h"
+#include "settings.h"
 
 #ifdef NO_HARBOUR_COMPLIANCE
 #include "gstaudiorecorder.h"
@@ -36,7 +36,7 @@ class VoiceNoteRecorder : public QObject {
     Q_PROPERTY(QString voiceNotePath READ getVoiceNotePath)
     Q_PROPERTY(qlonglong voiceNoteDuration READ getVoiceNoteDuration NOTIFY voiceNoteDurationChanged)
 public:
-    explicit VoiceNoteRecorder(int argc, char *argv[], AppSettings *appSettings, QObject *parent = nullptr);
+    explicit VoiceNoteRecorder(int argc, char *argv[], Settings *settings, QObject *parent = nullptr);
     ~VoiceNoteRecorder();
 
     enum VoiceNoteRecordingState {
@@ -64,7 +64,7 @@ private slots:
     void setupAudioRecorder();
 
 private:
-    AppSettings *appSettings;
+    Settings *settings;
 
     int argc;
     char **argv;

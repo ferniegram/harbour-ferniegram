@@ -18,6 +18,7 @@
 */
 import QtQuick 2.6
 import Sailfish.Silica 1.0
+import Nemo.Configuration 1.0
 import "pages"
 import "components"
 import "./js/functions.js" as Functions
@@ -67,6 +68,43 @@ ApplicationWindow {
                   case Orientation.PortraitInverted: return 180
                   case Orientation.LandscapeInverted: return 270
                   }
+    }
+
+    ConfigurationGroup {
+        id: appConfig
+        path: '/apps/io.ferniegram/ferniegram'
+
+        property int remainingInteractionHints: 3
+        property int remainingDoubleTapHints: 3
+        property bool archiveChatListHintCompleted
+
+        ConfigurationGroup {
+            id: appSettings
+            path: 'settings'
+
+            property bool sendByEnter
+            property bool sendAttachmentByEnter
+            property bool focusTextAreaAfterSend
+            property bool focusTextAreaOnChatOpen
+
+            property bool showStickersAsEmojis
+            property bool showStickersAsImages
+            property bool animateStickers: true
+            property bool videoStickers: true
+            property bool downscaleAnimatedStickers
+
+            property bool goToQuotedMessage
+            property bool delayMessageRead: true
+            property bool highlightUnreadConversations
+
+            property bool showTranslateOption
+            property bool formattedTranslate
+            property bool forceAllowAISummary
+
+            property bool showFolderUnreadCount
+            property bool chatFoldersTabBarOnBottom
+            property bool chatFoldersTabBarShowIcons
+        }
     }
 
     Component.onCompleted: {

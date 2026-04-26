@@ -258,7 +258,7 @@ ListItem {
                     }
                 }
                 FancyMenuRow {
-                    visible: !appSettings.superCompactMessageMenu
+                    visible: !fernieSettings.superCompactMessageMenu
                     checkShort: function (ratio, size) { return Screen.sizeCategory <= Screen.Large && ratio > 1 }
                     IconTextRowMenuItem {
                         visible: canDeleteMessage
@@ -555,7 +555,7 @@ ListItem {
                                     if (precalculatedValues.pageIsSelecting) {
                                         view.toggleMessageSelection(myMessage, messageAlbumMessageIds)
                                     } else {
-                                        if(appSettings.goToQuotedMessage) {
+                                        if (appSettings.goToQuotedMessage) {
                                             messagesView.showMessage(messageInReplyToRow.inReplyToMessage.id, true)
                                         } else {
                                             messageOverlayLoader.active = true

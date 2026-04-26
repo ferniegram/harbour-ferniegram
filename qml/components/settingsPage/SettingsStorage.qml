@@ -29,22 +29,22 @@ AccordionItem {
             bottomPadding: Theme.paddingMedium
             TextSwitch {
                 width: parent.columnWidth
-                checked: appSettings.onlineOnlyMode
+                checked: fernieSettings.onlineOnlyMode
                 text: qsTr("Enable online-only mode")
                 description: qsTr("Disables offline caching. Certain features may be limited or missing in this mode. Changes require a restart of Ferniegram to take effect.")
                 automaticCheck: false
                 onClicked: {
-                    appSettings.onlineOnlyMode = !checked
+                    fernieSettings.onlineOnlyMode = !checked
                 }
             }
 
             TextSwitch {
                 width: parent.columnWidth
-                checked: appSettings.storageOptimizer
+                checked: fernieSettings.storageOptimizer
                 text: qsTr("Enable storage optimizer")
                 automaticCheck: false
                 onClicked: {
-                    appSettings.storageOptimizer = !checked
+                    fernieSettings.storageOptimizer = !checked
                 }
             }
 

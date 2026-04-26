@@ -53,6 +53,6 @@ Page {
         }
     }
 
-    Component.onCompleted: if (!appSettings.archiveChatListHintCompleted)
+    Component.onCompleted: if (!appConfig.archiveChatListHintCompleted)
                                openTutorialTimer.start()
 }

@@ -91,17 +91,6 @@ AccordionItem {
 
             TextSwitch {
                 width: parent.columnWidth
-                checked: appSettings.notificationAlwaysShowPreview
-                text: qsTr("Always append message preview to notifications")
-                description: qsTr("In addition to showing the number of unread messages, the latest message will also be appended to notifications.")
-                automaticCheck: false
-                onClicked: {
-                    appSettings.notificationAlwaysShowPreview = !checked
-                }
-            }
-
-            TextSwitch {
-                width: parent.columnWidth
                 checked: appSettings.goToQuotedMessage
                 text: qsTr("Go to quoted message")
                 description: qsTr("When tapping a quoted message, open it in chat instead of showing it in an overlay.")
@@ -122,24 +111,24 @@ AccordionItem {
                     width: feedbackComboBox.width
 
                     MenuItem {
-                        readonly property int value: AppSettings.NotificationFeedbackAll
+                        readonly property int value: FernieSettings.NotificationFeedbackAll
                         text: qsTr("All events")
                         onClicked: {
-                            appSettings.notificationFeedback = value
+                            fernieSettings.notificationFeedback = value
                         }
                     }
                     MenuItem {
-                        readonly property int value: AppSettings.NotificationFeedbackNew
+                        readonly property int value: FernieSettings.NotificationFeedbackNew
                         text: qsTr("Only new events")
                         onClicked: {
-                            appSettings.notificationFeedback = value
+                            fernieSettings.notificationFeedback = value
                         }
                     }
                     MenuItem {
-                        readonly property int value: AppSettings.NotificationFeedbackNone
+                        readonly property int value: FernieSettings.NotificationFeedbackNone
                         text: qsTr("None")
                         onClicked: {
-                            appSettings.notificationFeedback = value
+                            fernieSettings.notificationFeedback = value
                         }
                     }
                 }
@@ -150,7 +139,7 @@ AccordionItem {
                     var menuItems = feedbackMenu.children
                     var n = menuItems.length
                     for (var i=0; i<n; i++) {
-                        if (menuItems[i].value === appSettings.notificationFeedback) {
+                        if (menuItems[i].value === fernieSettings.notificationFeedback) {
                             currentIndex = i
                             return
                         }
@@ -158,7 +147,7 @@ AccordionItem {
                 }
 
                 Connections {
-                    target: appSettings
+                    target: fernieSettings
                     onNotificationFeedbackChanged: {
                         feedbackComboBox.updateFeedbackSelection()
                     }
@@ -174,7 +163,7 @@ AccordionItem {
             }
 
             Column {
-                enabled: appSettings.notificationFeedback !== AppSettings.NotificationFeedbackNone
+                enabled: fernieSettings.notificationFeedback !== FernieSettings.NotificationFeedbackNone
                 width: parent.columnWidth
                 height: enabled ? implicitHeight: 0
                 clip: height < implicitHeight
@@ -183,57 +172,57 @@ AccordionItem {
                 Behavior on height { SmoothedAnimation { duration: 200 } }
 
                 TextSwitch {
-                    checked: appSettings.notificationSuppressContent && enabled
+                    checked: fernieSettings.notificationSuppressContent && enabled
                     text: qsTr("Hide content in notifications")
                     enabled: parent.enabled
                     automaticCheck: false
                     onClicked: {
-                        appSettings.notificationSuppressContent = !checked
+                        fernieSettings.notificationSuppressContent = !checked
                     }
                 }
 
                 TextSwitch {
-                    checked: appSettings.notificationTurnsDisplayOn && enabled
+                    checked: fernieSettings.notificationTurnsDisplayOn && enabled
                     text: qsTr("Notification turns on the display")
                     enabled: parent.enabled
                     automaticCheck: false
                     onClicked: {
-                        appSettings.notificationTurnsDisplayOn = !checked
+                        fernieSettings.notificationTurnsDisplayOn = !checked
                     }
                 }
 
                 TextSwitch {
-                    checked: appSettings.notificationSoundsEnabled && enabled
+                    checked: fernieSettings.notificationSoundsEnabled && enabled
                     text: qsTr("Enable notification sounds")
                     description: qsTr("When sounds are enabled, Ferniegram will use the current Sailfish OS notification sound for chats, which can be configured in the system settings.")
                     enabled: parent.enabled
                     automaticCheck: false
                     onClicked: {
-                        appSettings.notificationSoundsEnabled = !checked
+                        fernieSettings.notificationSoundsEnabled = !checked
                     }
                 }
             }
 
             TextSwitch {
-                checked: appSettings.unreadCountIncludeMuted
+                checked: fernieSettings.unreadCountIncludeMuted
                 text: qsTr("Include muted chats in unread count")
                 automaticCheck: false
-                onClicked: appSettings.unreadCountIncludeMuted = !checked
+                onClicked: fernieSettings.unreadCountIncludeMuted = !checked
             }
 
             TextSwitch {
-                checked: appSettings.showFolderUnreadCount
+                checked: fernieSettings.showFolderUnreadCount
                 text: qsTr("Show unread chat count in folders")
                 automaticCheck: false
-                onClicked: appSettings.showFolderUnreadCount = !checked
+                onClicked: fernieSettings.showFolderUnreadCount = !checked
             }
 
             TextSwitch {
-                enabled: appSettings.showFolderUnreadCount
-                checked: appSettings.foldersUnreadCountIncludeMuted
+                enabled: fernieSettings.showFolderUnreadCount
+                checked: fernieSettings.foldersUnreadCountIncludeMuted
                 text: qsTr("Include muted chats in folders unread count")
                 automaticCheck: false
-                onClicked: appSettings.foldersUnreadCountIncludeMuted = !checked
+                onClicked: fernieSettings.foldersUnreadCountIncludeMuted = !checked
             }
 
             /*Slider {
@@ -242,18 +231,18 @@ AccordionItem {
                 minimumValue: 1
                 maximumValue: 15.0
                 stepSize: 1
-                value: appSettings.voiceNoteVolume
+                value: fernieSettings.voiceNoteVolume
                 valueText: value
-                onValueChanged: appSettings.voiceNoteVolume = sliderValue
+                onValueChanged: fernieSettings.voiceNoteVolume = sliderValue
             }*/
 
             TextField {
                 width: parent.columnWidth
                 label: qsTr("Voice messages volume")
                 validator: RegExpValidator { regExp: /^((?:\d|[1-9]\d+)(?:\.\d+)?)$/ }
-                text: appSettings.voiceNoteVolume
-                onTextChanged: if (acceptableInput) appSettings.voiceNoteVolume = text
-                onAcceptableInputChanged: if (acceptableInput) appSettings.voiceNoteVolume = text
+                text: fernieSettings.voiceNoteVolume
+                onTextChanged: if (acceptableInput) fernieSettings.voiceNoteVolume = text
+                onAcceptableInputChanged: if (acceptableInput) fernieSettings.voiceNoteVolume = text
             }
 
             TextSwitch {
@@ -276,18 +265,18 @@ AccordionItem {
 
             TextSwitch {
                 width: parent.columnWidth
-                checked: appSettings.sendMarkdown
+                checked: fernieSettings.sendMarkdown
                 text: qsTr("Parse markdown in messages")
                 automaticCheck: false
-                onClicked: appSettings.sendMarkdown = !checked
+                onClicked: fernieSettings.sendMarkdown = !checked
             }
 
             TextSwitch {
                 width: parent.columnWidth
-                checked: appSettings.forceQtAudioRecorder
+                checked: fernieSettings.forceQtAudioRecorder
                 text: qsTr("Force QtMultimedia-based audio recorder")
                 automaticCheck: false
-                onClicked: appSettings.forceQtAudioRecorder = !checked
+                onClicked: fernieSettings.forceQtAudioRecorder = !checked
                 visible: NO_HARBOUR_COMPLIANCE
             }
 
