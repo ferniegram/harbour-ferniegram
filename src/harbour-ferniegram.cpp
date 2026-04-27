@@ -13,19 +13,18 @@
 // The default filter can be overridden by QT_LOGGING_RULES envinronment variable, e.g.
 // QT_LOGGING_RULES="libfernie.*=true;ferniegram.*=true" harbour-ferniegram
 #if defined (QT_DEBUG) || defined(DEBUG)
-#  define DEFAULT_LOG_FILTER "libfernie.*=true;ferniegram.*=true"
+#  define DEFAULT_LOG_FILTER "libfernie.*=true\nferniegram.*=true"
 #else
-#  define DEFAULT_LOG_FILTER "libfernie.*=false;ferniegram.*=false"
+#  define DEFAULT_LOG_FILTER "libfernie.*=false\nferniegram.*=false"
 #endif
 
 #define JS_DEBUG_ROOT_MODULE "ferniegram.JS"
-
 #include "ferniemain.h"
 
 #include "voicenoterecorder.h"
 
 int main(int argc, char *argv[]) {
-    FernieMain::setupLogging();
+    QLoggingCategory::setFilterRules(DEFAULT_LOG_FILTER);
 
     QScopedPointer<QGuiApplication> app(SailfishApp::application(argc, argv));
     QSharedPointer<QQuickView> view(SailfishApp::createView());
@@ -41,6 +40,8 @@ int main(int argc, char *argv[]) {
     // FIXME: there's a short period of time when the application closes (waiting for tdlib to close),
     // but the dbus service isn't unregistered yet, in which clicking the application doesn't open it.
     // Seems like SailfishOS uses X-Maemo-Method not only for opening URLs, but for opening the app itself too
+
+    FernieMain::registerDebugLogJS(appContext.data());
 
     VoiceNoteRecorder *voiceNoteRecorder = new VoiceNoteRecorder(argc, argv, view.data());
     context->setContextProperty("voiceNoteRecorder", voiceNoteRecorder);
