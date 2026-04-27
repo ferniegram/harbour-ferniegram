@@ -7,17 +7,9 @@ namespace {
     const QString THEME_ICON_PREFIX("image://theme/icon-m-");
 }
 
-QUrl PlatformApp::pathTo(const QString &filename) {
-    return SailfishApp::pathTo(filename);
-}
-
-QUrl PlatformApp::pathToAppIcon() {
-    return SailfishApp::pathTo("images/ferniegram-notification.png");
-}
-
 QUrl PlatformApp::pathToChatFolderIcon(ChatFoldersModel::Icon icon) {
     auto pathToIcon = [](const QString &name) {
-        return PlatformApp::pathTo(FOLDER_ICON_PATH_PREFIX + name + SVG_EXTENSION_SUFFIX);
+        return SailfishApp::pathTo(FOLDER_ICON_PATH_PREFIX + name + SVG_EXTENSION_SUFFIX);
     };
 
     switch (icon) {
