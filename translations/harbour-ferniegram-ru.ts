@@ -380,14 +380,6 @@
         <translation>Новый секретный чат</translation>
     </message>
     <message>
-        <source>Unmute Chat</source>
-        <translation>Включить уведомления</translation>
-    </message>
-    <message>
-        <source>Mute Chat</source>
-        <translation>Выключить уведомления</translation>
-    </message>
-    <message>
         <source>ID has been copied to the clipboard.</source>
         <translation>ID скопирован в буфер обмена.</translation>
     </message>
@@ -415,6 +407,22 @@
     <message>
         <source>Date of birth</source>
         <translation>Дата рождения</translation>
+    </message>
+    <message>
+        <source>Notifications</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Muted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Muted for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unmuted</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -657,20 +665,27 @@
         <source>Unarchive</source>
         <translation>Вернуть из архива</translation>
     </message>
-    <message>
-        <source>Unmute</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mute notifications</source>
-        <translation type="unfinished"></translation>
-    </message>
+</context>
+<context>
+    <name>ChatNotificationsContextMenu</name>
     <message>
         <source>Mute forever</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
+    <message numerus="yes">
         <source>Mute for %Ln hours</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Mute for...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mute notifications</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -683,14 +698,6 @@
     <message>
         <source>Unknown</source>
         <translation>Неизвестный(ая)</translation>
-    </message>
-    <message>
-        <source>Unmute Chat</source>
-        <translation>Включить уведомления</translation>
-    </message>
-    <message>
-        <source>Mute Chat</source>
-        <translation>Выключить уведомления</translation>
     </message>
     <message>
         <source>Leave Chat</source>
@@ -938,6 +945,44 @@
     </message>
     <message>
         <source>Show Sender&apos;s Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DurationPickerDialog</name>
+    <message>
+        <source>Days</source>
+        <comment>Duration picker</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>h</source>
+        <comment>Duration picker hours</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>min</source>
+        <comment>Duration picker minutes</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>s</source>
+        <comment>Duration picker seconds</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Units</source>
+        <comment>Duration picker units</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hours and minutes</source>
+        <comment>Duration picker units</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Minutes and seconds</source>
+        <comment>Duration picker units</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1590,14 +1635,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Default</source>
-        <translation type="unfinished">По умолчанию</translation>
-    </message>
-    <message>
-        <source>Disabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Upload Sound</source>
         <comment>Upload a new sound</comment>
         <translation type="unfinished"></translation>
@@ -1605,6 +1642,16 @@
     <message>
         <source>Delete</source>
         <translation type="unfinished">Удалить</translation>
+    </message>
+    <message>
+        <source>Default</source>
+        <comment>Sound</comment>
+        <translation type="unfinished">По умолчанию</translation>
+    </message>
+    <message>
+        <source>Disabled</source>
+        <comment>Sound</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3635,6 +3682,14 @@
     <message>
         <source>Available</source>
         <comment>Indicates that the proxy is available</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unmute</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mute notifications</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
