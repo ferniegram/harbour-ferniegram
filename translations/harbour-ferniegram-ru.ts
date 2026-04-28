@@ -227,23 +227,23 @@
     </message>
     <message>
         <source>This is your Archive</source>
-        <translation>Это ваш Архив</translation>
+        <translation>Это Ваш архив</translation>
     </message>
     <message>
         <source>Archived chats will remain in the Archive when you receive a new message. %1Tap to change%2</source>
-        <translation>Чаты остаются в Архиве, когда приходят новые сообщения. %1Изменить%2</translation>
+        <translation>Чаты остаются в архиве, когда приходят новые сообщения. %1Изменить%2</translation>
     </message>
     <message>
         <source>When you receive a new message, muted chats will remain in the Archive, while unmuted chats will be moved to Chats. %1Tap to change%2</source>
-        <translation>Когда приходят новые сообщения, чаты без уведомлений остаются в Архиве, а с включенными уведомлениями — переносятся в «Чаты». %1Изменить%2</translation>
+        <translation>Когда приходят новые сообщения, чаты без уведомлений остаются в архиве, а с включёнными уведомлениями — переносятся в «Чаты». %1Изменить%2</translation>
     </message>
     <message>
         <source>Archived Chats</source>
-        <translation>Архивные чаты</translation>
+        <translation>Архив</translation>
     </message>
     <message>
         <source>Move any chat into your Archive and back using the context menu.</source>
-        <translation>Поместите любой чат в Архив и обратно используя контекстное меню.</translation>
+        <translation>Чат можно перенести в архив и обратно, используя контекстное меню.</translation>
     </message>
     <message>
         <source>Stories</source>
@@ -251,7 +251,7 @@
     </message>
     <message>
         <source>Archive Stories from your contacts separately from chats with them.</source>
-        <translation>Архивируйте Истории от ваших контактов отдельно от чатов с ними.</translation>
+        <translation>Вы можете добавлять истории контактов в архив отдельно от чатов.</translation>
     </message>
 </context>
 <context>
@@ -266,7 +266,7 @@
     </message>
     <message>
         <source>Archive settings</source>
-        <translation>Настройки Архива</translation>
+        <translation>Настройки архива</translation>
     </message>
     <message>
         <source>Mark as read</source>
@@ -296,7 +296,7 @@
     <message>
         <source>SCAM</source>
         <comment>string for a user text badge, should not be too long. Badge shows that this user was reported by many users as a fake or scam user: you should careful when interacting with them.</comment>
-        <translation>МОШЕННИК</translation>
+        <translation>СКАМ</translation>
     </message>
     <message>
         <source>FAKE</source>
@@ -306,7 +306,7 @@
     <message>
         <source>Ad</source>
         <comment>chat badge, indicates that the search result is sponsored</comment>
-        <translation>РЕКЛАМА</translation>
+        <translation>Реклама</translation>
     </message>
 </context>
 <context>
@@ -337,7 +337,7 @@
     </message>
     <message>
         <source>Join Chat</source>
-        <translation>Зайти в чат</translation>
+        <translation>Присоединиться к чату</translation>
     </message>
     <message>
         <source>Unknown</source>
@@ -346,7 +346,7 @@
     <message>
         <source>Chat Title</source>
         <comment>group title header</comment>
-        <translation>Заголовок чата</translation>
+        <translation>Название</translation>
     </message>
     <message>
         <source>Enter 1-128 characters</source>
@@ -410,7 +410,7 @@
     </message>
     <message>
         <source>View linked channel</source>
-        <translation>Открыть связанный канал</translation>
+        <translation>Открыть привязанный канал</translation>
     </message>
     <message>
         <source>Date of birth</source>
@@ -651,11 +651,11 @@
     </message>
     <message>
         <source>Archive</source>
-        <translation>В Архив</translation>
+        <translation>Архивировать</translation>
     </message>
     <message>
         <source>Unarchive</source>
-        <translation>Из Архива</translation>
+        <translation>Вернуть из архива</translation>
     </message>
     <message>
         <source>Unmute</source>
@@ -2044,11 +2044,11 @@
     </message>
     <message>
         <source>Move chat folders panel to bottom</source>
-        <translation>Переместить панель Папок вниз</translation>
+        <translation>Переместить панель папок вниз</translation>
     </message>
     <message>
         <source>Show chat folders icons</source>
-        <translation>Показывать иконки Папок</translation>
+        <translation>Показывать иконки папок</translation>
     </message>
     <message>
         <source>Downscale animated stickers</source>
@@ -2067,27 +2067,27 @@
     </message>
     <message>
         <source>Always keep unmuted chats archived</source>
-        <translation>Сообщения в Архиве без уведомлений</translation>
+        <translation>Сообщения в архиве без уведомлений</translation>
     </message>
     <message>
         <source>Keep archived chats in the Archive even if they are unmuted and get a new message.</source>
-        <translation>Оставлять чаты в Архиве даже с включенными уведомлениями.</translation>
+        <translation>Оставлять чаты в архиве даже с включенными уведомлениями.</translation>
     </message>
     <message>
         <source>Always keep chats from folders archived</source>
-        <translation>Всегда оставлять чаты из Папок в Архиве</translation>
+        <translation>Всегда оставлять чаты из папок в архиве</translation>
     </message>
     <message>
         <source>Keep archived chats from folders in the Archive even if they are unmuted and get a new message.</source>
-        <translation>Оставлять чаты в Архиве из Папок даже с включенными уведомлениями.</translation>
+        <translation>Оставлять чаты в архиве из папок даже с включенными уведомлениями.</translation>
     </message>
     <message>
         <source>Automatically archive new chats from unknown users</source>
-        <translation>Автоматически помещать новые чаты от неизвестных пользователей в Архив</translation>
+        <translation>Автоматически архивировать новые чаты от неизвестных пользователей</translation>
     </message>
     <message>
         <source>Automatically archive and mute new chats, groups and channels from non-contacts.</source>
-        <translation>Автоматически архивировать и выключать уведомления от новых чатов, групп и каналов от не контактов.</translation>
+        <translation>Автоматически отправлять в архив и отключать уведомления от новых чатов, групп и каналов, созданных пользователями не из списка контактов.</translation>
     </message>
 </context>
 <context>
