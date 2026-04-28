@@ -132,7 +132,8 @@ PhotoTextsListItem {
                             contextMenuLoader.sourceComponent = notificationsContextMenuComponent
                     }
                     text: tdLibWrapper.chatIsMuted(chat_id, notification_settings)
-                            ? (qsTr("Unmute") + ' <font color="'+(highlighted ? palette.secondaryHighlightColor : palette.secondaryColor) + '">' + Format.formatDuration(notification_settings.mute_for) + '</font>')
+                            ? (qsTr("Unmute") + (notification_settings.use_default_mute_for || notification_settings.mute_for > 31622400
+                                                 ? '' : ' <font color="'+(highlighted ? palette.secondaryHighlightColor : palette.secondaryColor) + '">' + Format.formatDuration(notification_settings.mute_for) + '</font>'))
                             : qsTr("Mute notifications")
                 }
 
@@ -153,12 +154,12 @@ PhotoTextsListItem {
             id: notificationsContextMenuComponent
             ContextMenu {
                 Repeater {
-                    model: [60, 60*8, 60*24]
+                    model: [1, 8, 24]
                     MenuItem {
-                        text: qsTr("Mute for %1").arg(Format.formatDuration(modelData))
+                        text: qsTr("Mute for %Ln hours", '', modelData)
                         onClicked: {
                             var newNotificationSettings = notification_settings
-                            newNotificationSettings.mute_for = modelData
+                            newNotificationSettings.mute_for = modelData * 60
                             tdLibWrapper.setChatNotificationSettings(chat_id, newNotificationSettings)
                         }
                     }
@@ -179,16 +180,18 @@ PhotoTextsListItem {
                     }
                 }
 
-                /*MenuItem {
+                MenuItem {
                     text: qsTr("Customize")
                     onClicked: pageStack.push(customizeNotificationsPageComponent)
                     Component {
                         id: customizeNotificationsPageComponent
-                        // Pass as bindings
-                        chatId: chat_id
-                        notificationSettings: notification_settings
+                        CustomizeNotificationsPage {
+                            // Pass as bindings
+                            chatId: chat_id
+                            notificationSettings: notification_settings
+                        }
                     }
-                }*/
+                }
             }
         }
     }
