@@ -36,15 +36,17 @@ Page {
             Repeater {
                 model: 2
                 BackgroundItem {
-                    height: Math.min(defaultLabel.height + 2*Theme.paddingMedium, Theme.itemSizeSmall)
+                    id: defaultSoundBackgroundItem
+                    height: Theme.itemSizeMedium
+
                     Label {
                         id: defaultLabel
                         x: Theme.horizontalPageMargin
                         width: parent.width - 2*x
                         anchors.verticalCenter: parent.verticalCenter
                         wrapMode: Text.Wrap
-                        text: index == 0 ? qsTr("Default") : qsTr("Disabled")
-                        highlighted: parent.highlighted || (currentSoundUnavailable && (index == 0 ? (currentSoundId != '0') : (currentSoundId == '0')))
+                        text: index == 0 ? qsTr("Default", "Sound") : qsTr("Disabled", "Sound")
+                        highlighted: defaultSoundBackgroundItem.highlighted || (currentSoundUnavailable && (index == 0 ? (currentSoundId != '0') : (currentSoundId == '0')))
                     }
 
                     onClicked: {
@@ -57,12 +59,14 @@ Page {
         }
 
         delegate: ListItem {
-            contentHeight: Math.min(column.height + 2*Theme.paddingMedium, Theme.itemSizeSmall)
+            id: soundListItem
+            contentHeight: Theme.itemSizeMedium
 
             Column {
                 id: column
                 x: Theme.horizontalPageMargin
-                width: parent.width - 2*x
+                width: parent.width - 2*x - (progressCircle.opacity > 0 ? (progressCircle.width + Theme.paddingLarge) : 0)
+                anchors.verticalCenter: parent.verticalCenter
 
                 Flow {
                     width: parent.width
@@ -72,7 +76,7 @@ Page {
                         id: mainLabel
                         width: Math.min(implicitWidth, parent.width)
                         wrapMode: Text.Wrap
-                        highlighted: modelData.id === currentSoundId
+                        highlighted: soundListItem.highlighted || modelData.id === currentSoundId
                         text: modelData.title
                     }
 
@@ -93,6 +97,29 @@ Page {
                 }
             }
 
+            ProgressCircle {
+                id: progressCircle
+                anchors {
+                    right: parent.right
+                    rightMargin: Theme.horizontalPageMargin
+                }
+
+                opacity: file.isDownloadingActive ? 1 : 0
+                Behavior on opacity { FadeAnimator {} }
+            }
+
+            TDLibFile {
+                id: file
+                fileInformation: modelData.sound
+                onIsDownloadingActiveChanged: console.log(modelData.title, "active", isDownloadingActive)
+            }
+
+            Audio {
+                id: audioPlayer
+                source: file.isDownloadingCompleted ? file.path : ''
+                autoPlay: false
+            }
+
             onClicked:
                 if (currentSoundId === modelData.id) {
                     if (file.isDownloadingCompleted) {
@@ -108,17 +135,6 @@ Page {
                     }
                 } else
                     selected(modelData.id)
-
-            TDLibFile {
-                id: file
-                fileInformation: modelData.sound
-            }
-
-            Audio {
-                id: audioPlayer
-                source: file.isDownloadingCompleted ? file.path : ''
-                autoPlay: false
-            }
 
             menu: Component {
                 ContextMenu {
