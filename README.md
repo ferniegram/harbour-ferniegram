@@ -9,6 +9,11 @@ Author: roundedrectangle
 
 Icon is based on Fernschreiber's icon.
 
+### Translations
+
+- Italian by @legacychimera247
+- Russian by @windes14
+
 ## Fernschreiber PRs included in Ferniegram
 
 Thanks to the following people who created PRs for Fernschreiber which were not merged to it:
