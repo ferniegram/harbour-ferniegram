@@ -32,11 +32,6 @@ ApplicationWindow {
     allowedOrientations: defaultAllowedOrientations
 
     Connections {
-        target: dBusAdaptor
-        onActivateWindow: appWindow.activate()
-    }
-
-    Connections {
         target: tdLibWrapper
         onErrorReceived: Functions.handleErrorMessage(code, message, extra)
         onServiceNotificationReceived: {
