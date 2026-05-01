@@ -100,106 +100,105 @@ AccordionItem {
                 }
             }
 
-            ComboBox {
-                id: feedbackComboBox
-                width: parent.columnWidth
-                label: qsTr("Notification feedback")
-                description: qsTr("Use non-graphical feedback (sound, vibration) for notifications")
-                menu: ContextMenu {
-                    id: feedbackMenu
-                    x: 0
-                    width: feedbackComboBox.width
-
-                    MenuItem {
-                        readonly property int value: FernieSettings.NotificationFeedbackAll
-                        text: qsTr("All events")
-                        onClicked: {
-                            fernieSettings.notificationFeedback = value
-                        }
-                    }
-                    MenuItem {
-                        readonly property int value: FernieSettings.NotificationFeedbackNew
-                        text: qsTr("Only new events")
-                        onClicked: {
-                            fernieSettings.notificationFeedback = value
-                        }
-                    }
-                    MenuItem {
-                        readonly property int value: FernieSettings.NotificationFeedbackNone
-                        text: qsTr("None")
-                        onClicked: {
-                            fernieSettings.notificationFeedback = value
-                        }
-                    }
-                }
-
-                Component.onCompleted: updateFeedbackSelection()
-
-                function updateFeedbackSelection() {
-                    var menuItems = feedbackMenu.children
-                    var n = menuItems.length
-                    for (var i=0; i<n; i++) {
-                        if (menuItems[i].value === fernieSettings.notificationFeedback) {
-                            currentIndex = i
-                            return
-                        }
-                    }
-                }
-
-                Connections {
-                    target: fernieSettings
-                    onNotificationFeedbackChanged: {
-                        feedbackComboBox.updateFeedbackSelection()
-                    }
-                }
-            }
-
-            Item {
-                // Occupies one grid cell so that the column ends up under the combo box
-                // in the landscape layout
-                visible: parent.columns === 2
-                width: 1
-                height: 1
-            }
-
             Column {
-                enabled: fernieSettings.notificationFeedback !== FernieSettings.NotificationFeedbackNone
                 width: parent.columnWidth
-                height: enabled ? implicitHeight: 0
-                clip: height < implicitHeight
-                visible: height > 0
+                ComboBox {
+                    id: feedbackComboBox
+                    width: parent.columnWidth
+                    label: qsTr("Notification feedback")
+                    description: qsTr("Use non-graphical feedback (sound, vibration) for notifications")
+                    menu: ContextMenu {
+                        id: feedbackMenu
+                        x: 0
+                        width: feedbackComboBox.width
 
-                Behavior on height { SmoothedAnimation { duration: 200 } }
+                        MenuItem {
+                            readonly property int value: FernieSettings.NotificationFeedbackAll
+                            text: qsTr("All events")
+                            onClicked: {
+                                fernieSettings.notificationFeedback = value
+                            }
+                        }
+                        MenuItem {
+                            readonly property int value: FernieSettings.NotificationFeedbackNew
+                            text: qsTr("Only new events")
+                            onClicked: {
+                                fernieSettings.notificationFeedback = value
+                            }
+                        }
+                        MenuItem {
+                            readonly property int value: FernieSettings.NotificationFeedbackNone
+                            text: qsTr("None")
+                            onClicked: {
+                                fernieSettings.notificationFeedback = value
+                            }
+                        }
+                    }
+
+                    Component.onCompleted: updateFeedbackSelection()
+
+                    function updateFeedbackSelection() {
+                        var menuItems = feedbackMenu.children
+                        var n = menuItems.length
+                        for (var i=0; i<n; i++) {
+                            if (menuItems[i].value === fernieSettings.notificationFeedback) {
+                                currentIndex = i
+                                return
+                            }
+                        }
+                    }
+
+                    Connections {
+                        target: fernieSettings
+                        onNotificationFeedbackChanged: {
+                            feedbackComboBox.updateFeedbackSelection()
+                        }
+                    }
+                }
+
+                Column {
+                    enabled: fernieSettings.notificationFeedback !== FernieSettings.NotificationFeedbackNone
+                    width: parent.width
+                    height: enabled ? implicitHeight: 0
+                    clip: height < implicitHeight
+                    visible: height > 0
+
+                    Behavior on height { SmoothedAnimation { duration: 200 } }
+
+                    TextSwitch {
+                        checked: fernieSettings.notificationTurnsDisplayOn && enabled
+                        text: qsTr("Notification turns on the display")
+                        enabled: parent.enabled
+                        automaticCheck: false
+                        onClicked: {
+                            fernieSettings.notificationTurnsDisplayOn = !checked
+                        }
+                    }
+
+                    TextSwitch {
+                        checked: fernieSettings.notificationSoundsEnabled && enabled
+                        text: qsTr("Enable notification sounds")
+                        description: qsTr("When sounds are enabled, Ferniegram will use the current Sailfish OS notification sound for chats, which can be configured in the system settings.")
+                        enabled: parent.enabled
+                        automaticCheck: false
+                        onClicked: {
+                            fernieSettings.notificationSoundsEnabled = !checked
+                        }
+                    }
+                }
 
                 TextSwitch {
                     checked: fernieSettings.notificationSuppressContent && enabled
                     text: qsTr("Hide content in notifications")
-                    enabled: parent.enabled
                     automaticCheck: false
-                    onClicked: {
-                        fernieSettings.notificationSuppressContent = !checked
-                    }
+                    onClicked: fernieSettings.notificationSuppressContent = !checked
                 }
 
                 TextSwitch {
-                    checked: fernieSettings.notificationTurnsDisplayOn && enabled
-                    text: qsTr("Notification turns on the display")
-                    enabled: parent.enabled
+                    checked: fernieSettings.notificationShowDefaultReaction && enabled
+                    text: qsTr("Setting quick reaction from notifications")
                     automaticCheck: false
-                    onClicked: {
-                        fernieSettings.notificationTurnsDisplayOn = !checked
-                    }
-                }
-
-                TextSwitch {
-                    checked: fernieSettings.notificationSoundsEnabled && enabled
-                    text: qsTr("Enable notification sounds")
-                    description: qsTr("When sounds are enabled, Ferniegram will use the current Sailfish OS notification sound for chats, which can be configured in the system settings.")
-                    enabled: parent.enabled
-                    automaticCheck: false
-                    onClicked: {
-                        fernieSettings.notificationSoundsEnabled = !checked
-                    }
+                    onClicked: fernieSettings.notificationShowDefaultReaction = !checked
                 }
             }
 
