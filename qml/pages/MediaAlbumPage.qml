@@ -123,7 +123,7 @@ Page {
 
         onCurrentIndexChanged: {
             if (!modelIsMedia) return
-            
+
             if (currentIndex <= 10)
                 model.loadMoreFuture()
             else if (currentIndex >= count - 1 - 10)

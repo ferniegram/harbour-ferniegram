@@ -159,7 +159,7 @@ Page {
                         readonly property bool haveNoLocalResults: headerItem
                                                                    && headerItem.localSearchListView.count == 0
                                                                    && headerItem.recentlyFoundSearchListView.count == 0
-                        
+
                         header: Column {
                             width: parent.width
                             property alias localSearchListView: localSearchListView

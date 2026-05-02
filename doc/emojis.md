@@ -1,7 +1,7 @@
 # Emoji search
 When writing a message with Fernschreiber, you can search for emojis to include by typing :\[search-text\] – you don't need to enable an emoji keyboard.
 
-Here's a list of the implemented emojis: 
+Here's a list of the implemented emojis:
 
 | emoji | search text |
 |---|---|

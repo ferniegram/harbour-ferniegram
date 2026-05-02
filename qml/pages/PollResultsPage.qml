@@ -84,7 +84,7 @@ Page {
                         x: Theme.horizontalPageMargin
                         width: parent.width - x
                         height: optionColumn.height
-                        
+
                         ListModel { id: votersModel }
 
                         property string optionExtra: pollResultsPage.chatId+':'+pollResultsPage.messageId+':'+index

@@ -84,7 +84,7 @@ In case you want to use the same codebase which was used to compile the library 
 - `mkdir build`
 - `cd build`
 - `sfdk build-init`
-- `sfdk build-shell --maintain zypper install ninja ccache` 
+- `sfdk build-shell --maintain zypper install ninja ccache`
   - optional, this installs ninja, which is usually faster than make, and ccache which can speed up rebuilds
 - `sfdk build-shell cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=../tdlib -DTD_ENABLE_LTO=ON ..`
   - if you don't have Ninja, remove the `-GNinja` flag, this will switch to make
@@ -118,7 +118,7 @@ Ferniegram does only output a few TDLib messages by default. To get its own debu
 
 Run `QT_LOGGING_RULES="ferniegram.*=true" harbour-ferniegram` to see all messages or replace the `*` with specific logging categories. You'll find the logging category inside the corresponding `.cpp` file for backend usage or you can use `JS` to only see frontend messages.
 
-You can append ` &> ferniegram.log` to the command to create a text file containing the debug messages. 
+You can append ` &> ferniegram.log` to the command to create a text file containing the debug messages.
 
 **Please be aware that debug messages will most likely include personal information** including (but not limited to) chat content and user ids/names of yourself and all your chat partners. Do not share it publicly and, at your discretion, try to remove private info even from the parts you do share with a trusted person.
 
