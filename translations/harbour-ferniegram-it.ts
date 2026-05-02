@@ -2109,6 +2109,29 @@
     </message>
 </context>
 <context>
+    <name>SettingsAdvanced</name>
+    <message>
+        <source>Advanced</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Voice messages volume</source>
+        <translation type="unfinished">Volume messaggi vocali</translation>
+    </message>
+    <message>
+        <source>Translate formatted text</source>
+        <translation type="unfinished">Traduci testo formattato</translation>
+    </message>
+    <message>
+        <source>Force QtMultimedia-based audio recorder</source>
+        <translation type="unfinished">Forza il registratore audio di QtMultimedia</translation>
+    </message>
+    <message>
+        <source>Forcefully allow AI summary</source>
+        <translation type="unfinished">Forza riassunto con IA</translation>
+    </message>
+</context>
+<context>
     <name>SettingsAppearance</name>
     <message>
         <source>Appearance</source>
@@ -2285,22 +2308,6 @@
         <translation>Mostra l&apos;opzione traduci per i messaggi</translation>
     </message>
     <message>
-        <source>Without Telegram Premium</source>
-        <translation>Senza Telegram Premium</translation>
-    </message>
-    <message>
-        <source>Voice messages volume</source>
-        <translation>Volume messaggi vocali</translation>
-    </message>
-    <message>
-        <source>Translate formatted text</source>
-        <translation>Traduci testo formattato</translation>
-    </message>
-    <message>
-        <source>Parse markdown in messages</source>
-        <translation>Interpreta markdown nei messaggi</translation>
-    </message>
-    <message>
         <source>Include muted chats in unread count</source>
         <translation>Includi chat silenziate nel conteggio dei non letti</translation>
     </message>
@@ -2313,12 +2320,12 @@
         <translation>Includi le chat silenziate dal conteggio non letti delle cartelle</translation>
     </message>
     <message>
-        <source>Force QtMultimedia-based audio recorder</source>
-        <translation>Forza il registratore audio di QtMultimedia</translation>
+        <source>Setting quick reaction from notifications</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Forcefully allow AI summary</source>
-        <translation>Forza riassunto con IA</translation>
+        <source>Parse markdown when sending messages</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

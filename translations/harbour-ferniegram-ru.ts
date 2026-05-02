@@ -1478,7 +1478,7 @@
     </message>
     <message>
         <source>Private Chat</source>
-        <translation>Приватный Чат</translation>
+        <translation>Приватный чат</translation>
     </message>
     <message>
         <source>Secret Chat</source>
@@ -2139,6 +2139,29 @@
     </message>
 </context>
 <context>
+    <name>SettingsAdvanced</name>
+    <message>
+        <source>Advanced</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Voice messages volume</source>
+        <translation type="unfinished">Громкость голосовых сообщений</translation>
+    </message>
+    <message>
+        <source>Translate formatted text</source>
+        <translation type="unfinished">Переводить форматированный текст</translation>
+    </message>
+    <message>
+        <source>Force QtMultimedia-based audio recorder</source>
+        <translation type="unfinished">Использовать для записи аудио QtMultimedia рекордер</translation>
+    </message>
+    <message>
+        <source>Forcefully allow AI summary</source>
+        <translation type="unfinished">Принудительная ИИ-сводка сообщений</translation>
+    </message>
+</context>
+<context>
     <name>SettingsAppearance</name>
     <message>
         <source>Appearance</source>
@@ -2256,7 +2279,7 @@
     </message>
     <message>
         <source>Notification feedback</source>
-        <translation>Уведомления</translation>
+        <translation>Отклик уведомлений</translation>
     </message>
     <message>
         <source>Use non-graphical feedback (sound, vibration) for notifications</source>
@@ -2315,22 +2338,6 @@
         <translation>Показывать опцию перевода для сообщений</translation>
     </message>
     <message>
-        <source>Without Telegram Premium</source>
-        <translation>Без Telegram Premium</translation>
-    </message>
-    <message>
-        <source>Voice messages volume</source>
-        <translation>Громкость голосовых сообщений</translation>
-    </message>
-    <message>
-        <source>Translate formatted text</source>
-        <translation>Переводить форматированный текст</translation>
-    </message>
-    <message>
-        <source>Parse markdown in messages</source>
-        <translation>Использовать теги выделения текста в сообщениях</translation>
-    </message>
-    <message>
         <source>Include muted chats in unread count</source>
         <translation>Включать в счетчик непрочитанных сообщений чаты без уведомлений</translation>
     </message>
@@ -2343,12 +2350,12 @@
         <translation>Включать в счетчик непрочитанных сообщений чаты без уведомлений в Папках</translation>
     </message>
     <message>
-        <source>Force QtMultimedia-based audio recorder</source>
-        <translation>Использовать для записи аудио QtMultimedia рекордер</translation>
+        <source>Setting quick reaction from notifications</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Forcefully allow AI summary</source>
-        <translation>Позволять использовать краткую ИИ-сводку сообщений</translation>
+        <source>Parse markdown when sending messages</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2700,7 +2707,7 @@
     </message>
     <message>
         <source>Private Chat</source>
-        <translation>Приватный Чат</translation>
+        <translation>Приватный чат</translation>
     </message>
     <message>
         <source>Group</source>

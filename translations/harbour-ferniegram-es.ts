@@ -2109,6 +2109,29 @@
     </message>
 </context>
 <context>
+    <name>SettingsAdvanced</name>
+    <message>
+        <source>Advanced</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Voice messages volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Translate formatted text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Force QtMultimedia-based audio recorder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Forcefully allow AI summary</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SettingsAppearance</name>
     <message>
         <source>Appearance</source>
@@ -2285,22 +2308,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Without Telegram Premium</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Voice messages volume</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Translate formatted text</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Parse markdown in messages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Include muted chats in unread count</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2313,11 +2320,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Force QtMultimedia-based audio recorder</source>
+        <source>Setting quick reaction from notifications</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Forcefully allow AI summary</source>
+        <source>Parse markdown when sending messages</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
