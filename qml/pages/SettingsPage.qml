@@ -121,6 +121,7 @@ Page {
                 SettingsArchiveChatList {}
                 SettingsAppearance {}
                 SettingsStorage {}
+                SettingsAdvanced {}
             }
         }
 
