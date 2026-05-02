@@ -2,8 +2,9 @@ import QtQuick 2.6
 import Sailfish.Silica 1.0
 import App.Logic 1.0
 
-import "../js/twemoji.js" as Emoji
-import "../js/functions.js" as Functions
+import ".."
+import "../../js/twemoji.js" as Emoji
+import "../../js/functions.js" as Functions
 
 PhotoTextsListItem {
     id: listItem
@@ -130,7 +131,7 @@ PhotoTextsListItem {
                             pageStack.pop(pageStack.find( function(page){ return(page._depth === 0)} ), PageStackAction.Immediate);
                         }
 
-                        pageStack.push(Qt.resolvedUrl("../pages/ChatInformationPage.qml"), { "chatInformation" : display});
+                        pageStack.push(Qt.resolvedUrl("../../pages/ChatInformationPage.qml"), { "chatInformation" : display});
                     }
                     text: model.display.type['@type'] === "chatTypePrivate" ? qsTr("User Info") : qsTr("Group Info")
                 }

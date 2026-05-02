@@ -20,10 +20,9 @@ import QtQuick 2.6
 import Sailfish.Silica 1.0
 import Nemo.Notifications 1.0
 import App.Logic 1.0
-import "../components"
-import "../js/twemoji.js" as Emoji
-import "../js/functions.js" as Functions
-import "../js/debug.js" as Debug
+import "../../js/twemoji.js" as Emoji
+import "../../js/functions.js" as Functions
+import "../../js/debug.js" as Debug
 
 SilicaListView {
     id: chatListView
@@ -55,7 +54,7 @@ SilicaListView {
         chatListType: chatListView.chatListType
         folderId: chatListView.folderId
         onClicked: {
-            pageStack.push(Qt.resolvedUrl("../pages/ChatPage.qml"), {
+            pageStack.push(Qt.resolvedUrl("../../pages/ChatPage.qml"), {
                 chatInformation : display,
                 chatPicture: photo_data.small
             })

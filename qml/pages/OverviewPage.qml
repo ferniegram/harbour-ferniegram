@@ -21,6 +21,7 @@ import Sailfish.Silica 1.0
 import Nemo.Notifications 1.0
 import App.Logic 1.0
 import "../components"
+import "../components/chatList"
 import "../js/twemoji.js" as Emoji
 import "../js/functions.js" as Functions
 import "../js/debug.js" as Debug
